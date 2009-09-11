@@ -418,7 +418,7 @@ $_options[] = array(
     'description' => 'Default language for this site',
     'type'        => 'select',
     'default'     => 'en',
-    'options'     => implode(',', Jojo::selectAssoc("SELECT languageid, languageid as name FROM {language} ORDER BY `languageid`")),
+    'options'     => implode(',', Jojo::selectAssoc("SELECT lc_code, lc_code as name FROM {lang_country} ORDER BY `lc_code`")),
 );
 
 $_options[] = array(

@@ -398,7 +398,7 @@ class Jojo_Table {
             $smarty->assign('table', $this->table);
             $smarty->assign('displayname', $this->getOption('displayname'));
             return $smarty->fetch('admin/edit-ajaxtree.tpl');
-        } elseif ($menutype == 'list') {
+        } elseif ($menutype == 'list' || $menutype == 'recursivePath' || $menutype == 'array') {
             global $_USERGROUPS;
             $idfield = $this->getOption('primarykey');
             $displayfield  =  Jojo::either($this->getOption('displayfield'), $this->getOption('primarykey'));
