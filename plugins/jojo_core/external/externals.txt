@@ -1,0 +1,9 @@
+#
+# Add new external repositories here then run
+#   svn propset svn:externals -F externals.txt .
+# in this folder to update. Then commit changes to this file and the folder
+#
+#jsmin http://jsmin-php.googlecode.com/svn/trunk/
+xinha http://svn.xinha.webfactional.com/trunk/
+smarty http://smarty-php.googlecode.com/svn/trunk/libs/
+jsTree http://jstree.googlecode.com/svn/trunk/

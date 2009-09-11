@@ -1,0 +1,13 @@
+Version 1.1.1 / 21-august-2007
+-----------------------------------------------------
+- Fix most of the bugs on tag insertion. Hope the lasts.
+
+Version 1.1.00 / 21-august-2007
+-----------------------------------------------------
+- Fix id duplication bug on container and textfield.
+- Fix some ie bugs on tag insertion.
+
+Version 1.0.00 / 27-jully-2007
+-----------------------------------------------------
+- Fix "undefined" in prompt values
+- Better empty settings management

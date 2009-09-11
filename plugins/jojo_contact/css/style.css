@@ -1,0 +1,59 @@
+form.contact-form label {
+  float: left;
+  width: 150px;
+  display: block;
+  text-align: right;
+  margin-right: 5px;
+  margin-bottom: 3px;
+}
+
+form.contact-form input, form.contact-form select, form.contact-form textarea {
+  float: left;
+  margin-bottom: 3px;
+  margin-right: 5px;
+}
+
+form.contact-form br {
+  clear: left;
+  margin-bottom: 3px;
+}
+
+form.contact-form div.form-field {
+  float: left;
+  margin-bottom: 3px;
+  width: 300px;
+}
+
+form.contact-form div.form-field br {
+  margin: 15px 0;
+}
+
+form.contact-form div.form-field input {
+  float: none;
+}
+
+form.contact-form div.form-field-description {
+  float: left;
+  margin-bottom: 3px;
+  width: 300px;
+  clear: both;
+  margin-left: 155px;
+  font-size: 0.8em;
+  line-height: 110%;
+}
+
+form.contact-formdiv.form-field label {
+  float: none;
+  width: auto;
+  display: inline;
+  text-align: left;
+  margin-left: 5px;
+}
+
+form.contact-form div.captcha {
+  margin: 7px 0;
+}
+
+form.contact-form input.button {
+  cursor: pointer;
+}

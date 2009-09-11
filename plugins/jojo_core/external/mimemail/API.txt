@@ -1,0 +1,186 @@
+
+   API docs
+   ¯¯¯¯¯¯¯¯
+
+Only public methods are documented. All properties are considered private except for
+is_built, which is a boolean and determines whether the message is built or not. This
+can be reset after sending to false, to force rebuilding if sending multiple times.
+If the content of the message doesn't change, rebuilding shouldn't be necessary.
+
+
+
+void htmlMimeMail()
+
+  Constructor. Simply sets up some defaults. In particular the smtp parameters
+  are initialised to:
+
+    host -> localhost
+    port -> 25
+    helo -> Either HTTP_HOST, SERVER_NAME, or localhost in that order
+    auth -> false
+    user -> blank
+    pass -> blank
+
+  Also, the build parameters are initialised to:
+
+    html_encoding -> quoted-printable
+    text_encoding -> 7bit
+    html_charset  -> ISO-8859-1
+    text_charset  -> ISO-8859-1
+    head_charset  -> ISO-8859-1
+    text_wrap     -> 998
+
+
+
+void setCrlf(string CRLF style)
+
+  Sets the type of CRLF to use. Usually either \r\n, \n or \r. Don't normally
+  need to call this as the send() function will set it according to what method
+  of sending you're using (SMTP versus PHP mail()).
+
+
+
+void setSMTPParams(string host, integer port, string helo, boolean auth, string user, string pass)
+
+  Use this if you need to alter the SMTP details. All arguments default to NULL so you
+  if you only need to set one thing you can set the rest to NULL.
+
+
+
+void setTextEncoding(string encoding)
+
+  Use this method to set the style of encoding for the text part of the message. Can be
+  one of 7bit, 8bit, quoted-printable, and base64. Defaults to 7bit.
+
+
+
+void setHTMLEncoding(string encoding)
+
+  As above except it applies to the HTML part of the message. Defaults to quoted-printable.
+
+
+
+void setTextCharset(string charset)
+
+  The character set to use for the text part of the message. Defaults ISO-8859-1.
+
+
+
+void setHTMLCharset(string charset)
+
+  The character set to use for the HTML part of the message. Defaults ISO-8859-1.
+
+
+
+void setHeadCharset(string charset)
+
+  The characer set to use when headers are encoded (RFC2047). Defaults to ISO-8859-1.
+
+
+
+void setSubject(string subject)
+
+  Sets the Subject: header.
+
+
+
+void setFrom(string from)
+
+  Sets the From: header. This is also used if the return path is not set when sending via
+  SMTP.
+
+
+
+void setCc(string Cc)
+
+  Sets the Cc: header. This can be multiple addresses.
+
+
+
+void setBcc(string bcc)
+
+  Sets the Bcc: header. This can be multiple addresses.
+
+
+
+void setText(string text)
+
+  Sets the text part of the message. Should ONLY be used if you're sending a TEXT ONLY
+  email. See the setHTML() method  for setting the text alternative to a HTML/text email.
+
+
+
+void setHTML(string html, string text, string images_path)
+
+  Use this method to set the HTML part of your message. The 2nd and 3rd arguments are
+  optional. The second sets the alternative text to the HTML in your message. The third
+  sets a path for the class to look in for any image references it finds in the HTML. If
+  you want to avoid multiple calls to addHTMLImage() you can use this third argument to
+  get the class to look for and auto add images referenced by the HTML. It has restrictions
+  in that the image refs must be quoted (eg. <img src="foo.gif" and not <img src=foo.gif).
+  The extension/content-type mappings are set in the constructor in the property image_types.
+  This property can be added to if necessary, and is not restricted to mere images.
+
+
+
+void addHTMLImage(string filedata, string name, string content_type)
+
+  Use this method to add an embedded image to your message. The first argument is the file
+  itself (you can use the getFile() method if you have a filename). The second the name of
+  the file, commonly the filename (eg foo.gif). This name must match precisely the name it
+  is referenced by in the HTML. The third argument is the content-type of the file, eg.
+  image/gif.
+
+
+
+void addAttachment(string filedata, string filename, string content_type, string encoding)
+
+  Use this method to add an attachment to the message. The first three arguments are the
+  same as the method above. The fourth can be used to specify an alternate encoding to
+  base64. This is useful when you're adding attached messages which are better encoded as
+  7bit, (an example of this is in example.5.php).
+
+
+
+boolean buildMessage(array params)
+
+  Usually you don't need to call this method as it's automatically called by the send()
+  method. However, if you're using the send() method in a loop sending to multiple recipients
+  AND changing the HTML/text/headers each time, then you will need to call this method before
+  calling the send() method to force the email to be rebuilt. The argument is an associative
+  array containing the following options to alter the way the email is built:
+
+    Array key       Purpose
+    =========       =======
+    html_encoding   Sets the encoding type for HTML. See setHTMLEncoding()
+    text_encoding   Sets the encoding type for text. See setTextEncoding()
+    text_wrap       Sets the default wrap for text parts. Defaults to 998.
+    html_charset    Sets the charset for the HTML part. See setHTMLCharset().
+    text_charset    Sets the charset for the text part. See setTextCharset().
+    head_charset    Sets the charset for encoded headers. See setHeadCharset().
+
+
+
+boolean send(array recipients, string type)
+
+  This method sends the message. The recipients array is what becomes the To: header. This
+  can be simply an empty array if you've set Cc: or Bcc: headers instead. The second argument
+  determines what method to send the mail via. This can be 'mail' (the default) or 'smtp' to
+  send direct via an SMTP server. In this case the smtp parameters are used to connect to the
+  server. The return value is true or false indicating a successful send or not. With SMTP if
+  there are errors they will be set in the errors property (an array) ie. $obj->errors.
+
+
+
+string getRFC822(array recipients)
+
+  This method can be used to return a message as a string suitable for adding to another mail
+  object using addAttachment(). The recipients argument is as with the send() method.
+
+
+
+string getFile(string filename)
+
+  Reads the given filename in and returns it. Use this to read files and add them
+  as attachments or embedded images/objects. See the examples for usages.
+

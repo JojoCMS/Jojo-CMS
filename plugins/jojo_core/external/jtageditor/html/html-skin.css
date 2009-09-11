@@ -1,0 +1,131 @@
+/* -------------------------------------------------------------------
+// Html Editor Skin 
+// j(Universal?)TagEditor, JQuery plugin
+// By Jay Salvat - http://www.jaysalvat.com/jquery/jtageditor/
+// -------------------------------------------------------------------
+// Icons based on http://www.famfamfam.com/
+// ------------------------------------------------------------------*/
+#html {
+	width:805px;
+	border:1px solid #3366CC;	
+	background:#FFF url(../_images/bg-container.png) repeat-x top left;
+	padding:5px;
+}
+#html .jTagEditor-editor {
+	font:12px "Courier New", Courier, monospace;
+	padding:5px 5px 5px 35px; margin-top:10px;
+	border:3px solid #3366CC;
+	width:760px;
+	height:320px;
+	background-image:url(../_images/bg-html.png);
+	background-repeat:no-repeat;
+	clear:both; display:block;
+	line-height:18px;
+}
+#html .jTagEditor-toolBar {
+	list-style:none;
+}
+#html .jTagEditor-toolBar ul	{
+	margin:0px; padding:0px;
+}
+#html .jTagEditor-toolBar li	{
+	float:left;
+	margin-bottom:5px;
+}
+#html .jTagEditor-toolBar a	{
+	display:block;
+	width:16px; height:16px;
+	margin:1px 3px;
+	text-indent:-1000px;
+	overflow:hidden;
+}
+#html .jTagEditor-button1 a	{
+	background-image:url(../_icons/h1.png); 
+}
+#html .jTagEditor-button2 a	{
+	background-image:url(../_icons/h2.png); 
+}
+#html .jTagEditor-button3 a	{
+	background-image:url(../_icons/h3.png); 
+}
+#html .jTagEditor-button4 a	{
+	background-image:url(../_icons/h4.png); 
+}
+#html .jTagEditor-button5 a	{
+	background-image:url(../_icons/h5.png); 
+}
+#html .jTagEditor-button6 a	{
+	background-image:url(../_icons/h6.png); 
+}
+#html .jTagEditor-button7 a	{
+	background-image:url(../_icons/paragraph.png); 
+	margin-right:20px;
+}
+#html .jTagEditor-button8 a	{
+	background-image:url(../_icons/picture.png); 
+}
+#html .jTagEditor-button9 a	{
+	background-image:url(../_icons/link.png);
+	margin-right:20px;
+}
+#html .jTagEditor-button10 a	{
+	background-image:url(../_icons/bold.png);
+}
+#html .jTagEditor-button11 a	{
+	background-image:url(../_icons/italic.png);
+}
+#html .jTagEditor-button12 a	{
+	background-image:url(../_icons/stroke.png);
+}
+#html .jTagEditor-button13 a	{
+	background-image:url(../_icons/superscript.png);
+}
+#html .jTagEditor-button14 a	{
+	background-image:url(../_icons/subscript.png);
+	margin-right:20px;
+}
+#html .jTagEditor-button15 a	{
+	background-image:url(../_icons/table.png);
+}
+#html .jTagEditor-button16 a	{
+	background-image:url(../_icons/table-row.png);
+}
+#html .jTagEditor-button17 a	{
+	background-image:url(../_icons/table-col.png);
+	margin-right:20px;
+}
+#html .jTagEditor-button18 a	{
+	background-image:url(../_icons/list-bullets.png);
+}
+#html .jTagEditor-button19 a	{
+	background-image:url(../_icons/list-numbers.png);
+}
+#html .jTagEditor-button20 a	{
+	background-image:url(../_icons/list-item.png);
+}
+#html .jTagEditor-button21 a	{
+	background-image:url(../_icons/indent.png);
+	margin-right:20px;
+}
+#html .jTagEditor-button22 a	{
+	background-image:url(../_icons/code.png);
+}
+#html .jTagEditor-button23 a	{
+	background-image:url(../_icons/comments.png);
+	margin-right:20px;
+}
+#html .jTagEditor-button24 a	{
+	background-image:url(../_icons/tags-close.png);
+}
+#html .jTagEditor-button25 a	{
+	background-image:url(../_icons/tags-delete.png);
+}
+#html .jTagEditor-button26 a	{
+	background-image:url(../_icons/preview.png);
+}
+#html .jTagEditor-resizeHandle {
+	width:22px; height:6px;
+	margin:5px 0 0 394px;
+	background-image:url(../_images/handle.png);
+	cursor:n-resize;
+}

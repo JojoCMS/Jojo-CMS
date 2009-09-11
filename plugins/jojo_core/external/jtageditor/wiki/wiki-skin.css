@@ -1,0 +1,110 @@
+/* -------------------------------------------------------------------
+// Wiki Syntax Editor Skin 
+// j(Universal?)TagEditor, JQuery plugin
+// By Jay Salvat - http://www.jaysalvat.com/jquery/jtageditor/
+// -------------------------------------------------------------------
+// Icons based on http://www.famfamfam.com/
+// ------------------------------------------------------------------*/
+#wiki {
+	width:805px;
+	border:1px solid #663366;
+	padding:5px;
+	background:#FFF url(../_images/bg-container.png) repeat-x top left;
+}
+#wiki .jTagEditor-toolBar {
+	list-style:none;
+}
+#wiki .jTagEditor-toolBar ul	{
+	margin:0px; padding:0px;
+}
+#wiki .jTagEditor-toolBar li	{
+	float:left;
+	margin-bottom:5px;
+}
+#wiki .jTagEditor-toolBar a	{
+	display:block;
+	width:16px; height:16px;
+	margin:1px 3px;
+	text-indent:-1000px;
+	overflow:hidden;
+}	
+#wiki .jTagEditor-editor {
+	font:12px "Courier New", Courier, monospace;
+	padding:5px 5px 5px 35px; margin-top:10px;
+	border:3px solid #663366;
+	width:760px;
+	height:320px;
+	background-image:url(../_images/bg-wiki.png);
+	background-repeat:no-repeat;
+	clear:both; display:block;
+	line-height:18px;
+}
+#wiki .jTagEditor-button1 a	{
+	background-image:url(../_icons/h.png);
+	margin-right:20px;
+}
+#wiki .jTagEditor-button2 a	{
+	background-image:url(../_icons/picture.png);
+}
+#wiki .jTagEditor-button3 a	{
+	background-image:url(../_icons/media.png);
+}
+#wiki .jTagEditor-button4 a	{
+	background-image:url(../_icons/link.png);
+}
+#wiki .jTagEditor-button5 a	{
+	background-image:url(../_icons/link.png);
+	margin-right:20px;
+}
+#wiki .jTagEditor-button6 a	{
+	background-image:url(../_icons/bold.png);
+}
+#wiki .jTagEditor-button7 a	{
+	background-image:url(../_icons/italic.png);
+}
+#wiki .jTagEditor-button8 a	{
+	background-image:url(../_icons/formula.png);
+	margin-right:20px;
+}
+#wiki .jTagEditor-button9 a	{
+	background-image:url(../_icons/table.png);
+}
+#wiki .jTagEditor-button10 a	{
+	background-image:url(../_icons/table-row.png);
+}
+#wiki .jTagEditor-button11 a	{
+	background-image:url(../_icons/table-col.png);
+	margin-right:20px;
+}
+#wiki .jTagEditor-button12 a	{
+	background-image:url(../_icons/list-bullets.png);
+}
+#wiki .jTagEditor-button13 a	{
+	background-image:url(../_icons/list-numbers.png);
+}
+#wiki .jTagEditor-button14 a	{
+	background-image:url(../_icons/indent.png);
+	margin-right:20px;
+}
+#wiki .jTagEditor-button15 a	{
+	background-image:url(../_icons/code.png);
+}
+#wiki .jTagEditor-button16 a	{
+	background-image:url(../_icons/folder.png);
+}
+#wiki .jTagEditor-button17 a	{
+	background-image:url(../_icons/signature.png);
+	margin-right:20px;
+}
+#wiki .jTagEditor-button18 a	{
+	background-image:url(../_icons/tags-close.png);
+}
+#wiki .jTagEditor-button19 a	{
+	background-image:url(../_icons/preview.png);
+}
+#wiki .jTagEditor-resizeHandle {
+	width:22px; height:6px;
+	margin:5px 0 0 394px;
+	background-image:url(../_images/handle.png);
+	cursor:n-resize;
+}

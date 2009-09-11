@@ -1,0 +1,1 @@
+Documentation is available online at http://www.jojocms.org/docs/

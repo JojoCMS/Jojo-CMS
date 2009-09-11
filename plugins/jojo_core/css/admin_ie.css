@@ -1,0 +1,23 @@
+div.admin-home-item-left ul li, ul.admin-list li {
+  list-style-image: url('../images/cms/admin/bullet.gif');
+}
+
+div.admin-home-item-left ul li ul li, ul.admin-list li ul li {
+  list-style-image: url('../images/cms/admin/bullet2.gif');
+}
+
+div.admin-home-item-left ul li ul li ul li, ul.admin-list li ul li ul li {
+  list-style-image: url('../images/cms/admin/bullet3.gif');
+}
+
+div.admin-home {
+  background: transparent url('../images/cms/admin/bg-menu.jpg') center bottom no-repeat;
+}
+
+#help-text {
+  background: #404886 url('../images/cms/admin/bg-header.jpg') left top repeat-x;
+}
+
+.jojo-admin-button {
+  background-image: url('../images/cms/admin/admin-button.png');
+}

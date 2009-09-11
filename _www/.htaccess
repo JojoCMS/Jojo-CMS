@@ -1,0 +1,11 @@
+# Jojo .htaccess file.
+# Version 1740
+RewriteEngine On
+
+RewriteBase /
+
+# Catch all requests
+RewriteRule ^$ index.php?uri= [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?uri=$1

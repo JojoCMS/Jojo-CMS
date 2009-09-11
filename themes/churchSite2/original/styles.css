@@ -1,0 +1,342 @@
+/*
+
+(c) 2007 Your Business Name Dot Com
+
+*/
+
+
+
+* {
+  padding: 0;
+  margin: 0;
+} 
+
+body {
+	background-color: #5F5F5F;
+	background-image: url(images/back.gif);
+}
+
+#container {
+  margin: 20px auto;
+  width: 900px;
+  height: 653px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+#header {
+    height : 116px;
+    width:900px;
+    background-color: #455A79;
+
+}
+#logo { 
+	position: absolute;
+	font-family: goudy old style, "verdana", Times, serif;
+	font-size: 20pt;
+	font-weight: bold;
+	color: #fff;
+	top: 108px;
+	margin-left:10px; 
+	width:300px; 
+	height:22px;
+}
+
+#headermenu { 
+	position:absolute;
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #fff;
+	top: 40px;
+	margin-left:695px; 
+	width:206px; 
+	height:15px;
+}
+
+
+#headermenu a {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+#headermenu a:hover {
+	color: #F5F5F5;
+	text-decoration: underline;
+}
+
+#menubar {
+	background-image: url(images/.jpg);
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	background-color: #455A79;
+	margin-top: 1px;
+	width:900px; 
+	height:23px;
+}
+
+
+#menubar ul {
+	margin: 0px;
+	padding: 5px;
+	list-style: none;
+	text-align: center;
+}
+
+#menubar li {
+	display: inline;
+}
+
+#menubar a {
+	padding: 5px 15px;
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+#menubar a:hover {
+	background-color: #fff;
+	color:#455A79;
+}
+
+
+
+#rightpic {
+		 background: #000000 url("images/rembrandt.jpg") no-repeat left top;
+         float: right;
+         background-color: #E3E3E3;
+         width: 179px;
+         height: 200px;
+         border-top: solid #fff 1px;
+		 border-bottom: solid #fff 1px
+}
+
+#rightsidebar {
+    float: right;
+    background-color: #EDEDED;
+	margin-top: 128px;
+    width: 179px;
+    height: 326px;
+	border-top: solid #fff 1px;
+    border-bottom: solid #fff 1px;
+}
+
+#rightsidebar h2 {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #fff;
+	background-color: #455A79;
+	padding: 3px 6px;
+}
+
+#rightsidebar h3 {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #fff;
+	background-color: #455A79;
+	padding: 3px 6px;
+}
+
+#rightsidebartext {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #455A79;
+	padding: 12px 12px;
+	line-height: 14pt;
+}
+
+#rightsidebartext ul {
+	margin: 0px;
+	list-style: none;
+}
+
+#rightsidebartext a {
+	text-decoration: none;
+	color: #66584B;
+	
+}
+
+#rightsidebartext a:hover {
+	color: #66584B;
+	text-decoration: underline;
+}
+
+#rightsidebartext1 {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #455A79;
+	padding: 12px 12px;
+	line-height: 14pt;
+}
+
+#rightsidebartext1 ul {
+	margin: 0px;
+	list-style: none;
+}
+
+
+#rightsidebartext1 a {
+	text-decoration: none;
+	color: #66584B;
+}
+
+#rightsidebartext1 a:hover {
+	color: #66584B;
+	text-decoration: underline;
+}
+
+#leftpic {
+		 background: #000000 url("images/study.jpg") no-repeat left top;
+         float: left;
+         background-color: #E3E3E3;
+         width: 179px;
+         height: 200px;
+         border-top: solid #fff 1px;
+		 border-bottom: solid #fff 1px
+}
+
+#leftsidebar {
+    float: left;
+    background-color: #F2F2F2;
+	margin-top: 128px;
+    width: 179px;
+    height: 326px;
+	border-top: solid #fff 1px;
+    border-bottom: solid #fff 1px;
+}
+
+#leftsidebar h2 {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #fff;
+	background-color: #455A79;
+	padding: 3px 6px;
+}
+
+#leftsidebar h3 {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #fff;
+	background-color: #455A79;
+	padding: 3px 6px;
+}
+
+#leftsidebartext {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #455A79;
+	padding: 12px 12px;
+	line-height: 14pt;
+}
+
+#leftsidebartext a {
+	text-decoration: none;
+	color: #66584B;
+}
+
+#leftsidebartext a:hover {
+	color: #66584B;
+	text-decoration: underline;
+}
+
+#leftsidebartext1 {
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #455A79;
+	padding: 12px 12px;
+	line-height: 14pt;
+}
+
+#leftsidebartext1 a {
+	text-decoration: none;
+	color: #66584B;
+}
+
+#leftsidebartext1 a:hover {
+	color: #66584B;
+	text-decoration: underline;
+}
+
+#middlepic {
+	background: #fff url("images/adam.jpg");
+	float: left;
+	width: 540px;
+    height: 128px;
+	border-top: solid #fff 1px;
+	border-bottom: solid #fff 1px;
+	border-right: solid #fff 1px;
+	border-left: solid #fff 1px;
+}
+
+#content { 
+  	float: left;
+  	width: 495px;
+
+}
+
+#contenttxt { 
+  	float: left;
+  	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	color: #4E4E4E;
+  	text-align: left;
+  	width: 515px;
+	padding: 12px 12px;
+	text-align: justify;
+	line-height: 12pt;
+}
+
+#content h2 { 
+	padding-bottom: 4px;
+	border-bottom: solid #455A79 1px;
+	font-size: 12px; 
+	color : #455A79; 
+}
+#content h3 {
+	color: #fff; 
+	background: #370F00; 
+	font-size: 86%; 
+	padding: 3px 6px;
+}
+
+.study {
+	padding: 12px 15px 15px 15px;
+	background: #D6DEE5;
+	font-size: 93%;
+	font-family: arial, sans-serif;
+}
+
+.bulletin {
+	padding: 12px 15px 15px 15px;
+	background: #E3EAF0;
+	font-size: 8pt;
+	font-face: arial, verdana;
+}
+
+
+
+
+#footer { 
+	border-top: solid #fff 1px;
+  	width: 900px;
+  	height: 60px;
+  	background-color: #455A79;
+  	float: left;
+
+}
+#footer_text {
+	text-align: center; 
+	font-family: verdana, "Microsoft Sans Serif", Times, serif;
+	font-size: 8pt;
+	margin-top: 15px;
+	color: #C9C9C9;
+	line-height: 12pt;
+}
+
+#footer_text a {
+	text-decoration: none;
+	color: #C9C9C9;
+}
+
+#footer_text a:hover {
+	color: #C9C9C9;
+	text-decoration: underline;
+}

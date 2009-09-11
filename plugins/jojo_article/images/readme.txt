@@ -1,0 +1,1 @@
+If you would like the "Post Comment" link to be a button, create a file here called post-comment.gif or place post-comment.gif under themes/YOURTHEME/images/ (recommended for multisite install).

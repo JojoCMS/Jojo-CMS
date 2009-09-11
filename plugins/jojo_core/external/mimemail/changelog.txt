@@ -1,0 +1,159 @@
+ Changelog
+===========
+
+15/07/2002 2.5.0
+
+  -  Major API change making pretty much everything easier and nicer. Most importantly
+     the send() and send_smtp() have been unified into a single send(). See the examples
+     and API docs for more information.
+
+21/12/2001 2.0.3
+
+  -  Fixed bug which prevented building when it was html, null text, embedded images and
+     no attachments.
+
+  -  Altered get_file() function to allow retrieval of images via urls.
+
+02/11/2001 2.0.2
+
+  -  Seperated the mimePart class out to it's own file.
+
+  -  Fixed bug in build process.
+
+11/10/2001 2.0.1
+
+  -  Fixed minor bugs.
+
+04/10/2001 2.00
+
+  -  Complete overhaul of internal build system. Now utilises the mime_part class (which
+     is part of the class.html.mime.mail.inc file).
+
+  -  Removed add_header() function. Use header argument of constructor or send functions.
+
+  -  Constructor now only takes an array of headers.
+
+  -  Changed set_body() to add_text.
+
+  -  Removed the get_mime() function.
+
+  -  Changed the body member variable to text.
+
+  -  Altered add_html() function to except the $text argument as NULL. This will affect the
+     build system such that if the text is NULL, a multipart/alternative will not be added,
+     just a html part. It is however, always a good idea to supply a text version of mail.
+
+  -  Added a fourth parameter to add_attachment() to specify the encoding type. This can be
+     7bit, quoted-printable or base64. For most attachments this should be base64 (default),
+     a notable exception being attached emails, which should be 7bit.
+
+26/09/2001 1.39b
+
+  -  Fixed a minor bug. Image names weren't being replaced with content ids.
+
+22/09/2001 1.39
+
+  -  Added example.5.php which shows how to attach one email to another.
+
+  -  Altered code that replaces image filenames with content ids to run at build time,
+     this means add_html_image() can now come after add_html().
+
+  -  Changed order of multipart/related --> multipart/alternative to be opposite way around.
+     Makes more sense this way as embedded images are not related to the text/plain part.
+
+  -  Fixed spurious crlfs
+
+  -  Altered smtp_send() method to use my own smtp class.
+
+  -  Removed charset function, now the charset is an option in the build parameters.
+
+  -  Altered quoted-printable encoding not to encode tabs.
+
+08/09/2001 1.38
+
+  -  General tidy up.
+
+  -  Altered default length of 7bit encoded data to 998 chars (RFC821).
+
+  -  Added example.4.php, which shows how to send Bcc: emails.
+
+29/08/2001 1.37
+
+  -  Added quoted-printable functionality (RFC2045).
+
+  -  Added argument to build_message() to control certain things during message building.
+
+27/08/2001 1.36
+
+  -  Added new function contributed by Dan Allen. Will look through the html
+     code for embedded images/files and try to automatically add them. The function
+     is called by adding a third argument to add_html(), which is the directory
+     where the function will look for images.
+
+  -  smtp_send() method no longer automatically adds From: or Subject: headers. These
+     must be added manually. The arguments have also changed for this function.
+
+  -  Two example scripts added, making total of three. Each of which shows the various
+     ways you can use the class.
+
+17/07/2001 1.35
+
+  -  Moved the mime version header to be the first header added to the mail.
+     Apparently this helps certain mail clients.
+
+28/01/2001
+
+  -  Changed all \r\n to \n. Should work "out of the box" for more people now. However,
+     this does contravene RFC822, which states line endings should be \r\n.
+
+24/10/2000
+
+  -  Added character set function. Contributed by "Matt". Also
+     fixed the properties' initialisation by moving it to the
+     constructor. Default character set is us-ascii.
+
+31/08/2000
+
+  -  Couple of bugfixes. Also, due to a mis-directed
+     complaint from a victim of porn spam, I have removed
+     the link to my website from the "This is a mime encoded
+     email." message. Please upgrade.
+
+24/08/2000
+
+  -  Changed all functions that add headers to accept either a string
+     of headers seperated by \r\n, a single header, or an array of headers.
+
+  -  Added get_rfc822() function. Enables you to add whole emails as attachments
+     to other emails.
+
+  -  Added add_header() function to add a header. This is php4 only, and takes
+     any number of arguments. The args must be either arrays full of headers or
+     a string containing a header.
+
+  -  Added get_mime() function as an accessor to get the mime class variable.
+
+  -  Added the set_body() function to set the body text class variable. This
+     is to be used to set the body text when it is not an HTML mail being sent.
+
+Previous History
+
+  - Fixed bug; when looping with $obj->send(), From: headers
+    were accumulating. Bummer. Thanks to Lance Rasmussen for
+    notifying me.
+
+  - Fixed bug; $html_images was tested to be an array or not
+    but was set to be an array during object creation, so the
+    test always returned true. Thanks to Bob Silva for
+    notifying me.
+
+  - Fixed bug; certain mail systems (gmx.net in particular)
+    were rejecting mail because of a space character either
+    side of the equal sign on the boundary line. Thanks to
+    Peter Holm for notifying me.
+
+  - Made headers terminated by CRLF instead of LF, now
+    compliant with RFC822.
+
+  - Thanks to Thomas Flemming for supplying a fix
+    for Win32.

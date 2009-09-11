@@ -1,0 +1,59 @@
+div.right {
+  float: right;
+}
+
+div.left {
+  float: left;
+}
+
+.center {
+  text-align: center;
+}
+
+div.clear {
+  clear: both;
+}
+
+div.quote {
+
+}
+
+div.info {
+
+}
+
+div.author {
+
+}
+
+.code, .codeblock {
+  font-family: Consolas, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace, serif;
+}
+
+/* these styles are to be moved into separate plugins - do not rely on them */
+.img-shadow {
+  float: left;
+  background: url('../images/cms/shadow.png') no-repeat bottom right !important;
+  margin: 10px 0 0 10px !important;
+}
+
+.img-shadow img {
+  display: block;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  margin: -6px 6px 6px -6px;
+  padding: 4px;
+}
+
+.magazine-image {
+  background: none;
+  border: 1px #ccc solid;
+}
+
+#content .magazine-image img {
+  background: none;
+  border: 1px #ccc solid;
+  margin: 2px;
+  padding: 0;
+}

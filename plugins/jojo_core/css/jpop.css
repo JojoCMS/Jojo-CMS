@@ -1,0 +1,61 @@
+#jpop_loading {
+  position: fixed;
+  display:none;
+  height:16px;
+  width:16px;
+  z-index:103;
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px; /* -height/2 0 0 -width/2 */
+}
+
+* html #jpop_loading {
+  position: absolute;
+  margin-top: expression(0 - parseInt(this.offsetHeight / 2) + (TBWindowMargin = document.documentElement && document.documentElement.scrollTop || document.body.scrollTop) + 'px');
+}
+
+#jpop_overlay {
+  position: fixed;
+  display: none;
+  z-index:100;
+  top: 0px;
+  left: 0px;
+  background-color:#000;
+  filter:alpha(opacity=75);
+  -moz-opacity: 0.75;
+  opacity: 0.75;
+  height:100%;
+  width:100%;
+}
+
+* html #jpop_overlay {
+  position: absolute;
+  height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+}
+
+.jpop_content {
+  z-index:101;
+  position: fixed;
+  display:none;
+  top: 0px;
+  left: 0px;
+  width: 400px;
+  height: 400px;
+  background: #fff;
+  border: 1px solid #000;
+  margin: auto;
+  padding: 10px;
+}
+
+* html .jpop_content {
+  position: absolute;
+  margin-top: expression((TBWindowMargin = document.documentElement && document.documentElement.scrollTop || document.body.scrollTop) + 'px');
+}
+
+.jpop {
+  display: none;
+}
+
+select.jpop_select {
+  _display: none;
+}

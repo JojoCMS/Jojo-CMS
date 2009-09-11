@@ -1,0 +1,1 @@
+Allows you to redirect a url to a new internal or external url. Useful for redirecting old urls to new urls when replacing a site.

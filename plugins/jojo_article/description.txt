@@ -1,0 +1,1 @@
+A comprehensive plugin for writing articles, news or blogging. Allows for comments to be made to articles.

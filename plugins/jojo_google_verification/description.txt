@@ -1,0 +1,1 @@
+Allows you to create a Google Webmaster Tools verification file dynamically, no uploads required.

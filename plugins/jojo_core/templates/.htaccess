@@ -1,0 +1,7 @@
+#prevent people from accessing Templates directly
+
+#RewriteRule ^(.*)$ ../ [F,L]
+<Files ~ "\.(tpl)$">
+ Order allow,deny
+ Deny from all
+</files>

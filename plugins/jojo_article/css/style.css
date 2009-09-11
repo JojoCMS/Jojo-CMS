@@ -1,0 +1,87 @@
+.tag-cloud a {
+  text-decoration:none;
+}
+
+#post-comment {
+  display:none;
+}
+
+#post-comment-link {
+  display:block;
+  text-align:center;
+}
+
+#article-comments {
+
+}
+
+#post-comment label {
+  float: left;
+  width: 150px;
+  display: block;
+  text-align: right;
+  margin-right: 5px;
+  margin-bottom: 3px;
+}
+
+#post-comment input, #post-comment select, #post-comment textarea {
+  float: left;
+  margin-bottom: 3px;
+}
+
+#post-comment br {
+  clear: left;
+  margin-bottom: 3px;
+}
+
+#post-comment div.post-comment-field {
+  float: left;
+  margin-bottom: 3px;
+  width: 300px;
+}
+
+#post-comment div.post-comment-field label {
+  float: none;
+  width: auto;
+  display: inline;
+  text-align: left;
+  margin-left: 5px;
+}
+
+#article a.next-article {
+  display: block;
+  margin-left: 5px;
+  float: right;
+  font-size: 0.9em;
+}
+
+#article a.prev-article {
+  display: block;
+  margin-right: 5px;
+  float: left;
+  font-size: 0.9em;
+}
+
+.article-date {
+  text-align:right;
+  font-size: 0.9em;
+  font-style: italic;
+  margin:20px 0 30px;
+}
+
+.links {
+  margin:10px 0;
+}
+
+.more {
+ text-align: right;
+}
+
+#article .note {
+  margin:10px 0;
+}
+
+img.index-thumb {
+    float:left;
+    margin: 3px 10px 5px 0;
+}

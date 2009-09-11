@@ -1,0 +1,1 @@
+Some additional styles that are required by the BBCode editor (instead of using inline styles).

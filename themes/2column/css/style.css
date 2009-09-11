@@ -1,0 +1,112 @@
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
+*/
+body{color:#000;background:#FFF;}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
+li{list-style:none;}caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
+q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup,sub{line-height:-1px;vertical-align:text-top;}sub{vertical-align:text-bottom;}input, textarea, select{font-family:inherit;font-size:inherit;font-weight:inherit;}
+
+/* general styles */
+body {
+  text-align: center;
+  font-family: Verdana, arial, sans-serif;
+  background: #889;
+}
+
+body, td {
+  font-size: 1em;
+  color: #222;
+}
+
+h1 {
+  font-size: 1.5em;
+}
+
+h2 {
+  font-size: 1.3em;
+}
+
+a {
+  color: #000;
+}
+
+a:hover {
+  color: #222;
+}
+
+.clear {
+  clear: both;
+}
+
+/* layout */
+
+#wrap {
+  margin: 10px auto;
+  text-align: left;
+  background: #fff;
+  width: 950px;
+}
+
+#header {
+  clear: both;
+  padding: 10px;
+  background: #ffffee;  
+  border: 1px solid #ffd;
+  text-align: center;
+  font-size: 2em;
+  font-style: italic;
+}
+
+#menu {
+  clear: both;
+  padding: 10px;
+  background: #eeffff;  
+  border: 1px solid #dff;
+  text-align: center;
+}
+
+#menu ul {
+  
+}
+
+#menu ul li {
+  float: left;
+}
+
+#menu ul li a {
+  display: block;
+  padding: 3px 10px;
+}
+
+#sidebar {
+  float: right;
+  width: 178px !important;
+  width: 198px;
+  padding: 10px;
+  background: #eeeeff;  
+  border: 1px solid #ddf;
+}
+
+#main {
+  float: left;
+  width: 728px !important;
+  width: 748px;
+  padding: 10px;
+  background: #eeffee;
+  border: 1px solid #dfd;
+}
+
+#footer {
+  clear: both;
+  padding: 10px;
+  background: #fff5f5;  
+  border: 1px solid #fee;
+  text-align: center;
+}

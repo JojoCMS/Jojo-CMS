@@ -1,0 +1,1 @@
+A robots.txt file allows you to block spiders from accessing certain parts of your website. Jojo provides a default robots.txt file, but you are free to cusomise this if desired. This plugin allows you to save your robots.txt file in the database, rather than as a physical file.

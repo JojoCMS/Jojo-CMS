@@ -1,0 +1,2 @@
+Adds a sitemap page to your website. The sitemap provides plain text links to all major sections of the site.
+A sitemap is recommended for all sites, as it provides alternative navigation for spiders and users.

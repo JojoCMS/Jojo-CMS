@@ -1,0 +1,1 @@
+Adds a semi-random footer credit to your website. Great for getting links back to yourself from your client's websites.
