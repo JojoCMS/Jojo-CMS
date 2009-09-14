@@ -99,11 +99,12 @@ if (!defined('_SITEURL')) {
 define('_SITENAME',         Jojo::getOption('sitetitle'));
 define('_NONSECUREURL',     Jojo::getOption('siteurl'));
 define('_SECUREURL',        Jojo::either(Jojo::getOption('secureurl') , Jojo::getOption('siteurl'))); //defaults to be same as SITEURL
+define('_CONTACTNAME',      Jojo::either(Jojo::getOption('contactname'), Jojo::getOption('fromname'), Jojo::getOption('webmastername'))); //used for contact form
+define('_CONTACTADDRESS',   Jojo::either(Jojo::getOption('contactaddress'), Jojo::getOption('fromaddress'), Jojo::getOption('webmasteraddress'))); //used for contact form
 define('_FROMNAME',         Jojo::either(Jojo::getOption('fromname'), Jojo::getOption('sitetitle')));
 define('_FROMADDRESS',      Jojo::getOption('fromaddress'));
 define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
 define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
-define('_CONTACTADDRESS',   Jojo::either(Jojo::getOption('contactaddress'), Jojo::getOption('fromaddress'), Jojo::getOption('webmasteraddress'))); //used for contact form
 define('_SITETITLE',        Jojo::getOption('sitetitle'));
 define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
 define('_MULTILANGUAGE',    Jojo::yes2true(Jojo::getOption('multilanguage')));
