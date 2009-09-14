@@ -4,7 +4,7 @@ header('Cache-Control: private, max-age=28800');
 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
 header('Pragma: ');
 ?>/* -------------------------------------------------------------------
-// BBCode Editor Skin 
+// BBCode Editor Skin
 // j(Universal?)TagEditor, JQuery plugin
 // By Jay Salvat - http://www.jaysalvat.com/jquery/jtageditor/
 // -------------------------------------------------------------------
@@ -43,23 +43,23 @@ header('Pragma: ');
 	line-height:18px;
 }
 .jTagBB .jTagEditor-button1 a	{
-	background-image:url(../../../images/cms/icons/text_bold.png);
+	background-image:url(../_icons/bold.png);
 }
 .jTagBB .jTagEditor-button2 a	{
-	background-image:url(../../../images/cms/icons/text_italic.png);
+	background-image:url(../_icons/italic.png);
 }
 .jTagBB .jTagEditor-button3 a	{
-	background-image:url(../../../images/cms/icons/text_underline.png);
+	background-image:url(../_icons/underline.png);
 	margin-right:20px;
 }
 .jTagBB .jTagEditor-button4 a	{
-	background-image:url(../../../images/cms/icons/text_heading_2.png);
+	background-image:url(../_icons/h2.png);
 }
 .jTagBB .jTagEditor-button5 a	{
-	background-image:url(../../../images/cms/icons/text_heading_3.png);
+	background-image:url(../_icons/h3.png);
 }
 .jTagBB .jTagEditor-button6 a	{
-	background-image:url(../../../images/cms/icons/text_heading_4.png);
+	background-image:url(../_icons/h4.png);
 	margin-right:20px;
 }
 .jTagBB .jTagEditor-button7 a	{
@@ -67,7 +67,7 @@ header('Pragma: ');
 	margin-right:20px;
 }
 .jTagBB .jTagEditor-button8 a	{
-	background-image:url(../../../images/cms/icons/link.png);
+	background-image:url(../_icons/link.png);
 }
 .jTagBB .jTagEditor-button9 a	{
 	background-image:url(../../../images/cms/icons/link_error.png);
@@ -77,10 +77,10 @@ header('Pragma: ');
 	margin-right:20px;
 }
 .jTagBB .jTagEditor-button11 a	{
-	background-image:url(../../../images/cms/icons/text_list_bullets.png);
+	background-image:url(../_icons/list-bullets.png);
 }
 .jTagBB .jTagEditor-button12 a	{
-	background-image:url(../../../images/cms/icons/text_list_numbers.png);
+	background-image:url(../_icons/list-numbers.png);
 }
 .jTagBB .jTagEditor-button13 a	{
 	background-image:url(../_icons/list-item.png);
@@ -91,13 +91,13 @@ header('Pragma: ');
 	margin-right:20px;
 }
 .jTagBB .jTagEditor-button15 a	{
-	background-image:url(../../../images/cms/icons/comment.png);
+	background-image:url(../_icons/comments.png);
 }
 .jTagBB .jTagEditor-button16 a	{
-	background-image:url(../../../images/cms/icons/tag.png);
+	background-image:url(../_icons/tags.png);
 }
 .jTagBB .jTagEditor-button17 a	{
-	background-image:url(../../../images/cms/icons/tag.png);
+	background-image:url(../_icons/tags.png);
 	margin-right:20px;
 }
 .jTagBB .jTagEditor-button18 a	{
