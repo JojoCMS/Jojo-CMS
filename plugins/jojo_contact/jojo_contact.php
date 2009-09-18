@@ -30,14 +30,12 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $fields = array();
         /* Fields from jojo_contact_fields.php in any plugin or theme */
-        foreach (Jojo::listPlugins('jojo_contact_fields.php') as $pluginfile) {
-          include($pluginfile);
-          break;
-        }
+        include array_pop(Jojo::listPlugins('jojo_contact_fields.php'));
+
         $errors = array();
         $from_email = '';
         $to_email = '';
-        
+
        foreach ($fields as &$field) {
             /* set field value from POST */
             if (is_array($_POST['form_' . $field['field']])) {
@@ -113,7 +111,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
            $from_name .= $fromfieldname;
         }
         $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
-        
+
         $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
 
         $subject  = 'Message from ' . Jojo::getOption('sitetitle') . ' website';
@@ -171,10 +169,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $fields = array();
         /* Fields from jojo_contact_fields.php in any plugin or theme */
-        foreach (Jojo::listPlugins('jojo_contact_fields.php') as $pluginfile) {
-          include($pluginfile);
-          break;
-        }
+        include array_pop(Jojo::listPlugins('jojo_contact_fields.php'));
 
         /* setup send to choices if it is set in options */
         if ((Jojo::getOption('contact_choice') == 'yes') && (Jojo::getOption('contact_choice_list') != '')) {
