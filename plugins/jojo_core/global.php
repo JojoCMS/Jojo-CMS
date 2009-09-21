@@ -99,6 +99,8 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
                          WHERE
                            pg_livedate<$now AND (pg_expirydate<=0 OR pg_expirydate>$now)
                          AND
+                           pg_status='active'
+                         AND
                            (pg_%s = 'yes' or pg_mainnavalways = 'yes')
                          ORDER BY
                            pg_order", $field);
@@ -109,6 +111,8 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
                            {page}
                          WHERE
                            pg_livedate<$now AND (pg_expirydate<=0 OR pg_expirydate>$now)
+                         AND
+                           pg_status='active'
                          AND
                            pg_%s = 'yes'
                          ORDER BY
