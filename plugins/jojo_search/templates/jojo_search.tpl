@@ -22,23 +22,23 @@
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance">Relevance</div>{/if}
    <p>{$numresults} Search results for <b>{$displaykeywords}</b>.</p>
 {if $OPTIONS.search_filtering =='yes' && count($resulttypes) > 1}
-    <p class="links" id="search-filter">Filter results by: <a href="#" onclick="filterresults();return false;" id="filter-search-none" class="current-filter">None</a> 
+    <p class="links" id="search-filter">Filter results by: <a href="#" onclick="filterresults();return false;" id="filter-search-none" class="current-filter">None</a>
 {foreach from=$resulttypes item=cat}
    | <a href="#" onclick="filterresults('search-cat-{$cat|strtolower|replace:' ':'-'}');return false;"  id="filter-search-cat-{$cat|strtolower|replace:' ':'-'}">{$cat}</a>&nbsp;
 {/foreach}
     </p>
 {/if}
-   
+
 
 {foreach item=res from=$results}
   <div class="search-result search-cat-{$res.type|strtolower|replace:' ':'-'} clear">
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance-display" style="width:{$res.displayrelevance|string_format:"%d"}px;" title="Search relevance: {$res.relevance|string_format:"%.1f"}"></div>{/if}
-    <h3><a href="{$res.url}" title="{$res.title|escape:"html":$charset}">{$res.title|escape:"html":$charset}</a></h3>
-    {if $res.image && $OPTIONS.search_images =='yes'}<a href="{$res.url}" title="{$res.title|escape:"html":$charset}" rel="nofollow"><img src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}v6000{/if}/{$res.image}" class="right-image" alt="{$res.title|escape:"html":$charset}" /></a>{/if}
+    <h3><a href="{$res.absoluteurl}" title="{$res.title|escape:"html":$charset}">{$res.title|escape:"html":$charset}</a></h3>
+    {if $res.image && $OPTIONS.search_images =='yes'}<a href="{$res.absoluteurl}" title="{$res.title|escape:"html":$charset}" rel="nofollow"><img src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}v6000{/if}/{$res.image}" class="right-image" alt="{$res.title|escape:"html":$charset}" /></a>{/if}
     <p>{$res.body}</p>
     {if $res.tags}<p class="links">Tagged with:
 {foreach from=$res.tags item=tag}
-<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag|replace:" ":"-"}/">{if $tag==$keywords}<b>{$tag}</b>{else}{$tag}{/if}</a> | 
+<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag|replace:" ":"-"}/">{if $tag==$keywords}<b>{$tag}</b>{else}{$tag}{/if}</a> |
 {/foreach}
     </p>{/if}
     <p class="links">{$res.type}: <a href="{$res.absoluteurl}" title="{$res.title|escape:"html":$charset}" class="links" rel="nofollow" >&gt; {$res.displayurl}</a></p>
