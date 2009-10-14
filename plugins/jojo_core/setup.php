@@ -161,7 +161,7 @@ if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'Jojo_Plugin_Log
 // Logout page
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'Jojo_Plugin_Logout'")) {
     echo "Adding <b>Logout</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Logout', pg_url = 'logout', pg_link = 'Jojo_Plugin_Logout', pg_parent = ?, pg_order=100, pg_permissions = 'everyone.show = 1\neveryone.view = 1'", array($_ADMIN_ROOT_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Logout', pg_url = 'logout', pg_link = 'Jojo_Plugin_Logout', pg_parent = ?, pg_order=100, pg_permissions = 'notloggedin.show = 1\neveryone.view = 1'", array($_ADMIN_ROOT_ID));
 }
 
 // Edit Tabledata
