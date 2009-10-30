@@ -21,7 +21,8 @@ function xyz(c,a,b,s) {
 }
 
 var GOOG_FIXURL_LANG = 'en';
-var GOOG_FIXURL_SITE = '{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}';
+var GOOG_FIXURL_SITE = '{/literal}{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}{literal}';
+
 
 {/literal}-->
 </script>
