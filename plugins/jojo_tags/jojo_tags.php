@@ -299,7 +299,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
 
                 /* Don't want these pages to be supplemental */
                 $meta = array();
-                $meta[] = "Content tagged as $casedtag" . _LINKBODY;
+                $meta[] = "Content tagged as $casedtag. " . _LINKBODY;
                 $meta[] = "Content tagged as $casedtag on  ". _SITETITLE;
                 $meta[] = "$casedtag on " . _SITETITLE . " - browse $numresults content items tagged as $casedtag. " . _LINKBODY;
                 $meta[] = "$casedtag on " . _SITETITLE . " - Browse our selection of content tagged $casedtag. " . _LINKBODY;
