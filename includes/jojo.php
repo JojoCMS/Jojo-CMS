@@ -374,12 +374,15 @@ if (isset($_SERVER["HTTP_X_FORWARDED_HOST"])) {
 }
 
 $url=parse_url($_SERVER['REQUEST_URI']);
-if (preg_match('/utm_source|utm_medium|utm_term|utm_content|utm_campaign|gclid/i', $url['query'])) {
-$correcturl = $page->getCorrectUrl()."?".$url['query'];
+if(isset($url['query'])===FALSE) {
+   $correcturl = $page->getCorrectUrl();
 } else {
-$correcturl = $page->getCorrectUrl();
+  if (preg_match('/utm_source|utm_medium|utm_term|utm_content|utm_campaign|gclid/i', $url['query'])) {
+    $correcturl = $page->getCorrectUrl()."?".$url['query'];
+  } else {
+    $correcturl = $page->getCorrectUrl();
+  }
 }
-
 
 if (($page->id == 1) && (rtrim($correcturl,'/') != rtrim($actualurl,'/')))  {
     Jojo::redirect($correcturl);
