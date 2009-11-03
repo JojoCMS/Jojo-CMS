@@ -27,7 +27,7 @@ class Jojo_Plugin_jojo_google_verification extends Jojo_Plugin
         $valid = explode("\n", Jojo::getOption('googleverification'));
         foreach ($valid as $file) {
             if (trim($file) == $filename) {
-                echo '<h1>Valid Verification file</h1><strong>'.$filename.'</strong> is a valid Google verification file.<br />You will need to confirm the existance of this file from the <a href="http://www.google.com/webmasters/sitemaps/">Google Webmaster Tools</a> control panel, if you have not done so already.';
+                echo 'google-site-verification: '.$filename;
                 exit();
             }
         }
