@@ -325,7 +325,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num, $start = 0, $categoryid=false, $sortby=false, $exclude=false) {
+    static function getArticles($num, $start = 0, $categoryid=false, $sortby=false, $exclude=false,$usemultilanguage=true) {
         global $page;
         if (_MULTILANGUAGE) $language = !empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
         $_CATEGORIES      = (Jojo::getOption('article_enable_categories', 'no') == 'yes' && $categoryid) ? true : false;
@@ -342,8 +342,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= $_CATEGORIES ? " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_url=p.pg_url)" : '';
         $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = articleid)" : '';
         $query .= " WHERE ar_livedate<$now AND (ar_expirydate<=0 OR ar_expirydate>$now)";
-        $query .= _MULTILANGUAGE ? " AND (ar_language = '$language')" : '';
-        $query .= ($_CATEGORIES && _MULTILANGUAGE) ? " AND (pg_language = '$language')" : '';
+        $query .= (_MULTILANGUAGE && $usemultilanguage) ? " AND (ar_language = '$language')" : '';
+        $query .= ($_CATEGORIES && _MULTILANGUAGE && $usemultilanguage) ? " AND (pg_language = '$language')" : '';
         $query .= ($_CATEGORIES && $categoryid!='all') ? " AND (ar_category = '$categoryid')" : '';
         $query .= $excludethisid ? " AND (articleid != '$excludethisid')" : '';
         $query .= $excludethisurl ? " AND (ar_url != '$excludethisurl')" : '';
@@ -424,7 +424,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $articleid = Jojo::getFormData('id',     0);
         $url       = Jojo::getFormData('url',    '');
         $action    = Jojo::getFormData('action', '');
-        
+
         /* handle unsubscribes */
         if ($action == 'unsubscribe') {
             $code      = Jojo::getFormData('code',      '');
@@ -1004,7 +1004,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $values = array('Jojo_Plugin_Jojo_article_rss');
         }
 
-        $res = Jojo::selectRow($query, $values);   
+        $res = Jojo::selectRow($query, $values);
         if ($res) {
             $_cache[$cacheKey] = !empty($res['pg_url']) ? $res['pg_url'] : $res['pageid'] . '/' . $res['pg_title'];
         } else {
