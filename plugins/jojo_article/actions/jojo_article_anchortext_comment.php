@@ -36,15 +36,15 @@ $frajax->sendHeader();
 if ($commentid) {
 
     if ($value == 'yes') {
-        Jojo::updateQuery("UPDATE `articlecomment` SET ac_useanchortext='yes', ac_nofollow='no' WHERE articlecommentid = ? LIMIT 1", array($commentid));
+        Jojo::updateQuery("UPDATE {articlecomment} SET ac_useanchortext='yes', ac_nofollow='no' WHERE articlecommentid = ? LIMIT 1", array($commentid));
     } elseif ($value == 'no') {
-        Jojo::updateQuery("UPDATE `articlecomment` SET ac_useanchortext='no' WHERE articlecommentid = ? LIMIT 1", array($commentid));
+        Jojo::updateQuery("UPDATE {articlecomment} SET ac_useanchortext='no' WHERE articlecommentid = ? LIMIT 1", array($commentid));
     } else {
         $frajax->alert('An error occured setting "use anchor text" option');
         $frajax->sendFooter();
         exit();
     }
-    $comments = Jojo::selectQuery("SELECT * FROM articlecomment WHERE articlecommentid = ? LIMIT 1", array($commentid));
+    $comments = Jojo::selectQuery("SELECT * FROM {articlecomment} WHERE articlecommentid = ? LIMIT 1", array($commentid));
     $comment = $comments[0];
 
     $smarty->assign('commentid', $comment['articlecommentid']);

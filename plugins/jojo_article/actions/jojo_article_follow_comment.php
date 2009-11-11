@@ -35,9 +35,9 @@ $frajax->title = 'Set nofollow for comment - ' . _SITETITLE;
 $frajax->sendHeader();
 
 if ($commentid) {
-    Jojo::updateQuery("UPDATE `articlecomment` SET ac_nofollow = ? WHERE articlecommentid = ? LIMIT 1", array($value, $commentid));
+    Jojo::updateQuery("UPDATE {articlecomment} SET ac_nofollow = ? WHERE articlecommentid = ? LIMIT 1", array($value, $commentid));
 
-    $comments = Jojo::selectQuery("SELECT * FROM articlecomment WHERE articlecommentid = ? LIMIT 1", array($commentid));
+    $comments = Jojo::selectQuery("SELECT * FROM {articlecomment} WHERE articlecommentid = ? LIMIT 1", array($commentid));
     $comment = $comments[0];
 
     $smarty->assign('commentid', $comment['articlecommentid']);

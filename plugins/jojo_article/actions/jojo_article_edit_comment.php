@@ -42,7 +42,7 @@ $frajax->sendHeader();
 /* Load into textarea action */
 if ($commentid && !$body) {
 
-    $comments = Jojo::selectQuery("SELECT * FROM articlecomment WHERE articlecommentid = ? LIMIT 1", array($commentid));
+    $comments = Jojo::selectQuery("SELECT * FROM {articlecomment} WHERE articlecommentid = ? LIMIT 1", array($commentid));
     $comment = $comments[0];
     $html  = '<form action="actions/jojo_article_edit_comment.php" target="frajax-iframe" method="post">';
     $html .= '<input type="hidden" name="commentid" value="'.$commentid.'" />';
