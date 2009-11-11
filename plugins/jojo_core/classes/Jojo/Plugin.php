@@ -37,7 +37,7 @@ class Jojo_Plugin {
 
     /* Boolean whether the content is expired/not live/disabled */
     var $expired = false;
-    
+
     var $revisions = false;
 
 
@@ -284,9 +284,16 @@ class Jojo_Plugin {
     function getCorrectUrl()
     {
         /* Allow URLs that have the Google Adwords / Yahoo tracking code */
-        if ((strpos($_SERVER['REQUEST_URI'],'gclid=') !== false) || (strpos($_SERVER['REQUEST_URI'],'gad=') !== false) || (strpos($_SERVER['REQUEST_URI'],'OVKEY=') !== false) || (strpos($_SERVER['REQUEST_URI'],'OVRAW=') !== false) || (strpos($_SERVER['REQUEST_URI'],'OVMTC=') !== false)) return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $allowed_vars = array('__utma', 'gclid=', 'gad=', 'OVKEY=', 'OVRAW=', 'OVMTC=', 'utm_source=','utm_medium=','utm_term=','utm_content=','utm_campaign=','OVADID=','OVKWID=');
+        $allowed_vars = Jojo::applyFilter('index_allowed_vars', $allowed_vars); //Allow plugins to add additional safe strings here
 
-        /* Use the page url if we have it, else genereate something */
+        foreach ($allowed_vars as $var) {
+            if (strpos($_SERVER['REQUEST_URI'], $var) !== false) {
+                return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            }
+        }
+
+         /* Use the page url if we have it, else generate something */
         $link = '';
         if ($this->page['pg_url']) {
             $link .= $this->page['pg_url'] . '/';

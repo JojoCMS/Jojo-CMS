@@ -42,7 +42,7 @@ class Jojo_Plugin_Index extends Jojo_Plugin
               $url .= '/';
         }
         /* allow URLs that have the Google Adwords / Yahoo tracking code */
-        $allowed_vars = array('__utma', 'gclid=', 'gad=', 'OVKEY=', 'OVRAW=', 'OVMTC=');
+        $allowed_vars = array('__utma', 'gclid=', 'gad=', 'OVKEY=', 'OVRAW=', 'OVMTC=', 'utm_source=','utm_medium=','utm_term=','utm_content=','utm_campaign=','OVADID=','OVKWID=');
         $allowed_vars = Jojo::applyFilter('index_allowed_vars', $allowed_vars); //Allow plugins to add additional safe strings here
 
         foreach ($allowed_vars as $var) {
