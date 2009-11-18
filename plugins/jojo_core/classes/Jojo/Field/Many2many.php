@@ -158,7 +158,7 @@ class Jojo_Field_many2many extends Jojo_Field
         if (Jojo::getPost('fm_'.$this->fd_field, false)) {
             /* if an update to this data was not POSTed explicitly, do nothing */
             foreach ($_POST as $k => $v) {
-                if (strpos($k,'fm_'.$this->fd_field) === 0) {
+                if (strpos($k,'fm_'.$this->fd_field.'_') === 0) {
                     $selected[] = $v;
                 }
             }
