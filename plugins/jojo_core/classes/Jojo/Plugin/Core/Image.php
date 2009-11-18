@@ -374,6 +374,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         foreach(Jojo::listPlugins('config/watermark.inc.php') as $wmfile) {
             require_once($wmfile);
         }
+        
+        $new_im = Jojo::applyFilter('image_watermark', $new_im);
 
         /* output image data */
         header('Content-type: ' . $mimetype);
