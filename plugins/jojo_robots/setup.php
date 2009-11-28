@@ -20,8 +20,10 @@
 
 /* Add robots.txt page if one does not exist */
 Jojo::updateQuery("UPDATE {page} SET pg_link='Jojo_Plugin_Jojo_robots' WHERE pg_link='jojo_robots.php'");
+Jojo::updateQuery("UPDATE {page} SET pg_sitemapnav='no', pg_xmlsitemapnav='no' WHERE pg_link='Jojo_Plugin_Jojo_robots'");
+
 $data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_Robots'");
 if (!count($data)) {
     echo "Adding <b>Robots.txt</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Robots.txt', pg_link = 'Jojo_Plugin_Jojo_Robots', pg_url = 'robots.txt', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Robots.txt', pg_link = 'Jojo_Plugin_Jojo_Robots', pg_url = 'robots.txt', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_body = '',pg_sitemapnav='no', pg_xmlsitemapnav='no'", array($_NOT_ON_MENU_ID));
 }
