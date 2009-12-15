@@ -2778,6 +2778,7 @@ class Jojo {
             $message = "Error No: $errno\nDescription: $errstr\nFile: $errfile\nLine: $errline\n";
 
             /* Log the message */
+            if (!class_exists('Jojo_Eventlog')) require_once(_BASEDIR.'/plugins/jojo_core/classes/Jojo/Eventlog.php');
             $log = new Jojo_Eventlog();
             $log->code = 'PHP Error';
             $log->importance = 'high';
