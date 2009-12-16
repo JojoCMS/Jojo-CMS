@@ -114,7 +114,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
 
-        $subject  = 'Message from ' . Jojo::getOption('sitetitle') . ' website';
+        $subject  = 'Message from ' . Jojo::getOption('sitetitle') . ' website'." - to: $to_name, $to_email";
 
         $message  = '';
         foreach ($fields as $f) {
