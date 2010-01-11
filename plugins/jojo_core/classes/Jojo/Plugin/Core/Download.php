@@ -42,9 +42,12 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
             $content = file_get_contents($file);
 
             /* Send header */
+            $imgExtensions = array('jpg', 'gif', 'jpeg', 'png');
             header('Content-Type: ' . Jojo::getMimeType($file));
             header('Content-Length: ' . strlen($content));
             if(Jojo::getFileExtension($file)=='swf') {
+                header('Content-disposition: inline; filename="' . basename($file) . '"');
+            } elseif (in_array(Jojo::getFileExtension($file), $imgExtensions)) {
                 header('Content-disposition: inline; filename="' . basename($file) . '"');
             } else {
                 header('Content-disposition: attachment; filename="' . basename($file) . '"');
