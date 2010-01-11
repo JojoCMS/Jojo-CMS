@@ -141,7 +141,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             /* output image data */
             $data = file_get_contents($cachefile);
             header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            header('Cache-Control: private, max-age=28800');
+            header('Cache-Control: public, max-age=28800');
             header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
             header('Pragma: ');
             header('Content-type: ' . $mimetype);
@@ -163,11 +163,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* output image data */
                 $data = file_get_contents($filename);
 
-                //header('Cache-Control: private');
+                //header('Cache-Control: public');
                 if (!self::isRemoteFile($filename)) {
                     header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($filename)));
                 }
-                header('Cache-Control: private, max-age=28800');
+                header('Cache-Control: public, max-age=28800');
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
@@ -191,7 +191,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* output image data */
                 $data = file_get_contents($pluginfile);
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: private, max-age=28800');
+                header('Cache-Control: public, max-age=28800');
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
@@ -215,7 +215,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* output image data */
                 $data = file_get_contents($pluginfile);
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: private, max-age=28800');
+                header('Cache-Control: public, max-age=28800');
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
@@ -374,7 +374,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         foreach(Jojo::listPlugins('config/watermark.inc.php') as $wmfile) {
             require_once($wmfile);
         }
-        
+
         $new_im = Jojo::applyFilter('image_watermark', $new_im);
 
         /* output image data */
@@ -383,7 +383,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         header('Content-Description: PHP Generated Image');
         header('Content-Transfer-Encoding: binary');
 
-        header('Cache-Control: private, max-age=28800');
+        header('Cache-Control: public, max-age=28800');
         header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
         header('Pragma: ');
 
