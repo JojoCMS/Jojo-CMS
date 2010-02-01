@@ -1795,6 +1795,18 @@ class Jojo {
             $_REQUEST = array_merge($_REQUEST, $vars);
         }
         $uri = trim($uri, '/');
+        
+        /* handle subfolder installs */
+        $f = ltrim(_SITEFOLDER, 'https://');
+        $f = ltrim(_SITEFOLDER, 'http://');
+        $temp = explode('/', $f);
+        if (count($temp) > 1) {
+            array_shift($temp);
+            $basefolder = implode('/', $temp);
+        } else {
+            $basefolder = '';
+        }
+        $uri = preg_replace('%^'.$basefolder.'/(.*)$%', '$1', $uri);
 
         /* Strip the language prefix off the URI */
         $language = Jojo::getOption('multilanguage-default', 'en');
