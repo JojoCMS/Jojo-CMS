@@ -158,16 +158,21 @@ define('_FULLSITEURI', $fullSiteUri); // Site URI including the langauge prefix
 $relativeurl = (_SITEFOLDER!='') ? ltrim(str_replace(_SITEFOLDER . '/', '', $_SERVER['REQUEST_URI']) , '/') : ltrim($_SERVER['REQUEST_URI'], '/');
 define('_RELATIVE_URL', $relativeurl );
 
-/* define assets array */
-$ASSETS = array();
-foreach (explode("\n", Jojo::getOption('assetdomains')) as $a) {
-    if (trim($a)) {
-        $ASSETS[] = trim($a) . '/';
+
+/* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
+if ($issecure) {
+    $ASSETS[] = _SECUREURL . '/';
+} else {
+    /* define assets array */
+    $ASSETS = array();
+    foreach (explode("\n", Jojo::getOption('assetdomains')) as $a) {
+        if (trim($a)) {
+            $ASSETS[] = trim($a) . '/';
+        }
     }
-}
-/* if no assets set, use siteurl to make resource links absolute for browsers that don't understand base href) */
-if (empty($ASSETS)) {
-            $ASSETS[] = _SITEURL . '/';
+    if (empty($ASSETS)) {
+        $ASSETS[] = _SITEURL . '/';
+    }
 }
 
 /* Setup and start custom session handler */
@@ -244,7 +249,7 @@ $smarty->assign('NONSECUREURL',     _NONSECUREURL);
 $smarty->assign('RELATIVE_URL',     _RELATIVE_URL);
 $smarty->assign('issecure',         $issecure);
 $smarty->assign('ADMIN',            _ADMIN);
-$smarty->assign('NEXTASSET',        $ASSETS);
+if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
 
 /* Authentication */
