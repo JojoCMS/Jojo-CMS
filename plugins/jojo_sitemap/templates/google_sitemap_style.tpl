@@ -8,7 +8,7 @@
      Created by Serge Baccou
      1.0 / 20 Aug 2005
 
-     Changes by Johannes Müller (http://GSiteCrawler.com)
+     Changes by Johannes Muller (http://GSiteCrawler.com)
      1.1 / 20 Aug 2005 - sorting by clicking on column headers
                        - open urls in new window/tab
                        - some stylesheet/CSS cleanup
@@ -28,7 +28,7 @@
      1.5 / 02 May 2007 - Support new sitemaps.org namespace 0.9.
 
      Changes by Michael Brandon (http://www.SearchMasters.co.nz)
-     1.6 / 25 Apr 2008 - updating links, localising images and css for jojo instalation
+     1.6 / 25 Apr 2008 - updating links, localising images and css for jojo installation
 -->
 
 <xsl:stylesheet version="2.0"
