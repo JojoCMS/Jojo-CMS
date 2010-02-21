@@ -1,19 +1,19 @@
-    <script type="text/javascript" src="external/jsTree/jquery.tree.js"></script>
-    <link rel="stylesheet" type="text/css" href="external/jsTree/themes/default/style.css" />
+    <script type="text/javascript" src="external/jsTree/_stable/jquery.tree.js"></script>
+    <link rel="stylesheet" type="text/css" href="external/jsTree/_stable/themes/default/style.css" />
 
     <!-- required for xml data type -->
     <script type="text/javascript" src="external/jsTree/lib/sarissa.js"></script>
-    <script type="text/javascript" src="external/jsTree/plugins/jquery.tree.xml_flat.js"></script>
-    <script type="text/javascript" src="external/jsTree/plugins/jquery.tree.xml_nested.js"></script>
+    <script type="text/javascript" src="external/jsTree/_stable/plugins/jquery.tree.xml_flat.js"></script>
+    <script type="text/javascript" src="external/jsTree/_stable/plugins/jquery.tree.xml_nested.js"></script>
 
     <script type="text/javascript" src="external/jsTree/lib/jquery.metadata.js"></script>
-    <script type="text/javascript" src="external/jsTree/plugins/jquery.tree.metadata.js"></script>
+    <script type="text/javascript" src="external/jsTree/_stable/plugins/jquery.tree.metadata.js"></script>
 
     <script type="text/javascript" src="external/jsTree/lib/jquery.hotkeys.js"></script>
-    <script type="text/javascript" src="external/jsTree/plugins/jquery.tree.hotkeys.js"></script>
+    <script type="text/javascript" src="external/jsTree/_stable/plugins/jquery.tree.hotkeys.js"></script>
 
     <script type="text/javascript" src="external/jsTree/lib/jquery.cookie.js"></script>
-    <script type="text/javascript" src="external/jsTree/plugins/jquery.tree.cookie.js"></script>
+    <script type="text/javascript" src="external/jsTree/_stable/plugins/jquery.tree.cookie.js"></script>
 
     <div id="treediv" class="treediv" style="min-height:400px; overflow-x:auto; border-right:1px solid #eeeeee;"></div>
     <script type="text/javascript">{literal}
