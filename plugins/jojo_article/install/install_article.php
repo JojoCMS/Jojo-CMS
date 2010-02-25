@@ -68,6 +68,7 @@ $query = "
       `articlecategoryid` int(11) NOT NULL auto_increment,
       `ac_url` varchar(255) NOT NULL default '',
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc') NOT NULL default 'ar_date desc',
+      `ac_pageid` int(11) NOT NULL default '0',
       PRIMARY KEY  (`articlecategoryid`)
     ) TYPE=MyISAM ;";
 

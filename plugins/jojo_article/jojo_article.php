@@ -1153,4 +1153,113 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $_prefixes[$testPrefix] = false;
         return false;
     }
+
+    // Sync the articlecategory data over to the page table
+    static function admin_action_after_save_articlecategory() {
+   	    self::sync_articlecategory_to_page();
+    }
+
+    // Sync the articlecategory data over from the page table
+    static function admin_action_after_save_page() {
+   	    self::sync_page_to_articlecategory();
+    }
+
+    static function sync_articlecategory_to_page() {
+        // Get the list of categories
+        $categories = jojo::selectQuery("SELECT * FROM {articlecategory}");
+        // And the list of pages
+        $pages = jojo::selectQuery(
+            "SELECT pageid, pg_url FROM {page} WHERE pg_link LIKE ?",
+            'jojo_plugin_jojo_article'
+        );
+        // Set the array keys as the primary keys, I don't know why the system doesn't already do it, sigh
+        if ($pages) {
+            foreach ($pages as $id => $pagedata) {
+                $pages[$pagedata['pageid']] = $pagedata;
+                unset($pages[$id]);
+            }
+        }
+        if (!$categories) { return false; }
+
+        foreach ($categories as $category) {
+            $newpageid = 0;
+            // Page ID exists, as does the Page
+            if ($category['ac_pageid'] && $pages[$category['ac_pageid']]) {
+                // Does the url need updating?
+                if ($pages[$category['ac_pageid']]['pg_url'] != $category['ac_url']) {
+                    // Only thing to update is the URL
+                    jojo::updateQuery(
+                        "UPDATE {page} SET pg_url = ? WHERE pageid = ?",
+                        array($category['ac_url'], $category['ac_pageid'])
+                    );
+                }
+            } else {
+                // There's no page set for this category, first check if the page exists, since it might already
+                foreach ($pages as $pageid => $page) {
+                    if ($page['pg_url'] == $category['ac_url']) {
+                        $newpageid = $page['pageid'];
+                    }
+                }
+                // If there's no page currently, so we'll have to create one
+                if (!$newpageid) {
+                    $newpageid = Jojo::insertQuery(
+                        "INSERT INTO {page} SET pg_title = ?, pg_link = ?, pg_url = ?, pg_parent = ?",
+                        array(
+                            $category['ac_url'],  // Title
+                            'Jojo_Plugin_Jojo_article',  // Link
+                            $category['ac_url'],  // URL
+                            0  // Parent - don't do anything smart, just put it at the top level for now
+                        )
+                    );
+                }
+                // If we successfully added the page, now lets update the product category
+                if ($newpageid) {
+                    jojo::updateQuery(
+                        "UPDATE {articlecategory} SET ac_pageid = ?, ac_url = ? WHERE articlecategoryid = ?",
+                        array(
+                            $newpageid,
+                            $category['ac_url'],
+                            $category['articlecategoryid']
+                        )
+                    );
+                }
+            }
+        }
+        return true;
+    }
+
+    static function sync_page_to_articlecategory() {
+        // Get the list of categories
+        $categories = jojo::selectQuery("SELECT * FROM {articlecategory}");
+        if (!$categories) { return false; }
+        // And the list of pages
+        $pages = jojo::selectQuery(
+            "SELECT pageid, pg_url FROM {page} WHERE pg_link LIKE ?",
+            'jojo_plugin_jojo_article'
+        );
+        // Set the array keys as the primary keys, I don't know why the system doesn't already do it, sigh
+        if ($pages) {
+            foreach ($pages as $id => $pagedata) {
+                $pages[$pagedata['pageid']] = $pagedata;
+                unset($pages[$id]);
+            }
+        }
+
+        foreach ($categories as $category) {
+            $newpageid = 0;
+            // Page ID exists, as does the Page
+            if ($category['ac_pageid'] && $pages[$category['ac_pageid']]) {
+                // Does the url need updating?
+                if ($pages[$category['ac_pageid']]['pg_url'] != $category['ac_url']) {
+                    // Only thing to update is the URL
+                    jojo::updateQuery(
+                        "UPDATE {articlecategory} SET ac_url = ? WHERE articlecategoryid = ?",
+                        array($pages[$category['ac_pageid']]['pg_url'], $category['articlecategoryid'])
+                    );
+                }
+            }
+            // No handling of missing or unlinked article categories here. If it's broken, fix it manually.
+        }
+        return true;
+    }
 }

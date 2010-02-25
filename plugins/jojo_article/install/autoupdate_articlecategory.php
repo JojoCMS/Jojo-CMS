@@ -58,4 +58,12 @@ $default_fd['articlecategory']['sortby'] = array(
         'fd_tabname' => "Content",
     );
 
-
+// PageID Field
+$default_fd['articlecategory']['ac_pageid'] = array(
+        'fd_name' => "PageID",
+        'fd_type' => "hidden",
+        'fd_required' => "no",
+        'fd_help' => "The page id for the page used for this category.",
+        'fd_order' => "4",
+        'fd_tabname' => "Content",
+    );
