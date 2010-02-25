@@ -1183,7 +1183,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         foreach ($categories as $category) {
             $newpageid = 0;
-            // Page ID exists, as does the Page
+            // Page ID exists as well as the corrosponding page
             if ($category['ac_pageid'] && $pages[$category['ac_pageid']]) {
                 // Does the url need updating?
                 if ($pages[$category['ac_pageid']]['pg_url'] != $category['ac_url']) {
