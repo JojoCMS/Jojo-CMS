@@ -336,7 +336,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         $now    = time();
         $query  = "SELECT ar.*";
-        $query .= $_CATEGORIES ? ", ac.ac_url, p.pg_title" : '';
+        $query .= $_CATEGORIES ? ", ac.ac_url, p.pg_menutitle, p.pg_title" : '';
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= $_CATEGORIES ? " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_url=p.pg_url)" : '';
@@ -358,7 +358,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $a['date']         = Jojo::strToTimeUK($a['ar_date']);
             $a['datefriendly'] = Jojo::mysql2date($a['ar_date'], "medium");
             $a['url']          = Jojo_Plugin_Jojo_article::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], ($_CATEGORIES ? $a['ar_category'] : '') );
-            $a['category']     = ($_CATEGORIES && !empty($a['pg_title'])) ? $a['pg_title'] : '';
+            $a['category']     = ($_CATEGORIES && !empty($a['pg_menutitle'])) ? $a['pg_menutitle'] : $a['pg_title'];
             $a['categoryurl']  = ($_CATEGORIES && !empty($a['ac_url'])) ? (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . $a['ac_url'] . '/' : '';
             if(!$shownumcomments) $a['numcomments'] = 0;
             //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
