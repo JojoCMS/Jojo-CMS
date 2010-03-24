@@ -152,7 +152,7 @@ if ($table->getOption('categorytable')) {
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes[$r['id']] = array(
-                                'attributes' => array ('id' => $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
+                                'attributes' => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
                                 'data'     => $r['title'],
                                 'state'    => 'closed',
                                );
