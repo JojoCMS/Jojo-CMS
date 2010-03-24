@@ -483,7 +483,7 @@ class Jojo_Table {
             $tree = new hktree($this->table);
 
             /* Add group 1 categories to HKTree */
-            $groups = $this->_transpose($records);
+            $groups = self::_transpose($records);
             if (isset($groups['group1']) && is_array($groups['group1'])) {
                 $groups['group1'] = array_unique($groups['group1']);
 
@@ -497,7 +497,8 @@ class Jojo_Table {
             if (isset($catrecords) && is_array($catrecords)) {
                 for ($i = 0; $i < count($catrecords); $i++) {
                     $status = 'folder';
-                    $tree->addnode('c' . $catrecords[$i]['id'], 0, $catrecords[$i]['display'], '', '', '', '', '', '', $status);
+                    $cat_parent = !empty($catrecords[$i]['parent']) ? 'c'.$catrecords[$i]['parent'] : 0;
+                    $tree->addnode('c' . $catrecords[$i]['id'], $cat_parent, $catrecords[$i]['display'], '', '', '', '', '', '', $status);
                 }
             }
 
