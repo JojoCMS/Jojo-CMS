@@ -604,7 +604,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
             // Snip the article for the index description
             foreach ($articles as $key => $article) {
-              $article = explode('[[snip]]', $article['bodyplain']);
+              $article = Jojo::iExplode('[[snip]]', $article['bodyplain']);
               $articles[$key]['bodyplain'] = $article[0];
             }
 
