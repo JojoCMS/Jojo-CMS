@@ -602,6 +602,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         } else {
             /* Article index section */
 
+            // Snip the article for the index description
+            foreach ($articles as $key => $article) {
+              $article = explode('[[snip]]', $article['bodyplain']);
+              $articles[$key]['bodyplain'] = $article[0];
+            }
+
             $pagenum = Jojo::getFormData('pagenum', 1);
             if ($pagenum[0] == 'p') {
                 $pagenum = substr($pagenum, 1);
