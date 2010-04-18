@@ -325,10 +325,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num, $start = 0, $categoryid=false, $sortby=false, $exclude=false,$usemultilanguage=true) {
+    static function getArticles($num, $start = 0, $categoryid='all', $sortby=false, $exclude=false,$usemultilanguage=true) {
         global $page;
         if (_MULTILANGUAGE) $language = !empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-        $_CATEGORIES      = (Jojo::getOption('article_enable_categories', 'no') == 'yes' && $categoryid) ? true : false;
+        $_CATEGORIES      = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false;
         /* if calling page is an article, Get current articleid, and exclude from the list  */
         $excludethisid = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('id')) ? Jojo::getFormData('id') : '';
         $excludethisurl = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('url')) ? Jojo::getFormData('url') : '';
@@ -344,7 +344,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= " WHERE ar_livedate<$now AND (ar_expirydate<=0 OR ar_expirydate>$now)";
         $query .= (_MULTILANGUAGE && $usemultilanguage) ? " AND (ar_language = '$language')" : '';
         $query .= ($_CATEGORIES && _MULTILANGUAGE && $usemultilanguage) ? " AND (pg_language = '$language')" : '';
-        $query .= ($_CATEGORIES && $categoryid!='all') ? " AND (ar_category = '$categoryid')" : '';
+        $query .= ($_CATEGORIES && $categoryid && $categoryid!='all') ? " AND (ar_category = '$categoryid')" : '';
         $query .= $excludethisid ? " AND (articleid != '$excludethisid')" : '';
         $query .= $excludethisurl ? " AND (ar_url != '$excludethisurl')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
@@ -421,9 +421,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
         /* Are we looking at an article or the index? */
-        $articleid = Jojo::getFormData('id',     0);
-        $url       = Jojo::getFormData('url',    '');
-        $action    = Jojo::getFormData('action', '');
+        $articleid = Jojo::getFormData('id',        0);
+        $url       = Jojo::getFormData('url',      '');
+        $action    = Jojo::getFormData('action',   '');
+        $category  = Jojo::getFormData('category', '');
+        $findby = ($category) ? $category : $this->page['pg_url'];
 
         /* handle unsubscribes */
         if ($action == 'unsubscribe') {
@@ -442,9 +444,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* Get category url and id if needed */
         $pg_url = $this->page['pg_url'];
         $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
-        $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_url = '$pg_url'") : '';
-        $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : '';
+        $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_url = ?", $findby) : '';
+        $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : 0;
         $sortby = ($_CATEGORIES && count($categorydata)) ? $categorydata['sortby'] : '';
+		// For some reason the page url gets set wrong.
+		$smarty->assign('pg_url', $categorydata['pc_url']);
 
         $articles = Jojo_Plugin_Jojo_article::getArticles('', '', $categoryid, $sortby);
 
@@ -769,7 +773,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                     $rssurl = ((_MULTILANGUAGE) ? Jojo::getMultiLanguageString($language, false) : '') . Jojo_Plugin_Jojo_article::_getPrefix('rss', ((_MULTILANGUAGE) ? $language : ''), $categoryid) . '/';
                     $articletree->addNode('index-rss', $parent, $c['pg_title'], $rssurl);
                 } else {
-                    $articletree->addNode($c['pageid'], $parent, $c['pg_title'], $c['pg_url']);
+                    $articletree->addNode($c['pageid'], $parent, $c['pg_title'], $c['pg_url'] . '/');
                 }
             }
 
@@ -1028,9 +1032,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $url       = Jojo::getFormData('url',    '');
         $action    = Jojo::getFormData('action', '');
         $pagenum   = Jojo::getFormData('pagenum', 1);
+		$category  = Jojo::getFormData('category', '');
+
         $data = array('ar_category' => '');
         if (Jojo::getOption('article_enable_categories', 'no') == 'yes') {
-            $data = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url=?", $pg_url);
+            $data = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url=?", $category);
         }
         $categoryid = !empty($data['articlecategoryid']) ? $data['articlecategoryid'] : '';
 
@@ -1082,26 +1088,32 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* "$prefix/[id:integer]/[string]" eg "articles/123/name-of-article/" */
             $prefix = $matches[1];
             $getvars = array(
-                        'id' => $matches[2]
+                        'id' => $matches[2],
+                        'category' => $prefix
                         );
         } elseif (preg_match('#^(.+)/([0-9]+)$#', $uri, $matches)) {
             /* "$prefix/[id:integer]" eg "articles/123/" */
             $prefix = $matches[1];
             $getvars = array(
-                        'id' => $matches[2]
+                        'id' => $matches[2],
+                        'category' => $prefix
                         );
         } elseif (preg_match('#^(.+)/p([0-9]+)$#', $uri, $matches)) {
             /* "$prefix/p[pagenum:([0-9]+)]" eg "articles/p2/" for pagination of articles */
             $prefix = $matches[1];
             $getvars = array(
-                        'pagenum' => $matches[2]
+                        'pagenum' => $matches[2],
+                        'category' => $prefix
                         );
         } elseif (preg_match('#^(.+)/((?!rss)([a-z0-9-_]+))$#', $uri, $matches)) {
             /* "$prefix/[url:((?!rss)string)]" eg "articles/name-of-article/" ignoring "artciles/rss" */
             $prefix = $matches[1];
             $getvars = array(
-                        'url' => $matches[2]
+                        'url' => $matches[2],
+                        'category' => $prefix
                         );
+            $row = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url LIKE ?", $uri);
+            if ($row) return false;
         } else {
             /* Didn't match */
             return false;
