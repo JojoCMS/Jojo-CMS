@@ -41,6 +41,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             /* Max size */
             $_GET['sz'] = $matches[1];
             $filename = $matches[2];
+        } elseif (preg_match('/^fit([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
+            /* Fit to Max width + max height (no crop)*/
+            $_GET['fitmaxw'] = $matches[1];
+            $_GET['fitmaxh'] = $matches[2];
+            $filename = $matches[3];
         } elseif (preg_match('/^([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
             /* Max width + max height*/
             $_GET['maxw'] = $matches[1];
@@ -96,6 +101,10 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         if (isset($_GET['sz'])) {
             $size = $_GET['sz'];
             $s = $size;
+        } elseif (isset($_GET['fitmaxw']) && isset($_GET['fitmaxh'])) {
+            $fitmaxw = $_GET['fitmaxw'];
+            $fitmaxh = $_GET['fitmaxh'];
+            $s = 'fit' . $fitmaxw.'x'.$fitmaxh;
         } elseif (isset($_GET['maxw']) && isset($_GET['maxh'])) {
             $maxw = $_GET['maxw'];
             $maxh = $_GET['maxh'];
@@ -308,6 +317,19 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $starty = ($im_height / 2) - ($shortest / 2);
             //resize
             $im_height = $im_width = min($im_height, $im_width);
+        } elseif (!empty($fitmaxw) && !empty($fitmaxh)) {
+            /* Scale to maximum dimensions - no clipping */
+            $startx = 0;
+            $starty = 0;
+            $wfactor = $fitmaxw/$im_width;
+            $hfactor = $fitmaxh/$im_height;
+            if ($hfactor < $wfactor) {
+               $new_height = $fitmaxh;
+               $new_width = $im_width * $hfactor;
+            } else {
+               $new_width = $fitmaxw;
+               $new_height = $im_height * $wfactor;
+            }
         } elseif (isset($maxv) && !empty($maxv)) {
             /* Image of a maximum total area */
             $currentv = $im_width * $im_height;
