@@ -23,7 +23,7 @@
     {elseif $f.type == 'checkboxes'}
     <div class="form-field">
 {foreach from=$f.options item=fo }
-        <input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}" /><label for="form_{$f.field}_{$fo}"> {$fo}</label><br />
+        <input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}" /><label for="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}"> {$fo}</label><br />
 {/foreach}
     </div></div>
     {elseif $f.type=='select'}
