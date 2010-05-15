@@ -32,10 +32,11 @@
   ++$f;
   $fields[$f]['field'] = 'FirstName';                     //The ID of the field - no spaces, keep it short but descriptive
   $fields[$f]['display'] = 'First Name';                  //The display name - this will show on the form and in the resulting email
+  $fields[$f]['displayonly'] = false;                     //This field shows only on the form, not in the email. Use with headings and notes
   $fields[$f]['required'] = true;                         //true or false - is this a required field?
   $fields[$f]['validation'] = '';                         //The type of validation to be used - options are 'email', 'url', 'text', 'integer' or leave blank for no validation.
-  $fields[$f]['type'] = 'text';                           //type of input - use 'text', 'textarea', or 'checkboxes' - more options to come
-  $fields[$f]['size'] = 40;                               //Used for 'text' type fields - the size of the input
+  $fields[$f]['type'] = 'text';                           //type of input - use 'text', 'textarea', 'checkboxes', 'heading', 'note' - more options to come
+  $fields[$f]['size'] = 40;                               //Used for 'text' type fields - the size of the input. For headings, is the H size (1=biggest)
   $fields[$f]['value'] = '';                              //A default value if any
   $fields[$f]['options'] = array('option 1','option 2');  //An array of options. Required for 'checkboxes' type
   $fields[$f]['rows'] = '15';                             //number of rows - only needed for textareas

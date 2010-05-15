@@ -118,6 +118,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $message  = '';
         foreach ($fields as $f) {
+            if ($f.displayonly) { continue; }
             $message .= $f['display'] . ': ' . $f['value'] . "\r\n";
         }
         $message .= Jojo::emailFooter();
