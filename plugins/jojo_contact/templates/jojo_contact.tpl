@@ -17,13 +17,13 @@
 {foreach from=$fields key=k item=f }
     {assign var=x value=`$k-1`}
     {if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}<fieldset><legend>{$f.fieldset}</legend>{/if}
-    <div><label for="form_{$f.field}">{if $f.display!=''}{$f.display}:{/if}</label>
+    {if !in_array($f.type,array('heading','note'))}<div><label for="form_{$f.field}">{if $f.display!=''}{$f.display}:{/if}</label>{/if}
     {if $f.type == 'textarea'}
     <textarea class="textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}*{/if}</div>
     {elseif $f.type == 'checkboxes'}
     <div class="form-field">
 {foreach from=$f.options item=fo }
-        <input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}" /><label for="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}"> {$fo}</label><br />
+        <input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}" /><label for="form_{$f.field}_{$fo}"> {$fo}</label><br />
 {/foreach}
     </div></div>
     {elseif $f.type=='select'}
@@ -33,6 +33,10 @@
           <option value="{$so|escape:'htmlall'}"{if $f.value == $so} selected="selected"{/if}>{$so}</option>
 {/foreach}
     </select></div>
+    {elseif $f.type=='heading'}{if in_array($f.size, array(1,2,3,4,5,6))}{$size=$f.size}{else}{$size=2}{/if}
+    	<h{$size}>{$f.value}</h{$size}>
+    {elseif $f.type=='note'}
+    	<p>{$f.value}</p>
     {else}
     <input type="{$f.type}" class="{$f.type}" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />
     {if $f.required}*{/if}</div>
