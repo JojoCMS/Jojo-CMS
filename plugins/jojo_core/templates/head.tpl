@@ -41,7 +41,7 @@
         <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin_ie.css" />
         <![endif]-->
 {if $OPTIONS.googleajaxlibs == "yes"}
-        <script type="text/javascript" src="http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+        <script type="text/javascript" src="http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 {else}
         <script type="text/javascript" src="{cycle values=$NEXTASSET}external/jquery/jquery-1.3.2.min.js"></script>
 {/if}
@@ -57,7 +57,7 @@
         <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/handheld.css" media="handheld" />
 {/if}
 {if $OPTIONS.googleajaxlibs == "yes"}
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 {else}
         <script type="text/javascript" src="{cycle values=$NEXTASSET}external/jquery/jquery-1.3.2.min.js"></script>
 {/if}
