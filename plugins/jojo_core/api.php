@@ -372,6 +372,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'analyticscodetype',
+    'category'    => 'Google Analytics',
+    'label'       => 'Analytics Code Type',
+    'description' => 'The type of Google analytics code - new asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored.',
+    'type'        => 'radio',
+    'default'     => 'ga',
+    'options'     => 'async,ga',
+);
+
+$_options[] = array(
     'id'          => 'crossdomainanalytics',
     'category'    => 'Google Analytics',
     'label'       => 'Cross Domain Analytics',

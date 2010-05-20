@@ -102,9 +102,9 @@
         {if $customhead}{$customhead}{/if}
         {jojoHook hook="customhead"}
 {/if}
-{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition == 'top'}
+{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && ($OPTIONS.analyticsposition == 'top' || $OPTIONS.analyticscodetype == 'async')}
         {include file="analytics.tpl"}
-{elseif $OPTIONS.analyticscode && $adminloggedin && $OPTIONS.analyticsposition == 'top'}
+{elseif $OPTIONS.analyticscode && $adminloggedin && ($OPTIONS.analyticsposition == 'top' || $OPTIONS.analyticscodetype == 'async')}
         <!-- Google Analytics code not displayed when logged in as Admin -->
 {/if}
     </head>
