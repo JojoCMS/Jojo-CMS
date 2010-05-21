@@ -380,11 +380,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         /* URL specified */
         if (!empty($url)) {
-            $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $categoryid) . '/' . $url . '/';
+        	$category = Jojo::selectRow("SELECT ar_category FROM article WHERE ar_url = ? ORDER BY ar_category = ?", array($url, $categoryid));
+            $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $category['ar_category']) . '/' . $url . '/';
             return $fullurl;
          }
         /* ArticleID + title specified */
         if ($articleid && !empty($title)) {
+        	$category = Jojo::selectRow("SELECT ar_category FROM article WHERE articleid = ? ORDER BY ar_category = ?", array($articleid, $categoryid));
             $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $categoryid) . '/' . $articleid . '/' .  Jojo::cleanURL($title) . '/';
             return $fullurl;
         }
