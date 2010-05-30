@@ -355,6 +355,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $a['id']           = $a['articleid'];
             $a['title']        = htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false);
             $a['bodyplain']    = strip_tags($a['ar_body']);
+
+            /* Strip any template include code ie [[ ]] */
+            $a['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '', $a['bodyplain']);
+
             $a['date']         = Jojo::strToTimeUK($a['ar_date']);
             $a['datefriendly'] = Jojo::mysql2date($a['ar_date'], "medium");
             $a['url']          = Jojo_Plugin_Jojo_article::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], ($_CATEGORIES ? $a['ar_category'] : '') );
