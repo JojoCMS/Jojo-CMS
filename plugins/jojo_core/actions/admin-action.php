@@ -53,7 +53,7 @@ function refreshMenu($table, $t, $frajax) {
 
         case 'list':
             /* Update HTML list */
-            $tree = $table->createlist($table->getOption('menutype'), true, 'admin/edit', $id);
+            $tree = $table->createlist($table->getOption('menutype'), true, _ADMIN.'/edit', $id);
             $frajax->assign('recordlist', 'innerHTML', $tree);
         break;
     }
