@@ -24,7 +24,7 @@
         Open Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_html_outer">
-        <textarea class="jTagEditor jTagHTML" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly == "yes"}readonly="readonly"{/if} title="{$fd_help}"></textarea>
+        <textarea class="jTagEditor jTagHTML" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly == "yes"}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
 
@@ -39,7 +39,7 @@
         <img class="icon" src="images/cms/icons/page_white_wrench.png" alt="Launch Fullscreen Editor" />Launch Fullscreen Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_bb_outer" style="overflow: auto;">
-        <textarea class="jTagEditor jTagBB" style="width:90%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_bb" id="fm_{$fd_field}_bb" rows="{$rows}" cols="{$cols}" {if $readonly == "yes"}readonly="readonly"{/if} title="{$fd_help}"></textarea>
+        <textarea class="jTagEditor jTagBB" style="width:90%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_bb" id="fm_{$fd_field}_bb" rows="{$rows}" cols="{$cols}" {if $readonly == "yes"}readonly="readonly"{/if}></textarea>
     </div>
 </div>
 
