@@ -62,21 +62,20 @@ class hktree
         $depth = 0;
     }
 
-    function addnode($id=0,$parent=0,$name = '',$url = '', $target = '', $onclick = '',$classname = '', $rollover = '', $html = '', $status = '')
+    function addNode($id=0, $parent=0, $name = '', $url = '', $target = '', $onclick = '', $classname = '', $rollover = '', $html = '', $status = '')
     {
-        $parent = str_replace("'", '',$parent);
-        $parent = str_replace('"', '',$parent);
-        $id = str_replace("'", '',$id);
-        $id = str_replace('"', '',$id);
-        $this->nodes[$id] = $name;
-        $this->htmls[$id] = $html;
-        $this->statuses[$id] = $status;
-        $this->urls[$id] = $url;
-        $this->targets[$id] = $target;
-        $this->classname[$id] = $classname;
-        $this->rollovers[$id] = $rollover;
-        $this->onclicks[$id] = $onclick;
-        $this->children[$parent][] = $id;
+        $parent = str_replace("'", '', $parent);
+        $parent = str_replace('"', '', $parent);
+        $id = str_replace(array("'", '"'), '',  $id);
+        $this->nodes[$id]                = $name;
+        $this->htmls[$id]                = $html;
+        $this->statuses[$id]             = $status;
+        $this->urls[$id]                 = $url;
+        $this->targets[$id]              = $target;
+        $this->classname[$id]            = $classname;
+        $this->rollovers[$id]            = $rollover;
+        $this->onclicks[$id]             = $onclick;
+        $this->children[$parent][]       = $id;
         $this->parentnode[$id]['parent'] = $parent;
         if ( ($onclick != '') && ($url == '') ) {$url = '#';} //If onclick event is used, we must have at least # for the URL
     }
