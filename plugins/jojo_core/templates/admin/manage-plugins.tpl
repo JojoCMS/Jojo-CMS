@@ -8,23 +8,26 @@
 
       list-style: none;
       margin: 0;
+      padding: 5px;
       clear: both;
+      line-height: 16px;
     }
 
     ul.plugins li img {
       float: right;
-      margin: 5px;
     }
 
     ul.plugins li span {
-      float: left;
-      margin: 5px;
+      /* float: left; */
     }
 
     ul.plugins {
       margin-right: 30px;
       padding: 0;
       border-bottom: 0px solid #ccc;
+    }
+    ul.plugins p {
+        margin: 0;
     }
 
     div.options, div.readme {
