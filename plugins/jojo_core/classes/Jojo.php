@@ -1798,7 +1798,7 @@ class Jojo {
             $_REQUEST = array_merge($_REQUEST, $vars);
         }
         $uri = trim($uri, '/');
-        
+
         /* handle subfolder installs */
         $f = ltrim(_SITEFOLDER, 'https://');
         $f = ltrim(_SITEFOLDER, 'http://');
@@ -1863,11 +1863,21 @@ class Jojo {
                     continue;
                 } elseif ($res === true) {
                     /* Did match, find the page in the database */
-                    $query = 'SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link = ?';
                     $values = array($uriPattern['class']);
+                    /* Search for the page with the url that best matches the current uri */
+                    $uri_pieces = explode('/', $uri);
+                    $uri_heirachy_list = array();
+                    foreach ($uri_pieces as $slug) {
+                    	$values[] = implode('/', $uri_pieces);
+                    	$placeholders[] = '?';
+                    	array_pop($uri_pieces);
+                    }
+                    $placeholders = implode(', ', $placeholders);
+
+                    $query = 'SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link = ? AND pg_url IN ('.$placeholders.') ORDER BY LENGTH(pg_url) DESC';
                     if ($language && _MULTILANGUAGE) {
                         /* Order by $language then english, then anything else that matches */
-                        $query .= " ORDER BY field(pg_language, ?, ?) DESC";
+                        $query .= ", field(pg_language, ?, ?) DESC";
                         $values[] = Jojo::getOption('multilanguage-default');
                         $values[] = $language;
                     }
