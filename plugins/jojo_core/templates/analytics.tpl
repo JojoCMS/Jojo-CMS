@@ -37,6 +37,7 @@
     pageTracker._setDomainName("none");
     pageTracker._setAllowLinker(true);
 {/if}
+{jojoHook hook="analytics_trackPageview"}
 {if $sent and $OPTIONS.contact_tracking_code_analytics}
     pageTracker._trackPageview("{$OPTIONS.contact_tracking_code_analytics}");
 {else}
