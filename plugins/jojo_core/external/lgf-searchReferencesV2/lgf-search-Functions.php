@@ -310,7 +310,7 @@ $replacements=array(
 'fr.excite.com' => 'excite.fr',
 'chinese.excite.com' => 'excite.ch',
 );
-if (ereg('^(.*)\?(.*)',$refurl,$regs)) {
+if (preg_match('~^(.*)\?(.*)~',$refurl,$regs)) {
 $refhost=$regs[1];$refquery=$regs[2];
 foreach ($replacements as $key => $value) {
 if (preg_match("/^http:\/\/(www)?".$key."\//",$refhost)) {
@@ -321,7 +321,7 @@ break;
 $sechecked=0;
 foreach($ses as $name=>$seng) {
 $sechecked++;
-if (ereg($seng['url']."/",$refhost)) {
+if (preg_match('~' . $seng['url'] . '/~',$refhost)) {
 if (isset($seng['home'])) {
 // if there is a 'set homepage' for the SE, store that
 $searchengineurl="http://".$seng['home']."/";
