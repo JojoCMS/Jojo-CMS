@@ -452,10 +452,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
         $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_url = ?", $findby) : '';
         $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : 0;
-        $categoryurl = ($_CATEGORIES && count($categorydata)) ? $categorydata['ac_url'] : '';
+        $categoryurl = ($_CATEGORIES && count($categorydata)) ? $categorydata['ac_url'] : $pg_url;
         $sortby = ($_CATEGORIES && count($categorydata)) ? $categorydata['sortby'] : '';
-		// For some reason the page url gets set wrong.
-		$smarty->assign('pg_url', $categoryurl);
+
+        // For some reason the page url gets set wrong.
+        $smarty->assign('pg_url', $categoryurl);
 
         $articles = Jojo_Plugin_Jojo_article::getArticles('', '', $categoryid, $sortby);
 
