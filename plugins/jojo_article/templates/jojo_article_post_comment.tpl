@@ -30,7 +30,7 @@
     <div class="post-comment-field">
       <img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /><br />
       <label for="captchacode">Enter code shown above</label><br />
-      <input type="text" size="8" name="captchacode" id="captchacode" value="{$captchacode}" /> *<br />
+      <input type="text" size="8" name="captchacode" id="captchacode" value="{if $captchacode}{$captchacode}{/if}" /> *<br />
       <em>Code is not case-sensitive</em>
     </div>
     {/if}

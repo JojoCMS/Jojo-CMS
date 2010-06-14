@@ -362,7 +362,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $a['date']         = Jojo::strToTimeUK($a['ar_date']);
             $a['datefriendly'] = Jojo::mysql2date($a['ar_date'], "medium");
             $a['url']          = Jojo_Plugin_Jojo_article::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], ($_CATEGORIES ? $a['ar_category'] : '') );
-            $a['category']     = ($_CATEGORIES && !empty($a['pg_menutitle'])) ? $a['pg_menutitle'] : $a['pg_title'];
+            $a['category']     = ($_CATEGORIES) ? (!empty($a['pg_menutitle']) ? $a['pg_menutitle'] : $a['pg_title']) : '';
             $a['categoryurl']  = ($_CATEGORIES && !empty($a['ac_url'])) ? (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . $a['ac_url'] . '/' : '';
             if(!$shownumcomments) $a['numcomments'] = 0;
             //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
@@ -452,9 +452,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
         $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_url = ?", $findby) : '';
         $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : 0;
+        $categoryurl = ($_CATEGORIES && count($categorydata)) ? $categorydata['ac_url'] : '';
         $sortby = ($_CATEGORIES && count($categorydata)) ? $categorydata['sortby'] : '';
 		// For some reason the page url gets set wrong.
-		$smarty->assign('pg_url', $categorydata['pc_url']);
+		$smarty->assign('pg_url', $categoryurl);
 
         $articles = Jojo_Plugin_Jojo_article::getArticles('', '', $categoryid, $sortby);
 
