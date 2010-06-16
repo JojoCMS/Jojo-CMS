@@ -446,9 +446,13 @@ if ($charset == '')  {
 if ($templateEngine == 'dwoo') {
     $smarty->setCharset($charset);
 }
-$smarty->assign('charset', $charset);
-header("Content-type: text/html; charset=" . $charset);
 
+$smarty->assign('charset', $charset);
+if(substr($page->page [ 'pg_url' ],-4,4)=='.txt') {
+  header('Content-type: text/plain; charset=' . $charset);
+} else {
+  header("Content-type: text/html; charset=" . $charset);
+}
 /* Set the content variables */
 $content = $page->getContent();
 $content = Jojo::applyFilter('jojo:content', $content); //plugins - add any additional elements to the $content array here
