@@ -346,7 +346,7 @@ if (preg_match('/'.$seng['query2'].'=(.*)(?:&|$)/Ui',$refquery,$regs)) {
 // ok, we have a match!
 $searched=urldecode($regs[1]);
 $keywords=$searched;
-$keywords=split(' ',$searched); // split up the keywords
+$keywords=explode(' ',$searched); // split up the keywords
 
 $searchengine=$name; // store the name of the search engine
 }
