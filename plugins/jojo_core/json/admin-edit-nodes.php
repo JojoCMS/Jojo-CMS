@@ -99,6 +99,17 @@ if ($table->getOption('categorytable')) {
         $values = array($node);
         $res = Jojo::selectQuery($query, $values);
 
+        if ($categoryTable->getOption('displayfield')) {
+            $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($categoryTable->getTableName(), $categoryTable->getOption('displayfield')));
+            $displayfieldtype = $displayfielddata['fd_type'];
+            $displayfieldoptions = $displayfielddata['fd_options'];
+            if ($displayfieldtype == 'dbpluginpagelist') {
+                $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
+                foreach ($res as &$r) {
+                    $r['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
+                }
+            } 
+       }
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes[$r['id']] = array(
@@ -169,6 +180,17 @@ if ($table->getOption('categorytable')) {
             $query .= $categoryTable->getOption('orderbyfields') ? ' ORDER BY ' . $categoryTable->getOption('orderbyfields') : '';
             $res = Jojo::selectQuery($query);
 
+            if ($categoryTable->getOption('displayfield')) {
+                $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($categoryTable->getTableName(), $categoryTable->getOption('displayfield')));
+                $displayfieldtype = $displayfielddata['fd_type'];
+                $displayfieldoptions = $displayfielddata['fd_options'];
+                if ($displayfieldtype == 'dbpluginpagelist') {
+                    $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
+                    foreach ($res as &$r) {
+                        $r['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
+                    }
+                } 
+           }
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes[$r['id']] = array(

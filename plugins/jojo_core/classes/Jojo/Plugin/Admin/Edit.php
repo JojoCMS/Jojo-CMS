@@ -145,7 +145,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
         } else {
             $smarty->assign('savebutton', "Add");
         }
-        if (($table->getOption('deleteoption') == "yes") && ($table->getRecordID() > 0)) {
+        if ($table->getOption('deleteoption') == "yes") {
             $smarty->assign('deletebutton', "Delete");
         }
         if ($table->getOption('addsimilar') == "yes") {

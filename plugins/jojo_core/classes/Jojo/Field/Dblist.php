@@ -56,8 +56,7 @@ class Jojo_Field_dblist extends Jojo_Field_list
         $this->tree = new hktree();
         $tablename = $this->fd_options;
         //TODO: Make it look a bit prettier - sort it by the same parent options as the treemenu
-        $rows = Jojo::selectQuery("SELECT * FROM {tabledata} WHERE td_name = ?", $tablename);
-        $this->tableoptions = $rows[0];
+        $this->tableoptions = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ?", $tablename);
 
         $idfield         = $this->tableoptions['td_primarykey'];
         $displayfield    = Jojo::either($this->tableoptions['td_displayfield'], $this->tableoptions['td_primarykey']);
@@ -92,7 +91,19 @@ class Jojo_Field_dblist extends Jojo_Field_list
                             Jojo::onlyIf($group1field, ' '.$group1field.', '),
                             Jojo::onlyIf($orderbyfield, ' '.$orderbyfield.', ')
                         );
-        foreach (Jojo::selectQuery($query) as $record) {
+            $records = Jojo::selectQuery($query);
+            if ($this->tableoptions['td_displayfield']) {
+                $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($tablename, $this->tableoptions['td_displayfield']));
+                $displayfieldtype = $displayfielddata['fd_type'];
+                $displayfieldoptions = $displayfielddata['fd_options'];
+                if ($displayfieldtype == 'dbpluginpagelist') {
+                    $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
+                    foreach ($records as &$r) {
+                        $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? $displaytitles[$r['display']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
+                    }
+                } 
+           }
+        foreach ($records as $record) {
             $this->tree->addnode($record['id'], $record['parent'], $record['display']);
         }
     }

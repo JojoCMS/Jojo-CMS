@@ -449,6 +449,17 @@ class Jojo_Table {
             . " display";
             $records = Jojo::selectQuery($query);
 
+            if ($this->getOption('displayfield')) {
+                $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($this->table, $this->getOption('displayfield')));
+                $displayfieldtype = $displayfielddata['fd_type'];
+                $displayfieldoptions = $displayfielddata['fd_options'];
+                if ($displayfieldtype == 'dbpluginpagelist') {
+                    $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
+                    foreach ($records as &$r) {
+                        $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? $displaytitles[$r['display']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
+                    }
+                } 
+           }
             //get the TABLEDATA options for the category
             $catidfield = '';
             $catoptions = Jojo::selectQuery("SELECT * FROM {tabledata} WHERE td_name = ? LIMIT 1", array($categorytable));

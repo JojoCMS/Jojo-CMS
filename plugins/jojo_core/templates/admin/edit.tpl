@@ -30,9 +30,9 @@
             {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="button-wrap-add jojo-admin-button" title="Add new {$displayname}" />{/if}
 
             <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="button-wrap-save jojo-admin-button" title="Save the changes to this {$displayname}" />
-            <input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="button-wrap-delete jojo-admin-button" title="Delete to this {$displayname} - this action cannot be undone" />
-            <input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="button-wrap-duplicate jojo-admin-button" title="Create another {$displayname} using selected {$displayname} as a starting point " />
-            <input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="button-wrap-addchild jojo-admin-button" title="Add a new {$displayname} underneath this one" />
+            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="button-wrap-delete jojo-admin-button" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
+            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="button-wrap-duplicate jojo-admin-button" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
+            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="button-wrap-addchild jojo-admin-button" title="Add a new {$displayname} underneath this one" />{/if}
 
             <!--<input type="submit" name="btn_help" id="btn_help" value="Help" class="button-wrap-help button" onmouseover="this.className='button-wrap-help button button-hover';" onmouseout="this.className='button-wrap-help button'" onclick="showhide('help'); return false;" title="Show help information" />-->
             <div class="clear"></div>
