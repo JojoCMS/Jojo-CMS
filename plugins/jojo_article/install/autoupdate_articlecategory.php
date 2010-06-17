@@ -16,7 +16,7 @@
 $default_td['articlecategory'] = array(
         'td_name' => "articlecategory",
         'td_primarykey' => "articlecategoryid",
-        'td_displayfield' => "ac_url",
+        'td_displayfield' => "ac_pageid",
         'td_filter' => "yes",
         'td_topsubmit' => "yes",
         'td_deleteoption' => "yes",
@@ -24,6 +24,7 @@ $default_td['articlecategory'] = array(
         'td_help' => "News Article Categories are managed from here.",
     );
 
+$o = 0;
 
 /* Content Tab */
 
@@ -32,11 +33,21 @@ $default_fd['articlecategory']['articlecategoryid'] = array(
         'fd_name' => "Articlecategoryid",
         'fd_type' => "readonly",
         'fd_help' => "A unique ID, automatically assigned by the system",
-        'fd_order' => "1",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
 
+// PageID Field
+$default_fd['articlecategory']['ac_pageid'] = array(
+        'fd_name' => "Page",
+        'fd_type' => "dbpluginpagelist",
+        'fd_required' => "no",
+        'fd_help' => "The page id for the page used for this category.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+    
 // URL Field
 $default_fd['articlecategory']['ac_url'] = array(
         'fd_name' => "URL",
@@ -44,7 +55,7 @@ $default_fd['articlecategory']['ac_url'] = array(
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "URL for the Article Category. This will be used for the base URL for all articles in this category. The Page url for this category's home page MUST match the category URL.",
-        'fd_order' => "2",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
 
@@ -54,16 +65,7 @@ $default_fd['articlecategory']['sortby'] = array(
         'fd_type' => "radio",
         'fd_options' => "ar_title asc:Title\nar_date desc:Article Date\nar_livedate desc:Go Live Date",
         'fd_default' => "ar_date desc",
-        'fd_order' => "3",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
 
-// PageID Field
-$default_fd['articlecategory']['ac_pageid'] = array(
-        'fd_name' => "PageID",
-        'fd_type' => "hidden",
-        'fd_required' => "no",
-        'fd_help' => "The page id for the page used for this category.",
-        'fd_order' => "4",
-        'fd_tabname' => "Content",
-    );
