@@ -61,6 +61,7 @@ $_provides['fieldTypes'] = array(
         'date'             => 'MySQL Date',
         'dblist'           => 'Database List',
         'dbpagelist'       => 'Database List For Pages',
+        'dbpluginpagelist'  => 'Database List For Plugin Pages',
         'decimal'          => 'Decimal',
         'email'            => 'Email',
         'fieldtype'        => 'Field Type Dropdown',
