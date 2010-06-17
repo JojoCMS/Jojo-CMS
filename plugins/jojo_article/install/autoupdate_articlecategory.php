@@ -42,8 +42,9 @@ $default_fd['articlecategory']['articlecategoryid'] = array(
 $default_fd['articlecategory']['ac_pageid'] = array(
         'fd_name' => "Page",
         'fd_type' => "dbpluginpagelist",
+        'fd_options' => "jojo_plugin_jojo_article",
         'fd_required' => "no",
-        'fd_help' => "The page id for the page used for this category.",
+        'fd_help' => "The artciles page on the site used for this category.",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
