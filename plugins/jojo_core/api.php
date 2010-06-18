@@ -86,6 +86,7 @@ $_provides['fieldTypes'] = array(
         'timestamp'        => 'Timestamp',
         'url'              => 'URL',
         'unixdate'         => 'Unix Date',
+        'yesno'         => 'Yes or No',
         );
 
 $_provides['pluginClasses'] = array(
