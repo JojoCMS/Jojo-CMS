@@ -87,6 +87,15 @@ class Jojo_Table {
         /* Fetch the record from the database */
         $fieldvalues = Jojo::selectRow($query, array($id));
 
+        if ($this->getOption('displayfield')) {
+            $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($this->table, $this->getOption('displayfield')));
+            $displayfieldtype = $displayfielddata['fd_type'];
+            if ($displayfieldtype == 'dbpluginpagelist') {
+                $pageid =  $fieldvalues[$this->getOption('displayfield')];
+                $page = Jojo::selectRow("SELECT pg_title FROM {page} WHERE pageid = ? ", array($pageid));
+                $fieldvalues['DISPLAYFIELDVALUE'] = $page['pg_title'];
+            }
+        } 
         /* Set all the fields to their values */
         if ($fieldvalues) {
             foreach ($fieldvalues as $k => $v) {
