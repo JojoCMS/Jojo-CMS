@@ -99,6 +99,14 @@ $default_fd['fielddata']['fd_required'] = array(
         'fd_order' => "9",
     );
 
+// Required Field
+$default_fd['fielddata']['fd_readonly'] = array(
+        'fd_name' => "Read Only",
+        'fd_type' => "yesno",
+        'fd_default' => "0",
+        'fd_order' => "9",
+    );
+
 // Default Field
 $default_fd['fielddata']['fd_default'] = array(
         'fd_name' => "Default",

@@ -33,6 +33,7 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
         $smarty->assign('hktree',   $this->tree->printout_select(0, $this->value, $this->table->getRecordID()));
         $smarty->assign('error',    $this->error);
         $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonlydisplay', $this->readonlydisplay);
 
         return  $smarty->fetch('admin/fields/dbpagelist.tpl');
     }
@@ -40,7 +41,6 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
     function populate()
     {
         $this->tree = new hktree();
-
         $tablename = 'page';
         $pluginname = $this->fd_options;
         //TODO: Make it look a bit prettier - sort it by the same parent options as the treemenu
@@ -56,6 +56,7 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
 
         //TODO - Add group2 logic
         $datafilter      = "pg_link = '" . $pluginname . "'"; //filter results by plugin
+        $datafilter .= ($this->readonly) ? ' AND ' . $idfield . ' = ' .  $this->value : '';
         $rolloverfield   = Jojo::either($this->tableoptions['td_rolloverfield'], "''");
         $html            = '';
 
@@ -78,8 +79,9 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
                             Jojo::onlyIf($group1field, ' '.$group1field.', '),
                             Jojo::onlyIf($orderbyfield, ' '.$orderbyfield.', ')
                         );
-
-        foreach (Jojo::selectQuery($query) as $record) {
+        $records = Jojo::selectQuery($query);
+        $this->readonlydisplay = $this->readonly ? $records[0]['display']: '';
+        foreach ($records as $record) {
             $this->tree->addnode($record['id'], $record['parent'], $record['display']);
         }
     }

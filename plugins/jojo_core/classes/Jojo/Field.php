@@ -63,7 +63,7 @@ class Jojo_Field
             $this->fd_help = $fielddata['fd_help'];
             $this->fd_maxsize = $fielddata['fd_maxsize'];
             $this->fd_tabname = $fielddata['fd_tabname'];
-            $this->readonly = isset($fielddata['fd_readonly']) ? $fielddata['fd_readonly'] : 'no';
+            $this->readonly = isset($fielddata['fd_readonly']) ? $fielddata['fd_readonly'] : 0;
 
             /* create an array of flags */
             if (!empty($fielddata['fd_flags'])) {
