@@ -81,13 +81,20 @@ class Jojo_Field_internalurl extends Jojo_Field
      */
     function displayedit()
     {
-        global $smarty;
+        global $smarty, $table;
 
         $this->texttype = $this->fd_options;
-
-        $url = str_replace('http://', '' ,_SITEURL);
-        if (!empty($this->prefix)) $url = $url.'/'.$this->prefix;
-
+        $this->tableoptions = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ?", $this->fd_table);
+        $plugin = isset($this->tableoptions['td_plugin']) ? $this->tableoptions['td_plugin'] : '';
+        $class = 'Jojo_Plugin_' . $plugin;
+        $id = $this->table->getRecordID();
+        $url = str_replace('http://', '' ,_SITEURL) . '/';
+        if (class_exists($class) && method_exists($class, 'getPrefixById') && $id) { 
+            $prefix = call_user_func_array($class . '::getPrefixById', array($id)) . '/';
+        } else   {
+            $prefix = !empty($this->prefix) ? $this->prefix . '/' : '';
+        }
+        $url = $url . $prefix;        
         $smarty->assign('url', $url);
         $smarty->assign('fd_field', $this->fd_field);
         $smarty->assign('readonly', $this->readonly);
