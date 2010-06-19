@@ -178,6 +178,14 @@ $default_fd['tabledata']['td_autoupdate'] = array(
         'fd_order' => "17",
     );
 
+// Primary plugin class name Field
+$default_fd['tabledata']['td_plugin'] = array(
+        'fd_name' => "Table Plugin Name",
+        'fd_type' => "text",
+        'fd_help' => "The classname of the main plugin that uses the table",
+        'fd_order' => "18",
+    );
+
 
 /* Categories Tab */
 
