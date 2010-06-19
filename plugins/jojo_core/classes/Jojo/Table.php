@@ -89,11 +89,13 @@ class Jojo_Table {
 
         if ($this->getOption('displayfield')) {
             $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($this->table, $this->getOption('displayfield')));
-            $displayfieldtype = $displayfielddata['fd_type'];
+            $displayfieldtype = isset($displayfielddata['fd_type']) ? $displayfielddata['fd_type'] : '';
             if ($displayfieldtype == 'dbpluginpagelist') {
-                $pageid =  $fieldvalues[$this->getOption('displayfield')];
-                $page = Jojo::selectRow("SELECT pg_title FROM {page} WHERE pageid = ? ", array($pageid));
-                $fieldvalues['DISPLAYFIELDVALUE'] = $page['pg_title'];
+                $pageid = isset($fieldvalues[$this->getOption('displayfield')]) ? $fieldvalues[$this->getOption('displayfield')] : '';
+                if ($pageid) {
+                    $page = Jojo::selectRow("SELECT pg_title FROM {page} WHERE pageid = ? ", array($pageid));
+                    $fieldvalues['DISPLAYFIELDVALUE'] = $page['pg_title'];
+                }
             }
         } 
         /* Set all the fields to their values */

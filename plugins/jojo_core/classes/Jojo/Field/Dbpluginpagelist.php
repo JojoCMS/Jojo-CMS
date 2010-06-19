@@ -80,7 +80,7 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
                             Jojo::onlyIf($orderbyfield, ' '.$orderbyfield.', ')
                         );
         $records = Jojo::selectQuery($query);
-        $this->readonlydisplay = $this->readonly ? $records[0]['display']: '';
+        $this->readonlydisplay = ($records && $this->readonly) ? $records[0]['display']: '';
         foreach ($records as $record) {
             $this->tree->addnode($record['id'], $record['parent'], $record['display']);
         }
