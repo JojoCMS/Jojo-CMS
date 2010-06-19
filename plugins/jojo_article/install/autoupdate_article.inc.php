@@ -34,9 +34,10 @@ $default_td['article'] = array(
         'td_help' => "News Articles are managed from here. Depending on the exact configuration, the most recent 5 articles may be shown on the homepage or sidebar, or they may be listed only on the news page. All News Articles have their own \"full info\" page, which has a unique URL for the search engines. This is based on the title of the article, so please do not change the title of an article unless absolutely necessary, as the PageRank of the article may suffer. The system will comfortably take many hundreds of articles, but you may want to manually delete anything that is no longer relevant, or correct.",
         'td_golivefield' => "ar_livedate",
         'td_expiryfield' => "ar_expirydate",
+        'td_plugin' => "Jojo_article",
     );
 
-
+$o= 0;
 /* Content Tab */
 
 // Articleid Field
@@ -44,7 +45,22 @@ $default_fd['article']['articleid'] = array(
         'fd_name' => "Articleid",
         'fd_type' => "readonly",
         'fd_help' => "A unique ID, automatically assigned by the system",
-        'fd_order' => "1",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+        'fd_mode' => "advanced",
+    );
+
+$defaultcat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} ");
+$defaultcat = isset($defaultpage['articlecategoryid']) ? $defaultpage['articlecategoryid'] : 1;
+// Category Field
+$default_fd['article']['ar_category'] = array(
+        'fd_name' => "Category",
+        'fd_type' => "dblist",
+        'fd_options' => "articlecategory",
+        'fd_default' => $defaultcat,
+        'fd_size' => "20",
+        'fd_help' => "If applicable, the page the Article belongs to",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -56,7 +72,7 @@ $default_fd['article']['ar_title'] = array(
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "Title of the Article. This will be used for the URL, headings and titles. Because the URL is based on this field, avoid changing this if possible.",
-        'fd_order' => "2",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
 
@@ -67,7 +83,7 @@ $default_fd['article']['ar_seotitle'] = array(
         'fd_options' => "seotitle",
         'fd_size' => "60",
         'fd_help' => "Title of the Article - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
-        'fd_order' => "3",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",
     );
@@ -78,7 +94,7 @@ $default_fd['article']['ar_date'] = array(
         'fd_type' => "date",
         'fd_default' => "NOW()",
         'fd_help' => "Date the article was published (defaults to Today)",
-        'fd_order' => "4",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",
     );
@@ -89,7 +105,7 @@ $default_fd['article']['ar_desc'] = array(
         'fd_type' => "text",
         'fd_size' => "60",
         'fd_help' => "A one sentence description of the article. Used for rollover text on links, which enhances usability",
-        'fd_order' => "5",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -101,7 +117,7 @@ $default_fd['article']['ar_url'] = array(
         'fd_options' => class_exists('Jojo_Plugin_Jojo_article') ? Jojo_Plugin_Jojo_article::_getPrefix() : '',
         'fd_size' => "20",
         'fd_help' => "A customized URL - leave blank to create a URL from the title of the article",
-        'fd_order' => "6",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",
     );
@@ -125,7 +141,7 @@ $default_fd['article']['ar_body'] = array(
         'fd_rows' => "10",
         'fd_cols' => "50",
         'fd_help' => "The body of the article. Try to summarise the article in the first paragraph as this will be used for the snippet",
-        'fd_order' => "8",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -137,7 +153,7 @@ $default_fd['article']['ar_comments'] = array(
         'fd_options' => "yes\nno",
         'fd_default' => "yes",
         'fd_help' => "Whether comments are allowed for this article",
-        'fd_order' => "9",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -148,7 +164,7 @@ $default_fd['article']['ar_author'] = array(
         'fd_type' => "text",
         'fd_size' => "20",
         'fd_help' => "The author of the article, used with syndicated content",
-        'fd_order' => "10",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -159,20 +175,7 @@ $default_fd['article']['ar_source'] = array(
         'fd_type' => "url",
         'fd_size' => "20",
         'fd_help' => "The original source of the article (Syndicated articles only). This field is not displayed, but is for internal use.",
-        'fd_order' => "11",
-        'fd_tabname' => "Content",
-        'fd_mode' => "advanced",
-    );
-
-// Category Field
-$default_fd['article']['ar_category'] = array(
-        'fd_name' => "Category",
-        'fd_type' => "dblist",
-        'fd_options' => "articlecategory",
-        'fd_default' => "0",
-        'fd_size' => "20",
-        'fd_help' => "If applicable, the category the Article belongs to",
-        'fd_order' => "12",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -185,7 +188,7 @@ $default_fd['article']['ar_metadesc'] = array(
         'fd_rows' => "4",
         'fd_cols' => "60",
         'fd_help' => "A META Description for the article. By default, a meta description is auto-generated, but hand-written descriptions are always better. This is a recommended field.",
-        'fd_order' => "13",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -195,7 +198,7 @@ $default_fd['article']['ar_image'] = array(
         'fd_name' => "Image",
         'fd_type' => "fileupload",
         'fd_help' => "An image for the article, if  available",
-        'fd_order' => "14",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",
     );
@@ -208,7 +211,7 @@ $default_fd['article']['ar_language'] = array(
         'fd_default' => "en",
         'fd_size' => "20",
         'fd_help' => "The language or country of the article",
-        'fd_order' => "15",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
@@ -221,7 +224,7 @@ $default_fd['article']['ar_htmllang'] = array(
         'fd_default' => "",
         'fd_size' => "20",
         'fd_help' => "The language of the article - if different from the default language for the language/country chosen above.",
-        'fd_order' => "16",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );

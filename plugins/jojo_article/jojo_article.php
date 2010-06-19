@@ -983,7 +983,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return $data;
     }
 
-
+    static function getPrefixById($id=false) {
+        if ($id) {
+            $data = Jojo::selectRow("SELECT ar_category, ar_language FROM {article} WHERE articleid = ?", array($id));
+            $prefix = self::_getPrefix('article', $data['ar_language'], $data['ar_category']);
+            return $prefix;
+        }
+        return false;
+    }
 
     /**
      * Get the url prefix for a particular part of this plugin
@@ -1007,12 +1014,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
         $categorydata =  ($_CATEGORIES && $categoryid) ? Jojo::selectRow("SELECT `ac_url` FROM {articlecategory} WHERE `articlecategoryid` = '$categoryid';") : '';
         $category = ($_CATEGORIES && $categoryid) ? $categorydata['ac_url'] : '';
-        $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_link = ?";
+        $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_link LIKE ?";
         $query .= (_MULTILANGUAGE) ? " AND pg_language = '$language'" : '';
         $query .= $category ? " AND pg_url LIKE '%$category'": '';
 
         if ($for == 'article') {
-            $values = array('Jojo_Plugin_Jojo_article');
+            $values = array('jojo_plugin_jojo_article');
         } elseif ($for == 'admin') {
             $values = array('Jojo_Plugin_Jojo_article_admin');
         } elseif ($for == 'rss') {
