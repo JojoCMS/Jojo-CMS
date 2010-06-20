@@ -1,0 +1,1 @@
+{if $smarty.get.pagenum>1}<meta name="robots" content="noindex, follow" />{/if}
