@@ -130,7 +130,7 @@ $default_fd['article']['ar_bbbody'] = array(
         'fd_rows' => "10",
         'fd_cols' => "50",
         'fd_help' => "The body of the article. Try to summarise the article in the first paragraph as this will be used for the snippet",
-        'fd_order' => "7",
+        'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
 
