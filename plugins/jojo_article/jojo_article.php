@@ -332,7 +332,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         // if one article is being excluded up the limit by one
         if ($num && ($excludethisid || $excludethisurl)) $num++;
         $now    = time();
-        $query  = "SELECT ar.*, ac.*, p.pg_menutitle, p.pg_title";
+        $query  = "SELECT ar.*, ac.*, p.pg_menutitle, p.pg_title, p.pg_status";
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
