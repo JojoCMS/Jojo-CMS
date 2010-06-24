@@ -67,9 +67,14 @@ $query = "
     CREATE TABLE {articlecategory} (
       `articlecategoryid` int(11) NOT NULL auto_increment,
       `ac_url` varchar(255) NOT NULL default '',
-      `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc') NOT NULL default 'ar_date desc',
       `ac_pageid` int(11) NOT NULL default '0',
-      PRIMARY KEY  (`articlecategoryid`)
+      `type` enum('normal','parent','index') NOT NULL default 'normal',
+      `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
+      `weighting` binary(1) default '1',
+      `rsslink` binary(1) default '1',
+      `thumbnail` varchar(255) NOT NULL default '',
+      PRIMARY KEY  (`articlecategoryid`),
+      KEY `id` (`ac_pageid`)
     ) TYPE=MyISAM ;";
 
 /* Check table structure */

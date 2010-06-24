@@ -21,7 +21,6 @@
 $_provides['pluginClasses'] = array(
         'Jojo_Plugin_Jojo_article'       => 'Article - Article Listing and View',
         'Jojo_Plugin_Jojo_article_admin' => 'Article - Article Comment Admin',
-        'Jojo_Plugin_Jojo_article_rss'   => 'Article - RSS Feed',
         );
 
 /* Register URI handlers */
@@ -291,17 +290,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'article_enable_categories',
-    'category'    => 'Articles',
-    'label'       => 'Article Categories',
-    'description' => 'Allows multiple article collections by category under their own URLs',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'article_optional_email',
     'category'    => 'Articles',
     'label'       => 'Optional email address',
@@ -327,9 +315,9 @@ $_options[] = array(
     'id'          => 'article_meta_description',
     'category'    => 'Articles',
     'label'       => 'Dynamic article meta description',
-    'description' => 'A dynamically built meta description template to use for articles, which will assist with SEO. Variables to use are [forum], [site].',
+    'description' => 'A dynamically built meta description template to use for articles, which will assist with SEO. Variables to use are [title], [author], [site], [body].',
     'type'        => 'textarea',
-    'default'     => '[article], an article on [site] - Read all about [article] here.',
+    'default'     => '[title], an article on [site]. [body]...',
     'options'     => '',
     'plugin'      => 'jojo_article'
 );

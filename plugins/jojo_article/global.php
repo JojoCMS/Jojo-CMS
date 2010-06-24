@@ -18,15 +18,14 @@
  * @package jojo_article
  */
 
-$_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
-$categories =  ($_CATEGORIES) ? Jojo::selectQuery("SELECT * FROM {articlecategory}") : array();
+$categories = Jojo::selectQuery("SELECT * FROM {articlecategory}");
 $numarticles = Jojo::getOption('article_num_sidebar_articles', 3);
 
 if ($numarticles) {
-$exclude = (Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes') ? true : false;
+$exclude = (boolean)(Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes');
 
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
-    if ($_CATEGORIES && count($categories) && Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
+    if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
         $smarty->assign('allarticles', JOJO_Plugin_Jojo_article::getArticles($numarticles, 0, 'all', '', $exclude) );
         foreach ($categories as $c) {
             $smarty->assign('articles_' . str_replace('-', '_', $c['ac_url']), JOJO_Plugin_Jojo_article::getArticles($numarticles, 0, $c['articlecategoryid'],  $c['sortby']), $exclude );
@@ -44,7 +43,7 @@ $exclude = (Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes') ? t
     
     /* Get the prefix for articles (can vary for multiple installs) for use in the theme template instead of hard coding it */
     $smarty->assign('articleshome', JOJO_Plugin_Jojo_article::_getPrefix('article', $page->getValue('pg_language')) );
-    if ($_CATEGORIES && count($categories) && Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
+    if (count($categories) && Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
         foreach ($categories as $c) {
             $category = $c['ac_url'];
             $categoryid = $c['articlecategoryid'];

@@ -23,7 +23,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     /*
     * Comments
     */
-    static function postComment()
+    static function postComment($article)
     {
         global $smarty, $_USERID;
 
@@ -39,8 +39,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $website         = Jojo::getFormData('website',         '');
         $anchortext      = Jojo::getFormData('anchortext',      '');
         $bbcomment       = Jojo::getFormData('comment',         '');
-        $articleid       = Jojo::getFormData('id',              0);
-        $url             = Jojo::getFormData('url',             '');
         $captchacode     = Jojo::getFormData('captchacode',     '');
         if (!empty($website)) $website = Jojo::addhttp($website);
 
@@ -51,15 +49,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* trim whitespace just in case people copy-paste the email address wrong */
         $email = trim($email);
 
-        /* get the article ID if we don't have it already */
-        if ($articleid) {
-            $article = Jojo::selectRow("SELECT * FROM {article} WHERE articleid = ?", $articleid);
-        } elseif ($url) {
-            $article = Jojo::selectRow("SELECT * FROM {article} WHERE ar_url = ?", $url);
-            if (count($article)) $articleid = $article['articleid'];
-        } else {
-            return false;
-        }
+        if (!$article) return false;
+        $articleid       = $article['articleid'];
 
         $ip = Jojo::getIP();
 
@@ -153,8 +144,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $_SESSION['anchortext'] = $anchortext;
 
         /* Send article details for email to webmaster */
-        $article['fullurl'] = Jojo_Plugin_Jojo_article::getArticleUrl($article['articleid'], $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
-        $message  = "A comment has been added to an article on " . _SITEURL . "/". $article['fullurl'] . "\n\n";
+        $message  = "A comment has been added to an article on " . _SITEURL . "/". $article['url'] . "\n\n";
         $message .= "Comment by: " . $name . "\n";
         $message .= $email != '' ? "Email: " . $email. "\n" : '';
         $message .= $website != '' ? "Website: " . $website . "\n" : '';
@@ -165,29 +155,29 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if (!empty($anchortext)) {
             $message .= "To FOLLOW the link on this comment AND use the chosen anchor text (for great comments), click the following link\n";
-            $message .= _SITEURL . '/' . Jojo_Plugin_Jojo_article::_getPrefix('admin') . '/' . $anchortextcode . "/\n\n";
+            $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $anchortextcode . "/\n\n";
         }
         $message .= "To FOLLOW the link on this comment (for good comments), click the following link\n";
-        $message .= _SITEURL . '/' . Jojo_Plugin_Jojo_article::_getPrefix('admin') . '/' . $approvecode . "/\n\n";
+        $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $approvecode . "/\n\n";
         $message .= "To DELETE this comment, click the following link\n";
-        $message .= _SITEURL . '/' . Jojo_Plugin_Jojo_article::_getPrefix('admin') . '/' . $deletecode . "/\n";
+        $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $deletecode . "/\n";
         $message .= Jojo::emailFooter();
 
         /* Email comment to webmaster and site contact */
-        Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['ar_title'], $message, $name, $email);
-        if(_WEBMASTERADDRESS != _CONTACTADDRESS) Jojo::simplemail(_FROMNAME, _CONTACTADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['ar_title'], $message, $name, $email);
+        Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['title'], $message, $name, $email);
+        if(_WEBMASTERADDRESS != _CONTACTADDRESS) Jojo::simplemail(_FROMNAME, _CONTACTADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['title'], $message, $name, $email);
 
         /* add subscription if needed, and update all subscriptions to say the topic has a new comment */
         if ($commentsubscriptions && $email_subscribe && !empty($_USERID)) {
-            Jojo_Plugin_Jojo_article::addSubscription($_USERID, $articleid);
-            Jojo_Plugin_Jojo_article::markSubscriptionsUpdated($articleid);
+            self::addSubscription($_USERID, $articleid);
+            self::markSubscriptionsUpdated($articleid);
         }
 
         /* log a copy of the comment */
         $log = new Jojo_Eventlog();
         $log->code = 'article comment';
         $log->importance = 'normal';
-        $log->shortdesc = 'Article comment by ' . $name . ' on ' . $article['ar_title'];
+        $log->shortdesc = 'Article comment by ' . $name . ' on ' . $article['title'];
         $log->desc = $message;
         $log->savetodb();
         unset($log);
@@ -195,12 +185,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* Delete cache for this page - forcing regeneration next view */
         if (_CONTENTCACHE) {
             $query = "DELETE FROM {contentcache} WHERE cc_url=? LIMIT 1";
-            $values = array(_SITEURL . '/' . $article['fullurl']);
+            $values = array(_SITEURL . '/' . $article['url']);
             Jojo::deleteQuery($query, $values);
         }
 
         /* Redirect back to the article to see the comment on the page */
-        header('location: ' . Jojo_Plugin_Jojo_article::getCorrectUrl());
+        header('location: ' . self::getCorrectUrl());
         exit();
     }
 
@@ -249,16 +239,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
     static function processSubscriptionEmails($limit=3) {
-        $subscriptions = Jojo::selectQuery("SELECT acs.*, ar_title, us_firstname, us_login, us_email FROM {articlecommentsubscription} acs LEFT JOIN {article} ar ON (acs.articleid=ar.articleid) LEFT JOIN {user} us ON (acs.userid=us.userid) WHERE (lastupdated > lastviewed) AND (lastviewed > lastemailed) LIMIT ?", $limit);
+        $subscriptions = Jojo::selectQuery("SELECT acs.*, ar_title, ar_category, ar_language, us_firstname, us_login, us_email FROM {articlecommentsubscription} acs LEFT JOIN {article} ar ON (acs.articleid=ar.articleid) LEFT JOIN {user} us ON (acs.userid=us.userid) WHERE (lastupdated > lastviewed) AND (lastviewed > lastemailed) LIMIT ?", $limit);
         foreach ($subscriptions as $sub) {
             $subject  = 'New comment notification: ' . $sub['ar_title'];
             $message  = 'A new comment has been added to "' . $sub['ar_title'] . '" on ' . Jojo::getOption('sitetitle') . '. You are subscribed to receive email notifications notifications of any new comments on this post.';
             $message .= "To view the new comments, please visit the following link.\n";
-            $message .= _SITEURL.'/'. JOJO_Plugin_Jojo_article::getArticleUrl($sub['articleid'])."\n\n";
+            $message .= _SITEURL.'/'. self::getArticleUrl($sub['articleid'], $sub['ar_title'], $sub['ar_language'], $sub['ar_category'])."\n\n";
             $message .= "You can unsubscribe from this notification by using the following link.\n";
-            $message .= _SITEURL.'/'. JOJO_Plugin_Jojo_article::_getPrefix() . "/unsubscribe/".$sub['articleid']."/".$sub['code']."/\n";
+            $message .= _SITEURL.'/'. self::_getPrefix('article', $sub['ar_language'], $sub['ar_category']) . "/unsubscribe/".$sub['articleid']."/".$sub['code']."/\n";
             $message .= "\nRegards,\n" . Jojo::getOption('webmastername') . "\n" . Jojo::getOption('sitetitle')."\n".Jojo::getOption('fromaddress')."\n";
-            if (@Jojo::simpleMail($sub['us_login'], $sub['us_email'], $subject, $message)) {
+            if (Jojo::simpleMail($sub['us_login'], $sub['us_email'], $subject, $message)) {
                 Jojo::updateQuery("UPDATE {articlecommentsubscription} SET lastemailed=? WHERE userid=? AND articleid=?", array(time(), $sub['userid'], $sub['articleid']));
             }
         }
@@ -328,23 +318,27 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function getArticles($num, $start = 0, $categoryid='all', $sortby=false, $exclude=false,$usemultilanguage=true) {
         global $page;
         if (_MULTILANGUAGE) $language = !empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-        $_CATEGORIES      = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false;
+        if (is_array($categoryid)) {
+             $categoryquery = " AND ar_category IN ('" . implode("','", $categoryid) . "')";
+        } elseif (is_numeric($categoryid)) {
+            $categoryquery = " AND ar_category = '$categoryid'";
+        } else {
+            $categoryquery = '';
+        }
         /* if calling page is an article, Get current articleid, and exclude from the list  */
         $excludethisid = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('id')) ? Jojo::getFormData('id') : '';
         $excludethisurl = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('url')) ? Jojo::getFormData('url') : '';
         $shownumcomments = (Jojo::getOption('articlecomments') == 'yes' && Jojo::getOption('article_show_num_comments', 'no') == 'yes') ? true : false;
 
         $now    = time();
-        $query  = "SELECT ar.*";
-        $query .= $_CATEGORIES ? ", ac.ac_url, p.pg_menutitle, p.pg_title" : '';
+        $query  = "SELECT ar.*, ac.*, p.pg_menutitle, p.pg_title";
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
-        $query .= $_CATEGORIES ? " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_url=p.pg_url)" : '';
+        $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
         $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = articleid)" : '';
         $query .= " WHERE ar_livedate<$now AND (ar_expirydate<=0 OR ar_expirydate>$now)";
-        $query .= (_MULTILANGUAGE && $usemultilanguage) ? " AND (ar_language = '$language')" : '';
-        $query .= ($_CATEGORIES && _MULTILANGUAGE && $usemultilanguage) ? " AND (pg_language = '$language')" : '';
-        $query .= ($_CATEGORIES && $categoryid && $categoryid!='all') ? " AND (ar_category = '$categoryid')" : '';
+        $query .= (_MULTILANGUAGE && $usemultilanguage) ? " AND (ar_language = '$language') AND (pg_language = '$language')" : '';
+        $query .= $categoryquery;
         $query .= $excludethisid ? " AND (articleid != '$excludethisid')" : '';
         $query .= $excludethisurl ? " AND (ar_url != '$excludethisurl')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
@@ -354,16 +348,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         foreach ($articles as &$a){
             $a['id']           = $a['articleid'];
             $a['title']        = htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false);
-            $a['bodyplain']    = strip_tags($a['ar_body']);
-
-            /* Strip any template include code ie [[ ]] */
-            $a['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '', $a['bodyplain']);
-
+            /* Strip all tags and template include code ie [[ ]] */
+            $a['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($a['ar_body'])));
             $a['date']         = Jojo::strToTimeUK($a['ar_date']);
             $a['datefriendly'] = Jojo::mysql2date($a['ar_date'], "medium");
-            $a['url']          = Jojo_Plugin_Jojo_article::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], ($_CATEGORIES ? $a['ar_category'] : '') );
-            $a['category']     = ($_CATEGORIES) ? (!empty($a['pg_menutitle']) ? $a['pg_menutitle'] : $a['pg_title']) : '';
-            $a['categoryurl']  = ($_CATEGORIES && !empty($a['ac_url'])) ? (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . $a['ac_url'] . '/' : '';
+            $a['url']          = self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']);
+            $a['category']     = !empty($a['pg_menutitle']) ? htmlspecialchars($a['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($a['pg_title'], ENT_COMPAT, 'UTF-8', false);
+            $a['categoryurl']  = !empty($a['ac_url']) ? (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . $a['ac_url'] . '/' : '';
             if(!$shownumcomments) $a['numcomments'] = 0;
             //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
         }
@@ -374,31 +365,27 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
      * calculates the URL for the article - requires the article ID, but works without a query if given the URL or title from a previous query
      *
      */
-    static function getArticleUrl($articleid=false, $url=false, $title=false, $language=false, $categoryid=false )
+    static function getArticleUrl($id=false, $url=false, $title=false, $language=false, $category=false )
     {
         if (_MULTILANGUAGE) {
             $language = !empty($language) ? $language : Jojo::getOption('multilanguage-default', 'en');
-            $mldata = Jojo::getMultiLanguageData();
-            $lclanguage = $mldata['longcodes'][$language];
         }
 
         /* URL specified */
         if (!empty($url)) {
-        	$category = Jojo::selectRow("SELECT ar_category FROM article WHERE ar_url = ? ORDER BY ar_category = ?", array($url, $categoryid));
-            $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $category['ar_category']) . '/' . $url . '/';
+            $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $category) . '/' . $url . '/';
             return $fullurl;
          }
         /* ArticleID + title specified */
-        if ($articleid && !empty($title)) {
-        	$category = Jojo::selectRow("SELECT ar_category FROM article WHERE articleid = ? ORDER BY ar_category = ?", array($articleid, $categoryid));
-            $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $categoryid) . '/' . $articleid . '/' .  Jojo::cleanURL($title) . '/';
-            return $fullurl;
+        if ($id && !empty($title)) {
+            $fullurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $category) . '/' . $id . '/' .  Jojo::cleanURL($title) . '/';
+          return $fullurl;
         }
         /* use the article ID to find either the URL or title */
-        if ($articleid) {
-            $article = Jojo::selectRow("SELECT ar_url, ar_title, ar_language, ar_category FROM {article} WHERE articleid = ?", $articleid);
-            if (count($article)) {
-                return self::getArticleUrl($articleid, $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
+        if ($id) {
+            $article = Jojo::selectRow("SELECT ar_url, ar_title, ar_language, ar_category FROM {article} WHERE articleid = ?", array($id));
+             if ($article) {
+                return self::getArticleUrl($id, $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
             }
          }
         /* No article matching the ID supplied or no ID supplied */
@@ -408,60 +395,55 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
     function _getContent()
     {
-        global $smarty, $_USERGROUPS, $_USERID;
+         global $smarty, $_USERGROUPS, $_USERID;
         $content = array();
         $language = !empty($this->page['pg_language']) ? $this->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-        $mldata = Jojo::getMultiLanguageData();
-        $lclanguage = $mldata['longcodes'][$language];
 
-        $commentsubscriptions = Jojo::getOption('article_comment_subscriptions', 'no');
-        $commentsubscriptions = ($commentsubscriptions == 'yes') ? true : false;
-
-        if ($commentsubscriptions) {
+        if (Jojo::getOption('article_comment_subscriptions', 'no') == 'yes') {
             Jojo_Plugin_Jojo_article::processSubscriptionEmails();
-        }
-
-        /* Was a comment submitted? */
-        if (Jojo::getFormData('submit', false)) {
-            Jojo_Plugin_Jojo_article::postComment();
         }
 
         /* Are we looking at an article or the index? */
         $articleid = Jojo::getFormData('id',        0);
         $url       = Jojo::getFormData('url',      '');
         $action    = Jojo::getFormData('action',   '');
-        $category  = Jojo::getFormData('category', '');
-        $findby = ($category) ? $category : $this->page['pg_url'];
+        $pageid = $this->page['pageid'];
+        $categorydata =  Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_pageid = ?", $pageid);
+        if ($category . '/' . $url == $categorydata['ac_url']) $url = '';
+        $categorydata['type'] = isset($categorydata['type']) ? $categorydata['type'] : 'normal';
+        if ($categorydata['type']=='index') {
+            $categoryid = 'all';
+        } elseif ($categorydata['type']=='parent') {
+            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page} LEFT JOIN {articlecategory} ON (pageid=ac_pageid) WHERE pg_parent = ? AND pg_link LIKE 'jojo_plugin_jojo_article'", $pageid);
+            foreach ($childcategories as $c) {
+                $categoryid[] = $c['articlecategoryid'];
+            }
+            $categoryid[] = $categorydata['articlecategoryid'];
+        } else {
+            $categoryid = $categorydata['articlecategoryid'];
+        }
+        $sortby = $categorydata ? $categorydata['sortby'] : '';
 
         /* handle unsubscribes */
         if ($action == 'unsubscribe') {
             $code      = Jojo::getFormData('code',      '');
             $articleid = Jojo::getFormData('articleid', '');
-            if (Jojo_Plugin_Jojo_article::removeSubscriptionByCode($code, $articleid)) {
+            if (self::removeSubscriptionByCode($code, $articleid)) {
                 $content['content'] = 'Subscription removed.<br />';
             } else {
                 $content['content'] = 'This unsubscribe link is inactive, or you have already been unsubscribed.<br />';
             }
-
-            $content['content'] .= 'Return to <a href="' . Jojo_Plugin_Jojo_article::getArticleUrl($articleid) . '">article</a>.';
+            $content['content'] .= 'Return to <a href="' . self::getArticleUrl($articleid) . '">article</a>.';
             return $content;
-        }
+        } 
 
-        /* Get category url and id if needed */
-        $pg_url = $this->page['pg_url'];
-        $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
-        $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_url = ?", $findby) : '';
-        $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : 0;
-        $categoryurl = ($_CATEGORIES && count($categorydata)) ? $categorydata['ac_url'] : $pg_url;
-        $sortby = ($_CATEGORIES && count($categorydata)) ? $categorydata['sortby'] : '';
+        $articles = self::getArticles('', '', $categoryid, $sortby);
 
-        // For some reason the page url gets set wrong.
-        $smarty->assign('pg_url', $categoryurl);
-
-        $articles = Jojo_Plugin_Jojo_article::getArticles('', '', $categoryid, $sortby);
-
+        if ($action == 'rss') {
+            self::getFeed($articles);
+        }        
+        
         if ($articleid || !empty($url)) {
-
             /* find the current, next and previous profiles */
             $article = '';
             $prevarticle = array();
@@ -494,7 +476,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Get the specific article */
             $articleid = $article['articleid'];
             $article['ar_datefriendly'] = Jojo::mysql2date($article['ar_date'], "long");
-            $article['fullurl'] = Jojo_Plugin_Jojo_article::getArticleUrl($article['articleid'], $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
+
+            /* Was a comment submitted? */
+            if (Jojo::getFormData('submit', false)) {
+                self::postComment($article);
+            }
 
             /* assign user variables for pre-populating fields for logged in users */
             if (!empty($_USERID)) {
@@ -508,9 +494,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 if (empty($_SESSION['email']) && isset($user['us_email']))   $_SESSION['email'] = $user['us_email'];
                 if (empty($_SESSION['website']) && isset($user['website'])) $_SESSION['website'] = $user['website'];
 
-                if ($commentsubscriptions && Jojo_Plugin_Jojo_article::isSubscribed($_USERID, $articleid)) {
+                if ($commentsubscriptions && self::isSubscribed($_USERID, $articleid)) {
                     $user['email_subscribe'] = true;
-                    Jojo_Plugin_Jojo_article::markSubscriptionsViewed($_USERID, $articleid);
+                    self::markSubscriptionsViewed($_USERID, $articleid);
                 }
                 $smarty->assign('article_user', $user);
             }
@@ -518,12 +504,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* calculate the next and previous articles */
             if (Jojo::getOption('article_next_prev') == 'yes') {
                 if (!empty($nextarticle)) {
-                    $nextarticle['url'] = Jojo_Plugin_Jojo_article::getArticleUrl($nextarticle['articleid'], $nextarticle['ar_url'], $nextarticle['ar_title'], $nextarticle['ar_language'], $nextarticle['ar_category']);
+                    $nextarticle['url'] = self::getArticleUrl($nextarticle['articleid'], $nextarticle['ar_url'], $nextarticle['ar_title'], $nextarticle['ar_language'], $nextarticle['ar_category']);
                     $smarty->assign('nextarticle', $nextarticle);
                 }
 
                 if (!empty($prevarticle)) {
-                    $prevarticle['url'] = Jojo_Plugin_Jojo_article::getArticleUrl($prevarticle['articleid'], $prevarticle['ar_url'], $prevarticle['ar_title'], $prevarticle['ar_language'], $prevarticle['ar_category']);
+                    $prevarticle['url'] = self::getArticleUrl($prevarticle['articleid'], $prevarticle['ar_url'], $prevarticle['ar_title'], $prevarticle['ar_language'], $prevarticle['ar_category']);
                     $smarty->assign('prevarticle', $prevarticle);
                 }
             }
@@ -558,14 +544,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
 
             /* Calculate URL to POST comments to */
-            $smarty->assign('jojo_articleposturl', $article['fullurl']);
+            $smarty->assign('jojo_articleposturl', $article['url']);
 
             /* Add article breadcrumb */
             $breadcrumbs                      = $this->_getBreadCrumbs();
             $breadcrumb                       = array();
             $breadcrumb['name']               = $article['title'];
             $breadcrumb['rollover']           = $article['ar_desc'];
-            $breadcrumb['url']                = $article['fullurl'];
+            $breadcrumb['url']                = $article['url'];
             $breadcrumbs[count($breadcrumbs)] = $breadcrumb;
 
             /* Remember user fields from session */
@@ -607,8 +593,21 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if (!empty($article['ar_metadesc'])) {
                 $content['meta_description'] = $article['ar_metadesc'];
             } else {
-                $meta_description_template = Jojo::getOption('article_meta_description', '[article], an article on [site] - Read all about [article] here.');
-                $content['meta_description'] = str_replace(array('[article]', '[site]'), array($article['title'], _SITETITLE), $meta_description_template);
+                $meta_description_template = Jojo::getOption('article_meta_description', '[article] - [body]... ');
+                $articlebody = strlen($article['bodyplain'] >200) ?  substr($mbody=wordwrap($article['bodyplain'], 200, '$$'), 0, strpos($mbody,'$$')) : $article['bodyplain'];
+                $metafilters = array(
+                        '[title]', 
+                        '[site]', 
+                        '[body]', 
+                        '[author]'
+                        );
+                $metafilterreplace = array(
+                        $article['title'], 
+                        _SITETITLE, 
+                        !empty($article['description']) ? $article['description'] : $articlebody,
+                        $article['ar_author']
+                        );
+                        $content['meta_description'] = str_replace($metafilters, $metafilterreplace, $meta_description_template);
             }
             $content['metadescription']  = $content['meta_description'];
         } else {
@@ -637,13 +636,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($numpages == 1) {
                 $pagination = '';
             } elseif ($numpages == 2 && $pagenum == 2) {
-                $pagination = sprintf('<a href="%s/p1/">previous...</a>', (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, false) : '') . Jojo_Plugin_Jojo_article::_getPrefix('article', (_MULTILANGUAGE ? $language : ''), (!empty($categoryid) ? $categoryid : '')) );
+                $pagination = sprintf('<a href="%s/p1/">previous...</a>', (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, false) : '') . self::_getPrefix('article', (_MULTILANGUAGE ? $language : ''), $categoryid) );
             } elseif ($numpages == 2 && $pagenum == 1) {
-                $pagination = sprintf('<a href="%s/p2/">more...</a>', (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, false) : '') . Jojo_Plugin_Jojo_article::_getPrefix('article', (_MULTILANGUAGE ? $language : ''), ($_CATEGORIES ? $categoryid : '')) );
+                $pagination = sprintf('<a href="%s/p2/">more...</a>', (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, false) : '') . self::_getPrefix('article', (_MULTILANGUAGE ? $language : ''), $categoryid) );
             } else {
                 $pagination = '<ul>';
                 for ($p=1;$p<=$numpages;$p++) {
-                    $url = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, false) : '') . Jojo_Plugin_Jojo_article::_getPrefix('article', (_MULTILANGUAGE ? $language : ''), (!empty($categoryid) ? $categoryid : '')) . '/';
+                    $url = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, false) : '') . self::_getPrefix('article', (_MULTILANGUAGE ? $language : ''), $categoryid) . '/';
                     if ($p > 1) {
                         $url .= 'p' . $p . '/';
                     }
@@ -694,15 +693,15 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     public static function sitemap($sitemap)
     {
         /* See if we have any article sections to display and find all of them */
-        $articleindexes = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes'");
+        $articleindexes = Jojo::selectQuery("SELECT p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link LIKE 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes'");
         if (!count($articleindexes)) {
             return $sitemap;
         }
-
+        
         if (Jojo::getOption('article_inplacesitemap', 'separate') == 'separate') {
             /* Remove any existing links to the articles section from the page listing on the sitemap */
             foreach($sitemap as $j => $section) {
-                $sitemap[$j]['tree'] = Jojo_Plugin_Jojo_article::_sitemapRemoveSelf($section['tree']);
+                $sitemap[$j]['tree'] = self::_sitemapRemoveSelf($section['tree']);
             }
             $_INPLACE = false;
         } else {
@@ -712,24 +711,17 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $now = strtotime('now');
         $limit = 15;
         $articlesperpage = Jojo::getOption('articlesperpage', 40);
-        $limit = ($articlesperpage >= 15) ? 15 : $articlesperpage ;
          /* Make sitemap trees for each articles instance found */
         foreach($articleindexes as $k => $i){
-            /* Get language and language longcode if needed */
-            if (_MULTILANGUAGE) {
-                $language = !empty($i['pg_language']) ? $i['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-                $mldata = Jojo::getMultiLanguageData();
-                $lclanguage = $mldata['longcodes'][$language];
-            }
-            /* Get category url and id if needed */
-            $pg_url = $i['pg_url'];
-            $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
-            $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE `ac_url` = '$pg_url'") : '';
-            $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : '';
+            /* Set language */
+            $language = (_MULTILANGUAGE && !empty($i['pg_language'])) ? $i['pg_language'] : '';
+            /* Set category */
+            $categoryid = $i['articlecategoryid'];
+            $sortby = $i['sortby'];
 
             /* Create tree and add index and feed links at the top */
             $articletree = new hktree();
-            $indexurl = (_MULTILANGUAGE) ? Jojo::getMultiLanguageString($language, false) . Jojo_Plugin_Jojo_article::_getPrefix('article', $language, $categoryid) . '/' : Jojo_Plugin_Jojo_article::_getPrefix('article', '', $categoryid) . '/' ;
+            $indexurl = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '' ) . self::_getPrefix('article', $language, $categoryid) . '/';
             if ($_INPLACE) {
                 $parent = 0;
             } else {
@@ -737,60 +729,43 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                $parent = 'index';
             }
 
-            /* Get the article content from the database */
-            $query =  "SELECT * FROM {article} WHERE ar_livedate<$now AND (ar_expirydate<=0 OR ar_expirydate>$now)";
-            $query .= (_MULTILANGUAGE) ? " AND (ar_language = '$language')" : '';
-            $query .= ($_CATEGORIES) ? " AND (ar_category = '$categoryid')" : '';
-            $query .= " ORDER BY ar_date DESC LIMIT $limit";
-
-            $articles = Jojo::selectQuery($query);
+            $articles = self::getArticles('', '', $categoryid, $sortby);
             $n = count($articles);
+
+            /* Trim items down to first page and add to tree*/
+            $articles = array_slice($articles, 0, $articlesperpage);
             foreach ($articles as $a) {
-                $articletree->addNode($a['articleid'], $parent, $a['ar_title'], Jojo_Plugin_Jojo_article::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']));
+                $articletree->addNode($a['articleid'], $parent, $a['ar_title'], self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']));
             }
 
-            /* Get number of articles for pagination */
-            $countquery =  "SELECT COUNT(*) AS numarticles FROM {article} WHERE ar_livedate<$now AND (ar_expirydate<=0 OR ar_expirydate>$now)";
-            $countquery .= (_MULTILANGUAGE) ? " AND (ar_language = '$language')" : '';
-            $countquery .= ($_CATEGORIES) ? " AND (ar_category = '$categoryid')" : '';
-            $articlescount = Jojo::selectQuery($countquery);
-            $numarticles = $articlescount[0]['numarticles'];
-            $numpages = ceil($numarticles / $articlesperpage);
-
+            /* Get number of pages for pagination */
+            $numpages = ceil($n / $articlesperpage);
             /* calculate pagination */
-            if ($numpages == 1) {
-                if ($limit < $numarticles) {
-                    $articletree->addNode('p1', $parent, 'More ' . $i['pg_title'] , $indexurl );
-                }
-            } else {
-                for ($p=1; $p <= $numpages; $p++) {
-                    if (($limit < $articlesperpage) && ($p == 1)) {
-                        $articletree->addNode('p1', $parent, '...More' , $indexurl );
-                    } elseif ($p != 1) {
-                        $url = $indexurl .'p' . $p .'/';
-                        $nodetitle = $i['pg_title'] . ' Index - p'. $p;
-                        $articletree->addNode('p' . $p, $parent, $nodetitle, $url);
-                    }
+            if ($numpages > 1) {
+                for ($p=2; $p <= $numpages; $p++) {
+                    $url = $indexurl .'p' . $p .'/';
+                    $nodetitle = $i['pg_title'] . '  - page '. $p;
+                    $articletree->addNode('p' . $p, $parent, $nodetitle, $url);
                 }
             }
+            /* Add RSS link for the plugin page */
+           $articletree->addNode('rss', $parent, $i['pg_title'] . ' RSS Feed', $indexurl . 'rss/');
 
             /* Check for child pages of the plugin page */
             foreach (Jojo::selectQuery("SELECT * FROM {page} WHERE pg_parent = '" . $i['pageid'] . "' AND pg_sitemapnav = 'yes'") as $c) {
-                /* Check whether an RSS Feed page exists and is to be shown on the sitemap, and if so, add it to the sitemap array */
-                if ($c['pg_link']=='Jojo_Plugin_Jojo_article_rss') {
-                    $rssurl = ((_MULTILANGUAGE) ? Jojo::getMultiLanguageString($language, false) : '') . Jojo_Plugin_Jojo_article::_getPrefix('rss', ((_MULTILANGUAGE) ? $language : ''), $categoryid) . '/';
-                    $articletree->addNode('index-rss', $parent, $c['pg_title'], $rssurl);
-                } else {
                     $articletree->addNode($c['pageid'], $parent, $c['pg_title'], $c['pg_url'] . '/');
-                }
             }
 
             /* Add to the sitemap array */
             if ($_INPLACE) {
                 /* Add inplace */
-                $url = ((_MULTILANGUAGE) ? Jojo::getMultiLanguageString ( $language, false ) : '') . Jojo_Plugin_Jojo_article::_getPrefix('article', ((_MULTILANGUAGE) ? $language : ''), $categoryid) . '/';
-                $sitemap['pages']['tree'] = Jojo_Plugin_Jojo_article::_sitemapAddInplace($sitemap['pages']['tree'], $articletree->asArray(), $url);
+                $url = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . self::_getPrefix('article', $language, $categoryid) . '/';
+                $sitemap['pages']['tree'] = self::_sitemapAddInplace($sitemap['pages']['tree'], $articletree->asArray(), $url);
             } else {
+                if (_MULTILANGUAGE) {
+                    $mldata = Jojo::getMultiLanguageData();
+                    $lclanguage = $mldata['longcodes'][$language];
+                }
                 /* Add to the end */
                 $sitemap["articles$k"] = array(
                     'title' => $i['pg_title'] . ( _MULTILANGUAGE ? ' (' . ucfirst($lclanguage) . ')' : ''),
@@ -810,7 +785,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($t['url'] == $url) {
                 $sitemap[$k]['children'] = $toadd;
             } elseif (isset($sitemap[$k]['children'])) {
-                $sitemap[$k]['children'] = Jojo_Plugin_Jojo_article::_sitemapAddInplace($t['children'], $toadd, $url);
+                $sitemap[$k]['children'] = self::_sitemapAddInplace($t['children'], $toadd, $url);
             }
         }
         return $sitemap;
@@ -823,7 +798,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if (!is_array($urls)) {
             $urls = array();
-            $articleindexes = Jojo::selectQuery("SELECT p.*" . ($_CATEGORIES ? ", ac.articlecategoryid" : '') . " FROM {page} p " . ($_CATEGORIES ? "LEFT JOIN {articlecategory} ac ON (pg_url=ac_url) " : '') . "WHERE pg_link = 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes'");
+            $articleindexes = Jojo::selectQuery("SELECT p.*, ac.* FROM {page} p  LEFT JOIN {articlecategory} ac ON (pageid=ac_pageid) WHERE pg_link LIKE 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes'");
             if (count($articleindexes)==0) {
                return $tree;
             }
@@ -832,8 +807,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $language = !empty($i['pg_language']) ? $i['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
                 $mldata = Jojo::getMultiLanguageData();
                 $lclanguage = $mldata['longcodes'][$language];
-                $urls[] = ((_MULTILANGUAGE) ? $lclanguage . '/' : '') . Jojo_Plugin_Jojo_article::_getPrefix('article', ((_MULTILANGUAGE) ? $language : ''), ($_CATEGORIES ? $i['articlecategoryid'] : '')) . '/';
-                $urls[] = ((_MULTILANGUAGE) ? $lclanguage . '/' : '') . Jojo_Plugin_Jojo_article::_getPrefix('rss', ((_MULTILANGUAGE) ? $language : ''), ($_CATEGORIES ? $i['articlecategoryid'] : '')) . '/';
+                $urls[] = ((_MULTILANGUAGE) ? $lclanguage . '/' : '') . self::_getPrefix('article', ((_MULTILANGUAGE) ? $language : ''), $i['articlecategoryid']) . '/';
+                $urls[] = ((_MULTILANGUAGE) ? $lclanguage . '/' : '') . self::_getPrefix('rss', ((_MULTILANGUAGE) ? $language : ''), $i['articlecategoryid']) . '/';
             }
         }
 
@@ -841,7 +816,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if (in_array($t['url'], $urls)) {
                 unset($tree[$k]);
             } else {
-                $tree[$k]['children'] = Jojo_Plugin_Jojo_article::_sitemapRemoveSelf($t['children']);
+                $tree[$k]['children'] = self::_sitemapRemoveSelf($t['children']);
             }
         }
         return $tree;
@@ -860,7 +835,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         /* Add articles to sitemap */
         foreach($articles as $a) {
-            $url = _SITEURL . '/'. Jojo_Plugin_Jojo_article::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']);
+            $url = _SITEURL . '/'. self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']);
             $lastmod = strtotime($a['ar_date']);
             $priority = 0.6;
             $changefreq = '';
@@ -878,7 +853,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function search($results, $keywords, $language, $booleankeyword_str=false)
     {
         global $_USERGROUPS;
-        $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
         $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
         $pagePermissions = new JOJO_Permissions();
         $boolean = ($booleankeyword_str) ? true : false;
@@ -902,7 +876,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query = "SELECT articleid, ar_url, ar_title, ar_desc, ar_body, ar_image, ar_language, ar_expirydate, ar_livedate, ar_category, ((MATCH(ar_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(ar_title, ar_desc, ar_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
         $query .= ", p.pg_url, p.pg_title";
         $query .= " FROM {article} AS article ";
-        $query .= $_CATEGORIES ? " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_url=p.pg_url)" : "LEFT JOIN {page} p ON (p.pg_link='jojo_plugin_jojo_article' AND p.pg_language=ar_language)";
+        $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
         $query .= " LEFT JOIN {language} AS language ON (article.ar_language = languageid)";
         $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid)" : '';
         $query .= " WHERE ($like";
@@ -932,7 +906,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $result['title'] = $d['ar_title'];
             $result['body'] = $d['ar_body'];
             $result['image'] = 'articles/' . $d['ar_image'];
-            $result['url'] = Jojo_Plugin_Jojo_article::getArticleUrl($d['articleid'], $d['ar_url'], $d['ar_title'], $d['ar_language'], $d['ar_category']);
+            $result['url'] = self::getArticleUrl($d['articleid'], $d['ar_url'], $d['ar_title'], $d['ar_language'], $d['ar_category']);
             $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
             $result['id'] = $d['articleid'];
             $result['plugin'] = 'jojo_article';
@@ -957,17 +931,18 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
      */
     static function rssicon($data)
     {
+        global $page;
         $link = Jojo::getOption('article_external_rss');
-        $data['Articles'] = !empty($link) ? $link : _SITEURL . '/' . Jojo_Plugin_Jojo_article::_getPrefix('rss');
-
-        /* add category RSS feed */
-        $pg_url = _SITEURI;
-        $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
-        $categorydata =  ($_CATEGORIES) ? Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url = '$pg_url'") : '';
-        $categoryid = ($_CATEGORIES && count($categorydata)) ? $categorydata['articlecategoryid'] : '';
-
-        if ( $_CATEGORIES && !empty($categoryid)) {
-            $data['Articles - '.$pg_url] = _SITEURL . '/' . Jojo_Plugin_Jojo_article::_getPrefix('rss', false, $categoryid);
+        if ($link) {
+            $data['Articles'] =  $link;
+        }
+        /* add category RSS feeds */
+        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} LEFT JOIN {page} ON (pageid=ac_pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
+        foreach ($categories as $c) {
+            $prefix =  self::_getPrefix('article', (_MULTILANGUAGE ? $c['pg_language'] : ''), $c['articlecategoryid']) . '/rss/';
+            if ($prefix) {
+                $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? $c['pg_language'] . '/' : '') . $prefix;
+            }
         }
         return $data;
     }
@@ -986,8 +961,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function getPrefixById($id=false) {
         if ($id) {
             $data = Jojo::selectRow("SELECT ar_category, ar_language FROM {article} WHERE articleid = ?", array($id));
-            $prefix = self::_getPrefix('article', $data['ar_language'], $data['ar_category']);
-            return $prefix;
+            if ($data) {
+                $prefix = self::_getPrefix('article', $data['ar_language'], $data['ar_category']);
+                return $prefix;
+            }
         }
         return false;
     }
@@ -1006,27 +983,20 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             return $_cache[$cacheKey];
         }
 
-        if (!in_array($for, array('article', 'admin', 'rss'))) {
+        if (!in_array($for, array('article', 'admin'))) {
             return '';
         }
         /* Cache some stuff */
         $language = $language ? $language : Jojo::getOption('multilanguage-default', 'en');
-        $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
-        $categorydata =  ($_CATEGORIES && $categoryid) ? Jojo::selectRow("SELECT `ac_url` FROM {articlecategory} WHERE `articlecategoryid` = '$categoryid';") : '';
-        $category = ($_CATEGORIES && $categoryid) ? $categorydata['ac_url'] : '';
-        $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_link LIKE ?";
-        $query .= (_MULTILANGUAGE) ? " AND pg_language = '$language'" : '';
-        $query .= $category ? " AND pg_url LIKE '%$category'": '';
+        $categorydata =  Jojo::selectRow("SELECT ac_url, ac_pageid FROM {articlecategory} WHERE `articlecategoryid` = '$categoryid';");
+        $category = isset($categorydata['ac_url']) ? $categorydata['ac_url'] : '';
+        $pageid = isset($categorydata['ac_pageid']) ? $categorydata['ac_pageid'] : '';
+        $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pageid = '$pageid'";
 
         if ($for == 'article') {
             $values = array('jojo_plugin_jojo_article');
         } elseif ($for == 'admin') {
             $values = array('Jojo_Plugin_Jojo_article_admin');
-        } elseif ($for == 'rss') {
-            $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_link = ?";
-            $query .= (_MULTILANGUAGE) ? " AND pg_language = '$language'" : '';
-            $query .= (!empty($category)) ? " AND pg_url LIKE '$category%'": '';
-            $values = array('Jojo_Plugin_Jojo_article_rss');
         }
 
         $res = Jojo::selectRow($query, $values);
@@ -1042,17 +1012,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         global $page;
         $language  = $page->page['pg_language'];
-        $pg_url    = $page->page['pg_url'];
-        $articleid = Jojo::getFormData('id',     0);
+        $id = Jojo::getFormData('id',     0);
         $url       = Jojo::getFormData('url',    '');
         $action    = Jojo::getFormData('action', '');
         $pagenum   = Jojo::getFormData('pagenum', 1);
-		$category  = Jojo::getFormData('category', '');
 
-        $data = array('ar_category' => '');
-        if (Jojo::getOption('article_enable_categories', 'no') == 'yes') {
-            $data = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url=?", $category);
-        }
+        $data = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_pageid=?", $page->page['pageid']);
         $categoryid = !empty($data['articlecategoryid']) ? $data['articlecategoryid'] : '';
 
         if ($pagenum[0] == 'p') {
@@ -1068,15 +1033,18 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* the special URL for the latest article */
         if ($action == 'latest') {
             $article = Jojo::selectRow("SELECT * FROM {article} ORDER BY ar_date DESC, ar_title");
-            return _SITEURL . '/' . Jojo_Plugin_Jojo_article::getArticleUrl($article['articleid'], $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
+            return _SITEURL . '/' . self::getArticleUrl($article['articleid'], $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
         }
-        $correcturl = Jojo_Plugin_Jojo_article::getArticleUrl($articleid, $url, null, $language, $categoryid);
+        $correcturl = self::getArticleUrl($id, $url, null, $language, $categoryid);
+
         if ($correcturl) {
             return _SITEURL . '/' . $correcturl;
         }
 
         /* article index with pagination */
         if ($pagenum > 1) return parent::getCorrectUrl() . 'p' . $pagenum . '/';
+
+        if ($action == 'rss') return parent::getCorrectUrl() . 'rss/';
 
         /* article index - default */
         return parent::getCorrectUrl();
@@ -1104,38 +1072,38 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $prefix = $matches[1];
             $getvars = array(
                         'id' => $matches[2],
-                        'category' => $prefix
                         );
         } elseif (preg_match('#^(.+)/([0-9]+)$#', $uri, $matches)) {
             /* "$prefix/[id:integer]" eg "articles/123/" */
             $prefix = $matches[1];
             $getvars = array(
                         'id' => $matches[2],
-                        'category' => $prefix
                         );
         } elseif (preg_match('#^(.+)/p([0-9]+)$#', $uri, $matches)) {
             /* "$prefix/p[pagenum:([0-9]+)]" eg "articles/p2/" for pagination of articles */
             $prefix = $matches[1];
             $getvars = array(
                         'pagenum' => $matches[2],
-                        'category' => $prefix
                         );
-        } elseif (preg_match('#^(.+)/((?!rss)([a-z0-9-_]+))$#', $uri, $matches)) {
-            /* "$prefix/[url:((?!rss)string)]" eg "articles/name-of-article/" ignoring "artciles/rss" */
+        } elseif (preg_match('#^(.+)/rss$#', $uri, $matches)) {
+            /* eg "articles/rss/" for rss feeds */
+            $prefix = $matches[1];
+            $getvars = array(
+                        'action' => 'rss',
+                        );
+        } elseif (preg_match('#^(.+)/([a-z0-9-_]+)$#', $uri, $matches)) {
+            /* "$prefix/[url:((?!rss)string)]" eg "articles/name-of-article/" ignoring "articles/rss" */
             $prefix = $matches[1];
             $getvars = array(
                         'url' => $matches[2],
-                        'category' => $prefix
                         );
-            $row = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url LIKE ?", $uri);
-            if ($row) return false;
         } else {
             /* Didn't match */
             return false;
         }
 
         /* Check the prefix matches */
-        if ($res = Jojo_Plugin_Jojo_article::checkPrefix($prefix)) {
+        if ($res = self::checkPrefix($prefix)) {
             /* The prefix is good, pass through uri parts */
             foreach($getvars as $k => $v) {
                 $_GET[$k] = $v;
@@ -1160,9 +1128,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $languages = Jojo::selectAssoc("SELECT languageid, languageid as languageid2 FROM {language} WHERE active = 'yes'");
             }
             $categories = array(false);
-            if (Jojo::getOption('article_enable_categories', 'no') == 'yes') {
-                $categories = array_merge($categories, Jojo::selectAssoc("SELECT articlecategoryid, articlecategoryid as articlecategoryid2 FROM {articlecategory}"));
-            }
+            $categories = array_merge($categories, Jojo::selectAssoc("SELECT articlecategoryid, articlecategoryid as articlecategoryid2 FROM {articlecategory}"));
             $_prefixes = array();
         }
         /* Check if it's in the cache */
@@ -1173,7 +1139,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         foreach ($languages as $language) {
             $language = $language ? $language : Jojo::getOption('multilanguage-default', 'en');
             foreach($categories as $category) {
-                $testPrefix = Jojo_Plugin_Jojo_article::_getPrefix('article', $language, $category);
+                $testPrefix = self::_getPrefix('article', $language, $category);
                 $_prefixes[$testPrefix] = true;
                 if ($testPrefix == $prefix) {
                     /* The prefix is good */
@@ -1267,4 +1233,321 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
         return true;
     }
+
+    static function getFeed($articles)
+    {
+        $full = (Jojo::getOption('article_full_rss_description') == 'yes') ? true : false;
+        $site = mb_convert_encoding(_SITETITLE, 'HTML-ENTITIES', 'UTF-8');
+        $page = mb_convert_encoding($articles[0]['category'], 'HTML-ENTITIES', 'UTF-8');
+        $description = mb_convert_encoding(Jojo::getOption('sitedesc', Jojo::getOption('sitetitle')), 'HTML-ENTITIES', 'UTF-8');
+        $rss  = "<?xml version=\"1.0\" ?".">\n";
+        $rss .= "<rss version=\"2.0\">\n";
+        $rss .= "<channel>\n";
+        $rss .= "<title>" . $site . ': ' . $page . "</title>\n";
+        $rss .= "<description>" . $description . "</description>\n";
+        $rss .= "<link>"._SITEURL . '/' . $articles[0]['categoryurl'] . "</link>\n";
+        $rss .= "<copyright>" . htmlentities(_SITETITLE) . " " . date('Y', strtotime('now')) . "</copyright>\n";
+
+        $limit = Jojo::getOption('article_rss_num_articles', 15);
+        $articles = array_slice($articles, 0, $limit);
+        foreach ($articles as &$a) {
+            $a['ar_body'] = Jojo::relative2absolute($a['ar_body'], _SITEURL);
+            /* chop the article up to the first [[snip]] */
+            if ($full) {
+                $a['ar_body'] = str_ireplace('[[snip]]','',$a['ar_body']);
+            } else {
+                $arr = Jojo::iExplode('[[snip]]', $a['ar_body']);
+                if (count($arr) === 1) {
+                    $a['ar_body'] = substr($a['ar_body'], 0, Jojo::getOption('article_rss_truncate', 800)) . ' ...';
+                } else {
+                    $a['ar_body'] = $arr[0];
+                }
+            } 
+            $source = _SITEURL . "/" . $a['url'];
+            if (Jojo::getOption('article_feed_source_link') == 'yes') $a['ar_body'] .= '<p>Source: <a href="' . $source . '">' . $a['title'] . '</a></p>';
+            $a['body'] = mb_convert_encoding($a['ar_body'], 'HTML-ENTITIES', 'UTF-8');
+            $a['title'] = mb_convert_encoding($a['title'], 'HTML-ENTITIES', 'UTF-8');
+            $rss .= "<item>\n";
+            $rss .= "<title>" . self::rssEscape($a['title']) . "</title>\n";
+            $rss .= "<description>" . self::rssEscape($a['body']) . "</description>\n";
+            $rss .= "<link>". $source . "</link>\n";
+            $rss .= "<pubDate>" . Jojo::mysql2date($a['ar_date'], 'rss') . "</pubDate>\n";
+            $rss .= "</item>\n";
+        }
+        $rss .= "</channel>\n";
+        $rss .= "</rss>\n";
+
+        header('Content-type: application/xml');
+        echo $rss;
+        exit;
+    }
+
+    static function rssEscape($data) {
+        $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'self::convert_entity', $data);
+        return str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', $xmldata)));
+    }
+    
+    /* Swap HTML named entity with its numeric equivalent. If the entity
+     * isn't in the lookup table, this function returns a blank, which
+     * destroys the character in the output - this is probably the 
+     * desired behaviour when producing XML. */
+    function convert_entity($matches) {
+      static $table = array('quot'    => '&#34;',
+                            'amp'      => '&#38;',
+                            'lt'       => '&#60;',
+                            'gt'       => '&#62;',
+                            'OElig'    => '&#338;',
+                            'oelig'    => '&#339;',
+                            'Scaron'   => '&#352;',
+                            'scaron'   => '&#353;',
+                            'Yuml'     => '&#376;',
+                            'circ'     => '&#710;',
+                            'tilde'    => '&#732;',
+                            'ensp'     => '&#8194;',
+                            'emsp'     => '&#8195;',
+                            'thinsp'   => '&#8201;',
+                            'zwnj'     => '&#8204;',
+                            'zwj'      => '&#8205;',
+                            'lrm'      => '&#8206;',
+                            'rlm'      => '&#8207;',
+                            'ndash'    => '&#8211;',
+                            'mdash'    => '&#8212;',
+                            'lsquo'    => '&#8216;',
+                            'rsquo'    => '&#8217;',
+                            'sbquo'    => '&#8218;',
+                            'ldquo'    => '&#8220;',
+                            'rdquo'    => '&#8221;',
+                            'bdquo'    => '&#8222;',
+                            'dagger'   => '&#8224;',
+                            'Dagger'   => '&#8225;',
+                            'permil'   => '&#8240;',
+                            'lsaquo'   => '&#8249;',
+                            'rsaquo'   => '&#8250;',
+                            'euro'     => '&#8364;',
+                            'fnof'     => '&#402;',
+                            'Alpha'    => '&#913;',
+                            'Beta'     => '&#914;',
+                            'Gamma'    => '&#915;',
+                            'Delta'    => '&#916;',
+                            'Epsilon'  => '&#917;',
+                            'Zeta'     => '&#918;',
+                            'Eta'      => '&#919;',
+                            'Theta'    => '&#920;',
+                            'Iota'     => '&#921;',
+                            'Kappa'    => '&#922;',
+                            'Lambda'   => '&#923;',
+                            'Mu'       => '&#924;',
+                            'Nu'       => '&#925;',
+                            'Xi'       => '&#926;',
+                            'Omicron'  => '&#927;',
+                            'Pi'       => '&#928;',
+                            'Rho'      => '&#929;',
+                            'Sigma'    => '&#931;',
+                            'Tau'      => '&#932;',
+                            'Upsilon'  => '&#933;',
+                            'Phi'      => '&#934;',
+                            'Chi'      => '&#935;',
+                            'Psi'      => '&#936;',
+                            'Omega'    => '&#937;',
+                            'alpha'    => '&#945;',
+                            'beta'     => '&#946;',
+                            'gamma'    => '&#947;',
+                            'delta'    => '&#948;',
+                            'epsilon'  => '&#949;',
+                            'zeta'     => '&#950;',
+                            'eta'      => '&#951;',
+                            'theta'    => '&#952;',
+                            'iota'     => '&#953;',
+                            'kappa'    => '&#954;',
+                            'lambda'   => '&#955;',
+                            'mu'       => '&#956;',
+                            'nu'       => '&#957;',
+                            'xi'       => '&#958;',
+                            'omicron'  => '&#959;',
+                            'pi'       => '&#960;',
+                            'rho'      => '&#961;',
+                            'sigmaf'   => '&#962;',
+                            'sigma'    => '&#963;',
+                            'tau'      => '&#964;',
+                            'upsilon'  => '&#965;',
+                            'phi'      => '&#966;',
+                            'chi'      => '&#967;',
+                            'psi'      => '&#968;',
+                            'omega'    => '&#969;',
+                            'thetasym' => '&#977;',
+                            'upsih'    => '&#978;',
+                            'piv'      => '&#982;',
+                            'bull'     => '&#8226;',
+                            'hellip'   => '&#8230;',
+                            'prime'    => '&#8242;',
+                            'Prime'    => '&#8243;',
+                            'oline'    => '&#8254;',
+                            'frasl'    => '&#8260;',
+                            'weierp'   => '&#8472;',
+                            'image'    => '&#8465;',
+                            'real'     => '&#8476;',
+                            'trade'    => '&#8482;',
+                            'alefsym'  => '&#8501;',
+                            'larr'     => '&#8592;',
+                            'uarr'     => '&#8593;',
+                            'rarr'     => '&#8594;',
+                            'darr'     => '&#8595;',
+                            'harr'     => '&#8596;',
+                            'crarr'    => '&#8629;',
+                            'lArr'     => '&#8656;',
+                            'uArr'     => '&#8657;',
+                            'rArr'     => '&#8658;',
+                            'dArr'     => '&#8659;',
+                            'hArr'     => '&#8660;',
+                            'forall'   => '&#8704;',
+                            'part'     => '&#8706;',
+                            'exist'    => '&#8707;',
+                            'empty'    => '&#8709;',
+                            'nabla'    => '&#8711;',
+                            'isin'     => '&#8712;',
+                            'notin'    => '&#8713;',
+                            'ni'       => '&#8715;',
+                            'prod'     => '&#8719;',
+                            'sum'      => '&#8721;',
+                            'minus'    => '&#8722;',
+                            'lowast'   => '&#8727;',
+                            'radic'    => '&#8730;',
+                            'prop'     => '&#8733;',
+                            'infin'    => '&#8734;',
+                            'ang'      => '&#8736;',
+                            'and'      => '&#8743;',
+                            'or'       => '&#8744;',
+                            'cap'      => '&#8745;',
+                            'cup'      => '&#8746;',
+                            'int'      => '&#8747;',
+                            'there4'   => '&#8756;',
+                            'sim'      => '&#8764;',
+                            'cong'     => '&#8773;',
+                            'asymp'    => '&#8776;',
+                            'ne'       => '&#8800;',
+                            'equiv'    => '&#8801;',
+                            'le'       => '&#8804;',
+                            'ge'       => '&#8805;',
+                            'sub'      => '&#8834;',
+                            'sup'      => '&#8835;',
+                            'nsub'     => '&#8836;',
+                            'sube'     => '&#8838;',
+                            'supe'     => '&#8839;',
+                            'oplus'    => '&#8853;',
+                            'otimes'   => '&#8855;',
+                            'perp'     => '&#8869;',
+                            'sdot'     => '&#8901;',
+                            'lceil'    => '&#8968;',
+                            'rceil'    => '&#8969;',
+                            'lfloor'   => '&#8970;',
+                            'rfloor'   => '&#8971;',
+                            'lang'     => '&#9001;',
+                            'rang'     => '&#9002;',
+                            'loz'      => '&#9674;',
+                            'spades'   => '&#9824;',
+                            'clubs'    => '&#9827;',
+                            'hearts'   => '&#9829;',
+                            'diams'    => '&#9830;',
+                            'nbsp'     => '&#160;',
+                            'iexcl'    => '&#161;',
+                            'cent'     => '&#162;',
+                            'pound'    => '&#163;',
+                            'curren'   => '&#164;',
+                            'yen'      => '&#165;',
+                            'brvbar'   => '&#166;',
+                            'sect'     => '&#167;',
+                            'uml'      => '&#168;',
+                            'copy'     => '&#169;',
+                            'ordf'     => '&#170;',
+                            'laquo'    => '&#171;',
+                            'not'      => '&#172;',
+                            'shy'      => '&#173;',
+                            'reg'      => '&#174;',
+                            'macr'     => '&#175;',
+                            'deg'      => '&#176;',
+                            'plusmn'   => '&#177;',
+                            'sup2'     => '&#178;',
+                            'sup3'     => '&#179;',
+                            'acute'    => '&#180;',
+                            'micro'    => '&#181;',
+                            'para'     => '&#182;',
+                            'middot'   => '&#183;',
+                            'cedil'    => '&#184;',
+                            'sup1'     => '&#185;',
+                            'ordm'     => '&#186;',
+                            'raquo'    => '&#187;',
+                            'frac14'   => '&#188;',
+                            'frac12'   => '&#189;',
+                            'frac34'   => '&#190;',
+                            'iquest'   => '&#191;',
+                            'Agrave'   => '&#192;',
+                            'Aacute'   => '&#193;',
+                            'Acirc'    => '&#194;',
+                            'Atilde'   => '&#195;',
+                            'Auml'     => '&#196;',
+                            'Aring'    => '&#197;',
+                            'AElig'    => '&#198;',
+                            'Ccedil'   => '&#199;',
+                            'Egrave'   => '&#200;',
+                            'Eacute'   => '&#201;',
+                            'Ecirc'    => '&#202;',
+                            'Euml'     => '&#203;',
+                            'Igrave'   => '&#204;',
+                            'Iacute'   => '&#205;',
+                            'Icirc'    => '&#206;',
+                            'Iuml'     => '&#207;',
+                            'ETH'      => '&#208;',
+                            'Ntilde'   => '&#209;',
+                            'Ograve'   => '&#210;',
+                            'Oacute'   => '&#211;',
+                            'Ocirc'    => '&#212;',
+                            'Otilde'   => '&#213;',
+                            'Ouml'     => '&#214;',
+                            'times'    => '&#215;',
+                            'Oslash'   => '&#216;',
+                            'Ugrave'   => '&#217;',
+                            'Uacute'   => '&#218;',
+                            'Ucirc'    => '&#219;',
+                            'Uuml'     => '&#220;',
+                            'Yacute'   => '&#221;',
+                            'THORN'    => '&#222;',
+                            'szlig'    => '&#223;',
+                            'agrave'   => '&#224;',
+                            'aacute'   => '&#225;',
+                            'acirc'    => '&#226;',
+                            'atilde'   => '&#227;',
+                            'auml'     => '&#228;',
+                            'aring'    => '&#229;',
+                            'aelig'    => '&#230;',
+                            'ccedil'   => '&#231;',
+                            'egrave'   => '&#232;',
+                            'eacute'   => '&#233;',
+                            'ecirc'    => '&#234;',
+                            'euml'     => '&#235;',
+                            'igrave'   => '&#236;',
+                            'iacute'   => '&#237;',
+                            'icirc'    => '&#238;',
+                            'iuml'     => '&#239;',
+                            'eth'      => '&#240;',
+                            'ntilde'   => '&#241;',
+                            'ograve'   => '&#242;',
+                            'oacute'   => '&#243;',
+                            'ocirc'    => '&#244;',
+                            'otilde'   => '&#245;',
+                            'ouml'     => '&#246;',
+                            'divide'   => '&#247;',
+                            'oslash'   => '&#248;',
+                            'ugrave'   => '&#249;',
+                            'uacute'   => '&#250;',
+                            'ucirc'    => '&#251;',
+                            'uuml'     => '&#252;',
+                            'yacute'   => '&#253;',
+                            'thorn'    => '&#254;',
+                            'yuml'     => '&#255;'
+    
+                            );
+      // Entity not found? Destroy it.
+      return isset($table[$matches[1]]) ? $table[$matches[1]] : '';
+    }
+
 }
