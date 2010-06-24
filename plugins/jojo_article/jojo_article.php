@@ -315,7 +315,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num, $start = 0, $categoryid='all', $sortby=false, $exclude=false,$usemultilanguage=true) {
+    static function getArticles($num, $start = 0, $categoryid='all', $sortby=false, $exclude=false, $usemultilanguage=true) {
         global $page;
         if (_MULTILANGUAGE) $language = !empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
         if (is_array($categoryid)) {
@@ -692,8 +692,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
     public static function sitemap($sitemap)
     {
+        global $page;
         /* See if we have any article sections to display and find all of them */
-        $articleindexes = Jojo::selectQuery("SELECT p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link LIKE 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes'");
+        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link LIKE 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes' ORDER BY pg_parent");
         if (!count($articleindexes)) {
             return $sitemap;
         }
@@ -715,6 +716,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         foreach($articleindexes as $k => $i){
             /* Set language */
             $language = (_MULTILANGUAGE && !empty($i['pg_language'])) ? $i['pg_language'] : '';
+            if (_MULTILANGUAGE) $page->page['pg_language'] = $i['pg_language'];
             /* Set category */
             $categoryid = $i['articlecategoryid'];
             $sortby = $i['sortby'];
