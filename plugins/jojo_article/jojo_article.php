@@ -368,10 +368,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $order="name";
             break;
           case "ar_author":
-            $order="name";
+            $order="author";
             break;
           case "ar_livedate desc":
-            $order="date";
+            $order="live";
             break;
         }
         if (isset($order)) {
@@ -387,7 +387,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
          if ($a['ar_title']) {
             return strcmp($a['ar_title'],$b['ar_title']);
-        } else {
+        } 
+    }
+
+    private static function authorsort($a, $b)
+    {
+         if ($a['ar_author']) {
             return strcmp($a['ar_author'],$b['ar_author']);
         }
     }
@@ -396,17 +401,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
          if ($a['ar_date']) {
             return strcmp($b['ar_date'],$a['ar_date']);
-         } else {
-            return strcmp($b['ar_livedate'],$a['ar_livedate']);
          }
     }
 
-    private static function imageidsort($a, $b)
+    private static function livesort($a, $b)
     {
-        if(isset($a['imageid']) and isset($b['imageid'])) return strcmp($a['imageid'],$b['imageid']);
-        if(isset($a['imageid'])) return 1;
-        return -1;
+         if ($a['ar_livedate']) {
+            return strcmp($b['ar_livedate'],$a['ar_livedate']);
+         }
     }
+    
     /*
      * calculates the URL for the article - requires the article ID, but works without a query if given the URL or title from a previous query
      *
