@@ -47,6 +47,7 @@ $query = "
       `td_expiryfield` varchar(255) NOT NULL default '',
       `td_activefield` varchar(255) NOT NULL default '',
       `td_privacyfield` varchar(255) NOT NULL default '',
+      `td_languagefield` varchar(255) NOT NULL default '',
       `td_autoupdate` enum('yes','no') NOT NULL default 'yes',
       `td_defaultpermissions` text NULL,
       PRIMARY KEY  (`tabledataid`)

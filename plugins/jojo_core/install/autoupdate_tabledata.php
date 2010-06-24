@@ -168,6 +168,15 @@ $default_fd['tabledata']['td_privacyfield'] = array(
         'fd_order' => "16",
     );
 
+// Language Field Field
+$default_fd['tabledata']['td_languagefield'] = array(
+        'fd_name' => "Language Field",
+        'fd_type' => "text",
+        'fd_size' => "40",
+        'fd_help' => "The name of the TEXT field that contains language data for this record (optional)",
+        'fd_order' => "16",
+    );
+
 // Auto Update Field
 $default_fd['tabledata']['td_autoupdate'] = array(
         'fd_name' => "Auto Update",

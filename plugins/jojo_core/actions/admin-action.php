@@ -241,6 +241,11 @@ if (Jojo::getPost('btn_addsimilar', false)) {
 if (Jojo::getPost('btn_addchild', false)) {
     $table = new Jojo_Table($t);
     $table->setFieldValue($table->getOption('parentfield'), $id);
+    $languagefield = $table->getOption('languagefield');
+     if ($languagefield) {
+        $parentlanguage = Jojo::getFormData('fm_' . $languagefield, '');
+        if ($parentlanguage) $table->setFieldValue($fieldname, $parentlanguage);
+    }
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn("slow");');
     $frajax->assign("h1", "innerHTML", 'New Child');
@@ -278,6 +283,9 @@ if (Jojo::getPost('btn_addchild', false)) {
                 $js = str_replace('$(', 'parent.$(', $f['js']); //the jQuery object does not exist in the iframe, so need to reference the parent.
                 $frajax->script($js);
             }
+        }
+        if ($fieldname == $languagefield ) {
+            $frajax->assign("fm_" . $fieldname, "value", $parentlanguage);
         }
     }
 
