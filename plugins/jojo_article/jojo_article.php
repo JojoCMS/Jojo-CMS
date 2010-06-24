@@ -315,7 +315,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num, $start = 0, $categoryid='all', $sortby=false, $exclude=false, $usemultilanguage=true) {
+    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $usemultilanguage=true) {
         global $page;
         if (_MULTILANGUAGE) $language = !empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
         if (is_array($categoryid)) {
@@ -340,10 +340,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= $categoryquery;
         $query .= (_MULTILANGUAGE) ? " AND (ar_language = '$language') AND (pg_language = '$language')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
+        $query .= $num ? " ORDER BY $sortby" : '';
         $query .= $num ? " LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
         foreach ($articles as $k=>&$a){
-            if ($a['ar_livedate']>$now || (!empty($a['ar_expirydate']) && $a['ar_expirydate']<$now) || (!empty($a['articleid']) && $a['articleid']==$excludethisid)  || (!empty($a['ar_url']) && $a['ar_url']==$excludethisurl)) {
+            if ($a['ar_livedate']>$now || (!empty($a['ar_expirydate']) && $a['ar_expirydate']<$now) || (!empty($a['articleid']) && $a['articleid']==$excludethisid)  || (!empty($a['ar_url']) && $a['ar_url']==$excludethisurl) || $a['pg_status']=='inactive') {
                 unset($articles[$k]);
                 continue;
             }
@@ -374,12 +375,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $order="live";
             break;
         }
-        if (isset($order)) {
+        if (!$num) {
             usort($articles, array('Jojo_Plugin_Jojo_article', $order . 'sort'));
-        } else {
-            usort($articles, array('Jojo_Plugin_Jojo_article', 'datesort'));
         }
-        if ($reverse) $articles = array_reverse($articles);
         return $articles;
     }
 

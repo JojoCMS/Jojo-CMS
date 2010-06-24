@@ -27,21 +27,20 @@ $exclude = (boolean)(Jojo::getOption('article_sidebar_exclude_current', 'no')=='
 $num = $numarticles + 10;
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
     if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
-        $allarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all', '', $exclude);
+        $allarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
         $allarticles = array_slice ($allarticles, 0, $numarticles);
         $smarty->assign('allarticles',  $allarticles);
         foreach ($categories as $c) {
-            $smarty->assign('articles_' . str_replace('-', '_', $c['ac_url']), JOJO_Plugin_Jojo_article::getArticles($numarticles, 0, $c['articlecategoryid'],  $c['sortby']), $exclude );
+            $smarty->assign('articles_' . str_replace('-', '_', $c['ac_url']), JOJO_Plugin_Jojo_article::getArticles($num, 0, $c['articlecategoryid'],  $c['sortby']), $exclude );
         }
     } else {
         if (Jojo::getOption('article_sidebar_randomise', 0) > 0) {
-            $recentarticles = JOJO_Plugin_Jojo_article::getArticles(Jojo::getOption('article_sidebar_randomise', 0), 0, 'all', 'ar_date DESC', $exclude);
+            $recentarticles = JOJO_Plugin_Jojo_article::getArticles(Jojo::getOption('article_sidebar_randomise', 0), 0, 'all',  'ar_date desc', $exclude);
             shuffle($recentarticles);
-            $recentarticles = array_slice($recentarticles, 0, $numarticles);
         } else {
-            $recentarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date DESC', $exclude);       
-            $recentarticles = array_slice ($recentarticles, 0, $numarticles);
+            $recentarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);       
         }        
+        $recentarticles = array_slice($recentarticles, 0, $numarticles);
         $smarty->assign('articles', $recentarticles );
     }
     
