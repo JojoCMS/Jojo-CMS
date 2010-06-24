@@ -23,10 +23,13 @@ $numarticles = Jojo::getOption('article_num_sidebar_articles', 3);
 
 if ($numarticles) {
 $exclude = (boolean)(Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes');
-
+//some of the articles we're getting might have expired or not yet gone live, so put in a buffer
+$num = $numarticles + 10;
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
     if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
-        $smarty->assign('allarticles', JOJO_Plugin_Jojo_article::getArticles($numarticles, 0, 'all', '', $exclude) );
+        $allarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all', '', $exclude);
+        $allarticles = array_slice ($allarticles, 0, $numarticles);
+        $smarty->assign('allarticles',  $allarticles);
         foreach ($categories as $c) {
             $smarty->assign('articles_' . str_replace('-', '_', $c['ac_url']), JOJO_Plugin_Jojo_article::getArticles($numarticles, 0, $c['articlecategoryid'],  $c['sortby']), $exclude );
         }
@@ -36,7 +39,8 @@ $exclude = (boolean)(Jojo::getOption('article_sidebar_exclude_current', 'no')=='
             shuffle($recentarticles);
             $recentarticles = array_slice($recentarticles, 0, $numarticles);
         } else {
-             $recentarticles = JOJO_Plugin_Jojo_article::getArticles($numarticles, 0, 'all', 'ar_date DESC', $exclude);       
+            $recentarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date DESC', $exclude);       
+            $recentarticles = array_slice ($recentarticles, 0, $numarticles);
         }        
         $smarty->assign('articles', $recentarticles );
     }

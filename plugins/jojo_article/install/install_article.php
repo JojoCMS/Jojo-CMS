@@ -40,6 +40,8 @@ $query = "
       `ar_language` varchar(100) NOT NULL default 'en',
       `ar_htmllang` varchar(100) NOT NULL default 'en',
       PRIMARY KEY  (`articleid`),
+      KEY `category` (`ar_category`),
+      KEY `language` (`ar_language`),
       FULLTEXT KEY `title` (`ar_title`),
       FULLTEXT KEY `body` (`ar_title`,`ar_desc`,`ar_body`)
     ) TYPE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci  AUTO_INCREMENT=1000;";
@@ -70,8 +72,8 @@ $query = "
       `ac_pageid` int(11) NOT NULL default '0',
       `type` enum('normal','parent','index') NOT NULL default 'normal',
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
-      `weighting` binary(1) default '1',
-      `rsslink` binary(1) default '1',
+      `weighting` tinyint(1) default '1',
+      `rsslink` tinyint(1) default '1',
       `thumbnail` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`articlecategoryid`),
       KEY `id` (`ac_pageid`)

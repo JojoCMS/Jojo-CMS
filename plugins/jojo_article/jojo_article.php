@@ -329,23 +329,24 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $excludethisid = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('id')) ? Jojo::getFormData('id') : '';
         $excludethisurl = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('url')) ? Jojo::getFormData('url') : '';
         $shownumcomments = (Jojo::getOption('articlecomments') == 'yes' && Jojo::getOption('article_show_num_comments', 'no') == 'yes') ? true : false;
-
+        // if one article is being excluded up the limit by one
+        if ($num && ($excludethisid || $excludethisurl)) $num++;
         $now    = time();
         $query  = "SELECT ar.*, ac.*, p.pg_menutitle, p.pg_title";
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
-        $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = articleid)" : '';
-        $query .= " WHERE ar_livedate<$now AND (ar_expirydate<=0 OR ar_expirydate>$now)";
-        $query .= (_MULTILANGUAGE && $usemultilanguage) ? " AND (ar_language = '$language') AND (pg_language = '$language')" : '';
+        $query .= " WHERE 1";
         $query .= $categoryquery;
-        $query .= $excludethisid ? " AND (articleid != '$excludethisid')" : '';
-        $query .= $excludethisurl ? " AND (ar_url != '$excludethisurl')" : '';
+        $query .= (_MULTILANGUAGE) ? " AND (ar_language = '$language') AND (pg_language = '$language')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
-        $query .= " ORDER BY " . ($sortby ? $sortby : "ar_date DESC, articleid DESC");
         $query .= $num ? " LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
-        foreach ($articles as &$a){
+        foreach ($articles as $k=>&$a){
+            if ($a['ar_livedate']>$now || (!empty($a['ar_expirydate']) && $a['ar_expirydate']<$now) || (!empty($a['articleid']) && $a['articleid']==$excludethisid)  || (!empty($a['ar_url']) && $a['ar_url']==$excludethisurl)) {
+                unset($articles[$k]);
+                continue;
+            }
             $a['id']           = $a['articleid'];
             $a['title']        = htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false);
             /* Strip all tags and template include code ie [[ ]] */
@@ -358,9 +359,54 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if(!$shownumcomments) $a['numcomments'] = 0;
             //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
         }
+        $order = "date";
+        switch ($sortby) {
+          case "ar_date desc":
+            $order="date";
+            break;
+          case "ar_title asc":
+            $order="name";
+            break;
+          case "ar_author":
+            $order="name";
+            break;
+          case "ar_livedate desc":
+            $order="date";
+            break;
+        }
+        if (isset($order)) {
+            usort($articles, array('Jojo_Plugin_Jojo_article', $order . 'sort'));
+        } else {
+            usort($articles, array('Jojo_Plugin_Jojo_article', 'datesort'));
+        }
+        if ($reverse) $articles = array_reverse($articles);
         return $articles;
     }
 
+    private static function namesort($a, $b)
+    {
+         if ($a['ar_title']) {
+            return strcmp($a['ar_title'],$b['ar_title']);
+        } else {
+            return strcmp($a['ar_author'],$b['ar_author']);
+        }
+    }
+
+    private static function datesort($a, $b)
+    {
+         if ($a['ar_date']) {
+            return strcmp($b['ar_date'],$a['ar_date']);
+         } else {
+            return strcmp($b['ar_livedate'],$a['ar_livedate']);
+         }
+    }
+
+    private static function imageidsort($a, $b)
+    {
+        if(isset($a['imageid']) and isset($b['imageid'])) return strcmp($a['imageid'],$b['imageid']);
+        if(isset($a['imageid'])) return 1;
+        return -1;
+    }
     /*
      * calculates the URL for the article - requires the article ID, but works without a query if given the URL or title from a previous query
      *

@@ -54,7 +54,7 @@ $defaultcat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} "
 $defaultcat = isset($defaultpage['articlecategoryid']) ? $defaultpage['articlecategoryid'] : 1;
 // Category Field
 $default_fd['article']['ar_category'] = array(
-        'fd_name' => "Category",
+        'fd_name' => "Article Page",
         'fd_type' => "dblist",
         'fd_options' => "articlecategory",
         'fd_default' => $defaultcat,
@@ -130,7 +130,7 @@ $default_fd['article']['ar_bbbody'] = array(
         'fd_rows' => "10",
         'fd_cols' => "50",
         'fd_help' => "The body of the article. Try to summarise the article in the first paragraph as this will be used for the snippet",
-        'fd_order' => $o++,
+        'fd_order' => "7",
         'fd_tabname' => "Content",
     );
 
