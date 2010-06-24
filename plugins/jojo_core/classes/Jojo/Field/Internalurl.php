@@ -90,11 +90,11 @@ class Jojo_Field_internalurl extends Jojo_Field
         $id = $this->table->getRecordID();
         $url = str_replace('http://', '' ,_SITEURL) . '/';
         if (class_exists($class) && method_exists($class, 'getPrefixById') && $id) { 
-            $prefix = call_user_func_array($class . '::getPrefixById', array($id)) . '/';
+            $prefix = call_user_func_array($class . '::getPrefixById', array($id));
         } else   {
-            $prefix = !empty($this->prefix) ? $this->prefix . '/' : '';
+            $prefix = !empty($this->prefix) ? $this->prefix : '';
         }
-        $url = $url . $prefix;        
+        $url = $url . ($prefix ? $prefix . '/' : '');        
         $smarty->assign('url', $url);
         $smarty->assign('fd_field', $this->fd_field);
         $smarty->assign('readonly', $this->readonly);
