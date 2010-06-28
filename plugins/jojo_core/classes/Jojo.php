@@ -1891,7 +1891,7 @@ class Jojo {
                         }
                     } else {
                         $pageid = $res[0]['pageid'];
-                        preg_match('#([a-z0-9-_]*)\/#', $uri, $matches);
+                        preg_match('#([a-z0-9-_/]*)\/#', $uri, $matches);
                         foreach ($res as $r){
                            if ( $r['pg_url'] == $matches[1] && $r['pg_language'] == $language) $pageid = $r['pageid'];
                         }
