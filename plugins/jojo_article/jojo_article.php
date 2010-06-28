@@ -360,22 +360,22 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if(!$shownumcomments) $a['numcomments'] = 0;
             //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
         }
-        $order = "date";
-        switch ($sortby) {
-          case "ar_date desc":
-            $order="date";
-            break;
-          case "ar_title asc":
-            $order="name";
-            break;
-          case "ar_author":
-            $order="author";
-            break;
-          case "ar_livedate desc":
-            $order="live";
-            break;
-        }
         if (!$num) {
+            $order = "date";
+            switch ($sortby) {
+              case "ar_date desc":
+                $order="date";
+                break;
+              case "ar_title asc":
+                $order="name";
+                break;
+              case "ar_author":
+                $order="author";
+                break;
+              case "ar_livedate desc":
+                $order="live";
+                break;
+            }
             usort($articles, array('Jojo_Plugin_Jojo_article', $order . 'sort'));
         }
         return $articles;
@@ -471,7 +471,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $categoryid = $categorydata['articlecategoryid'];
         }
         $sortby = $categorydata ? $categorydata['sortby'] : '';
-
+        
         /* handle unsubscribes */
         if ($action == 'unsubscribe') {
             $code      = Jojo::getFormData('code',      '');
@@ -1154,6 +1154,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         /* Check the prefix matches */
         if ($res = self::checkPrefix($prefix)) {
+  
+            /* If full uri matches a prefix it's an index page so ignore it and let the page plugin handle it */
+            if (self::checkPrefix(trim($uri, '/'))) return false;
+      
             /* The prefix is good, pass through uri parts */
             foreach($getvars as $k => $v) {
                 $_GET[$k] = $v;
