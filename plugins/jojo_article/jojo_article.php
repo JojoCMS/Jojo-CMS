@@ -802,8 +802,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
            $articletree->addNode('rss', $parent, $i['pg_title'] . ' RSS Feed', $indexurl . 'rss/');
 
             /* Check for child pages of the plugin page */
-            foreach (Jojo::selectQuery("SELECT * FROM {page} WHERE pg_parent = '" . $i['pageid'] . "' AND pg_sitemapnav = 'yes'") as $c) {
-                    $articletree->addNode($c['pageid'], $parent, $c['pg_title'], $c['pg_url'] . '/');
+            foreach (Jojo::selectQuery("SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_parent = '" . $i['pageid'] . "' AND pg_sitemapnav = 'yes'") as $c) {
+                    if ($c['pg_url']) {
+                        $articletree->addNode($c['pageid'], $parent, $c['pg_title'], (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . $c['pg_url'] . '/');
+                    } else {
+                        $articletree->addNode($c['pageid'], $parent, $c['pg_title'], (_MULTILANGUAGE ? Jojo::getMultiLanguageString($language, false) : '') . $c['pageid']  . '/' .  Jojo::cleanURL($c['pg_title']) . '/');
+                    }
             }
 
             /* Add to the sitemap array */
@@ -844,7 +848,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function _sitemapRemoveSelf($tree)
     {
         static $urls;
-        $_CATEGORIES = (Jojo::getOption('article_enable_categories', 'no') == 'yes') ? true : false ;
 
         if (!is_array($urls)) {
             $urls = array();
