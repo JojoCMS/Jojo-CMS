@@ -336,7 +336,20 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $factor = max(sqrt($currentv/$maxv), 1);
             $new_height = $im_height / $factor;
             $new_width = $im_width / $factor;
-        } elseif (!empty($maxw) && !empty($maxh)) {
+         } elseif (!empty($fitmaxw) && !empty($fitmaxh)) {
+            /* Scale to maximum dimensions - no clipping */
+            $startx = 0;
+            $starty = 0;
+            $wfactor = $fitmaxw/$im_width;
+            $hfactor = $fitmaxh/$im_height;
+            if ($hfactor < $wfactor) {
+               $new_height = $fitmaxh;
+               $new_width = $im_width * $hfactor;
+            } else {
+               $new_width = $fitmaxw;
+               $new_height = $im_height * $wfactor;
+            }
+       } elseif (!empty($maxw) && !empty($maxh)) {
             /* Scale to maximum dimensions, clipping to fit */
             $new_width = $maxw;
             $new_height = $maxh;
