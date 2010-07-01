@@ -336,6 +336,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
+        $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = ar.articleid)" : '';
         $query .= " WHERE 1";
         $query .= $categoryquery;
         $query .= (_MULTILANGUAGE) ? " AND (ar_language = '$language') AND (pg_language = '$language')" : '';

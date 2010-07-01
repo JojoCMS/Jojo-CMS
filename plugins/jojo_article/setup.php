@@ -123,19 +123,22 @@ if (count($articles)) {
 
 //script to force articles into categories - should only run once
 if (Jojo::getOption('article_enable_categories')) {
-    $categories = jojo::selectAssoc("SELECT ac_pageid AS id, articlecategoryid, ac_pageid, ac_url FROM {articlecategory}");
+    $categories = Jojo::selectQuery("SELECT articlecategoryid, ac_pageid, ac_url FROM {articlecategory}");
     //run through the categories and ensure each of them is tied to a pageid, grabbing the first one it finds for multiple page with the same url
     if ($categories) {
         foreach ($categories as $c) {
             if (!$c['ac_pageid']) {
-                $page = Jojo::selectRow("SELECT pageid, pg_url FROM {page} WHERE pg_link LIKE 'jojo_plugin_jojo_article' AND pg_url = ? ", array($c['ac_url']));
-                jojo::updateQuery("UPDATE {articlecategory} SET ac_pageid = ? WHERE ac_url = ? ", array($pageid, $pageurl));
+                $articlespage = Jojo::selectRow("SELECT pageid, pg_url FROM {page} WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_url = ? ", array($c['ac_url']));
+                if (count($articlespage)) {
+                    Jojo::updateQuery("UPDATE {articlecategory} SET ac_pageid = ? WHERE articlecategoryid = ? ", array($articlespage['pageid'], $c['articlecategoryid']));
+                }
             }
         }
     }
-    $articles = Jojo::selectQuery("SELECT * FROM {article}");
+    $categories = jojo::selectAssoc("SELECT ac_pageid AS id, articlecategoryid, ac_pageid, ac_url FROM {articlecategory}");
+    $articles = Jojo::selectQuery("SELECT articleid, ar_category, ar_language FROM {article}");
     $articlepages = Jojo::selectQuery("SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link LIKE 'jojo_plugin_jojo_article'"); 
-    if (Jojo::getOption('article_enable_categories', '')=='no') {
+    if (Jojo::getOption('article_enable_categories')=='no') {
         //1st case - no categories and no multilanguage
         if (Jojo::getOption('multilanguage', '') == 'no') {
             /* should only be one articles page in this case, but you never know.. 
@@ -243,3 +246,4 @@ if (Jojo::getOption('article_enable_categories')) {
     Jojo::deleteQuery("DELETE FROM {option} WHERE op_name = 'article_enable_categories' ");
     echo 'Article categories enforced';
 }
+
