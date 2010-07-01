@@ -1,11 +1,5 @@
-﻿<div class="tag-cloud">
-{if $related}
-{foreach from=$cloudwords key=word item=c}
-    <span style="font-size: {$c.fontsize}em;" title="{$word}"><a href="{$prefix}/{$c.url}/" >{$word}</a></span>
-{/foreach}
-{else}
-{foreach from=$cloudwords key=word item=c}
-    <span style="font-size: {$c.fontsize}em;" title="{$word}"><a href="{$prefix}/{$c.url}/">{$word}</a></span>
-{/foreach}
-{/if}
+﻿{if $cloudwords}
+<div class="tag-cloud">
+<p>{foreach from=$cloudwords key=word item=c}<span> <a href="{$prefix}/{$c.url}/"  style="font-size: {$c.fontsize}em;"  title="{$c.cleanword}" >{$c.cleanword}</a> </span>{/foreach}</p>
 </div>
+{/if}

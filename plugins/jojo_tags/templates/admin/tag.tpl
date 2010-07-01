@@ -2,12 +2,12 @@
 <button id="tag-search-button" onclick="addTag($('#tag-search').val()); $('#tag-search').val('').focus(); return false;">Add</button>
 <div class="clear"></div>
 
-<div style="width:45%; float: left;">
-<textarea rows="10" cols="45" name="fm_{$fd_field}" id="fm_{$fd_field}" onchange="getRelatedTags()">{$tags}</textarea>
-Separate each tag with a space: <em>cameraphone urban moblog</em>. Or to join 2 words together in one tag, use double quotes: <em>&quot;daily commute&quot;</em>.
+<div style="width:400px; margin-right: 20px; float: left;">
+<textarea rows="8" cols="53" name="fm_{$fd_field}" id="fm_{$fd_field}" onchange="getRelatedTags()">{if $taglist}{$taglist}{/if}</textarea>
+<p class="note">Separate each tag with a space: <em>cameraphone urban moblog</em>. Or to join 2 words together in one tag, use double quotes: <em>&quot;daily commute&quot;</em>.</p>
 </div>
 
-<div style="width: 45%; float: right;">
+<div style="width: 200px; float: left;">
     <div id="suggestions">
         <strong>Suggestions</strong><br />
     </div>
@@ -48,7 +48,7 @@ function tagSearchKeyPress(e) {
 function getRelatedTags() {
     $.getJSON('json/get-related-tags.php', { related: $('#{/literal}fm_{$fd_field}{literal}').val() }, function(json){
         $('#related-tags').html('<strong>Related tags</strong><br />');
-        for (var i=0; i<json.length; i++) {
+        for (var i=0; i < json.length; i++) {
             $('#related-tags').append(suggestTag(json[i].tg_tag));
         }
     });

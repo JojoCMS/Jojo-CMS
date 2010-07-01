@@ -38,7 +38,7 @@ class Jojo_Field_replacelist extends Jojo_Field_list
         $smarty->assign('value',    $this->value);
         $smarty->assign('rows',     $this->rows);
         $smarty->assign('fd_help',  htmlentities($this->fd_help));
-        $smarty->assign('hktree',   $this->tree->printout_select(0,$this->value));
+        $smarty->assign('hktree',   $this->tree->printout_select(0, $this->value));
         $smarty->assign('error',    $this->error);
         $smarty->assign('readonly', $this->readonly);
 
@@ -67,7 +67,7 @@ class Jojo_Field_replacelist extends Jojo_Field_list
 
         //Layer1 represents table structure where the first level is the grouping, then individual records underneath
         if ($this->tableoptions['td_group1'] != '') { // - this is used to pull down the main groupings - takes an extra query
-            $layer1 = Jojo::selectQuery("SELECT ".$this->tableoptions['td_group1']." FROM {".$this->tableoptions['td_name']."} GROUP BY ".$this->tableoptions['td_group1']." ORDER BY ".$this->tableoptions['td_group1']."");
+            $layer1 = Jojo::selectQuery("SELECT " . $this->tableoptions['td_group1'] . " FROM {" . $this->tableoptions['td_name'] . "} GROUP BY " . $this->tableoptions['td_group1'] . " ORDER BY " . $this->tableoptions['td_group1'] . "");
             foreach ($layer1 as $group) {
                 $this->tree->addnode($group[$this->tableoptions['td_group1']], 0, $group[$this->tableoptions['td_group1']]);
             }
@@ -79,11 +79,11 @@ class Jojo_Field_replacelist extends Jojo_Field_list
                             $parentfield,
                             $categoryfield,
                             $rolloverfield,
-                            Jojo::onlyIf($group1field, ','.$group1field.' AS group1'),
+                            Jojo::onlyIf($group1field, ',' . $group1field . ' AS group1'),
                             $this->tableoptions['td_name'],
                             $datafilter,
-                            Jojo::onlyIf($group1field, ' '.$group1field.', '),
-                            Jojo::onlyIf($orderbyfield, ' '.$orderbyfield.', ')
+                            Jojo::onlyIf($group1field, ' ' . $group1field . ', '),
+                            Jojo::onlyIf($orderbyfield, ' ' . $orderbyfield . ', ')
                         );
 
         $records = Jojo::selectQuery($query);
@@ -99,20 +99,13 @@ class Jojo_Field_replacelist extends Jojo_Field_list
 
     function checkValue() {
 
-        $currenttagid = $this->table->_fields['tagid']->value;
-
-        /* no id, must be a new file, stop */
-        if ( !$currenttagid) {
-            return true;
-        }
-
+        $currenttagid = $this->table->getFieldValue('tagid');
         $newid = $this->value;
 
-        /* unchanged, stop */
-        if ( $currenttagid == $newid || !$newid) {
+        /* no id, must be a new file, or unchanged, stop */
+        if ( !$currenttagid || $currenttagid == $newid || !$newid) {
             return true;
         }
-
 
         /* update the database with the new tagid replacing the old one (ignore it if it's already there) */
         Jojo::updateQuery("UPDATE IGNORE {tag_item} SET `tagid`  =  ? WHERE `tagid` = ?", array($newid, $currenttagid));

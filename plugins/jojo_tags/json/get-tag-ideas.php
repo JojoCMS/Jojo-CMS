@@ -22,7 +22,6 @@ $search = Jojo::getFormData('search', '');
 
 if (!empty($search)) {
     $tags = Jojo::selectQuery("SELECT * FROM {tag} WHERE tg_tag LIKE '" . Jojo::clean($search) . "%' ORDER BY tg_tag");
+     if ($tags) echo json_encode($tags);
 }
-
-echo json_encode($tags);
 exit;

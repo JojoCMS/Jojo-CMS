@@ -72,18 +72,19 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
     {
 
         /* get array of tags for the content in question */
-        $tags = array();
-        $data = Jojo::selectQuery("SELECT t.tg_tag FROM {tag} t, {tag_item} ti WHERE t.tagid=ti.tagid AND ti.itemid = ? AND ti.plugin = ?", array($itemid, $plugin));
+        $tags = Jojo::selectQuery("SELECT t.tg_tag FROM {tag} t, {tag_item} ti WHERE t.tagid=ti.tagid AND ti.itemid = ? AND ti.plugin = ?", array($itemid, $plugin));
 
-        if (!isset($data[0])) {
+        if (!count($tags)) {
             /* Not found so insert */
             return false;
         } else {
-            foreach ($data as $tag) {
-                $tags[] = $tag['tg_tag'];
+            foreach ($tags as &$tag) {
+               $tag['tag'] = $tag['tg_tag'];
+               $tag['cleanword'] = htmlspecialchars($tag['tg_tag'], ENT_COMPAT, 'UTF-8', false);
+               $tag['url'] = Jojo::getOption('tag_stricturl', 'yes') == 'yes' ? Jojo::cleanURL($tag['tg_tag']) : urlencode($tag['tg_tag']);
             }
-            return $tags;
         }
+        return $tags;
     }
 
     /**
@@ -102,10 +103,10 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
         }
 
         /* Query the database for the tag */
-        $res = Jojo::selectQuery("SELECT tagid FROM {tag} WHERE tg_tag = ?", $tag);
-        if (isset($res[0])) {
+        $res = Jojo::selectRow("SELECT tagid FROM {tag} WHERE tg_tag = ?", $tag);
+        if (count($res)) {
             /* Found, cache and return */
-            $_cache[$tag] = $res[0]['tagid'];
+            $_cache[$tag] = $res['tagid'];
             return $_cache[$tag];
         } elseif ($create) {
             /* Not found, create, cache and return */
@@ -150,14 +151,11 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
 
         /* Get tag results */
         $sqltags = array();
-    if(!empty($tags)){
-        foreach ($tags as $k => $v) {
-            if ($v) {
-            $tags[$k] = str_replace('-', ' ', $v);
-            $sqltags[$k] = '"' . str_replace('"', '\"', $tags[$k]) . '"';
+        if(!empty($tags)){
+            foreach ($tags as $k => $v) {
+                $sqltags[$k] = '"' . addslashes($v['tg_tag']) . '"';
             }
         }
-    }
         $results = array();
         if (count($sqltags)) {
 
@@ -203,10 +201,9 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
 
         /* sort result so best matches are first */
         $sortedresults = array();
-        $n = count($results);
-        for ($i=0;$i<$n;$i++) {
+        foreach ($results as $i=>$result) {
             //$results[$i]['title'] = $results[$i]['title'] . ' - '.$counter['jojo_article'][$results[$i]['id']];  //debug - uncomment to see the closeness of matches
-            $sortedresults[$sort['jojo_article'][$results[$i]['id']]] = $results[$i];
+            $sortedresults[$sort['jojo_article'][$result['id']]] = $result;
         }
         sort($sortedresults);
         return $sortedresults;
@@ -221,14 +218,13 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
         $tags = explode('/', Jojo::getFormData('tags', false));
 
         $sqltags = array();
-        foreach ($tags as $k => $v) {
-            if ($v) {
-                $tags[$k] = str_replace('-', ' ', $v);
-                $sqltags[$k] = '"' . str_replace('"', '\"', $tags[$k]) . '"';
+        if ($tags) {
+            foreach ($tags as $k => $v) {
+                    $tags[$k] = Jojo::getOption('tag_stricturl', 'yes') == 'yes' ? str_replace('-', ' ', $v) : urldecode($v);
+                    $sqltags[$k] = '"' . str_replace('"', '\"', $tags[$k]) . '"';
             }
+            $smarty->assign('selectedtags', $tags);
         }
-        $smarty->assign('selectedtags', $tags);
-
 
         if (count($sqltags)) {
 
@@ -293,13 +289,13 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
                 $query = "SELECT * FROM {tag} t WHERE t.tg_tag = ?";
                 $tagdata = Jojo::selectQuery($query, $tag);
                 $tagdata = isset($tagdata[0]) ? $tagdata[0] : array('tg_tag' => $tag);
-                $casedtag = addslashes($tagdata['tg_tag']);
+                $casedtag = htmlspecialchars($tagdata['tg_tag'], ENT_COMPAT, 'UTF-8', false);
 
                 if (!defined('_LINKBODY')) define('_LINKBODY',''); //to avoid literal text appearing
 
                 /* Don't want these pages to be supplemental */
                 $meta = array();
-                $meta[] = "Content tagged as $casedtag. " . _LINKBODY;
+                $meta[] = "Content tagged as $casedtag" . _LINKBODY;
                 $meta[] = "Content tagged as $casedtag on  ". _SITETITLE;
                 $meta[] = "$casedtag on " . _SITETITLE . " - browse $numresults content items tagged as $casedtag. " . _LINKBODY;
                 $meta[] = "$casedtag on " . _SITETITLE . " - Browse our selection of content tagged $casedtag. " . _LINKBODY;
@@ -320,6 +316,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
 
                 //pick a semi-random body content if none provided
                 $smarty->assign('openingparagraph', empty($tagdata['tg_body']) ? $body[Jojo::semiRand(0, (count($body)-1))] : $tagdata['tg_body']);
+                $smarty->assign('tag', $casedtag);
 
                 $content['seotitle'] =  empty($tagdata['tg_seotitle']) ? $casedtag : $tagdata['tg_seotitle'];
 
@@ -328,6 +325,8 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
             } elseif (count($tags) > 1) {
                 $content['seotitle'] =  implode($tags, ' / ');
                 $content['title'] = implode($tags, '/');
+            } else {
+                $smarty->assign('tags', false);
             }
 
         }
@@ -437,11 +436,11 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
             $max = 0;
         }
         foreach ($cloudwords as $word => $count) {
-          $fontsize = round($count / $max * 2.3,1)+ 0.95;
+          $fontsize = round($count / $max * 2,1)+ 0.8;
           $cloudwords[$word] = array(
                                 'fontsize' => $fontsize,
-                                'cleanword' => $word,
-                                'url' => Jojo::cleanURL($word)
+                               'cleanword' => htmlspecialchars($word, ENT_COMPAT, 'UTF-8', false),
+                                'url' => Jojo::getOption('tag_stricturl', 'yes') == 'yes' ? Jojo::cleanURL($word) : urlencode($word)
                                );
         }
 
@@ -471,7 +470,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
     static function in_arrayi($search, &$array) {
       $search = strtolower($search);
       foreach ($array as $item)
-        if (strtolower($item) == $search)
+        if (strtolower($item['tg_tag']) == $search)
           return TRUE;
       return FALSE;
     }
@@ -541,7 +540,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
 
         /* Add tags to sitemap */
         foreach($tags as $t) {
-            $url = _SITEURL . '/tags/' . Jojo::cleanURL($t['tg_tag']) . '/';
+            $url = _SITEURL . '/tags/' . (Jojo::getOption('tag_stricturl', 'yes') == 'yes' ? Jojo::cleanURL($t['tg_tag']) : urlencode($t['tg_tag']) ) . '/';
             $lastmod = '';
             $priority = 0.5;
             $changefreq = '';
@@ -570,7 +569,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
                 $languagePrefix = Jojo::getMultiLanguageString ( $this->page['pg_language']);
                 $expectedurl .= $languagePrefix != '' ? $languagePrefix : '';
             }
-            $expectedurl .= $this->page['pg_url'] . '/' . Jojo::cleanURL(implode($tag, '/')) . '/';
+            $expectedurl .= $this->page['pg_url'] . '/' . (Jojo::getOption('tag_stricturl', 'yes') == 'yes' ? Jojo::cleanURL(implode($tag, '/')) : implode($tag, '/') )  . '/';
             return $expectedurl;
         }
 

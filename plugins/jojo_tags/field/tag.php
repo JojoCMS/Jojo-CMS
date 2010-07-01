@@ -29,10 +29,14 @@ class Jojo_Field_tag extends Jojo_Field
 
         $smarty->assign('fd_field', $this->fd_field);
         $smarty->assign('readonly', $this->readonly);
-
         $tags = Jojo_Plugin_Jojo_Tags::getTags(trim($this->getOption('options')), $this->table->getRecordID());
-        $smarty->assign('tags', Jojo_Plugin_Jojo_Tags::tagArrayToStr($tags));
-
+        $taglist = array();
+        if (!empty($tags)) {
+            foreach ($tags as $tagitem) {
+                $taglist[] = $tagitem['tg_tag'];
+            }
+            $smarty->assign('taglist', Jojo_Plugin_Jojo_Tags::tagArrayToStr($taglist));
+        }
         return  $smarty->fetch('admin/tag.tpl');
     }
 

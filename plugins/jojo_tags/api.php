@@ -42,3 +42,14 @@ $_options[] = array(
     'options'     => 'yes,no',
     'plugin'      => 'jojo_tags'
 );
+
+$_options[] = array(
+    'id'          => 'tag_stricturl',
+    'category'    => 'Tags',
+    'label'       => 'Strict URL',
+    'description' => 'Restrict tags to url friendly characters and replace spaces with hyphens in URLs, or allow free-form tags and encode URLs.',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_tags'
+);

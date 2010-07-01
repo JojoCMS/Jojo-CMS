@@ -20,12 +20,21 @@
 
 $related = Jojo::getFormData('related', '');
 
-
-$tags = Jojo_Plugin_Jojo_Tags::getTagArray($related);
-usort($tags, 'tagsort');
-
-function tagsort($a, $b) {
-    return ($a['frequency'] != $b['frequency']) ? $a['frequency'] < $b['frequency'] : strcmp($a['tg_tag'], $b['tg_tag']);
+function relatedtagsort($a, $b)
+{
+    if ($a['frequency'] != $b['frequency']) {
+        return ($a['frequency'] < $b['frequency']) ? 1 : -1;
+    } elseif ($a['tg_tag'] != $b['tg_tag']) {
+        return strcmp($a['tg_tag'], $b['tg_tag']);
+    }
+    return 0;
 }
-echo json_encode($tags);
+
+if (!empty($related)) {
+    $tags = Jojo_Plugin_Jojo_Tags::getTagArray(urldecode($related));
+    if ($tags && is_array($tags)) {
+        usort($tags, "relatedtagsort");
+        echo json_encode($tags);
+    }
+}
 exit;

@@ -1,20 +1,22 @@
-<p>{if $openingparagraph}{$openingparagraph}{elseif $tag}The following results and pages have been tagged as <strong>{$tag}{$tag}</strong>.{/if}</p>
-
-{section name=a loop=$results}
-
-<h3 style="clear: both"><a href="{$results[a].url}">{$results[a].title|escape:"html"}</a></h3>
+{if $openingparagraph}<p>{$openingparagraph}</p>{elseif $tag}<p>The following results and pages have been tagged as <strong>{$tag}</strong>.</p>{/if}
+{if $results}
+{foreach from=$results item=result}
+<h3 style="clear: both"><a href="{$result.url}">{$result.title}</a></h3>
 <div>
-  <p>{if $results[a].image}<a href="{$results[a].url}" title="{$results[a].title}"><img src="images/v12000/{$results[a].image}" class="right-image" alt="{$results[a].title}{if $tag} - {$tag}{/if}" /></a>{/if}
-  {$results[a].text|truncate:350}
-  <br /><a href="{if $results[a].absoluteurl}{$results[a].absoluteurl}{else}{$results[a].url}{/if}" title="Read more" class="links">&gt; {$results[a].displayurl}</a></p>
+  <p>{if $result.image}<a href="{$result.url}" title="{$result.title}"><img src="images/v12000/{$result.image}" class="float-right" alt="{$result.title}{if $tag} - {$tag}{/if}" /></a>{/if}
+  {$result.text|truncate:350}
+  <br /><a href="{if $result.absoluteurl}{$result.absoluteurl}{else}{$result.url}{/if}" title="Read more" class="links">&gt; {$result.displayurl}</a></p>
 </div>
-{/section}
-
+{/foreach}
+{/if}
 {if $tags}
 {if $article_tag_cloud_related != "no"}
 <h3 style='clear: both'>{if $tag}Tags related to {$tag}{else}Related Tags{/if}</h3>
-[[tagcloud:{$tags}]]{/if}{else}
-{$pg_body}
+[[tagcloud:{$tags}]]
+{/if}
+{else}
+{if $pg_body}{$pg_body}
 <h3>Tags</h3>
+{/if}
 [[tagcloud]]
 {/if}
