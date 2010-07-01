@@ -32,7 +32,7 @@
         {$itemcloud}
 {else}
 {foreach from=$tags item=tag}
-        <a href="{if $multilangstring}{$multilangstring}{/if}tags/{$tag|replace:" ":"-"}/">{$tag}</a>
+        <a href="{if $multilangstring}{$multilangstring}{/if}tags/{$tag.url}/">{$tag.cleanword}</a>
 {/foreach}
     </p>
 {/if}
