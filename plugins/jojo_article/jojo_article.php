@@ -458,12 +458,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $action    = Jojo::getFormData('action',   '');
         $pageid = $this->page['pageid'];
         $categorydata =  Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_pageid = ?", $pageid);
-        if ($category . '/' . $url == $categorydata['ac_url']) $url = '';
         $categorydata['type'] = isset($categorydata['type']) ? $categorydata['type'] : 'normal';
         if ($categorydata['type']=='index') {
             $categoryid = 'all';
         } elseif ($categorydata['type']=='parent') {
-            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page} LEFT JOIN {articlecategory} ON (pageid=ac_pageid) WHERE pg_parent = ? AND pg_link LIKE 'jojo_plugin_jojo_article'", $pageid);
+            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page} LEFT JOIN {articlecategory} ON (pageid=ac_pageid) WHERE pg_parent = ? AND pg_link = 'jojo_plugin_jojo_article'", $pageid);
             foreach ($childcategories as $c) {
                 $categoryid[] = $c['articlecategoryid'];
             }

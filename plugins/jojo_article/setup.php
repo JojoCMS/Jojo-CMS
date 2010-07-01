@@ -219,6 +219,7 @@ if (Jojo::getOption('article_enable_categories')) {
             set a category for them and add any category-less articles to that category,
             make sure that the pageids have been saved into existing categories */
             foreach($articlepages as $k => $page) {
+                $catid = '';
                $pageid = $page['pageid'];
                $pageurl = $page['pg_url'];
                $pagelanguage = $page['pg_language'];
@@ -227,15 +228,14 @@ if (Jojo::getOption('article_enable_categories')) {
                     if ($categories[$pageid]['ac_url'] != $pageurl ) {
                         Jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE ac_pageid = ? ", array($pageurl, $pageid));
                     }
-                    $catid = $categories[$pageid]['articlecategoryid'];        
                 // no category is set for this page id
                 } else{
                     $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (ac_pageid, ac_url) VALUES ('$pageid', '$pageurl')");
                 }
                 //update all articles with the pageid found for that language
-                if ($articles) {
+                if ($articles && $catid) {
                     foreach ($articles as $a) {
-                        Jojo::updateQuery("UPDATE {article} SET ar_category = ? WHERE ar_language = ? ", array($catid, $pagelanguage));
+                        Jojo::updateQuery("UPDATE {article} SET ar_category = ? WHERE ar_language = ? AND ar_category= '0' ", array($catid, $pagelanguage));
                     }
                 }
             }
