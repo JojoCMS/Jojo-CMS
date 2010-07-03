@@ -742,7 +742,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         global $page;
         /* See if we have any article sections to display and find all of them */
-        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link LIKE 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes' ORDER BY pg_parent");
+        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes' ORDER BY pg_parent");
         if (!count($articleindexes)) {
             return $sitemap;
         }
@@ -851,7 +851,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if (!is_array($urls)) {
             $urls = array();
-            $articleindexes = Jojo::selectQuery("SELECT p.*, ac.* FROM {page} p  LEFT JOIN {articlecategory} ac ON (pageid=ac_pageid) WHERE pg_link LIKE 'Jojo_Plugin_Jojo_article' AND pg_sitemapnav = 'yes'");
+            $articleindexes = Jojo::selectQuery("SELECT p.*, ac.* FROM {page} p  LEFT JOIN {articlecategory} ac ON (pageid=ac_pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes'");
             if (count($articleindexes)==0) {
                return $tree;
             }
@@ -884,11 +884,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function xmlsitemap($sitemap)
     {
         /* Get articles from database */
-        $articles = Jojo::selectQuery("SELECT * FROM {article} WHERE ar_livedate<".time()." AND (ar_expirydate<=0 OR ar_expirydate>".time().")");
+        $articles = self::getArticles('', '', 'all');
 
         /* Add articles to sitemap */
         foreach($articles as $a) {
-            $url = _SITEURL . '/'. self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']);
+            $url = _SITEURL . '/'. $a['url'];
             $lastmod = strtotime($a['ar_date']);
             $priority = 0.6;
             $changefreq = '';
@@ -1296,34 +1296,35 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $full = (Jojo::getOption('article_full_rss_description') == 'yes') ? true : false;
         $site = mb_convert_encoding(_SITETITLE, 'HTML-ENTITIES', 'UTF-8');
         $page = mb_convert_encoding($articles[0]['category'], 'HTML-ENTITIES', 'UTF-8');
+        $pageurl = _SITEURL . '/' . $articles[0]['categoryurl'];
         $description = mb_convert_encoding(Jojo::getOption('sitedesc', Jojo::getOption('sitetitle')), 'HTML-ENTITIES', 'UTF-8');
         $rss  = "<?xml version=\"1.0\" ?".">\n";
         $rss .= "<rss version=\"2.0\">\n";
         $rss .= "<channel>\n";
         $rss .= "<title>" . $site . ': ' . $page . "</title>\n";
         $rss .= "<description>" . $description . "</description>\n";
-        $rss .= "<link>"._SITEURL . '/' . $articles[0]['categoryurl'] . "</link>\n";
+        $rss .= "<link>" . $pageurl . "</link>\n";
         $rss .= "<copyright>" . htmlentities(_SITETITLE) . " " . date('Y', strtotime('now')) . "</copyright>\n";
 
         $limit = Jojo::getOption('article_rss_num_articles', 15);
         $articles = array_slice($articles, 0, $limit);
         foreach ($articles as &$a) {
-            $a['ar_body'] = Jojo::relative2absolute($a['ar_body'], _SITEURL);
-            /* chop the article up to the first [[snip]] */
+            $a['body'] = Jojo::relative2absolute($a['ar_body'], _SITEURL);
+            /* chop up to the first [[snip]] */
             if ($full) {
-                $a['ar_body'] = str_ireplace('[[snip]]','',$a['ar_body']);
+                $a['body'] = str_ireplace('[[snip]]','',$a['body']);
             } else {
-                $arr = Jojo::iExplode('[[snip]]', $a['ar_body']);
+                $arr = Jojo::iExplode('[[snip]]', $a['body']);
                 if (count($arr) === 1) {
-                    $a['ar_body'] = substr($a['ar_body'], 0, Jojo::getOption('article_rss_truncate', 800)) . ' ...';
+                    $a['body'] = substr($a['body'], 0, Jojo::getOption('article_rss_truncate', 800)) . ' ...';
                 } else {
-                    $a['ar_body'] = $arr[0];
+                    $a['body'] = $arr[0];
                 }
             } 
             $source = _SITEURL . "/" . $a['url'];
-            if (Jojo::getOption('article_feed_source_link') == 'yes') $a['ar_body'] .= '<p>Source: <a href="' . $source . '">' . $a['title'] . '</a></p>';
             $a['body'] = mb_convert_encoding($a['ar_body'], 'HTML-ENTITIES', 'UTF-8');
             $a['title'] = mb_convert_encoding($a['title'], 'HTML-ENTITIES', 'UTF-8');
+            if (Jojo::getOption('article_feed_source_link') == 'yes') $a['body'] .= '<p>Source: <a href="' . $source . '">' . $a['title'] . '</a></p>';
             $rss .= "<item>\n";
             $rss .= "<title>" . self::rssEscape($a['title']) . "</title>\n";
             $rss .= "<description>" . self::rssEscape($a['body']) . "</description>\n";
