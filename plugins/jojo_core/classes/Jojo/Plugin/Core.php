@@ -161,9 +161,10 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
         $perms = new Jojo_Permissions();
         $pagetree = new hktree();
+        $now    = time();
 
         // build query to handle new language/country functionality.
-        $query = 'SELECT * FROM {page} as page';
+        $query = 'SELECT pageid, pg_parent, pg_url, pg_link, pg_title, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_sitemapnav FROM {page} as page';
         if ( _MULTILANGUAGE) {
             if ( Jojo::tableexists ( 'lang_country' )) {
                 $query .= " LEFT JOIN {lang_country} as lang_country ON (page.pg_language = lc_code)
@@ -171,12 +172,16 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             } else {
                 $query .= " LEFT JOIN {language} as language ON (page.pg_language = languageid)";
             }
+            $query .= " AND language.active = 'yes'";
         }
-        $query .= " WHERE  pg_sitemapnav = 'yes' AND pg_livedate < ? AND  (pg_expirydate = 0 OR pg_expirydate > ?)";
-        $query .= _MULTILANGUAGE ? " AND language.active = 'yes'" : '';
         $query .= " ORDER BY pg_order";
-        $sitemappages = Jojo::selectQuery($query, array(strtotime('now'), strtotime('now')));
-        foreach ($sitemappages as $sp) {
+        $sitemappages = Jojo::selectQuery($query);
+        foreach ($sitemappages as $k => $sp) {
+            // strip out expired pages
+            if ($sp['pg_sitemapnav'] != 'yes' || $sp['pg_livedate']>$now || (!empty($sp['pg_expirydate']) && $sp['pg_expirydate']<$now) || ($sp['pg_status']=='inactive' || ($sp['pg_status']=='hidden' && !isset($_SESSION['showhidden'])))) {
+                unset($sitemappages[$k]);
+                continue;
+            }
             if (_MULTILANGUAGE) {
                 $language = !empty($sp['pg_language']) ? $sp['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
                 $mldata = Jojo::getMultiLanguageData();
@@ -185,7 +190,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 $root = $mldata['roots'][$language];
             }
             $link  =  Jojo::urlPrefix( Jojo::yes2true($sp['pg_ssl']));
-            if (_MULTILANGUAGE && ($sp['pageid'] == $home || $sp['pageid'] == $root)) { //language homepage or root
+            if (_MULTILANGUAGE && $sp['pageid'] == $root) { //language root - no link
+                $link = false;
+            } elseif (_MULTILANGUAGE && $sp['pageid'] == $home) { //language homepage
                 $link = _SITEURL . '/' . Jojo::getMultiLanguageString($language,false);
             } elseif ($sp['pageid'] == 1 ) { //homepage
                 $link = _SITEURL;
@@ -200,7 +207,8 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             }
             $perms->getPermissions('page', $sp['pageid']);
             if ($perms->hasPerm($_USERGROUPS, 'show')) {
-                $sp['title'] = htmlspecialchars($sp['pg_title'],ENT_COMPAT,'UTF-8',false);
+                $sp['title'] = !empty($sp['pg_menutitle']) ? $sp['pg_menutitle'] : $sp['pg_title'];
+                $sp['title'] = htmlspecialchars($sp['title'],ENT_COMPAT,'UTF-8',false);
                 $pagetree->addNode($sp['pageid'], $sp['pg_parent'], $sp['title'], $link);
             }
 
@@ -227,6 +235,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     {
         /* Get pages from database */
         $perms = new Jojo_Permissions();
+        $now    = time();
 
         // build query to handle new language country functionality.
         $query = 'SELECT * FROM {page} as page';
@@ -237,13 +246,16 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             } else {
                 $query .= " LEFT JOIN {language} as language ON (page.pg_language = languageid)";
             }
+            $query .= " WHERE language.active = 'yes'";
         }
-        $query .= " WHERE pg_index = 'yes' AND pg_xmlsitemapnav = 'yes' AND pg_livedate < ? AND (pg_expirydate = 0 OR pg_expirydate > ?)";
-        $query .= _MULTILANGUAGE ? " AND language.active = 'yes'" : '';
-        $query .= " ORDER BY pg_order";
-        $sitemappages = Jojo::selectQuery($query, array(strtotime('now'), strtotime('now')));
+        $sitemappages = Jojo::selectQuery($query);
         /* Add pages to the sitemap */
-        foreach ($sitemappages as $p) {
+        foreach ($sitemappages as $k =>$p) {
+            // strip out expired pages
+            if ($p['pg_index'] != 'yes' || $p['pg_xmlsitemapnav'] != 'yes' || $p['pg_livedate']>$now || (!empty($p['pg_expirydate']) && $p['pg_expirydate']<$now) || $p['pg_status']!='active') {
+                unset($sitemappages[$k]);
+                continue;
+            }
             // Get multilanguage data for this page
             if (_MULTILANGUAGE) {
                 $language = !empty($p['pg_language']) ? $p['pg_language'] : Jojo::getOption('multilanguage-default', 'en');

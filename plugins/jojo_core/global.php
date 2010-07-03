@@ -57,7 +57,7 @@ if ($page->getValue('pg_parent') != $root) {
    if (!isset($tags)) {
     foreach (JOJO::listPlugins('jojo_tags.php') as $pluginfile) {
         require_once($pluginfile);
-             $tags = JOJO_Plugin_Jojo_Tags::getTags('jojo_core', $page->id);
+             $tags = JOJO_Plugin_Jojo_Tags::getTags('Core', $page->id);
             if (count($tags) > 0) {
                 $smarty->assign('tags', $tags);
             }
@@ -93,34 +93,31 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         // those pages that are configured to appear in all main nav menus.
         if ((_MULTILANGUAGE) && (Jojo::fieldExists ( 'page', 'pg_mainnavalways' )) && ($field == 'mainnav')) {
             $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_followto, pg_mainnavalways, pg_secondarynav
+                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_followto, pg_mainnavalways, pg_secondarynav
                          FROM
                            {page}
                          WHERE
-                           pg_livedate<$now AND (pg_expirydate<=0 OR pg_expirydate>$now)
-                         AND
-                           pg_status='active'
-                         AND
                            (pg_%s = 'yes' or pg_mainnavalways = 'yes')
                          ORDER BY
                            pg_order", $field);
         } else {
         $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_followto
+                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_followto, pg_status, pg_livedate, pg_expirydate
                          FROM
                            {page}
                          WHERE
-                           pg_livedate<$now AND (pg_expirydate<=0 OR pg_expirydate>$now)
-                         AND
-                           pg_status='active'
-                         AND
                            pg_%s = 'yes'
                          ORDER BY
                            pg_order", $field);
         }
         $_cached[$field] = array();
         $result = Jojo::selectquery($query);
-        foreach (Jojo::selectquery($query) as $row) {
+        foreach ($result as $k => $row) {
+            // strip out expired pages
+            if ($row['pg_livedate']>$now || (!empty($row['pg_expirydate']) && $row['pg_expirydate']<$now) || ($row['pg_status']=='inactive' || ($row['pg_status']=='hidden' && !isset($_SESSION['showhidden'])))) {
+                unset($result[$k]);
+                continue;
+            }
             $r = $row['pg_parent'];
             if (!isset($_cached[$field][$r])) {
                 $_cached[$field][$r] = array();
