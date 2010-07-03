@@ -1,0 +1,169 @@
+Index: plugins/jojo_core/external/xinha/plugins/ImageManager/Classes/Files.php
+===================================================================
+--- plugins/jojo_core/external/xinha/plugins/ImageManager/Classes/Files.php	(revision 1191)
++++ plugins/jojo_core/external/xinha/plugins/ImageManager/Classes/Files.php	(working copy)
+@@ -33,7 +33,7 @@
+ 	 * @param boolean $unique create unique destination file if true.
+ 	 * @return string the new copied filename, else error if anything goes bad.
+ 	 */
+-	function copyFile($source, $destination_dir, $destination_file, $unique=true) 
++	static function copyFile($source, $destination_dir, $destination_file, $unique=true) 
+ 	{
+ 		if(!is_uploaded_file($source) && !(file_exists($source) && is_file($source))) 
+ 			return FILE_ERROR_NO_SOURCE;
+@@ -77,7 +77,7 @@
+ 	 * @param string $newFolder specifiy the full path of the new folder.
+ 	 * @return boolean true if the new folder is created, false otherwise.
+ 	 */
+-	function createFolder($newFolder) 
++	static function createFolder($newFolder) 
+ 	{
+ 		mkdir ($newFolder, 0777);
+ 		return chmod($newFolder, 0777);
+@@ -90,7 +90,7 @@
+ 	 * @param string $filename the orginal filename
+ 	 * @return string the escaped safe filename
+ 	 */
+-	function escape($filename)
++	static function escape($filename)
+ 	{
+ 		Return preg_replace('/[^\w\._]/', '_', $filename);
+ 	}
+@@ -100,7 +100,7 @@
+ 	 * @param string $file file to be deleted
+ 	 * @return boolean true if deleted, false otherwise.
+ 	 */
+-	function delFile($file) 
++	static function delFile($file) 
+ 	{
+ 		if(is_file($file)) 
+ 			Return unlink($file);
+@@ -116,7 +116,7 @@
+ 	 * error if the directory is not empty.
+ 	 * @return boolean true if deleted.
+ 	 */
+-	function delFolder($folder, $recursive=false) 
++	static function delFolder($folder, $recursive=false) 
+ 	{
+ 		$deleted = true;
+ 		if($recursive) 
+@@ -158,7 +158,7 @@
+ 	 * @param string $path the path
+ 	 * @return string path with trailing /
+ 	 */
+-	function fixPath($path) 
++	static function fixPath($path) 
+ 	{
+ 		//append a slash to the path if it doesn't exists.
+ 		if(!(substr($path,-1) == '/'))
+@@ -172,7 +172,7 @@
+ 	 * @param string $pathB path two
+ 	 * @return string a trailing slash combinded path.
+ 	 */
+-	function makePath($pathA, $pathB) 
++	static function makePath($pathA, $pathB) 
+ 	{
+ 		$pathA = Files::fixPath($pathA);
+ 		if(substr($pathB,0,1)=='/')
+@@ -187,7 +187,7 @@
+ 	 * @param string $pathB the ending path with file
+ 	 * @return string combined file path.
+ 	 */
+-	function makeFile($pathA, $pathB) 
++	static function makeFile($pathA, $pathB) 
+ 	{		
+ 		$pathA = Files::fixPath($pathA);
+ 		if(substr($pathB,0,1)=='/')
+@@ -202,7 +202,7 @@
+ 	 * @param int $size the raw filesize
+ 	 * @return string formated file size.
+ 	 */
+-	function formatSize($size) 
++	static function formatSize($size) 
+ 	{
+ 		if($size < 1024) 
+ 			return $size.' bytes';	
+@@ -218,7 +218,7 @@
+ 	 * @param string dir path
+ 	 * @return int
+ 	 */
+-	function dirSize($dirName = '.')
++	static function dirSize($dirName = '.')
+ 	{
+ 		$dir  = dir($dirName);
+ 		$size = 0;
+@@ -246,7 +246,7 @@
+ 	 * @param string new filename (just the name, without path or extension)
+ 	 * @author Krzysztof Kotowicz <koto@webworkers.pl>
+ 	 */
+-	function renameFile($oldPath, $newName) {
++	static function renameFile($oldPath, $newName) {
+ 
+ 		if(!(file_exists($oldPath) && is_file($oldPath)))
+ 			return FILE_ERROR_NO_SOURCE;
+@@ -265,7 +265,7 @@
+ 
+ 	}
+ 	
+-	function rename ($oldPath,$newPath)
++	static function rename ($oldPath,$newPath)
+ 	{
+ 		if(!(is_dir($oldPath) || is_file($oldPath)))
+ 			return FILE_ERROR_NO_SOURCE;
+@@ -290,7 +290,7 @@
+ 	 *  
+ 	 * @return mixed bool true on pass, number on fail
+ 	 */
+-  	function copyDir($basePath, $source, $dest, $overwrite = false)
++  	static function copyDir($basePath, $source, $dest, $overwrite = false)
+ 	{
+ 		if(!is_dir($basePath . $dest))
+ 		{
+Index: plugins/jojo_core/external/xinha/plugins/ImageManager/backend.php
+===================================================================
+--- plugins/jojo_core/external/xinha/plugins/ImageManager/backend.php	(revision 1191)
++++ plugins/jojo_core/external/xinha/plugins/ImageManager/backend.php	(working copy)
+@@ -30,7 +30,7 @@
+ */
+ 
+ // Strip slashes if MQGPC is on
+-set_magic_quotes_runtime(0);
++//set_magic_quotes_runtime(0);
+ if(get_magic_quotes_gpc())
+ {
+   $to_clean = array(&$_GET, &$_POST, &$_REQUEST, &$_COOKIE);
+Index: plugins/jojo_core/external/xinha/plugins/ExtendedFileManager/backend.php
+===================================================================
+--- plugins/jojo_core/external/xinha/plugins/ExtendedFileManager/backend.php	(revision 1191)
++++ plugins/jojo_core/external/xinha/plugins/ExtendedFileManager/backend.php	(working copy)
+@@ -37,7 +37,7 @@
+ 
+ 
+ // Strip slashes if MQGPC is on
+-set_magic_quotes_runtime(0);
++//set_magic_quotes_runtime(0);
+ if(get_magic_quotes_gpc())
+ {
+   $to_clean = array(&$_GET, &$_POST, &$_REQUEST, &$_COOKIE);
+Index: plugins/jojo_core/external/xinha/contrib/php-xinha.php
+===================================================================
+--- plugins/jojo_core/external/xinha/contrib/php-xinha.php	(revision 1191)
++++ plugins/jojo_core/external/xinha/contrib/php-xinha.php	(working copy)
+@@ -29,7 +29,7 @@
+     $bk = array();
+     $bk['data']       = serialize($Data);
+     
+-    @session_start();
++    if (!isset($_SESSION)){session_start();}    
+     if(!isset($_SESSION[$KeyLocation]))
+     {
+       $_SESSION[$KeyLocation] = uniqid('Key_');
+@@ -144,7 +144,7 @@
+    {
+      $bk = $_REQUEST['backend_data'];
+      session_name($bk['session_name']);
+-     @session_start();
++    if (!isset($_SESSION)){session_start();}
+      if(!isset($_SESSION[$bk['key_location']])) return NULL;
+      
+      if($bk['hash']         === 
