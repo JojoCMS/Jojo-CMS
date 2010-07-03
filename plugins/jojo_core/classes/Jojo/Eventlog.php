@@ -49,11 +49,12 @@ class Jojo_Eventlog
     {
         if (Jojo::tableexists('eventlog')) {
             $query = 'INSERT INTO {eventlog} SET
-                                el_datetime = NOW(), el_code = ?, el_shortdesc = ?,
+                                el_datetime = ?, el_code = ?, el_shortdesc = ?,
                                 el_desc = ?, el_importance = ?, el_userid = ?,
                                 el_username = ?, el_ip = ?, el_uri = ?,
                                 el_referer = ?, el_browser = ?';
             Jojo::insertQuery($query, array(
+                                  date( 'Y-m-d H:i:s', time()),
                                   $this->code,
                                   $this->shortdesc,
                                   $this->desc,
