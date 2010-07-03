@@ -110,6 +110,8 @@ class Jojo {
                $_USERGROUPS[] = $group['groupid'];
                if ($group['groupid'] == 'admin') {
                    $smarty->assign('adminloggedin', true);
+                   // allow admins to see hidden pages
+                   $_SESSION['showhidden'] = true;                   
                }
             }
         }
@@ -2685,7 +2687,6 @@ class Jojo {
     The full date / time should be given on the rollover, outside the scope of this function
     */
     public static function relativeDate($timestamp, $showtime=true) {
-        $now = strtotime('now');
         if ( is_null($timestamp) || ($timestamp == 0) ) {return '';}
         if (date('d/m/Y',strtotime('+0 day')) == date('d/m/Y',$timestamp)) {
             $d = $showtime ? 'Today, '.date("h:ia",$timestamp) : 'Today';
