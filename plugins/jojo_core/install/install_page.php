@@ -44,7 +44,7 @@ $query = "
       `pg_link` varchar(255) NOT NULL default '',
       `pg_order` int(11) NOT NULL default '0',
       `pg_parent` int(11) NOT NULL default '0',
-      `pg_status` enum('active','inactive') NOT NULL default 'active',
+      `pg_status` enum('active','inactive','hidden') NOT NULL default 'active',
       `pg_ssl` enum('yes','no') NOT NULL default 'no',
       `pg_index` enum('yes','no') NOT NULL default 'yes',
       `pg_followto` enum('yes','no') NOT NULL default 'yes',
