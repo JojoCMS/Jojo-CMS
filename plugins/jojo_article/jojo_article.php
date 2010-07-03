@@ -885,9 +885,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         /* Get articles from database */
         $articles = self::getArticles('', '', 'all');
-
+        $now = time();
+        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link = 'jojo_plugin_jojo_article'");
         /* Add articles to sitemap */
-        foreach($articles as $a) {
+        foreach($articles as $k => $a) {
+            $apage =  $articleindexes[$a['ac_pageid']];
+            // strip out articles from expired pages
+            if ($apage['pg_index'] != 'yes' || $apage['pg_xmlsitemapnav'] != 'yes' || $apage['pg_livedate']>$now || (!empty($apage['pg_expirydate']) && $apage['pg_expirydate']<$now) || $apage['pg_status']!='active') {
+                unset($articles[$k]);
+                continue;
+            }
             $url = _SITEURL . '/'. $a['url'];
             $lastmod = strtotime($a['ar_date']);
             $priority = 0.6;
