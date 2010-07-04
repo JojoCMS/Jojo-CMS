@@ -73,7 +73,6 @@ class Jojo_Plugin_Jojo_SitemapXML extends Jojo_Plugin
 
         /* handle pings */
         $ping = Jojo::getFormData('ping', false);
-
         if ($ping) {
             $success=Jojo_Plugin_Jojo_SitemapXML::ping($ping);
             if ($success) {
@@ -110,7 +109,6 @@ class Jojo_Plugin_Jojo_SitemapXML extends Jojo_Plugin
 
         /* handle pings */
         $ping = Jojo::getFormData('ping', false);
-
         if ($ping) {
             return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         }
