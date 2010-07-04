@@ -24,12 +24,38 @@ class Jojo_Plugin_Jojo_SitemapXML extends Jojo_Plugin
 
     function ping($engine='google')
     {
-        /* ping all engines (currently only Google) */
-        if ($engine == 'ping') {
-            $engine = 'google';
-        }
-        if (strtolower($engine) == 'google') {
+        /* ping all engines */
+        switch(strtolower($engine)){
+          case 'ping':
             $url = 'http://www.google.com/webmasters/sitemaps/ping?sitemap='.urlencode(_SITEURL.'/sitemap.xml'); //hardcoded to sitemap.xml
+            $googlesuccess = Jojo_Plugin_Jojo_SitemapXML::pingengine($url);
+
+            $url = 'http://www.bing.com/webmaster/ping.aspx?siteMap='.urlencode(_SITEURL.'/sitemap.xml'); //hardcoded to sitemap.xml
+            $bingsuccess = Jojo_Plugin_Jojo_SitemapXML::pingengine($url);
+
+            break;
+
+          case 'google':
+            $url = 'http://www.google.com/webmasters/sitemaps/ping?sitemap='.urlencode(_SITEURL.'/sitemap.xml'); //hardcoded to sitemap.xml
+            $googlesuccess = Jojo_Plugin_Jojo_SitemapXML::pingengine($url);
+            break;
+
+          case 'bing':
+            $url = 'http://www.bing.com/webmaster/ping.aspx?siteMap='.urlencode(_SITEURL.'/sitemap.xml'); //hardcoded to sitemap.xml
+            $bingsuccess = Jojo_Plugin_Jojo_SitemapXML::pingengine($url);
+
+        } // switch
+
+        if ($bingsuccess && $googlesuccess) return "google bing";
+        if ($bingsuccess) return "bing";
+        if ($googlesuccess) return "google";
+
+        return false;
+
+    }
+
+    function pingengine($url)
+    {
             foreach (Jojo::listPlugins('external/snoopy/Snoopy.class.php') as $pluginfile) {
                 require_once($pluginfile);
                 break;
@@ -38,8 +64,7 @@ class Jojo_Plugin_Jojo_SitemapXML extends Jojo_Plugin
             $snoopy->fetch($url);
             /* a 200 response means the ping was successful. Any other response is a failure. */
             if (strpos($snoopy->response_code, '200') !== false) return true;
-        }
-        return false;
+
     }
 
     function _getContent()
@@ -48,9 +73,11 @@ class Jojo_Plugin_Jojo_SitemapXML extends Jojo_Plugin
 
         /* handle pings */
         $ping = Jojo::getFormData('ping', false);
+
         if ($ping) {
-            if (Jojo_Plugin_Jojo_SitemapXML::ping($ping)) {
-                echo 'Ping successful';
+            $success=Jojo_Plugin_Jojo_SitemapXML::ping($ping);
+            if ($success) {
+                echo $success.' Pinged Successfully';
             } else {
                 echo 'Ping failed';
             }
@@ -83,6 +110,7 @@ class Jojo_Plugin_Jojo_SitemapXML extends Jojo_Plugin
 
         /* handle pings */
         $ping = Jojo::getFormData('ping', false);
+
         if ($ping) {
             return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         }

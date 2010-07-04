@@ -23,8 +23,8 @@ $_provides['pluginClasses'] = array(
         );
 
 /* Register URI patterns */
-Jojo::registerURI("sitemap/[ping:ping]",        'Jojo_Plugin_Jojo_SitemapXML'); // "sitemap/ping/" - will ping all available engines
 Jojo::registerURI("sitemap/ping/[ping:string]", 'Jojo_Plugin_Jojo_SitemapXML'); // "sitemap/ping/google/"
+Jojo::registerURI("sitemap/[ping:ping]",        'Jojo_Plugin_Jojo_SitemapXML'); // "sitemap/ping/" - will ping all available engines
 
 /* Register filters */
 Jojo::addFilter('jojo_robots_rules', 'robots', 'Jojo_Sitemap');
