@@ -3,5 +3,5 @@
 <input readonly="readonly" type="text" class="counter" name="fm_{$fd_field}_counter" id="fm_{$fd_field}_counter" size="3" maxlength="3" value="{$counterstrlen}" />
 <script type="text/javascript">countDown('fm_{$fd_field}','fm_{$fd_field}_counter',{$counter});</script>
 {else}
-<input type="text" name="fm_{$fd_field}" id="fm_{$fd_field}" size="{$fd_size}" value="{$value}" {if $error != ""}class="error"{/if} {if $readonly == "yes"}readonly="readonly"{/if} title="{$fd_help}" />{if $fd_units} {$fd_units}{/if}
+<input type="text" name="fm_{$fd_field}" id="fm_{$fd_field}" size="{$fd_size}" value="{$value}" {if $error != ""}class="error"{/if} {if $readonly}readonly="readonly"{/if} title="{$fd_help}" />{if $fd_units} {$fd_units}{/if}
 {/if}

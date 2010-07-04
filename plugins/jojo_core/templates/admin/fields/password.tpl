@@ -1,3 +1,3 @@
 <input {if $error != ""}class="error"{/if} type="hidden" name="fm_{$fd_field}[orig]" id="fm_{$fd_field}[orig]" value="{$value}" readonly="readonly" />
-<input {if $error != ""}class="error"{/if} type="password" name="fm_{$fd_field}[1]" id="fm_{$fd_field}[1]"  size="{$fd_size}" value="" {if $readonly == "yes"}readonly="readonly"{/if} title="{$fd_help}" />
-<br /><input {if $error != ""}class="error"{/if} type="password" name="fm_{$fd_field}[2]" id="fm_{$fd_field}[2]"  size="{$fd_size}" value="" {if $readonly == "yes"}readonly="readonly"{/if} title="{$fd_help}" /> (confirm)
+<input {if $error != ""}class="error"{/if} type="password" name="fm_{$fd_field}[1]" id="fm_{$fd_field}[1]"  size="{$fd_size}" value="" {if $readonly}readonly="readonly"{/if} title="{$fd_help}" />
+<br /><input {if $error != ""}class="error"{/if} type="password" name="fm_{$fd_field}[2]" id="fm_{$fd_field}[2]"  size="{$fd_size}" value="" {if $readonly}readonly="readonly"{/if} title="{$fd_help}" /> (confirm)

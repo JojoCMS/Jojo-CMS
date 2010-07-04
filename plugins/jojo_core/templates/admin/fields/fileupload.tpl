@@ -8,4 +8,4 @@
 <input type="hidden" name="fm_{$this->fd_field}" value="{$this->value}" />
 <div style="color: #999">{$this->value}</div>
 <input type="hidden" name="MAX_FILE_SIZE" value="{$this->fd_maxvalue}" />
-<input {$class} type="file" name="fm_FILE_{$this->fd_field}" id="fm_FILE_{$this->fd_field}"  size="{$this->fd_size}" value="" {$readonly} onchange="fullsave = true;" title="{fd_help}" />
+<input {$class} type="file" name="fm_FILE_{$this->fd_field}" id="fm_FILE_{$this->fd_field}"  size="{$this->fd_size}" value=""  onchange="fullsave = true;" title="{fd_help}" />

@@ -1,6 +1,7 @@
-{if $readonly == "yes"}<input type="hidden" name="fm_{$fd_field}" id="fm_{$fd_field}" value="{$value}" />{/if}
-
-<select name="fm_{$fd_field}" id="fm_{$fd_field}" size="{$rows}" {if $error != ""}class="error"{/if} {if $readonly == "yes"}readonly="readonly"{/if} title="{$fd_help}">
+{if $readonly}
+<input type="hidden" name="fm_{$fd_field}" id="fm_{$fd_field}" value="{$value}" />
+{/if}
+<select name="fm_{$fd_field}" id="fm_{$fd_field}" size="{$rows}" {if $error != ""}class="error"{/if} {if $readonly}readonly="readonly"{/if} title="{$fd_help}">
     <option value=""></option>
     {foreach from=$options key=k item=item}
     {if isset($item.group) && $item.group != "" && $item.group != $item.group}<optgroup label="{$item.gruppe}">{/if}

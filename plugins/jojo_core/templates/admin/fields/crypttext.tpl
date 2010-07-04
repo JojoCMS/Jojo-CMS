@@ -1,1 +1,1 @@
-<input type="text" name="fm_{$fd_field}" id="fm_{$fd_field}" size="{$fd_size}" title="{$fd_help}" value="{$value}" {if $readonly == "yes"}readonly="readonly"{/if} />
+<input type="text" name="fm_{$fd_field}" id="fm_{$fd_field}" size="{$fd_size}" title="{$fd_help}" value="{$value}" {if $readonly}readonly="readonly"{/if} />
