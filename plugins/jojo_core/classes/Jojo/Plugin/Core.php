@@ -164,7 +164,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $now    = time();
 
         // build query to handle new language/country functionality.
-        $query = 'SELECT pageid, pg_parent, pg_url, pg_link, pg_title, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_sitemapnav FROM {page} as page';
+        $query = 'SELECT pageid, pg_parent, pg_url, pg_link, pg_title, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_sitemapnav, pg_ssl FROM {page} as page';
         if ( _MULTILANGUAGE) {
             if ( Jojo::tableexists ( 'lang_country' )) {
                 $query .= " LEFT JOIN {lang_country} as lang_country ON (page.pg_language = lc_code)
