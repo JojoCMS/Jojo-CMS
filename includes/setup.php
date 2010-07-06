@@ -254,12 +254,17 @@ foreach (Jojo::listPlugins('setup.php', 'all', false, true) as $pluginfile) {
 }
 
 /* Check for orphaned pages */
-$pages = Jojo::selectQuery("SELECT pageid, pg_title, pg_link FROM {page}  WHERE pg_link!=''");
+$pages = Jojo::selectAssoc("SELECT pageid as id, pageid, pg_title, pg_link, pg_parent FROM {page}");
 $html = '';
 foreach($pages as $page) {
-    $classname = strtolower($page['pg_link']);
-    if (!class_exists($classname)) {
-        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found <b>".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+    if ($page['pg_link'] != '') {
+        $classname = strtolower($page['pg_link']);
+        if (!class_exists($classname)) {
+            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found <b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+        }
+    }
+    if ($page['pg_parent'] != 0 && !isset($pages[$page['pg_parent']]) ) {
+        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
     }
 }
 if (!empty($html)) {
