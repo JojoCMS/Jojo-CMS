@@ -30,6 +30,7 @@ class Jojo_Plugin_Logout extends Jojo_Plugin
         /* Delete session values */
         $userid = $_SESSION['userid'];
         unset($_SESSION['userid']);
+        unset($_SESSION['showhidden']);
 
         $_SESSION['loggingout'] = true;
         
