@@ -24,7 +24,7 @@ $_provides['pluginClasses'] = array(
         );
 
 /* Register URI handlers */
-Jojo::registerURI(null, 'Jojo_Plugin_Jojo_article', 'isArticleUrl');
+Jojo::registerURI(null, 'jojo_plugin_jojo_article', 'isArticleUrl');
 Jojo::registerURI(null, 'Jojo_Plugin_Jojo_article_admin', 'isArticleUrl');
 
 /* Article RSS icon filter */

@@ -19,7 +19,7 @@
  */
 
 /* Articles */
-$data = Jojo::selectRow("SELECT * FROM {page}  WHERE pg_link='jojo_plugin_jojo_article'");
+$data = Jojo::selectRow("SELECT * FROM {page}  WHERE pg_link LIKE 'jojo_plugin_jojo_article'");
 if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Adding <b>Articles</b> Page to menu<br />";
     $articlespage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Articles', pg_link='jojo_plugin_jojo_article', pg_url='articles'");
@@ -32,6 +32,8 @@ $data = Jojo::selectRow("SELECT * FROM {page}  WHERE pg_url='admin/edit/article'
 if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Adding <b>Edit Articles</b> Page to menu<br />";
     $editarticlepage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Edit Articles', pg_link='Jojo_Plugin_Admin_Edit', pg_url='admin/edit/article', pg_parent=?, pg_order=2", array($_ADMIN_CONTENT_ID));
+} else {
+    $editarticlepage = $data['pageid'];
 }
 
 

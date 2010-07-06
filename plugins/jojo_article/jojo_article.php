@@ -1131,31 +1131,31 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* "$prefix/[id:integer]/[string]" eg "articles/123/name-of-article/" */
             $prefix = $matches[1];
             $getvars = array(
-                        'id' => $matches[2],
+                        'id' => $matches[2]
                         );
-        } elseif (preg_match('#^(.+)/([0-9]+)$#', $uri, $matches)) {
+         } elseif (preg_match('#^(.+)/([0-9]+)$#', $uri, $matches)) {
             /* "$prefix/[id:integer]" eg "articles/123/" */
             $prefix = $matches[1];
             $getvars = array(
-                        'id' => $matches[2],
+                        'id' => $matches[2]
                         );
         } elseif (preg_match('#^(.+)/p([0-9]+)$#', $uri, $matches)) {
             /* "$prefix/p[pagenum:([0-9]+)]" eg "articles/p2/" for pagination of articles */
             $prefix = $matches[1];
             $getvars = array(
-                        'pagenum' => $matches[2],
+                        'pagenum' => $matches[2]
                         );
         } elseif (preg_match('#^(.+)/rss$#', $uri, $matches)) {
             /* eg "articles/rss/" for rss feeds */
             $prefix = $matches[1];
             $getvars = array(
-                        'action' => 'rss',
+                        'action' => 'rss'
                         );
         } elseif (preg_match('#^(.+)/([a-z0-9-_]+)$#', $uri, $matches)) {
             /* "$prefix/[url:((?!rss)string)]" eg "articles/name-of-article/" ignoring "articles/rss" */
             $prefix = $matches[1];
             $getvars = array(
-                        'url' => $matches[2],
+                        'url' => $matches[2]
                         );
         } else {
             /* Didn't match */
@@ -1164,7 +1164,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         /* Check the prefix matches */
         if ($res = self::checkPrefix($prefix)) {
-  
             /* If full uri matches a prefix it's an index page so ignore it and let the page plugin handle it */
             if (self::checkPrefix(trim($uri, '/'))) return false;
       
