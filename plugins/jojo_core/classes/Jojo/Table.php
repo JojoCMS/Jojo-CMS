@@ -97,7 +97,7 @@ class Jojo_Table {
                     $fieldvalues['DISPLAYFIELDVALUE'] = $page['pg_title'];
                 }
             }
-        } 
+        }
         /* Set all the fields to their values */
         if ($fieldvalues) {
             foreach ($fieldvalues as $k => $v) {
@@ -469,7 +469,7 @@ class Jojo_Table {
                     foreach ($records as &$r) {
                         $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? $displaytitles[$r['display']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
                     }
-                } 
+                }
            }
             //get the TABLEDATA options for the category
             $catidfield = '';

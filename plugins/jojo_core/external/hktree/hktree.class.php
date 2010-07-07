@@ -33,8 +33,8 @@ class hktree
     var $liststyletype = '';      //Deprecated
     var $liststyle = 'circle';    //The type of list style to use on plain lists
     var $selected = '';           //Selected item in select lists
-    var $disabled = '';           //item in select list that should be disabled (if item has children, they get disabled to) 
-    
+    var $disabled = '';           //item in select list that should be disabled (if item has children, they get disabled to)
+
     var $plus = '<b>+</b>';       //image or string to use for closed elements
     var $minus = '<b>-</b>';      //image or string to use for opened elements
     var $nokids = '';             //image or string to use for elements with no kids
@@ -182,59 +182,51 @@ class hktree
         if (isset($this->statuses[$start]) && ($this->statuses[$start] == 'expired')) {
           $class[] = 'expired';
         }
-	//if ( ($start!='0') && ($start!='') ) { //Commenting this allows an empty item at the top
-	
-	//on IE: use optgroup to show disabled options in select box (disabled attr doesn't work with IE)
-	if (($this->disabled == $start || $disable) && $start!=0 && strstr($_SERVER['HTTP_USER_AGENT'],"MSIE")) {
-		
-	    $this->bulletlist .= "<optgroup label=\"";
-	    for ($i=0;$i<($this->depth-1);$i++) {
-                $this->bulletlist .= $indent; 
-            }
-	    $this->bulletlist .= isset($this->nodes[$start]) ? $this->nodes[$start] : '';
-	    $this->bulletlist .= "\"";
-	    if (count($class)) {
-                $this->bulletlist .= 'class="'.implode(' ',$class).'"';
-            }
-	    $this->bulletlist .= "></optgroup>";
-	    $disable=true;
-        }
-	else{	
-            $this->bulletlist .= "<option value=\"" . htmlentities($start) . "\"";
-            if ($this->selected == $start) {$this->bulletlist .= " selected=\"selected\"";}
+
+        if (($this->disabled == $start || $disable) && $start!=0 && strstr($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
+            // on IE: use optgroup to show disabled options in select box (disabled attr doesn't work with IE)
+            $this->bulletlist .= "<optgroup label=\"";
+            $this->bulletlist .= str_repeat($indent, max(0, $this->depth - 1));
+            $this->bulletlist .= isset($this->nodes[$start]) ? $this->nodes[$start] : '';
+            $this->bulletlist .= "\"";
             if (count($class)) {
                 $this->bulletlist .= 'class="'.implode(' ',$class).'"';
             }
-	    //on mozilla, opera etc. use disable-attribute to set option disabled in select box
-	    if (($this->disabled == $start || $disable) && $start!=0) {
-                $this->bulletlist .= ' disabled="disabled" ';
-		$disable=true;
-            }	    
-            $this->bulletlist .= ">";
-            $url = isset($this->urls[$start]) ? $this->urls[$start] : '';
-            for ($i=0;$i<($this->depth-1);$i++) {
-                $this->bulletlist .= $indent; //indent as many times as required
+            $this->bulletlist .= "></optgroup>";
+            $disable = true;
+        } else {
+            $this->bulletlist .= "<option value=\"" . htmlentities($start) . "\"";
+            if ($this->selected == $start) {
+                $this->bulletlist .= " selected=\"selected\"";
             }
+            if (count($class)) {
+                $this->bulletlist .= 'class="'.implode(' ',$class).'"';
+            }
+            //on mozilla, opera etc. use disable-attribute to set option disabled in select box
+            if (($this->disabled == $start || $disable) && $start != 0) {
+                $this->bulletlist .= ' disabled="disabled" ';
+                $disable = true;
+            }
+            $this->bulletlist .= ">";
+
+            $url = isset($this->urls[$start]) ? $this->urls[$start] : '';
+            $this->bulletlist .= str_repeat($indent, max(0, $this->depth - 1));
             $this->bulletlist .= isset($this->nodes[$start]) ? $this->nodes[$start] : '';
             $this->bulletlist .= "</option>\n";
-	}
-        //}
-        if (isset($this->children[$start]) && is_array($this->children[$start])) {
-            $this->depth = $this->depth + 1;
-
-            for ($i=0;$i<count($this->children[$start]);$i++) {
-		if($disable)
-			$this->displaynode_select($this->children[$start][$i],true); //disable all children
-		else
-			$this->displaynode_select($this->children[$start][$i]);
-            }
-	    //if ($this->disabled == $start) $disable=false;
-            $this->depth = $this->depth - 1;
         }
 
+        if (isset($this->children[$start]) && is_array($this->children[$start])) {
+            $this->depth = $this->depth + 1;
+            for ($i = 0; $i < count($this->children[$start]); $i++) {
+                if ($disable) {
+                    $this->displaynode_select($this->children[$start][$i],true); //disable all children
+                } else {
+                    $this->displaynode_select($this->children[$start][$i]);
+                }
+            }
+            $this->depth = $this->depth - 1;
+        }
     }
-
-
 
     function displaynode_moo($start=0)
     {
@@ -318,7 +310,7 @@ class hktree
     /* Returns an indented select list */
     function printout_select($showdepth=10,$selected = '', $disabled = '')
     {
-	$this->disabled = $disabled;
+    $this->disabled = $disabled;
         $this->selected = $selected;
         $this->showdepth = $showdepth;
         $this->bulletlist = '';
