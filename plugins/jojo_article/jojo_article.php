@@ -642,7 +642,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $content['meta_description'] = $article['ar_metadesc'];
             } else {
                 $meta_description_template = Jojo::getOption('article_meta_description', '[article] - [body]... ');
-                $articlebody = strlen($article['bodyplain'] >200) ?  substr($mbody=wordwrap($article['bodyplain'], 200, '$$'), 0, strpos($mbody,'$$')) : $article['bodyplain'];
+                $articlebody = (strlen($article['bodyplain']) >400) ?  substr($mbody=wordwrap($article['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $article['bodyplain'];
                 $metafilters = array(
                         '[title]', 
                         '[site]', 
