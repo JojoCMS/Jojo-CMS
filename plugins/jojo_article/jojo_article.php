@@ -493,7 +493,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         
         if ($articleid || !empty($url)) {
             /* find the current, next and previous profiles */
-            $article = '';
+            $article = array();
             $prevarticle = array();
             $nextarticle = array();
             $next = false;
@@ -1347,7 +1347,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
     static function rssEscape($data) {
-        $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'self::convert_entity', $data);
+        $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'Jojo_Plugin_Jojo_article::convert_entity', $data);
         return str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', $xmldata)));
     }
     
@@ -1355,7 +1355,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
      * isn't in the lookup table, this function returns a blank, which
      * destroys the character in the output - this is probably the 
      * desired behaviour when producing XML. */
-    function convert_entity($matches) {
+    static function convert_entity($matches) {
       static $table = array('quot'    => '&#34;',
                             'amp'      => '&#38;',
                             'lt'       => '&#60;',
