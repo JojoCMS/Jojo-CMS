@@ -37,8 +37,9 @@ Jojo::addFilter('jojo_sitemap', 'sitemap', 'jojo_article');
 Jojo::addFilter('jojo_xml_sitemap', 'xmlsitemap', 'jojo_article');
 
 /* Search Filter */
-Jojo::addFilter('jojo_search', 'search', 'jojo_article');
-
+if (class_exists('Jojo_Plugin_Jojo_search')) {
+    Jojo::addFilter('jojo_search', 'search', 'jojo_article');
+}
 /* Content Filter */
 Jojo::addFilter('content', 'removesnip', 'jojo_article');
 
