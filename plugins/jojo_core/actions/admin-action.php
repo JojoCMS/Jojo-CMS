@@ -127,8 +127,6 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
             /* Clear the content cache after saving */
             Jojo::clearCache();
 
-            refreshMenu($table, $t, $frajax);
-
             $frajax->assign('id', 'value', $table->getRecordID());
 
             $frajax->script('parent.$("#btn_addsimilar").fadeIn("fast");');
@@ -140,6 +138,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
             Jojo::runHook('admin_action_after_save_'.$table->getTableName());
             Jojo::runHook('admin_action_after_save');
 
+            refreshMenu($table, $t, $frajax);
 
         } else {
             /* Error saving */
