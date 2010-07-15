@@ -1051,7 +1051,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $query = "SELECT p.pageid, pg_title, pg_url FROM {page} p LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE `articlecategoryid` = '$categoryid'";
             $values = array('jojo_plugin_jojo_article');
         } elseif ($for == 'admin') {
-            $query = "SELECT pageid, pg_title, pg_url FROM {page} LEFT JOIN WHERE pg_link = ?";
+            $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_link = ?";
             $values = array('Jojo_Plugin_Jojo_article_admin');
         }
 
