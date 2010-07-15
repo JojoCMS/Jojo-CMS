@@ -334,4 +334,45 @@ class Jojo_Plugin {
         }
         return false;
     }
+    /* regex to check standard plugin URL formats */
+    static function isPluginUrl($uri)
+    {
+        $uribits = array();
+        if (preg_match('#^(.+)/([0-9]+)/([^/]+)$#', $uri, $matches)) {
+            /* "$prefix/[id:integer]/[string]" eg "articles/123/name-of-article/" */
+            $uribits['prefix'] = $matches[1];
+            $uribits['getvars'] = array(
+                        'id' => $matches[2]
+                        );
+         } elseif (preg_match('#^(.+)/([0-9]+)$#', $uri, $matches)) {
+            /* "$prefix/[id:integer]" eg "articles/123/" */
+            $uribits['prefix'] = $matches[1];
+            $uribits['getvars'] = array(
+                        'id' => $matches[2]
+                        );
+        } elseif (preg_match('#^(.+)/p([0-9]+)$#', $uri, $matches)) {
+            /* "$prefix/p[pagenum:([0-9]+)]" eg "articles/p2/" for pagination of articles */
+            $uribits['prefix'] = $matches[1];
+            $uribits['getvars'] = array(
+                        'pagenum' => $matches[2]
+                        );
+        } elseif (preg_match('#^(.+)/rss$#', $uri, $matches)) {
+            /* eg "articles/rss/" for rss feeds */
+            $uribits['prefix'] = $matches[1];
+            $uribits['getvars'] = array(
+                        'action' => 'rss'
+                        );
+        } elseif (preg_match('#^(.+)/([a-z0-9-_]+)$#', $uri, $matches)) {
+            /* "$prefix/[url:((?!rss)string)]" eg "articles/name-of-article/" ignoring "articles/rss" */
+            $uribits['prefix'] = $matches[1];
+            $uribits['getvars'] = array(
+                        'url' => $matches[2]
+                        );
+        } else {
+            /* Didn't match */
+            return false;
+        }
+        return $uribits;
+    }
+        
 }
