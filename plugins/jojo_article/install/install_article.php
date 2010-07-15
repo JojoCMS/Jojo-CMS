@@ -68,7 +68,7 @@ $table = 'articlecategory';
 /* Convert old Article Category pageid field to new */
 if (Jojo::tableExists($table) && Jojo::fieldExists($table, 'ac_pageid') ) {
     Jojo::structureQuery("ALTER TABLE  {articlecategory} CHANGE  `ac_pageid`  `pageid` INT( 11 ) NOT NULL DEFAULT  '0'");
-    Jojo::structureQuery("DELETE `ac_url`FROM {articlecategory}");
+    Jojo::structureQuery("ALTER TABLE  {articlecategory} DROP `ac_url`");
     echo "Jojo_Plugin_Jojo_Article: Update category pageid field<br />";
 }
 
