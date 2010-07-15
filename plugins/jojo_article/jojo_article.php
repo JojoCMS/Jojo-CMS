@@ -332,14 +332,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         // if one article is being excluded up the limit by one
         if ($num && ($excludethisid || $excludethisurl)) $num++;
         $now    = time();
-        $query  = "SELECT ar.*, ac.*, p.pg_menutitle, p.pg_title, p.pg_status";
+        $query  = "SELECT ar.*, ac.*, pg_menutitle, pg_title, pg_url, pg_status";
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
-        $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
+        $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = ar.articleid)" : '';
         $query .= " WHERE 1";
         $query .= $categoryquery;
-        $query .= (_MULTILANGUAGE) ? " AND (ar_language = '$language') AND (pg_language = '$language')" : '';
+        $query .= (_MULTILANGUAGE && $categoryid == 'all') ? " AND (pg_language = '$language')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
         $query .= $num ? " ORDER BY $sortby" : '';
         $query .= $num ? " LIMIT $start,$num" : '';
@@ -357,7 +357,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $a['datefriendly'] = Jojo::mysql2date($a['ar_date'], "medium");
             $a['url']          = self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']);
             $a['category']     = !empty($a['pg_menutitle']) ? htmlspecialchars($a['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($a['pg_title'], ENT_COMPAT, 'UTF-8', false);
-            $a['categoryurl']  = !empty($a['ac_url']) ? (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . $a['ac_url'] . '/' : '';
+            $a['categoryurl']  = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . (!empty($a['pg_url']) ? $a['pg_url'] : $a['pageid'] . '/' .  Jojo::cleanURL($a['pg_title'])) . '/';
             if(!$shownumcomments) $a['numcomments'] = 0;
             //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
         }
@@ -457,12 +457,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $url       = Jojo::getFormData('url',      '');
         $action    = Jojo::getFormData('action',   '');
         $pageid = $this->page['pageid'];
-        $categorydata =  Jojo::selectRow("SELECT * FROM {articlecategory} WHERE ac_pageid = ?", $pageid);
+        $categorydata =  Jojo::selectRow("SELECT * FROM {articlecategory} WHERE pageid = ?", $pageid);
         $categorydata['type'] = isset($categorydata['type']) ? $categorydata['type'] : 'normal';
         if ($categorydata['type']=='index') {
             $categoryid = 'all';
         } elseif ($categorydata['type']=='parent') {
-            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page} LEFT JOIN {articlecategory} ON (pageid=ac_pageid) WHERE pg_parent = ? AND pg_link = 'jojo_plugin_jojo_article'", $pageid);
+            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page}p  LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE pg_parent = ? AND pg_link = 'jojo_plugin_jojo_article'", $pageid);
             foreach ($childcategories as $c) {
                 $categoryid[] = $c['articlecategoryid'];
             }
@@ -742,7 +742,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         global $page;
         /* See if we have any article sections to display and find all of them */
-        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes' ORDER BY pg_parent");
+        $articleindexes = Jojo::selectAssoc("SELECT p.pageid as id, p.pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes' ORDER BY pg_parent");
         if (!count($articleindexes)) {
             return $sitemap;
         }
@@ -851,7 +851,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if (!is_array($urls)) {
             $urls = array();
-            $articleindexes = Jojo::selectQuery("SELECT p.*, ac.* FROM {page} p  LEFT JOIN {articlecategory} ac ON (pageid=ac_pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes'");
+            $articleindexes = Jojo::selectQuery("SELECT p.*, ac.* FROM {page} p  LEFT JOIN {articlecategory} ac ON (ac.pageid=p.pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes'");
             if (count($articleindexes)==0) {
                return $tree;
             }
@@ -886,10 +886,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* Get articles from database */
         $articles = self::getArticles('', '', 'all');
         $now = time();
-        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.ac_pageid) WHERE pg_link = 'jojo_plugin_jojo_article'");
+        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.pageid) WHERE pg_link = 'jojo_plugin_jojo_article'");
         /* Add articles to sitemap */
         foreach($articles as $k => $a) {
-            $apage =  $articleindexes[$a['ac_pageid']];
+            $apage =  $articleindexes[$a['pageid']];
             // strip out articles from expired pages
             if ($apage['pg_index'] != 'yes' || $apage['pg_xmlsitemapnav'] != 'yes' || $apage['pg_livedate']>$now || (!empty($apage['pg_expirydate']) && $apage['pg_expirydate']<$now) || $apage['pg_status']!='active') {
                 unset($articles[$k]);
@@ -936,7 +936,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query = "SELECT articleid, ar_url, ar_title, ar_desc, ar_body, ar_image, ar_language, ar_expirydate, ar_livedate, ar_category, ((MATCH(ar_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(ar_title, ar_desc, ar_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
         $query .= ", p.pg_url, p.pg_title";
         $query .= " FROM {article} AS article ";
-        $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.ac_pageid=p.pageid)";
+        $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= " LEFT JOIN {language} AS language ON (article.ar_language = languageid)";
         $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid)" : '';
         $query .= " WHERE ($like";
@@ -997,7 +997,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $data['Articles'] =  $link;
         }
         /* add category RSS feeds */
-        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} LEFT JOIN {page} ON (pageid=ac_pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
+        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', (_MULTILANGUAGE ? $c['pg_language'] : ''), $c['articlecategoryid']) . '/rss/';
             if ($prefix) {
@@ -1008,8 +1008,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
     /**
-     * Remove Snip
-     *
      * Removes any [[snip]] tags leftover in the content before outputting
      */
     static function removesnip($data)
@@ -1048,14 +1046,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
         /* Cache some stuff */
         $language = $language ? $language : Jojo::getOption('multilanguage-default', 'en');
-        $categorydata =  Jojo::selectRow("SELECT ac_url, ac_pageid FROM {articlecategory} WHERE `articlecategoryid` = '$categoryid';");
-        $category = isset($categorydata['ac_url']) ? $categorydata['ac_url'] : '';
-        $pageid = isset($categorydata['ac_pageid']) ? $categorydata['ac_pageid'] : '';
-        $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pageid = '$pageid'";
 
         if ($for == 'article') {
+            $query = "SELECT p.pageid, pg_title, pg_url FROM {page} p LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE `articlecategoryid` = '$categoryid'";
             $values = array('jojo_plugin_jojo_article');
         } elseif ($for == 'admin') {
+            $query = "SELECT pageid, pg_title, pg_url FROM {page} LEFT JOIN WHERE pg_link = ?";
             $values = array('Jojo_Plugin_Jojo_article_admin');
         }
 
@@ -1077,7 +1073,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $action    = Jojo::getFormData('action', '');
         $pagenum   = Jojo::getFormData('pagenum', 1);
 
-        $data = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_pageid=?", $page->page['pageid']);
+        $data = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE pageid=?", $page->page['pageid']);
         $categoryid = !empty($data['articlecategoryid']) ? $data['articlecategoryid'] : '';
 
         if ($pagenum[0] == 'p') {
@@ -1216,83 +1212,69 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return false;
     }
 
-    // Sync the articlecategory data over to the page table
+    // Sync the articategory data over to the page table
     static function admin_action_after_save_articlecategory() {
-        if (Jojo::getFormData('fm_ac_pageid', 0) || Jojo::getFormData('fm_ac_url',    '')) {
-   	        self::sync_articlecategory_to_page();
-   	    }
+        if (!Jojo::getFormData('fm_pageid', 0)) {
+            // no pageid set for this category (either it's a new category or maybe the original page was deleted)
+            self::sync_articlecategory_to_page();
+       }
     }
 
-    // Sync the articlecategory data over from the page table
+    // Sync the category data over from the page table
     static function admin_action_after_save_page() {
         if (strtolower(Jojo::getFormData('fm_pg_link',    ''))=='jojo_plugin_jojo_article') {
            self::sync_page_to_articlecategory();
        }
     }
 
-    static function sync_articlecategory_to_page() {
-
-        // Get the category data
-        $pageid = Jojo::getFormData('fm_ac_pageid', 0);
+    static function sync_category_to_page() {
+        // Get the category id (if an existing category being saved where the page has been deleted)
         $catid = Jojo::getFormData('fm_articlecategoryid', 0);
-        $caturl = Jojo::getFormData('fm_ac_url', '');
-        // page exists for this category, check to see if the url needs updating
-        if ($pageid) {
-            $page = Jojo::selectRow("SELECT pg_url FROM {page} WHERE pageid = ? ", array($pageid));
-            if ($page && $caturl != $page['pg_url'] ) {
-                Jojo::updateQuery("UPDATE {page} SET pg_url = ? WHERE pageid = ?", array($caturl, $pageid));
-            }
-            
-        // no page set for this category (either it's a new category or maybe the original page was deleted), so add one using the url to make up a title
-        } else {
+        if (!$catid) {
+        // no id because this is a new category - shouldn't really be done this way, new categories should be added by adding a new page
+            $cats = Jojo::selectQuery("SELECT articlecategoryid FROM {articlecategory} ORDER BY articlecategoryid");
+            // grab the highest id (assumes this is the newest one just created)
+            $cat = array_pop($cats);
+            $catid = $cat['articlecategoryid'];
+        }
+        // add a new hidden page for this category and make up a title
             $newpageid = Jojo::insertQuery(
-                "INSERT INTO {page} SET pg_title = ?, pg_link = ?, pg_url = ?, pg_parent = ?",
+            "INSERT INTO {page} SET pg_title = ?, pg_link = ?, pg_url = ?, pg_parent = ?, pg_status = ?",
+            array(
+                'Orphaned Articles',  // Title
+                'jojo_plugin_jojo_article',  // Link
+                'orphaned-articles',  // URL
+                0,  // Parent - don't do anything smart, just put it at the top level for now
+                'hidden' // hide new page so it doesn't show up on the live site until it's been given a proper title and url
+            )
+        );        
+        // If we successfully added the page, update the category with the new pageid
+        if ($newpageid) {
+            jojo::updateQuery(
+                "UPDATE {articlecategory} SET pageid = ? WHERE articlecategoryid = ?",
                 array(
-                    ucwords(str_replace(array('-','_','/'), ' ', $caturl)),  // Title
-                    'Jojo_Plugin_Jojo_article',  // Link
-                    $caturl,  // URL
-                    0  // Parent - don't do anything smart, just put it at the top level for now
+                    $newpageid,
+                    $catid
                 )
-            );        
-            // If we successfully added the page, update the category with the new pageid
-            if ($newpageid) {
-                // if it's a new category with no id in the form data, find the id of this category
-                if (!$catid) {
-                    $cat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} WHERE ac_url = ? ", array($caturl));
-                    $catid = $cat['articlecategoryid'];
-                }
-                jojo::updateQuery(
-                    "UPDATE {articlecategory} SET ac_pageid = ?, ac_url = ? WHERE articlecategoryid = ?",
-                    array(
-                        $newpageid,
-                        $caturl,
-                        $catid
-                    )
-                );
-            }
+            );
        }
-        return true;
+    return true;
     }
 
     static function sync_page_to_articlecategory() {
         // Get the list of categories
-        $categories = jojo::selectAssoc("SELECT ac_pageid AS id, ac_pageid, ac_url FROM {articlecategory}");
+        $categories = jojo::selectAssoc("SELECT pageid AS id, pageid FROM {articlecategory}");
         // And the page data
         $pageid = Jojo::getFormData('fm_pageid', 0);
-        $pageurl = Jojo::getFormData('fm_pg_url', '');
         // if it's a new page it won't have an id in the form data, so get it from the title
         if (!$pageid) {
            $title = Jojo::getFormData('fm_pg_title', 0);
            $page =  Jojo::selectRow("SELECT pageid, pg_url FROM {page} WHERE pg_title= ? AND pg_link = ? AND pg_language = ?", array($title, Jojo::getFormData('fm_pg_link', ''), Jojo::getFormData('fm_pg_language', '')));
            $pageid = $page['pageid'];
-           $pageurl = $page['pg_url'];
         }
         // no category for this page id
         if (!count($categories) || !isset($categories[$pageid])) { 
-            jojo::insertQuery("INSERT INTO {articlecategory} (ac_pageid, ac_url) VALUES ('$pageid', '$pageurl')");
-        // category is set for this page id, check to see if the url needs updating
-        } elseif (isset($categories[$pageid]) && $categories[$pageid]['ac_url'] != $pageurl ) {
-            jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE ac_pageid = ? ", array($pageurl, $pageid));
+            jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");
         }
         return true;
     }

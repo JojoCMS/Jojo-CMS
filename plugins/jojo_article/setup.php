@@ -18,13 +18,14 @@
  * @package jojo_article
  */
 
+
 /* Articles */
 $data = Jojo::selectRow("SELECT * FROM {page}  WHERE pg_link LIKE 'jojo_plugin_jojo_article'");
 if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Adding <b>Articles</b> Page to menu<br />";
     $articlespage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Articles', pg_link='jojo_plugin_jojo_article', pg_url='articles'");
     // add a corresponding category
-    Jojo::insertQuery("INSERT INTO {articlecategory} SET ac_url='articles', ac_pageid='$articlespage'");
+    Jojo::insertQuery("INSERT INTO {articlecategory} SET ac_url='articles', pageid='$articlespage'");
 }
 
 /* Edit Articles */

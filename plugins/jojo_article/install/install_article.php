@@ -65,18 +65,24 @@ if (isset($result['different'])) Jojo::printTableDifference($table, $result['dif
 
 
 $table = 'articlecategory';
+/* Convert old Article Category pageid field to new */
+if (Jojo::tableExists($table) && Jojo::fieldExists($table, 'ac_pageid') ) {
+    Jojo::structureQuery("ALTER TABLE  {articlecategory} CHANGE  `ac_pageid`  `pageid` INT( 11 ) NOT NULL DEFAULT  '0'");
+    Jojo::structureQuery("DELETE `ac_url`FROM {articlecategory}");
+    echo "Jojo_Plugin_Jojo_Article: Update category pageid field<br />";
+}
+
 $query = "
     CREATE TABLE {articlecategory} (
       `articlecategoryid` int(11) NOT NULL auto_increment,
-      `ac_url` varchar(255) NOT NULL default '',
-      `ac_pageid` int(11) NOT NULL default '0',
+      `pageid` int(11) NOT NULL default '0',
       `type` enum('normal','parent','index') NOT NULL default 'normal',
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
       `weighting` tinyint(1) default '1',
       `rsslink` tinyint(1) default '1',
       `thumbnail` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`articlecategoryid`),
-      KEY `id` (`ac_pageid`)
+      KEY `id` (`pageid`)
     ) TYPE=MyISAM ;";
 
 /* Check table structure */

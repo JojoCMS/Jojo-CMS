@@ -18,7 +18,6 @@
  * @package jojo_article
  */
 
-$categories = Jojo::selectQuery("SELECT * FROM {articlecategory}");
 $numarticles = Jojo::getOption('article_num_sidebar_articles', 3);
 
 if ($numarticles) {
@@ -27,11 +26,13 @@ $exclude = (boolean)(Jojo::getOption('article_sidebar_exclude_current', 'no')=='
 $num = $numarticles + 10;
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
     if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
+        $categories = Jojo::selectQuery("SELECT * FROM {articlecategory}");
         $allarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
         $allarticles = array_slice ($allarticles, 0, $numarticles);
         $smarty->assign('allarticles',  $allarticles);
         foreach ($categories as $c) {
-            $smarty->assign('articles_' . str_replace('-', '_', $c['ac_url']), JOJO_Plugin_Jojo_article::getArticles($num, 0, $c['articlecategoryid'],  $c['sortby']), $exclude );
+            $catarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, $c['articlecategoryid'],  $c['sortby'], $exclude );
+            $smarty->assign('articles_' . str_replace('-', '_', $catarticles[0]['categoryurl']), $catarticles);
         }
     } else {
         if (Jojo::getOption('article_sidebar_randomise', 0) > 0) {
@@ -44,16 +45,6 @@ $num = $numarticles + 10;
         $smarty->assign('articles', $recentarticles );
     }
     
-    /* Get the prefix for articles (can vary for multiple installs) for use in the theme template instead of hard coding it */
-    $smarty->assign('articleshome', JOJO_Plugin_Jojo_article::_getPrefix('article', $page->getValue('pg_language')) );
-    if (count($categories) && Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
-        foreach ($categories as $c) {
-            $category = $c['ac_url'];
-            $categoryid = $c['articlecategoryid'];
-            $smarty->assign('articles_' . str_replace('-', '_', $category) . 'home', JOJO_Plugin_Jojo_article::_getPrefix('article', $page->getValue('pg_language'), $categoryid) );
-        }
-    }
-
 }
 /** Example usage in theme template:
             {if $articles}

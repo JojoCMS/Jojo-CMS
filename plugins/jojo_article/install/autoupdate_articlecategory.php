@@ -16,9 +16,10 @@
 $default_td['articlecategory'] = array(
         'td_name' => "articlecategory",
         'td_primarykey' => "articlecategoryid",
-        'td_displayfield' => "ac_pageid",
+        'td_displayfield' => "pageid",
         'td_filter' => "yes",
         'td_topsubmit' => "yes",
+        'td_addsimilar' => "no",
         'td_deleteoption' => "yes",
         'td_menutype' => "list",
         'td_help' => "News Article Categories are managed from here.",
@@ -41,25 +42,13 @@ $default_fd['articlecategory']['articlecategoryid'] = array(
     );
 
 // Page Field
-$default_fd['articlecategory']['ac_pageid'] = array(
+$default_fd['articlecategory']['pageid'] = array(
         'fd_name' => "Page",
         'fd_type' => "dbpluginpagelist",
         'fd_options' => "jojo_plugin_jojo_article",
         'fd_readonly' => "1",
         'fd_default' => "0",
         'fd_help' => "The artciles page on the site used for this category.",
-        'fd_order' => $o++,
-        'fd_tabname' => "Content",
-    );
-
-// URL Field
-$default_fd['articlecategory']['ac_url'] = array(
-        'fd_name' => "URL",
-        'fd_type' => "internalurl",
-        'fd_required' => "yes",
-        'fd_readonly' => "0",
-        'fd_size' => "60",
-        'fd_help' => "URL for the Article Category. This will be used for the base URL for all articles in this category. The Page url for this category's home page MUST match the category URL.",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
