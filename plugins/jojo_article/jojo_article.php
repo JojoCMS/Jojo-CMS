@@ -866,7 +866,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if (count($articleindexes)==0) {
                return $tree;
             }
-
             foreach($articleindexes as $key => $i){
                 $language = !empty($i['pg_language']) ? $i['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
                 $mldata = Jojo::getMultiLanguageData();
@@ -912,7 +911,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $changefreq = '';
             $sitemap[$url] = array($url, $lastmod, $changefreq, $priority);
         }
-
         /* Return sitemap */
         return $sitemap;
     }
@@ -956,7 +954,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= " AND language.active = 'yes' ";
         $query .= " AND ar_livedate<" . time() . " AND (ar_expirydate<=0 OR ar_expirydate>" . time() . ") ";
         $query .= " ORDER BY relevance DESC LIMIT 100";
-
         $data = Jojo::selectQuery($query, array($keywords_str, $keywords_str));
 
         if (_MULTILANGUAGE) {
@@ -966,7 +963,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         } else {
             $homes = array(1);
         }
-
         foreach ($data as $d) {
             $pagePermissions->getPermissions('article', $d['articleid']);
             if (!$pagePermissions->hasPerm($_USERGROUPS, 'view')) {
@@ -989,8 +985,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
             $results[] = $result;
         }
-
-
         /* Return results */
         return $results;
     }
@@ -1121,7 +1115,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         $prefix = false;
         $getvars = array();
-        /* Check the suffix matches and extra the prefix */
+        /* Check the suffix matches and extract the prefix */
         if (preg_match('#^(.+)/latest$#', $uri, $matches)) {
             /* "$prefix/[action:latest]" eg "articles/latest/" */
             $prefix = $matches[1];
@@ -1134,51 +1128,21 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                         'articleid' => $matches[2],
                         'code' => $matches[3]
                         );
-        } elseif (preg_match('#^(.+)/([0-9]+)/([^/]+)$#', $uri, $matches)) {
-            /* "$prefix/[id:integer]/[string]" eg "articles/123/name-of-article/" */
-            $prefix = $matches[1];
-            $getvars = array(
-                        'id' => $matches[2]
-                        );
-         } elseif (preg_match('#^(.+)/([0-9]+)$#', $uri, $matches)) {
-            /* "$prefix/[id:integer]" eg "articles/123/" */
-            $prefix = $matches[1];
-            $getvars = array(
-                        'id' => $matches[2]
-                        );
-        } elseif (preg_match('#^(.+)/p([0-9]+)$#', $uri, $matches)) {
-            /* "$prefix/p[pagenum:([0-9]+)]" eg "articles/p2/" for pagination of articles */
-            $prefix = $matches[1];
-            $getvars = array(
-                        'pagenum' => $matches[2]
-                        );
-        } elseif (preg_match('#^(.+)/rss$#', $uri, $matches)) {
-            /* eg "articles/rss/" for rss feeds */
-            $prefix = $matches[1];
-            $getvars = array(
-                        'action' => 'rss'
-                        );
-        } elseif (preg_match('#^(.+)/([a-z0-9-_]+)$#', $uri, $matches)) {
-            /* "$prefix/[url:((?!rss)string)]" eg "articles/name-of-article/" ignoring "articles/rss" */
-            $prefix = $matches[1];
-            $getvars = array(
-                        'url' => $matches[2]
-                        );
+        /* Check for standard plugin url format matches */
+        } elseif ($uribits = Jojo_Plugin::isPluginUrl($uri)) {
+            $prefix = $uribits['prefix'];
+            $getvars = $uribits['getvars'];
         } else {
-            /* Didn't match */
             return false;
         }
-
         /* Check the prefix matches */
         if ($res = self::checkPrefix($prefix)) {
             /* If full uri matches a prefix it's an index page so ignore it and let the page plugin handle it */
             if (self::checkPrefix(trim($uri, '/'))) return false;
-      
             /* The prefix is good, pass through uri parts */
             foreach($getvars as $k => $v) {
                 $_GET[$k] = $v;
             }
-
             return true;
         }
         return false;
@@ -1217,7 +1181,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 }
             }
         }
-
         /* Didn't match */
         $_prefixes[$testPrefix] = false;
         return false;
@@ -1227,14 +1190,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function admin_action_after_save_articlecategory() {
         if (!Jojo::getFormData('fm_pageid', 0)) {
             // no pageid set for this category (either it's a new category or maybe the original page was deleted)
-            self::sync_articlecategory_to_page();
+            self::sync_category_to_page();
        }
     }
 
     // Sync the category data over from the page table
     static function admin_action_after_save_page() {
         if (strtolower(Jojo::getFormData('fm_pg_link',    ''))=='jojo_plugin_jojo_article') {
-           self::sync_page_to_articlecategory();
+           self::sync_page_to_category();
        }
     }
 
@@ -1272,10 +1235,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     return true;
     }
 
-    static function sync_page_to_articlecategory() {
-        // Get the list of categories
+    static function sync_page_to_category() {
+        // Get the list of categories and the page id if available
         $categories = jojo::selectAssoc("SELECT pageid AS id, pageid FROM {articlecategory}");
-        // And the page data
         $pageid = Jojo::getFormData('fm_pageid', 0);
         // if it's a new page it won't have an id in the form data, so get it from the title
         if (!$pageid) {
@@ -1338,6 +1300,5 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         echo $rss;
         exit;
     }
-
 
 }
