@@ -27,7 +27,7 @@ $num = $numarticles + 10;
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
     if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
         $categories = Jojo::selectQuery("SELECT * FROM {articlecategory}");
-        $allarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
+        $allarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
         $allarticles = array_slice ($allarticles, 0, $numarticles);
         $smarty->assign('allarticles',  $allarticles);
         foreach ($categories as $c) {
@@ -36,10 +36,10 @@ $num = $numarticles + 10;
         }
     } else {
         if (Jojo::getOption('article_sidebar_randomise', 0) > 0) {
-            $recentarticles = JOJO_Plugin_Jojo_article::getArticles(Jojo::getOption('article_sidebar_randomise', 0), 0, 'all',  'ar_date desc', $exclude);
+            $recentarticles = Jojo_Plugin_Jojo_article::getArticles(Jojo::getOption('article_sidebar_randomise', 0), 0, 'all',  'ar_date desc', $exclude);
             shuffle($recentarticles);
         } else {
-            $recentarticles = JOJO_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);       
+            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);       
         }        
         $recentarticles = array_slice($recentarticles, 0, $numarticles);
         $smarty->assign('articles', $recentarticles );
@@ -50,16 +50,12 @@ $num = $numarticles + 10;
             {if $articles}
             <div id='news' class="sidebarbox">
                 <h2>News</h2>
-
                 {foreach from=$articles key=key item=article}
-                    {if $article.ar_image}<img src="images/v7000/articles/{$article.ar_image}" alt = "{$article.title}" class="right-image"/>{/if}
+                    {if $article.ar_image}<img src="images/v7000/articles/{$article.ar_image}" alt = "{$article.title}" class="float-right"/>{/if}
                     <h3>{$article.title}</h3>
-                    <p class='news-content'>
-                        {$article.bodyplain|truncate:150:"..."}
-                        <a class='links' href='{$article.url}'>&gt; Read More</a>
-                    </p>
+                    <p class='news-content'>{$article.bodyplain|truncate:150:"..."} <a class='links' href='{$article.url}'>&gt; Read More</a></p>
                 {/foreach}
-                <p class="links">&gt; <a href='{$SITEURL}/{if _MULTILANGUAGE}{$lclanguage}/{/if}{$articleshome}/'>See all news articles</a></p>
+                <p class="links">&gt; <a href='{$SITEURL}/{$articles[0].categoryurl}'>See all {$articles[0].category}</a></p>
             </div>
             {/if}
 */
