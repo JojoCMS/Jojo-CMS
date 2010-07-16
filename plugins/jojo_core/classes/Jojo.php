@@ -2187,6 +2187,18 @@ class Jojo {
         $timestamp = Jojo::strToTimeUK($mysqldate);
 
         if (!$timestamp) {
+            return '';
+        } else {
+            return Jojo::formatTimestamp($timestamp, $format);
+        }
+    }
+
+    /**
+     * Convert a timestamp into a particular format
+     */
+    static function formatTimestamp($timestamp, $format='short')
+    {
+        if (!$timestamp) {
             return "";
         } else {
             if ($format == 'rss') {
@@ -3084,6 +3096,62 @@ class Jojo {
             $nocache = false;
         }
         return $nocache;
+    }
+
+    static function getFeed($items, $fields)
+    {
+        $pagetitle = $fields['pagetitle'];
+        $pageurl = $fields['pageurl'];
+        $titlefield = $fields['title'];
+        $bodyfield = $fields['body'];
+        $urlfield = $fields['url'];
+        $datefield = $fields['date'];
+        $datetype = $fields['datetype']; // mysql or unix timestamp
+        $snip = $fields['snip']; // full or truncate length
+        $sourcelink = $fields['sourcelink']; // full or truncate length
+
+        $site = mb_convert_encoding(_SITETITLE, 'HTML-ENTITIES', 'UTF-8');
+        $pagetitle = mb_convert_encoding($pagetitle, 'HTML-ENTITIES', 'UTF-8');
+        $description = mb_convert_encoding(Jojo::getOption('sitedesc', Jojo::getOption('sitetitle')), 'HTML-ENTITIES', 'UTF-8');
+        $rss  = "<?xml version=\"1.0\" ?".">\n";
+        $rss .= "<rss version=\"2.0\">\n";
+        $rss .= "<channel>\n";
+        $rss .= "<title>" . $site . ': ' . $pagetitle . "</title>\n";
+        $rss .= "<description>" . $description . "</description>\n";
+        $rss .= "<link>" . $pageurl . "</link>\n";
+        $rss .= "<copyright>" . htmlentities(_SITETITLE) . " " . date('Y', strtotime('now')) . "</copyright>\n";
+
+        foreach ($items as &$i) {
+            $i['body'] = Jojo::relative2absolute(preg_replace('/\[\[.*?\]\]/', '',  $i[$bodyfield]), _SITEURL);
+            /* chop up to the first [[snip]] */
+            if ($snip =='full') {
+                $i['body'] = str_ireplace('[[snip]]','',$i['body']);
+            } else {
+                $irr = Jojo::iExplode('[[snip]]', $i['body']);
+                if (count($irr) === 1 && is_numeric($snip)) {
+                    $i['body'] = substr($i['body'], 0, $snip) . ' ...';
+                } else {
+                    $i['body'] = $irr[0];
+                }
+            } 
+            $source = _SITEURL . "/" . $i['url'];
+            $i['body'] = mb_convert_encoding($i['body'], 'HTML-ENTITIES', 'UTF-8');
+            $i['title'] = mb_convert_encoding($i[$titlefield], 'HTML-ENTITIES', 'UTF-8');
+            $i['date'] = $datetype=='mysql' ? Jojo::mysql2date($i[$datefield], 'rss') :  Jojo::formatTimestamp($i[$datefield], 'rss');
+            if ($sourcelink) $i['body'] .= '<p>Source: <a href="' . $source . '">' . $i['title'] . '</a></p>';
+            $rss .= "<item>\n";
+            $rss .= "<title>" . Jojo::xmlEscape($i['title']) . "</title>\n";
+            $rss .= "<description>" . Jojo::xmlEscape($i['body']) . "</description>\n";
+            $rss .= "<link>". $source . "</link>\n";
+            $rss .= "<pubDate>" . $i['date'] . "</pubDate>\n";
+            $rss .= "</item>\n";
+        }
+        $rss .= "</channel>\n";
+        $rss .= "</rss>\n";
+
+        header('Content-type: application/xml');
+        echo $rss;
+        exit;
     }
 
     static function xmlEscape($data) {
