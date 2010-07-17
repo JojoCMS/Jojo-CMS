@@ -26,9 +26,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $usemultilanguage=true) {
+    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false) {
         global $page;
-        if (_MULTILANGUAGE) $language = !empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
+        $language = _MULTILANGUAGE ? (!empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en')) : '';
         if (is_array($categoryid)) {
              $categoryquery = " AND ar_category IN ('" . implode("','", $categoryid) . "')";
         } elseif (is_numeric($categoryid)) {
@@ -36,45 +36,66 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         } else {
             $categoryquery = '';
         }
-        /* if calling page is an article, Get current articleid, and exclude from the list  */
-        $excludethisid = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('id')) ? Jojo::getFormData('id') : '';
-        $excludethisurl = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && Jojo::getFormData('url')) ? Jojo::getFormData('url') : '';
+        /* if calling page is an article, Get current article, exclude from the list and up the limit by one */
+        $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
+        if ($num && $exclude) $num++;
         $shownumcomments = (Jojo::getOption('articlecomments') == 'yes' && Jojo::getOption('article_show_num_comments', 'no') == 'yes') ? true : false;
-        // if one article is being excluded up the limit by one
-        if ($num && ($excludethisid || $excludethisurl)) $num++;
-        $now    = time();
-        $query  = "SELECT ar.*, ac.*, pg_menutitle, pg_title, pg_url, pg_status";
+        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language";
         $query .= $shownumcomments ? ", COUNT(acom.ac_articleid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = ar.articleid)" : '';
-        $query .= " WHERE 1";
-        $query .= $categoryquery;
+        $query .= " WHERE 1" . $categoryquery;
         $query .= (_MULTILANGUAGE && $categoryid == 'all') ? " AND (pg_language = '$language')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
-        $query .= $num ? " ORDER BY $sortby" : '';
-        $query .= $num ? " LIMIT $start,$num" : '';
+        $query .= $num ? " ORDER BY $sortby LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
-        foreach ($articles as $k=>&$a){
-            if ($a['ar_livedate']>$now || (!empty($a['ar_expirydate']) && $a['ar_expirydate']<$now) || (!empty($a['articleid']) && $a['articleid']==$excludethisid)  || (!empty($a['ar_url']) && $a['ar_url']==$excludethisurl) || $a['pg_status']=='inactive') {
-                unset($articles[$k]);
+        $articles = self::cleanItems($articles, $exclude);
+        if (!$num)  $articles = self::sortItems($articles, $sortby);
+        return $articles;
+    }
+
+    static function getItemsById($ids = false, $sortby='ar_date desc') {
+        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language";
+        $query .= " FROM {article} ar";
+        $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
+        $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
+        $items = Jojo::selectQuery($query);
+        $items = self::cleanItems($items);
+        $items = self::sortItems($items, $sortby);
+        return $items;
+    }
+
+    /* clean items for output */
+    static function cleanItems($items, $exclude=false) {
+        global $_USERGROUPS;
+        $now    = time();
+        $pagePermissions = new JOJO_Permissions();
+        foreach ($items as $k=>&$i){
+            $pagePermissions->getPermissions('page', $i['pageid']);
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['ar_livedate']>$now || (!empty($i['ar_expirydate']) && $i['ar_expirydate']<$now) || (!empty($i['articleid']) && $i['articleid']==$exclude)  || (!empty($i['ar_url']) && $i['ar_url']==$exclude) || $i['pg_status']=='inactive') {
+                unset($items[$k]);
                 continue;
             }
-            $a['id']           = $a['articleid'];
-            $a['title']        = htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false);
-            // Snip the article for the index description
-            $a['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $a['ar_body']));
+            $i['id']           = $i['articleid'];
+            $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
+            // Snip for the index description
+            $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
-            $a['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($a['ar_body'])));
-            $a['date']         = Jojo::strToTimeUK($a['ar_date']);
-            $a['datefriendly'] = Jojo::mysql2date($a['ar_date'], "medium");
-            $a['url']          = self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']);
-            $a['category']     = !empty($a['pg_menutitle']) ? htmlspecialchars($a['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($a['pg_title'], ENT_COMPAT, 'UTF-8', false);
-            $a['categoryurl']  = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($language, true) : '') . (!empty($a['pg_url']) ? $a['pg_url'] : $a['pageid'] . '/' .  Jojo::cleanURL($a['pg_title'])) . '/';
-            if(!$shownumcomments) $a['numcomments'] = 0;
-            //$a['numcomments']  = $shownumcomments ? $a['numcomments'] : 0;
+            $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['ar_body'])));
+            $i['date']         = Jojo::strToTimeUK($i['ar_date']);
+            $i['datefriendly'] = Jojo::mysql2date($i['ar_date'], "medium");
+            $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
+            $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['ar_language'], $i['ar_category']);
+            $i['category']     = !empty($i['pg_menutitle']) ? htmlspecialchars($i['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
+            $i['categoryurl']  = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($i['pg_language'], true) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
         }
-        if (!$num) {
+        return $items;
+    }
+
+    /* sort items for output */
+    static function sortItems($items, $sortby=false) {
+        if ($sortby) {
             $order = "date";
             switch ($sortby) {
               case "ar_date desc":
@@ -90,9 +111,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $order="live";
                 break;
             }
-            usort($articles, array('Jojo_Plugin_Jojo_article', $order . 'sort'));
+            usort($items, array('Jojo_Plugin_Jojo_article', $order . 'sort'));
         }
-        return $articles;
+        return $items;
     }
 
     private static function namesort($a, $b)
@@ -133,7 +154,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $language = !empty($language) ? $language : Jojo::getOption('multilanguage-default', 'en');
             $multilangstring = Jojo::getMultiLanguageString($language, false);
         }
-
         /* URL specified */
         if (!empty($url)) {
             $fullurl = (_MULTILANGUAGE ? $multilangstring : '') . self::_getPrefix('article', $category) . '/' . $url . '/';
@@ -222,7 +242,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }        
         
         if ($articleid || !empty($url)) {
-            /* find the current, next and previous profiles */
+            /* find the current, next and previous items */
             $article = array();
             $prevarticle = array();
             $nextarticle = array();
@@ -242,7 +262,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 }
             }
 
-            /* If the article can't be found, return a 404 */
+            /* If the item can't be found, return a 404 */
             if (!$article) {
                 include(_BASEPLUGINDIR . '/jojo_core/404.php');
                 exit;
@@ -479,7 +499,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($_INPLACE) {
                 $parent = 0;
             } else {
-               $articletree->addNode('index', 0, $i['pg_title'] . ' Index', $indexurl);
+               $articletree->addNode('index', 0, $i['pg_title'], $indexurl);
                $parent = 'index';
             }
 
@@ -489,7 +509,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Trim items down to first page and add to tree*/
             $articles = array_slice($articles, 0, $articlesperpage);
             foreach ($articles as $a) {
-                $articletree->addNode($a['articleid'], $parent, $a['ar_title'], self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category']));
+                $articletree->addNode($a['id'], $parent, $a['title'], $a['url']);
             }
 
             /* Get number of pages for pagination */
@@ -853,9 +873,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
      */
     static function search($results, $keywords, $language, $booleankeyword_str=false)
     {
-        global $_USERGROUPS;
         $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
-        $pagePermissions = new JOJO_Permissions();
         $boolean = ($booleankeyword_str) ? true : false;
         $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
         if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
@@ -875,7 +893,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
 
         $query = "SELECT articleid, ar_url, ar_title, ar_desc, ar_body, ar_image, ar_language, ar_expirydate, ar_livedate, ar_category, ((MATCH(ar_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(ar_title, ar_desc, ar_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
-        $query .= ", p.pg_url, p.pg_title";
+        $query .= ", p.pageid, pg_url, pg_title, pg_status, pg_language";
         $query .= " FROM {article} AS article ";
         $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= " LEFT JOIN {language} AS language ON (article.ar_language = languageid)";
@@ -883,10 +901,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= " WHERE ($like";
         $query .= $tagid ? " OR (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid))" : ')';
         $query .= ($language) ? " AND ar_language = '$language' " : '';
-        $query .= " AND language.active = 'yes' ";
-        $query .= " AND ar_livedate<" . time() . " AND (ar_expirydate<=0 OR ar_expirydate>" . time() . ") ";
         $query .= " ORDER BY relevance DESC LIMIT 100";
         $data = Jojo::selectQuery($query, array($keywords_str, $keywords_str));
+        $data = self::cleanItems($data);
 
         if (_MULTILANGUAGE) {
             global $page;
@@ -896,20 +913,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $homes = array(1);
         }
         foreach ($data as $d) {
-            $pagePermissions->getPermissions('article', $d['articleid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view')) {
-                continue;
-            }
             $result = array();
             $result['relevance'] = $d['relevance'];
-            $result['title'] = $d['ar_title'];
-            $result['body'] = $d['ar_body'];
-            $result['image'] = 'articles/' . $d['ar_image'];
-            $result['url'] = self::getArticleUrl($d['articleid'], $d['ar_url'], $d['ar_title'], $d['ar_language'], $d['ar_category']);
+            $result['title'] = $d['title'];
+            $result['body'] = $d['bodyplain'];
+            $result['image'] = $d['image'];
+            $result['url'] = $d['url'];
             $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
-            $result['id'] = $d['articleid'];
+            $result['id'] = $d['id'];
             $result['plugin'] = 'jojo_article';
-            $result['type'] = $d['pg_title'] ? $d['pg_title'] : 'Articles';
+            $result['type'] = $d['category'];
 
             if ($_TAGS) {
                 $result['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $d['articleid']);
@@ -1169,38 +1182,21 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 /*
 * Tags
 */
-
     static function getTagSnippets($ids)
     {
-        /* Convert array of ids to a string */
-        $ids = "'" . implode($ids, "', '") . "'";
-
         /* Get the articles */
-        $articles = Jojo::selectQuery("SELECT *
-                                       FROM {article}
-                                       WHERE
-                                            articleid IN ($ids)
-                                         AND
-                                           ar_livedate < ?
-                                         AND
-                                           ar_expirydate<=0 OR ar_expirydate > ?
-                                       ORDER BY
-                                         ar_date DESC",
-                                      array(time(), time()));
-
+        $articles = self::getItemsById($ids);
         /* Create the snippets */
         $snippets = array();
         foreach ($articles as $i => $a) {
-            $image = !empty($a['ar_image']) ? 'articles/' . $a['ar_image'] : '';
             $snippets[] = array(
-                    'id'    => $a['articleid'],
-                    'image' => $image,
-                    'title' => htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false),
-                    'text'  => strip_tags($a['ar_body']),
-                    'url'   => Jojo::urlPrefix(false) . self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category'])
+                    'id'    => $a['id'],
+                    'image' => $a['image'],
+                    'title' => $a['title'],
+                    'text'  => $a['bodyplain'],
+                    'url'   => $a['url']
                 );
         }
-
         /* Return the snippets */
         return $snippets;
     }
