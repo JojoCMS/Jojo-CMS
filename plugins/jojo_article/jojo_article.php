@@ -55,6 +55,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return $articles;
     }
 
+     /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
     static function getItemsById($ids = false, $sortby='ar_date desc') {
         $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language";
         $query .= " FROM {article} ar";
@@ -62,7 +63,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
         $items = Jojo::selectQuery($query);
         $items = self::cleanItems($items);
-        $items = self::sortItems($items, $sortby);
+        $items = is_array($ids) ? self::sortItems($items, $sortby) : $items[0];
         return $items;
     }
 
@@ -82,7 +83,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             // Snip for the index description
             $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
-            $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['ar_body'])));
+            $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
             $i['date']         = Jojo::strToTimeUK($i['ar_date']);
             $i['datefriendly'] = Jojo::mysql2date($i['ar_date'], "medium");
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
