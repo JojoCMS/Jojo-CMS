@@ -20,290 +20,6 @@
 
 class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 {
-    /*
-    * Comments
-    */
-    static function postComment($article)
-    {
-        global $smarty, $_USERID;
-
-        $errors = array();
-
-        $commentsubscriptions = Jojo::getOption('article_comment_subscriptions', 'no') == 'yes' ? true : false;
-
-        /* Get variables from POST */
-        $name            = Jojo::getFormData('name',            '');
-        $authorcomment   = Jojo::getFormData('authorcomment',   'no');
-        $email           = Jojo::getFormData('email',           '');
-        $email_subscribe = Jojo::getFormData('email_subscribe', false) ? true : false;
-        $website         = Jojo::getFormData('website',         '');
-        $anchortext      = Jojo::getFormData('anchortext',      '');
-        $bbcomment       = Jojo::getFormData('comment',         '');
-        $captchacode     = Jojo::getFormData('captchacode',     '');
-        if (!empty($website)) $website = Jojo::addhttp($website);
-
-        /* sanitise input */
-        $name       = htmlentities($name);
-        $anchortext = htmlentities($anchortext);
-
-        /* trim whitespace just in case people copy-paste the email address wrong */
-        $email = trim($email);
-
-        if (!$article) return false;
-        $articleid       = $article['articleid'];
-
-        $ip = Jojo::getIP();
-
-        /* Check CAPTCHA is entered correctly */
-        if (empty($_USERID) && !PhpCaptcha::Validate($captchacode)) {
-            $errors[] = 'Invalid code entered';
-        }
-
-        if (Jojo::getOption('articlecomments', 'no') != 'yes') {
-            $errors[] = 'Article Comments are currently disabled';
-        }
-
-        /* are comments enabled for this post? */
-        $articlecommentsenabled = !empty($article['ar_comments']) ? Jojo::yes2True($article['ar_comments']) : true;
-        if (!$articlecommentsenabled) {
-            $errors[] = 'Comments are disabled for this post';
-        }
-
-        /* Error checking */
-        if ($name == '') {
-            $errors[] = 'Please enter your name';
-        }
-        if ($bbcomment == '') {
-            $errors[] = 'Please enter a comment';
-        }
-        if ((Jojo::getOption('article_optional_email', 'no') == 'no') && empty($email)) {
-            $errors[] = 'Please enter your email address (this will not be shown to the public)';
-        }
-        if (($email != '') && !Jojo::checkEmailFormat($email)) {
-            $errors[] = 'Email format is invalid';
-        }
-        if (($website != '') && !Jojo::checkUrlFormat($website)) {
-            $errors[] = 'Website format is invalid';
-        }
-
-        /* rate limiting to prevent spam */
-        $rate_comments = 5; // maximum X posts
-        $rate_mins = 5;  // in X mins
-        $ratelimit = Jojo::selectQuery("SELECT * FROM {articlecomment} WHERE ac_ip='" . $ip . "' AND ac_timestamp>" . strtotime('-' . $rate_mins . ' minutes'));
-        if (count($ratelimit)>$rate_comments) {
-            $errors[] = 'We limit comments to ' . $rate_comments . ' every ' . $rate_mins . ' minutes to prevent automated spam. Please try posting your comment again in a few minutes, and sorry for any inconvenience';
-        }
-
-        /* Convert BBCode to HTML */
-        $bb = new bbconverter();
-        $bb->truncateurl = 30;
-        $bb->nofollow = true;
-        $bb->setBBCode($bbcomment);
-        $htmlcomment = $bb->convert('bbcode2html');
-
-        /* Return errors */
-        if (count($errors)) {
-            /* Error */
-            $smarty->assign('error',      implode("<br />\n", $errors));
-            $smarty->assign('name',       $name);
-            $smarty->assign('email',      $email);
-            $smarty->assign('website',    $website);
-            $smarty->assign('anchortext', $anchortext);
-            $smarty->assign('comment',    $bbcomment);
-            return false;
-        }
-
-        /* Create unique approve and delete codes, ensure they are not already in the database for another comment */
-        $query = 'SELECT * FROM {articlecomment} WHERE ac_approvecode = ? OR ac_deletecode = ? OR ac_anchortextcode = ?';
-        do {
-            $approvecode = Jojo::randomString(16, '0123456789');
-            $res = Jojo::selectQuery($query, array($approvecode, $approvecode, $approvecode));
-        } while (count($res) > 0);
-        do {
-            $anchortextcode = Jojo::randomString(16, '0123456789');
-            $res = Jojo::selectQuery($query, array($anchortextcode, $anchortextcode, $anchortextcode));
-        } while (count($res) > 0);
-        do {
-            $deletecode = Jojo::randomString(16, '0123456789');
-            $res = Jojo::selectQuery($query, array($deletecode, $deletecode, $deletecode));
-        } while (count($res) > 0);
-
-        Jojo::insertQuery("INSERT INTO {articlecomment} SET
-                ac_timestamp = UNIX_TIMESTAMP(NOW()), ac_articleid = ?,
-                ac_name = ?, ac_email = ?, ac_website = ?, ac_anchortext = ?,
-                ac_ip = ?, ac_useanchortext = 'no', ac_authorcomment = ?,
-                ac_bbbody = ?, ac_body = ?, ac_approvecode = ?,
-                ac_anchortextcode = ?, ac_deletecode = ?",
-                array($articleid, $name, $email, $website, $anchortext, Jojo::getIP(),
-                      $authorcomment, $bbcomment, $htmlcomment, $approvecode, $anchortextcode, $deletecode));
-
-        /* Store details in the session so the user doesn't have to reenter on every comment */
-        $_SESSION['name']       = $name;
-        $_SESSION['email']      = $email;
-        $_SESSION['website']    = $website;
-        $_SESSION['anchortext'] = $anchortext;
-
-        /* Send article details for email to webmaster */
-        $message  = "A comment has been added to an article on " . _SITEURL . "/". $article['url'] . "\n\n";
-        $message .= "Comment by: " . $name . "\n";
-        $message .= $email != '' ? "Email: " . $email. "\n" : '';
-        $message .= $website != '' ? "Website: " . $website . "\n" : '';
-        $message .= $anchortext != '' ? "Anchor text: " . $anchortext . "\n" : '';
-        $message .= "Comment:\n" . $htmlcomment . "\n";
-
-        $message .= "\n\nThis comment is currently live on the site, but has a nofollow link\n\n";
-
-        if (!empty($anchortext)) {
-            $message .= "To FOLLOW the link on this comment AND use the chosen anchor text (for great comments), click the following link\n";
-            $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $anchortextcode . "/\n\n";
-        }
-        $message .= "To FOLLOW the link on this comment (for good comments), click the following link\n";
-        $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $approvecode . "/\n\n";
-        $message .= "To DELETE this comment, click the following link\n";
-        $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $deletecode . "/\n";
-        $message .= Jojo::emailFooter();
-
-        /* Email comment to webmaster and site contact */
-        Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['title'], $message, $name, $email);
-        if(_WEBMASTERADDRESS != _CONTACTADDRESS) Jojo::simplemail(_FROMNAME, _CONTACTADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['title'], $message, $name, $email);
-
-        /* add subscription if needed, and update all subscriptions to say the topic has a new comment */
-        if ($commentsubscriptions && $email_subscribe && !empty($_USERID)) {
-            self::addSubscription($_USERID, $articleid);
-        }
-        self::markSubscriptionsUpdated($articleid);
-
-        /* log a copy of the comment */
-        $log = new Jojo_Eventlog();
-        $log->code = 'article comment';
-        $log->importance = 'normal';
-        $log->shortdesc = 'Article comment by ' . $name . ' on ' . $article['title'];
-        $log->desc = $message;
-        $log->savetodb();
-        unset($log);
-
-        /* Delete cache for this page - forcing regeneration next view */
-        if (_CONTENTCACHE) {
-            $query = "DELETE FROM {contentcache} WHERE cc_url=? LIMIT 1";
-            $values = array(_SITEURL . '/' . $article['url']);
-            Jojo::deleteQuery($query, $values);
-        }
-
-        /* Redirect back to the article to see the comment on the page */
-        header('location: ' . self::getCorrectUrl());
-        exit();
-    }
-
-    static function addSubscription($userid, $articleid)
-    {
-        /* attempt to update existing subscription */
-        $updated = Jojo::updateQuery("UPDATE {articlecommentsubscription}  SET lastviewed=?, lastemailed=0 WHERE userid=? AND articleid=? LIMIT 1", array(time(), $userid, $articleid));
-        if ($updated) return true;
-
-        /* create new subscription */
-        $code = Jojo::randomString(16);
-        Jojo::insertQuery("INSERT INTO {articlecommentsubscription} SET userid=?, articleid=?, lastviewed=?, lastemailed=0, code=?", array($userid, $articleid, time(), $code));
-        return true;
-    }
-
-    static function removeSubscription($userid, $articleid)
-    {
-        $data = Jojo::selectQuery("SELECT * FROM {articlecommentsubscription} WHERE userid=? AND articleid=?", array($userid, $articleid));
-        if (!count($data)) return false; //nothing to delete
-        Jojo::deleteQuery("DELETE FROM {articlecommentsubscription} WHERE userid=? AND articleid=?", array($userid, $articleid));
-        return true;
-    }
-
-    static function removeSubscriptionByCode($code, $articleid)
-    {
-        $data = Jojo::selectQuery("SELECT * FROM {articlecommentsubscription} WHERE code=? AND articleid=?", array($code, $articleid));
-        if (!count($data)) return false; //nothing to delete
-        Jojo::deleteQuery("DELETE FROM {articlecommentsubscription} WHERE code=? AND articleid=?", array($code, $articleid));
-        return true;
-    }
-
-    static function isSubscribed($userid, $articleid)
-    {
-        $data = Jojo::selectQuery("SELECT * FROM {articlecommentsubscription} WHERE userid=? AND articleid=?", array($userid, $articleid));
-        return (count($data)) ? true : false;
-    }
-
-    static function markSubscriptionsUpdated($articleid)
-    {
-        Jojo::insertQuery("UPDATE {articlecommentsubscription} SET lastupdated=? WHERE articleid=?", array(time(), $articleid));
-    }
-
-    static function markSubscriptionsViewed($userid, $articleid)
-    {
-        Jojo::insertQuery("UPDATE {articlecommentsubscription} SET lastviewed=? WHERE userid=? AND articleid=? LIMIT 1", array(time(), $userid, $articleid));
-    }
-
-    static function processSubscriptionEmails($limit=3) {
-        $subscriptions = Jojo::selectQuery("SELECT acs.*, ar_title, ar_url, ar_category, ar_language, us_firstname, us_login, us_email FROM {articlecommentsubscription} acs LEFT JOIN {article} ar ON (acs.articleid=ar.articleid) LEFT JOIN {user} us ON (acs.userid=us.userid) WHERE (lastupdated > lastviewed) AND (lastviewed > lastemailed) LIMIT ?", $limit);
-        $from_name = Jojo::either(_FROMNAME, _WEBMASTERNAME);
-        $from_email = Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS);
-        foreach ($subscriptions as $sub) {
-            $subject  = 'New comment notification: ' . $sub['ar_title'];
-            $message  = 'A new comment has been added to "' . $sub['ar_title'] . '" on ' . Jojo::getOption('sitetitle') . '. You are subscribed to receive email notifications notifications of any new comments on this post.';
-            $message .= "To view the new comments, please visit the following link.\n";
-            $message .= _SITEURL.'/'. self::getArticleUrl($sub['articleid'], $sub['ar_url'], $sub['ar_title'], $sub['ar_language'], $sub['ar_category'])."\n\n";
-            $message .= "You can unsubscribe from this notification by using the following link.\n";
-            $message .= _SITEURL.'/'. self::_getPrefix('article', $sub['ar_category']) . "/unsubscribe/".$sub['articleid']."/".$sub['code']."/\n";
-            $message .= "\nRegards,\n" . Jojo::getOption('webmastername') . "\n" . Jojo::getOption('sitetitle')."\n".Jojo::getOption('fromaddress')."\n";
-            if (Jojo::simpleMail($sub['us_login'], $sub['us_email'], $subject, $message, $from_name, $from_email)) {
-                Jojo::updateQuery("UPDATE {articlecommentsubscription} SET lastemailed=? WHERE userid=? AND articleid=?", array(time(), $sub['userid'], $sub['articleid']));
-           } else {
-                /* log a copy of the message */
-                $log             = new Jojo_Eventlog();
-                $log->code       = 'enquiry';
-                $log->importance = 'high';
-                $log->shortdesc  = 'Failed comment notification to ' . $sub['us_login'] . ' (' . $sub['us_email'] . ')';
-                $log->desc       = $message;
-                $log->savetodb();
-                unset($log);
-            }
-        }
-    }
-
-
-/*
-* Tags
-*/
-
-    static function getTagSnippets($ids)
-    {
-        /* Convert array of ids to a string */
-        $ids = "'" . implode($ids, "', '") . "'";
-
-        /* Get the articles */
-        $articles = Jojo::selectQuery("SELECT *
-                                       FROM {article}
-                                       WHERE
-                                            articleid IN ($ids)
-                                         AND
-                                           ar_livedate < ?
-                                         AND
-                                           ar_expirydate<=0 OR ar_expirydate > ?
-                                       ORDER BY
-                                         ar_date DESC",
-                                      array(time(), time()));
-
-        /* Create the snippets */
-        $snippets = array();
-        foreach ($articles as $i => $a) {
-            $image = !empty($a['ar_image']) ? 'articles/' . $a['ar_image'] : '';
-            $snippets[] = array(
-                    'id'    => $a['articleid'],
-                    'image' => $image,
-                    'title' => htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false),
-                    'text'  => strip_tags($a['ar_body']),
-                    'url'   => Jojo::urlPrefix(false) . self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category'])
-                );
-        }
-
-        /* Return the snippets */
-        return $snippets;
-    }
 
 /*
 * Core
@@ -911,103 +627,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
     /**
-     * Site Search
-     *
-     */
-    static function search($results, $keywords, $language, $booleankeyword_str=false)
-    {
-        global $_USERGROUPS;
-        $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
-        $pagePermissions = new JOJO_Permissions();
-        $boolean = ($booleankeyword_str) ? true : false;
-        $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
-        if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
-            $like = '1';
-            foreach ($keywords as $keyword) {
-                $like .= sprintf(" AND (ar_body LIKE '%%%s%%' OR ar_title LIKE '%%%s%%')", Jojo::clean($keyword), Jojo::clean($keyword));
-            }
-        } elseif ($boolean && stripos($booleankeyword_str, '"') === 0) {
-            $like = "(ar_body LIKE '%%%". implode(' ', $keywords). "%%' OR ar_title LIKE '%%%". implode(' ', $keywords) . "%%')";
-        } else {
-            $like = '(0';
-            foreach ($keywords as $keyword) {
-                $like .= sprintf(" OR ar_body LIKE '%%%s%%' OR ar_title LIKE '%%%s%%'", Jojo::clean($keyword), Jojo::clean($keyword));
-            }
-            $like .= ')';
-        }
-        $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
-
-        $query = "SELECT articleid, ar_url, ar_title, ar_desc, ar_body, ar_image, ar_language, ar_expirydate, ar_livedate, ar_category, ((MATCH(ar_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(ar_title, ar_desc, ar_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
-        $query .= ", p.pg_url, p.pg_title";
-        $query .= " FROM {article} AS article ";
-        $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
-        $query .= " LEFT JOIN {language} AS language ON (article.ar_language = languageid)";
-        $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid)" : '';
-        $query .= " WHERE ($like";
-        $query .= $tagid ? " OR (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid))" : ')';
-        $query .= ($language) ? " AND ar_language = '$language' " : '';
-        $query .= " AND language.active = 'yes' ";
-        $query .= " AND ar_livedate<" . time() . " AND (ar_expirydate<=0 OR ar_expirydate>" . time() . ") ";
-        $query .= " ORDER BY relevance DESC LIMIT 100";
-        $data = Jojo::selectQuery($query, array($keywords_str, $keywords_str));
-
-        if (_MULTILANGUAGE) {
-            global $page;
-            $mldata = Jojo::getMultiLanguageData();
-            $homes = $mldata['homes'];
-        } else {
-            $homes = array(1);
-        }
-        foreach ($data as $d) {
-            $pagePermissions->getPermissions('article', $d['articleid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view')) {
-                continue;
-            }
-            $result = array();
-            $result['relevance'] = $d['relevance'];
-            $result['title'] = $d['ar_title'];
-            $result['body'] = $d['ar_body'];
-            $result['image'] = 'articles/' . $d['ar_image'];
-            $result['url'] = self::getArticleUrl($d['articleid'], $d['ar_url'], $d['ar_title'], $d['ar_language'], $d['ar_category']);
-            $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
-            $result['id'] = $d['articleid'];
-            $result['plugin'] = 'jojo_article';
-            $result['type'] = $d['pg_title'] ? $d['pg_title'] : 'Articles';
-
-            if ($_TAGS) {
-                $result['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $d['articleid']);
-                if ($result['tags'] && array_search(implode(' ', $keywords), $result['tags']) !== false) $result['relevance'] = $result['relevance'] + 1 ;
-            }
-            $results[] = $result;
-        }
-        /* Return results */
-        return $results;
-    }
-
-
-   /**
-     * RSS Icon filter
-     * Places the RSS feed icon in the head of the document, sitewide
-     */
-    static function rssicon($data)
-    {
-        global $page;
-        $link = Jojo::getOption('article_external_rss');
-        if ($link) {
-            $data['Articles'] =  $link;
-        }
-        /* add category RSS feeds */
-        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
-        foreach ($categories as $c) {
-            $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
-            if ($prefix) {
-                $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? Jojo::getMultiLanguageString($c['pg_language'], false) : '') . $prefix;
-            }
-        }
-        return $data;
-    }
-
-    /**
      * Removes any [[snip]] tags leftover in the content before outputting
      */
     static function removesnip($data)
@@ -1236,4 +855,383 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return true;
     }
 
+   /**
+     * RSS Icon filter
+     * Places the RSS feed icon in the head of the document, sitewide
+     */
+    static function rssicon($data)
+    {
+        global $page;
+        $link = Jojo::getOption('article_external_rss');
+        if ($link) {
+            $data['Articles'] =  $link;
+        }
+        /* add category RSS feeds */
+        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
+        foreach ($categories as $c) {
+            $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
+            if ($prefix) {
+                $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? Jojo::getMultiLanguageString($c['pg_language'], false) : '') . $prefix;
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Site Search
+     */
+    static function search($results, $keywords, $language, $booleankeyword_str=false)
+    {
+        global $_USERGROUPS;
+        $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
+        $pagePermissions = new JOJO_Permissions();
+        $boolean = ($booleankeyword_str) ? true : false;
+        $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
+        if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
+            $like = '1';
+            foreach ($keywords as $keyword) {
+                $like .= sprintf(" AND (ar_body LIKE '%%%s%%' OR ar_title LIKE '%%%s%%')", Jojo::clean($keyword), Jojo::clean($keyword));
+            }
+        } elseif ($boolean && stripos($booleankeyword_str, '"') === 0) {
+            $like = "(ar_body LIKE '%%%". implode(' ', $keywords). "%%' OR ar_title LIKE '%%%". implode(' ', $keywords) . "%%')";
+        } else {
+            $like = '(0';
+            foreach ($keywords as $keyword) {
+                $like .= sprintf(" OR ar_body LIKE '%%%s%%' OR ar_title LIKE '%%%s%%'", Jojo::clean($keyword), Jojo::clean($keyword));
+            }
+            $like .= ')';
+        }
+        $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
+
+        $query = "SELECT articleid, ar_url, ar_title, ar_desc, ar_body, ar_image, ar_language, ar_expirydate, ar_livedate, ar_category, ((MATCH(ar_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(ar_title, ar_desc, ar_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
+        $query .= ", p.pg_url, p.pg_title";
+        $query .= " FROM {article} AS article ";
+        $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
+        $query .= " LEFT JOIN {language} AS language ON (article.ar_language = languageid)";
+        $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid)" : '';
+        $query .= " WHERE ($like";
+        $query .= $tagid ? " OR (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid))" : ')';
+        $query .= ($language) ? " AND ar_language = '$language' " : '';
+        $query .= " AND language.active = 'yes' ";
+        $query .= " AND ar_livedate<" . time() . " AND (ar_expirydate<=0 OR ar_expirydate>" . time() . ") ";
+        $query .= " ORDER BY relevance DESC LIMIT 100";
+        $data = Jojo::selectQuery($query, array($keywords_str, $keywords_str));
+
+        if (_MULTILANGUAGE) {
+            global $page;
+            $mldata = Jojo::getMultiLanguageData();
+            $homes = $mldata['homes'];
+        } else {
+            $homes = array(1);
+        }
+        foreach ($data as $d) {
+            $pagePermissions->getPermissions('article', $d['articleid']);
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view')) {
+                continue;
+            }
+            $result = array();
+            $result['relevance'] = $d['relevance'];
+            $result['title'] = $d['ar_title'];
+            $result['body'] = $d['ar_body'];
+            $result['image'] = 'articles/' . $d['ar_image'];
+            $result['url'] = self::getArticleUrl($d['articleid'], $d['ar_url'], $d['ar_title'], $d['ar_language'], $d['ar_category']);
+            $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
+            $result['id'] = $d['articleid'];
+            $result['plugin'] = 'jojo_article';
+            $result['type'] = $d['pg_title'] ? $d['pg_title'] : 'Articles';
+
+            if ($_TAGS) {
+                $result['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $d['articleid']);
+                if ($result['tags'] && array_search(implode(' ', $keywords), $result['tags']) !== false) $result['relevance'] = $result['relevance'] + 1 ;
+            }
+            $results[] = $result;
+        }
+        /* Return results */
+        return $results;
+    }
+
+    /*
+    * Comments
+    */
+    static function postComment($article)
+    {
+        global $smarty, $_USERID;
+
+        $errors = array();
+
+        $commentsubscriptions = Jojo::getOption('article_comment_subscriptions', 'no') == 'yes' ? true : false;
+
+        /* Get variables from POST */
+        $name            = Jojo::getFormData('name',            '');
+        $authorcomment   = Jojo::getFormData('authorcomment',   'no');
+        $email           = Jojo::getFormData('email',           '');
+        $email_subscribe = Jojo::getFormData('email_subscribe', false) ? true : false;
+        $website         = Jojo::getFormData('website',         '');
+        $anchortext      = Jojo::getFormData('anchortext',      '');
+        $bbcomment       = Jojo::getFormData('comment',         '');
+        $captchacode     = Jojo::getFormData('captchacode',     '');
+        if (!empty($website)) $website = Jojo::addhttp($website);
+
+        /* sanitise input */
+        $name       = htmlentities($name);
+        $anchortext = htmlentities($anchortext);
+
+        /* trim whitespace just in case people copy-paste the email address wrong */
+        $email = trim($email);
+
+        if (!$article) return false;
+        $articleid       = $article['articleid'];
+
+        $ip = Jojo::getIP();
+
+        /* Check CAPTCHA is entered correctly */
+        if (empty($_USERID) && !PhpCaptcha::Validate($captchacode)) {
+            $errors[] = 'Invalid code entered';
+        }
+
+        if (Jojo::getOption('articlecomments', 'no') != 'yes') {
+            $errors[] = 'Article Comments are currently disabled';
+        }
+
+        /* are comments enabled for this post? */
+        $articlecommentsenabled = !empty($article['ar_comments']) ? Jojo::yes2True($article['ar_comments']) : true;
+        if (!$articlecommentsenabled) {
+            $errors[] = 'Comments are disabled for this post';
+        }
+
+        /* Error checking */
+        if ($name == '') {
+            $errors[] = 'Please enter your name';
+        }
+        if ($bbcomment == '') {
+            $errors[] = 'Please enter a comment';
+        }
+        if ((Jojo::getOption('article_optional_email', 'no') == 'no') && empty($email)) {
+            $errors[] = 'Please enter your email address (this will not be shown to the public)';
+        }
+        if (($email != '') && !Jojo::checkEmailFormat($email)) {
+            $errors[] = 'Email format is invalid';
+        }
+        if (($website != '') && !Jojo::checkUrlFormat($website)) {
+            $errors[] = 'Website format is invalid';
+        }
+
+        /* rate limiting to prevent spam */
+        $rate_comments = 5; // maximum X posts
+        $rate_mins = 5;  // in X mins
+        $ratelimit = Jojo::selectQuery("SELECT * FROM {articlecomment} WHERE ac_ip='" . $ip . "' AND ac_timestamp>" . strtotime('-' . $rate_mins . ' minutes'));
+        if (count($ratelimit)>$rate_comments) {
+            $errors[] = 'We limit comments to ' . $rate_comments . ' every ' . $rate_mins . ' minutes to prevent automated spam. Please try posting your comment again in a few minutes, and sorry for any inconvenience';
+        }
+
+        /* Convert BBCode to HTML */
+        $bb = new bbconverter();
+        $bb->truncateurl = 30;
+        $bb->nofollow = true;
+        $bb->setBBCode($bbcomment);
+        $htmlcomment = $bb->convert('bbcode2html');
+
+        /* Return errors */
+        if (count($errors)) {
+            /* Error */
+            $smarty->assign('error',      implode("<br />\n", $errors));
+            $smarty->assign('name',       $name);
+            $smarty->assign('email',      $email);
+            $smarty->assign('website',    $website);
+            $smarty->assign('anchortext', $anchortext);
+            $smarty->assign('comment',    $bbcomment);
+            return false;
+        }
+
+        /* Create unique approve and delete codes, ensure they are not already in the database for another comment */
+        $query = 'SELECT * FROM {articlecomment} WHERE ac_approvecode = ? OR ac_deletecode = ? OR ac_anchortextcode = ?';
+        do {
+            $approvecode = Jojo::randomString(16, '0123456789');
+            $res = Jojo::selectQuery($query, array($approvecode, $approvecode, $approvecode));
+        } while (count($res) > 0);
+        do {
+            $anchortextcode = Jojo::randomString(16, '0123456789');
+            $res = Jojo::selectQuery($query, array($anchortextcode, $anchortextcode, $anchortextcode));
+        } while (count($res) > 0);
+        do {
+            $deletecode = Jojo::randomString(16, '0123456789');
+            $res = Jojo::selectQuery($query, array($deletecode, $deletecode, $deletecode));
+        } while (count($res) > 0);
+
+        Jojo::insertQuery("INSERT INTO {articlecomment} SET
+                ac_timestamp = UNIX_TIMESTAMP(NOW()), ac_articleid = ?,
+                ac_name = ?, ac_email = ?, ac_website = ?, ac_anchortext = ?,
+                ac_ip = ?, ac_useanchortext = 'no', ac_authorcomment = ?,
+                ac_bbbody = ?, ac_body = ?, ac_approvecode = ?,
+                ac_anchortextcode = ?, ac_deletecode = ?",
+                array($articleid, $name, $email, $website, $anchortext, Jojo::getIP(),
+                      $authorcomment, $bbcomment, $htmlcomment, $approvecode, $anchortextcode, $deletecode));
+
+        /* Store details in the session so the user doesn't have to reenter on every comment */
+        $_SESSION['name']       = $name;
+        $_SESSION['email']      = $email;
+        $_SESSION['website']    = $website;
+        $_SESSION['anchortext'] = $anchortext;
+
+        /* Send article details for email to webmaster */
+        $message  = "A comment has been added to an article on " . _SITEURL . "/". $article['url'] . "\n\n";
+        $message .= "Comment by: " . $name . "\n";
+        $message .= $email != '' ? "Email: " . $email. "\n" : '';
+        $message .= $website != '' ? "Website: " . $website . "\n" : '';
+        $message .= $anchortext != '' ? "Anchor text: " . $anchortext . "\n" : '';
+        $message .= "Comment:\n" . $htmlcomment . "\n";
+
+        $message .= "\n\nThis comment is currently live on the site, but has a nofollow link\n\n";
+
+        if (!empty($anchortext)) {
+            $message .= "To FOLLOW the link on this comment AND use the chosen anchor text (for great comments), click the following link\n";
+            $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $anchortextcode . "/\n\n";
+        }
+        $message .= "To FOLLOW the link on this comment (for good comments), click the following link\n";
+        $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $approvecode . "/\n\n";
+        $message .= "To DELETE this comment, click the following link\n";
+        $message .= _SITEURL . '/' . self::_getPrefix('admin') . '/' . $deletecode . "/\n";
+        $message .= Jojo::emailFooter();
+
+        /* Email comment to webmaster and site contact */
+        Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['title'], $message, $name, $email);
+        if(_WEBMASTERADDRESS != _CONTACTADDRESS) Jojo::simplemail(_FROMNAME, _CONTACTADDRESS, Jojo::getOption('sitetitle') . ' Article Comment - ' . $article['title'], $message, $name, $email);
+
+        /* add subscription if needed, and update all subscriptions to say the topic has a new comment */
+        if ($commentsubscriptions && $email_subscribe && !empty($_USERID)) {
+            self::addSubscription($_USERID, $articleid);
+        }
+        self::markSubscriptionsUpdated($articleid);
+
+        /* log a copy of the comment */
+        $log = new Jojo_Eventlog();
+        $log->code = 'article comment';
+        $log->importance = 'normal';
+        $log->shortdesc = 'Article comment by ' . $name . ' on ' . $article['title'];
+        $log->desc = $message;
+        $log->savetodb();
+        unset($log);
+
+        /* Delete cache for this page - forcing regeneration next view */
+        if (_CONTENTCACHE) {
+            $query = "DELETE FROM {contentcache} WHERE cc_url=? LIMIT 1";
+            $values = array(_SITEURL . '/' . $article['url']);
+            Jojo::deleteQuery($query, $values);
+        }
+
+        /* Redirect back to the article to see the comment on the page */
+        header('location: ' . self::getCorrectUrl());
+        exit();
+    }
+
+    static function addSubscription($userid, $articleid)
+    {
+        /* attempt to update existing subscription */
+        $updated = Jojo::updateQuery("UPDATE {articlecommentsubscription}  SET lastviewed=?, lastemailed=0 WHERE userid=? AND articleid=? LIMIT 1", array(time(), $userid, $articleid));
+        if ($updated) return true;
+
+        /* create new subscription */
+        $code = Jojo::randomString(16);
+        Jojo::insertQuery("INSERT INTO {articlecommentsubscription} SET userid=?, articleid=?, lastviewed=?, lastemailed=0, code=?", array($userid, $articleid, time(), $code));
+        return true;
+    }
+
+    static function removeSubscription($userid, $articleid)
+    {
+        $data = Jojo::selectQuery("SELECT * FROM {articlecommentsubscription} WHERE userid=? AND articleid=?", array($userid, $articleid));
+        if (!count($data)) return false; //nothing to delete
+        Jojo::deleteQuery("DELETE FROM {articlecommentsubscription} WHERE userid=? AND articleid=?", array($userid, $articleid));
+        return true;
+    }
+
+    static function removeSubscriptionByCode($code, $articleid)
+    {
+        $data = Jojo::selectQuery("SELECT * FROM {articlecommentsubscription} WHERE code=? AND articleid=?", array($code, $articleid));
+        if (!count($data)) return false; //nothing to delete
+        Jojo::deleteQuery("DELETE FROM {articlecommentsubscription} WHERE code=? AND articleid=?", array($code, $articleid));
+        return true;
+    }
+
+    static function isSubscribed($userid, $articleid)
+    {
+        $data = Jojo::selectQuery("SELECT * FROM {articlecommentsubscription} WHERE userid=? AND articleid=?", array($userid, $articleid));
+        return (count($data)) ? true : false;
+    }
+
+    static function markSubscriptionsUpdated($articleid)
+    {
+        Jojo::insertQuery("UPDATE {articlecommentsubscription} SET lastupdated=? WHERE articleid=?", array(time(), $articleid));
+    }
+
+    static function markSubscriptionsViewed($userid, $articleid)
+    {
+        Jojo::insertQuery("UPDATE {articlecommentsubscription} SET lastviewed=? WHERE userid=? AND articleid=? LIMIT 1", array(time(), $userid, $articleid));
+    }
+
+    static function processSubscriptionEmails($limit=3) {
+        $subscriptions = Jojo::selectQuery("SELECT acs.*, ar_title, ar_url, ar_category, ar_language, us_firstname, us_login, us_email FROM {articlecommentsubscription} acs LEFT JOIN {article} ar ON (acs.articleid=ar.articleid) LEFT JOIN {user} us ON (acs.userid=us.userid) WHERE (lastupdated > lastviewed) AND (lastviewed > lastemailed) LIMIT ?", $limit);
+        $from_name = Jojo::either(_FROMNAME, _WEBMASTERNAME);
+        $from_email = Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS);
+        foreach ($subscriptions as $sub) {
+            $subject  = 'New comment notification: ' . $sub['ar_title'];
+            $message  = 'A new comment has been added to "' . $sub['ar_title'] . '" on ' . Jojo::getOption('sitetitle') . '. You are subscribed to receive email notifications notifications of any new comments on this post.';
+            $message .= "To view the new comments, please visit the following link.\n";
+            $message .= _SITEURL.'/'. self::getArticleUrl($sub['articleid'], $sub['ar_url'], $sub['ar_title'], $sub['ar_language'], $sub['ar_category'])."\n\n";
+            $message .= "You can unsubscribe from this notification by using the following link.\n";
+            $message .= _SITEURL.'/'. self::_getPrefix('article', $sub['ar_category']) . "/unsubscribe/".$sub['articleid']."/".$sub['code']."/\n";
+            $message .= "\nRegards,\n" . Jojo::getOption('webmastername') . "\n" . Jojo::getOption('sitetitle')."\n".Jojo::getOption('fromaddress')."\n";
+            if (Jojo::simpleMail($sub['us_login'], $sub['us_email'], $subject, $message, $from_name, $from_email)) {
+                Jojo::updateQuery("UPDATE {articlecommentsubscription} SET lastemailed=? WHERE userid=? AND articleid=?", array(time(), $sub['userid'], $sub['articleid']));
+           } else {
+                /* log a copy of the message */
+                $log             = new Jojo_Eventlog();
+                $log->code       = 'enquiry';
+                $log->importance = 'high';
+                $log->shortdesc  = 'Failed comment notification to ' . $sub['us_login'] . ' (' . $sub['us_email'] . ')';
+                $log->desc       = $message;
+                $log->savetodb();
+                unset($log);
+            }
+        }
+    }
+
+
+/*
+* Tags
+*/
+
+    static function getTagSnippets($ids)
+    {
+        /* Convert array of ids to a string */
+        $ids = "'" . implode($ids, "', '") . "'";
+
+        /* Get the articles */
+        $articles = Jojo::selectQuery("SELECT *
+                                       FROM {article}
+                                       WHERE
+                                            articleid IN ($ids)
+                                         AND
+                                           ar_livedate < ?
+                                         AND
+                                           ar_expirydate<=0 OR ar_expirydate > ?
+                                       ORDER BY
+                                         ar_date DESC",
+                                      array(time(), time()));
+
+        /* Create the snippets */
+        $snippets = array();
+        foreach ($articles as $i => $a) {
+            $image = !empty($a['ar_image']) ? 'articles/' . $a['ar_image'] : '';
+            $snippets[] = array(
+                    'id'    => $a['articleid'],
+                    'image' => $image,
+                    'title' => htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false),
+                    'text'  => strip_tags($a['ar_body']),
+                    'url'   => Jojo::urlPrefix(false) . self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['ar_language'], $a['ar_category'])
+                );
+        }
+
+        /* Return the snippets */
+        return $snippets;
+    }
 }
