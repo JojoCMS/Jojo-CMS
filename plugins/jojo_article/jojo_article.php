@@ -62,6 +62,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
             $a['id']           = $a['articleid'];
             $a['title']        = htmlspecialchars($a['ar_title'], ENT_COMPAT, 'UTF-8', false);
+            // Snip the article for the index description
+            $a['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $a['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
             $a['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($a['ar_body'])));
             $a['date']         = Jojo::strToTimeUK($a['ar_date']);
@@ -277,12 +279,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* calculate the next and previous articles */
             if (Jojo::getOption('article_next_prev') == 'yes') {
                 if (!empty($nextarticle)) {
-                    $nextarticle['url'] = self::getArticleUrl($nextarticle['articleid'], $nextarticle['ar_url'], $nextarticle['ar_title'], $nextarticle['ar_language'], $nextarticle['ar_category']);
                     $smarty->assign('nextarticle', $nextarticle);
                 }
-
                 if (!empty($prevarticle)) {
-                    $prevarticle['url'] = self::getArticleUrl($prevarticle['articleid'], $prevarticle['ar_url'], $prevarticle['ar_title'], $prevarticle['ar_language'], $prevarticle['ar_category']);
                     $smarty->assign('prevarticle', $prevarticle);
                 }
             }
@@ -299,12 +298,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                     $itemcloud = Jojo_Plugin_Jojo_Tags::getTagCloud('', $tags);
                     $smarty->assign('itemcloud', $itemcloud);
                 }
-            }
-
-            /* Calculate whether the article has expired or not */
-            $now = strtotime('now');
-            if (($now < $article['ar_livedate']) || (($now > $article['ar_expirydate']) && ($article['ar_expirydate'] > 0)) ) {
-                $this->expired = true;
+               /* get related articles if tags plugin installed and option enabled */
+                $numrelated = Jojo::getOption('article_num_related');
+                if ($numrelated) {
+                    $related = Jojo_Plugin_Jojo_Tags::getRelated('jojo_article', $articleid, $numrelated, 'jojo_article'); //set the last argument to 'jojo_article' to restrict results to only articles
+                    $smarty->assign('related', $related);
+                }
             }
 
             /* Get Comments */
@@ -363,6 +362,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $content['title']            = $article['title'];
             $content['seotitle']         = Jojo::either($article['ar_seotitle'], $article['title']);
             $content['breadcrumbs']      = $breadcrumbs;
+
             if (!empty($article['ar_metadesc'])) {
                 $content['meta_description'] = $article['ar_metadesc'];
             } else {
@@ -383,26 +383,20 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                         $content['meta_description'] = str_replace($metafilters, $metafilterreplace, $meta_description_template);
             }
             $content['metadescription']  = $content['meta_description'];
+
+            $content['content'] = $smarty->fetch('jojo_article.tpl');
+
         } else {
+
             /* Article index section */
-
-            // Snip the article for the index description
-            foreach ($articles as $key => $article) {
-              $article = Jojo::iExplode('[[snip]]', $article['bodyplain']);
-              $articles[$key]['bodyplain'] = $article[0];
-            }
-
             $pagenum = Jojo::getFormData('pagenum', 1);
             if ($pagenum[0] == 'p') {
                 $pagenum = substr($pagenum, 1);
             }
 
-            $smarty->assign('article','');
+            /* get number of articles for pagination */
             $articlesperpage = Jojo::getOption('articlesperpage', 40);
             $start = ($articlesperpage * ($pagenum-1));
-
-            /* get number of articles for pagination */
-            $now = strtotime('now');
             $numarticles = count($articles);
             $numpages = ceil($numarticles / $articlesperpage);
             /* calculate pagination */
@@ -427,8 +421,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 }
                 $pagination .= '</ul>';
             }
-            $smarty->assign('pagination',$pagination);
-            $smarty->assign('pagenum',$pagenum);
+            $smarty->assign('pagination', $pagination);
+            $smarty->assign('pagenum', $pagenum);
  
             /* clear the meta description to avoid duplicate content issues */
             $content['metadescription'] = '';
@@ -438,19 +432,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $smarty->assign('jojo_articles', $articles);
 
             $content['content'] = $smarty->fetch('jojo_article_index.tpl');
-            return $content;
-
         }
-
-        /* get related articles if tags plugin installed and option enabled */
-        $numrelated = Jojo::getOption('article_num_related');
-        if ($numrelated && class_exists('Jojo_Plugin_Jojo_Tags')) {
-            $related = Jojo_Plugin_Jojo_Tags::getRelated('jojo_article', $articleid, $numrelated, 'jojo_article'); //set the last argument to 'jojo_article' to restrict results to only articles
-            $smarty->assign('related', $related);
-        }
-
-        $content['content'] = $smarty->fetch('jojo_article.tpl');
-
         return $content;
     }
 
@@ -633,17 +615,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         $data = str_ireplace('[[snip]]','',$data);
         return $data;
-    }
-
-    static function getPrefixById($id=false) {
-        if ($id) {
-            $data = Jojo::selectRow("SELECT ar_category FROM {article} WHERE articleid = ?", array($id));
-            if ($data) {
-                $prefix = self::_getPrefix('article', $data['ar_category']);
-                return $prefix;
-            }
-        }
-        return false;
     }
 
     /**
@@ -1194,7 +1165,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
         }
     }
-
 
 /*
 * Tags
