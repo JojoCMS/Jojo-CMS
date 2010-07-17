@@ -270,22 +270,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 * Tags
 */
 
-    static function saveTags($record, $tags = array())
-    {
-        /* Ensure the tags class is available */
-        if (!class_exists('Jojo_Plugin_Jojo_Tags')) {
-            return false;
-        }
-
-        /* Delete existing tags for this item */
-        Jojo_Plugin_Jojo_Tags::deleteTags('jojo_article', $record['articleid']);
-
-        /* Save all the new tags */
-        foreach($tags as $tag) {
-            Jojo_Plugin_Jojo_Tags::saveTag($tag, 'jojo_article', $record['articleid']);
-        }
-    }
-
     static function getTagSnippets($ids)
     {
         /* Convert array of ids to a string */
