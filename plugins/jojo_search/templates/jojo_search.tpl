@@ -33,15 +33,15 @@
 {foreach item=res from=$results}
   <div class="search-result search-cat-{$res.type|strtolower|replace:' ':'-'} clear">
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance-display" style="width:{$res.displayrelevance|string_format:"%d"}px;" title="Search relevance: {$res.relevance|string_format:"%.1f"}"></div>{/if}
-    <h3><a href="{$res.absoluteurl}" title="{$res.title|escape:"html":$charset}">{$res.title|escape:"html":$charset}</a></h3>
-    {if $res.image && $OPTIONS.search_images =='yes'}<a href="{$res.absoluteurl}" title="{$res.title|escape:"html":$charset}" rel="nofollow"><img src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}v6000{/if}/{$res.image}" class="right-image" alt="{$res.title|escape:"html":$charset}" /></a>{/if}
+    <h3><a href="{$res.absoluteurl}" title="{$res.title}">{$res.title}</a></h3>
+    {if $res.image && $OPTIONS.search_images =='yes'}<a href="{$res.absoluteurl}" title="{$res.title}" rel="nofollow"><img src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}v6000{/if}/{$res.image}" class="float-right" alt="{$res.title}" /></a>{/if}
     <p>{$res.body}</p>
     {if $res.tags}<p class="links">Tagged with:
 {foreach from=$res.tags item=tag}
-<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag|replace:" ":"-"}/">{if $tag==$keywords}<b>{$tag}</b>{else}{$tag}{/if}</a> |
+<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag.url}/">{if $tag.cleanword==$keywords}<b>{$tag.cleanword}</b>{else}{$tag.cleanword}{/if}</a> |
 {/foreach}
     </p>{/if}
-    <p class="links">{$res.type}: <a href="{$res.absoluteurl}" title="{$res.title|escape:"html":$charset}" class="links" rel="nofollow" >&gt; {$res.displayurl}</a></p>
+    <p class="links">{$res.type}: <a href="{$res.absoluteurl}" title="{$res.title}" class="links" rel="nofollow" >&gt; {$res.displayurl}</a></p>
   </div>
 {/foreach}
 <form name="search2" action="{$searchurl}" method="post">
