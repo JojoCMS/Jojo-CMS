@@ -3122,7 +3122,7 @@ class Jojo {
         $rss .= "<copyright>" . htmlentities(_SITETITLE) . " " . date('Y', strtotime('now')) . "</copyright>\n";
 
         foreach ($items as &$i) {
-            $i['body'] = Jojo::relative2absolute(preg_replace('/\[\[.*?\]\]/', '',  $i[$bodyfield]), _SITEURL);
+            $i['body'] = Jojo::relative2absolute($i[$bodyfield], _SITEURL);
             /* chop up to the first [[snip]] */
             if ($snip =='full') {
                 $i['body'] = str_ireplace('[[snip]]','',$i['body']);
@@ -3133,6 +3133,7 @@ class Jojo {
                 } else {
                     $i['body'] = $irr[0];
                 }
+                $i['body'] = preg_replace('/\[\[.*?\]\]/', '',  $i['body']);
             } 
             $source = _SITEURL . "/" . $i['url'];
             $i['body'] = mb_convert_encoding($i['body'], 'HTML-ENTITIES', 'UTF-8');
