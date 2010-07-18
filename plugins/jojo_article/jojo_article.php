@@ -26,7 +26,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false) {
+    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include = false) {
         global $page;
         $language = _MULTILANGUAGE ? (!empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en')) : '';
         if (is_array($categoryid)) {
@@ -46,7 +46,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= $shownumcomments ? " LEFT JOIN {articlecomment} acom ON (acom.ac_articleid = ar.articleid)" : '';
         $query .= " WHERE 1" . $categoryquery;
-        $query .= (_MULTILANGUAGE && $categoryid == 'all') ? " AND (pg_language = '$language')" : '';
+        $query .= (_MULTILANGUAGE && $categoryid == 'all' && $include != 'alllanguages') ? " AND (pg_language = '$language')" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
         $query .= $num ? " ORDER BY $sortby LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
@@ -467,8 +467,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         global $page;
         /* See if we have any article sections to display and find all of them */
-        $articleindexes = Jojo::selectAssoc("SELECT p.pageid as id, p.pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes' ORDER BY pg_parent");
-        if (!count($articleindexes)) {
+        $indexes =  Jojo::selectQuery("SELECT articlecategoryid, sortby, p.pageid, pg_title, pg_url, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) WHERE pg_sitemapnav = 'yes' ORDER BY pg_language, pg_parent");
+        if (!count($indexes)) {
             return $sitemap;
         }
         
@@ -486,7 +486,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $limit = 15;
         $articlesperpage = Jojo::getOption('articlesperpage', 40);
          /* Make sitemap trees for each articles instance found */
-        foreach($articleindexes as $k => $i){
+        foreach($indexes as $k => $i){
             /* Set language */
             $language = (_MULTILANGUAGE && !empty($i['pg_language'])) ? $i['pg_language'] : '';
             $multilangstring = Jojo::getMultiLanguageString($language, false);
@@ -576,16 +576,15 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if (!is_array($urls)) {
             $urls = array();
-            $articleindexes = Jojo::selectQuery("SELECT p.*, ac.* FROM {page} p  LEFT JOIN {articlecategory} ac ON (ac.pageid=p.pageid) WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_sitemapnav = 'yes'");
-            if (count($articleindexes)==0) {
+            $indexes =  Jojo::selectQuery("SELECT articlecategoryid, p.pageid, pg_title, pg_url, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) WHERE pg_sitemapnav = 'yes' ORDER BY pg_parent");
+            if (count($indexes)==0) {
                return $tree;
             }
-            foreach($articleindexes as $key => $i){
-                $language = !empty($i['pg_language']) ? $i['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-                $mldata = Jojo::getMultiLanguageData();
-                $lclanguage = $mldata['longcodes'][$language];
-                $urls[] = ((_MULTILANGUAGE) ? $lclanguage . '/' : '') . self::_getPrefix('article', $i['articlecategoryid']) . '/';
-                $urls[] = ((_MULTILANGUAGE) ? $lclanguage . '/' : '') . self::_getPrefix('rss', $i['articlecategoryid']) . '/';
+            foreach($indexes as $key => $i){
+                $language = (_MULTILANGUAGE && !empty($i['pg_language'])) ? $i['pg_language'] : '';
+                $multilangstring = Jojo::getMultiLanguageString($language, false);
+                $urls[] = (_MULTILANGUAGE ? $multilangstring : '')  . self::_getPrefix('article', $i['articlecategoryid']) . '/';
+                $urls[] = (_MULTILANGUAGE ? $multilangstring : '')  . self::_getPrefix('rss', $i['articlecategoryid']) . '/';
             }
         }
 
@@ -608,12 +607,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function xmlsitemap($sitemap)
     {
         /* Get articles from database */
-        $articles = self::getArticles('', '', 'all');
+        $articles = self::getArticles('', '', 'all', '', '', 'alllanguages');
         $now = time();
-        $articleindexes = Jojo::selectAssoc("SELECT pageid as id, pageid, p.*, c.* FROM {page} p LEFT JOIN {articlecategory} c ON (p.pageid=c.pageid) WHERE pg_link = 'jojo_plugin_jojo_article'");
+        $indexes =  Jojo::selectAssoc("SELECT p.pageid as id, p.pageid, pg_index, pg_xmlsitemapnav, pg_livedate, pg_expirydate, pg_status, articlecategoryid FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)");
         /* Add articles to sitemap */
         foreach($articles as $k => $a) {
-            $apage =  $articleindexes[$a['pageid']];
+            $apage =  $indexes[$a['pageid']];
             // strip out articles from expired pages
             if ($apage['pg_index'] != 'yes' || $apage['pg_xmlsitemapnav'] != 'yes' || $apage['pg_livedate']>$now || (!empty($apage['pg_expirydate']) && $apage['pg_expirydate']<$now) || $apage['pg_status']!='active') {
                 unset($articles[$k]);
@@ -1139,7 +1138,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
            } else {
                 /* log a copy of the message */
                 $log             = new Jojo_Eventlog();
-                $log->code       = 'enquiry';
+                $log->code       = 'comment';
                 $log->importance = 'high';
                 $log->shortdesc  = 'Failed comment notification to ' . $sub['us_login'] . ' (' . $sub['us_email'] . ')';
                 $log->desc       = $message;
