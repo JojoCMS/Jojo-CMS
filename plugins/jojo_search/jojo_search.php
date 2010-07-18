@@ -111,7 +111,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         if (_MULTILANGUAGE) {
             /* Get list of languages for drop down */
             $languages = array();
-            foreach (Jojo::selectQuery("SELECT * FROM {language} WHERE active!='no' ORDER BY english_name") as $l) {
+            foreach (Jojo::selectQuery("SELECT * FROM {language} WHERE active='yes' ORDER BY english_name") as $l) {
                 $languages[$l['languageid']] = $l['name'];
             }
             $smarty->assign('languages', $languages);
@@ -176,6 +176,72 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         return parent::getCorrectUrl();
     }
 
+    /*-
+     * Generic search function for plugins to call rather than repeating all the boolean logic themselves
+     * Returns a raw array of language limited ids and relevance rankings.
+     * Display data for the results (title etc) and exclusions (expired items etc) to be handled by the plugin.
+     */
+    static function searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false)
+    {
+        $plugin = $searchfields['plugin'];
+        $table = $searchfields['table'];
+        $idfield = $searchfields['idfield'];
+        $languagefield = $searchfields['languagefield'];
+        $primaryfields = $searchfields['primaryfields'];
+        $secondaryfields = $searchfields['secondaryfields'];
+        $fieldarray = explode(', ', $secondaryfields);
+        
+        $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
+        $boolean = ($booleankeyword_str) ? true : false;
+        $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
+        if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
+            $like = '1';
+            foreach ($keywords as $keyword) {
+                foreach ($fieldarray as $k => $f) {
+                    if ($k == 0) {
+                        $like .= sprintf(" AND (%s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
+                    } else {
+                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
+                    }
+                }
+                $like .= ') ';
+            }
+        } elseif ($boolean && stripos($booleankeyword_str, '"') === 0) {
+            foreach ($fieldarray as $k => $f) {
+                if ($k == 0) {
+                    $like = sprintf("(%s LIKE '%%%s%%'", $f, implode(' ', $keywords));
+                } else {
+                    $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, implode(' ', $keywords));
+                }
+            }
+            $like .= ') ';
+        } else {
+            $like = '(0';
+            foreach ($keywords as $keyword) {
+                foreach ($fieldarray as $k => $f) {
+                    if ($k == 0) {
+                        $like .= sprintf(" OR %s LIKE '%%%%s%%'", $f, Jojo::clean($keyword));
+                    } else {
+                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
+                    }
+                }
+            }
+            $like .= ')';
+        }
+        $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
+
+        $query = "SELECT `$idfield` AS id, `$idfield`, ((MATCH($primaryfields) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH($secondaryfields) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
+        $query .= " FROM {$table} ";
+        $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid)" : '';
+        $query .= " WHERE ($like";
+        $query .= $tagid ? " OR (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid))" : ')';
+        $query .= ($language) ? " AND `$languagefield` = '$language' " : '';
+        $query .= " ORDER BY relevance DESC LIMIT 50";
+        $rawresults = Jojo::selectAssoc($query, array($keywords_str, $keywords_str));
+        
+        return $rawresults;
+    }
+    
     /*-
      * Copyright (c) 2005-2006 Vladimir Fedorkov (http://astellar.com/)
      * All rights reserved.
