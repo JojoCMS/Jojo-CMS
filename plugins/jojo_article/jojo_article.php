@@ -874,62 +874,31 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
      */
     static function search($results, $keywords, $language, $booleankeyword_str=false)
     {
-        $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
-        $boolean = ($booleankeyword_str) ? true : false;
-        $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
-        if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
-            $like = '1';
-            foreach ($keywords as $keyword) {
-                $like .= sprintf(" AND (ar_body LIKE '%%%s%%' OR ar_title LIKE '%%%s%%')", Jojo::clean($keyword), Jojo::clean($keyword));
+        $searchfields = array(
+            'plugin' => 'jojo_article',
+            'table' => 'article',
+            'idfield' => 'articleid',
+            'languagefield' => 'ar_language',
+            'primaryfields' => 'ar_title',
+            'secondaryfields' => 'ar_title, ar_desc, ar_body',
+        );
+        $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false);
+        $data = $rawresults ? self::getItemsById(array_keys($rawresults)) : '';
+        if ($data) {
+            foreach ($data as $d) {
+                $result = array();
+                $result['relevance'] = $rawresults[$d['id']]['relevance'];
+                $result['title'] = $d['title'];
+                $result['body'] = $d['bodyplain'];
+                $result['image'] = $d['image'];
+                $result['url'] = $d['url'];
+                $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
+                $result['id'] = $d['id'];
+                $result['plugin'] = 'jojo_article';
+                $result['type'] = $d['category'];
+                $result['tags'] = isset($rawresults[$d['id']]['tags']) ? $rawresults[$d['id']]['tags'] : '';
+                $results[] = $result;
             }
-        } elseif ($boolean && stripos($booleankeyword_str, '"') === 0) {
-            $like = "(ar_body LIKE '%%%". implode(' ', $keywords). "%%' OR ar_title LIKE '%%%". implode(' ', $keywords) . "%%')";
-        } else {
-            $like = '(0';
-            foreach ($keywords as $keyword) {
-                $like .= sprintf(" OR ar_body LIKE '%%%s%%' OR ar_title LIKE '%%%s%%'", Jojo::clean($keyword), Jojo::clean($keyword));
-            }
-            $like .= ')';
-        }
-        $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
-
-        $query = "SELECT articleid, ar_url, ar_title, ar_desc, ar_body, ar_image, ar_language, ar_expirydate, ar_livedate, ar_category, ((MATCH(ar_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(ar_title, ar_desc, ar_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
-        $query .= ", p.pageid, pg_url, pg_title, pg_status, pg_language";
-        $query .= " FROM {article} AS article ";
-        $query .= " LEFT JOIN {articlecategory} ac ON (article.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
-        $query .= " LEFT JOIN {language} AS language ON (article.ar_language = languageid)";
-        $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid)" : '';
-        $query .= " WHERE ($like";
-        $query .= $tagid ? " OR (tag.itemid = article.articleid AND tag.plugin='jojo_article' AND tag.tagid = $tagid))" : ')';
-        $query .= ($language) ? " AND ar_language = '$language' " : '';
-        $query .= " ORDER BY relevance DESC LIMIT 100";
-        $data = Jojo::selectQuery($query, array($keywords_str, $keywords_str));
-        $data = self::cleanItems($data);
-
-        if (_MULTILANGUAGE) {
-            global $page;
-            $mldata = Jojo::getMultiLanguageData();
-            $homes = $mldata['homes'];
-        } else {
-            $homes = array(1);
-        }
-        foreach ($data as $d) {
-            $result = array();
-            $result['relevance'] = $d['relevance'];
-            $result['title'] = $d['title'];
-            $result['body'] = $d['bodyplain'];
-            $result['image'] = $d['image'];
-            $result['url'] = $d['url'];
-            $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
-            $result['id'] = $d['id'];
-            $result['plugin'] = 'jojo_article';
-            $result['type'] = $d['category'];
-
-            if ($_TAGS) {
-                $result['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $d['articleid']);
-                if ($result['tags'] && array_search(implode(' ', $keywords), $result['tags']) !== false) $result['relevance'] = $result['relevance'] + 1 ;
-            }
-            $results[] = $result;
         }
         /* Return results */
         return $results;
