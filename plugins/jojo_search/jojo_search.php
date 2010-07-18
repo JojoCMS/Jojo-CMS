@@ -178,7 +178,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
 
     /*-
      * Generic search function for plugins to call rather than repeating all the boolean logic themselves
-     * Returns a raw array of language limited ids and relevance rankings.
+     * Returns a raw array of language limited ids, tags (if used) and relevance rankings.
      * Display data for the results (title etc) and exclusions (expired items etc) to be handled by the plugin.
      */
     static function searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false)
@@ -238,6 +238,16 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $query .= ($language) ? " AND `$languagefield` = '$language' " : '';
         $query .= " ORDER BY relevance DESC LIMIT 50";
         $rawresults = Jojo::selectAssoc($query, array($keywords_str, $keywords_str));
+        if ($_TAGS) {
+            foreach ($rawresults as $k => $r) {
+                $rawresults[$k]['tags'] = Jojo_Plugin_Jojo_Tags::getTags($plugin, $k);
+                if ($rawresults[$k]['tags']) {
+                    foreach ($rawresults[$k]['tags'] as $t) {
+                        if (strpos($t['cleanword'], $keywords_str) !== false) $rawresults[$k]['relevance'] = $r['relevance'] + 1;
+                    }
+                }
+            }
+        }
         
         return $rawresults;
     }
