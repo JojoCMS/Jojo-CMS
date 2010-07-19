@@ -70,6 +70,8 @@ class Jojo_Field_unixdate extends Jojo_Field
     function setValue($newvalue)
     {
         $this->value = is_numeric($newvalue) ? $newvalue : Jojo::strToTimeUK($newvalue);
+        if ($newvalue == '' && $this->fd_default=='now')  $this->value = time();
+        return true;
         if (($newvalue == '') || ($newvalue == 'n/a') || ($newvalue == 'na')) $this->value = 0;
         return true;
     }
