@@ -84,12 +84,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
-            $i['date']         = Jojo::strToTimeUK($i['ar_date']);
-            $i['datefriendly'] = Jojo::mysql2date($i['ar_date'], "medium");
+            $i['date']         = $i['ar_date'];
+            $i['datefriendly'] = Jojo::formatTimestamp($i['ar_date'], "medium");
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['ar_language'], $i['ar_category']);
-            $i['category']     = !empty($i['pg_menutitle']) ? htmlspecialchars($i['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
-            $i['categoryurl']  = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($i['pg_language'], true) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
+            $i['pagetitle']     = !empty($i['pg_menutitle']) ? htmlspecialchars($i['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
+            $i['pageurl']  = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($i['pg_language'], true) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
         }
         return $items;
     }
@@ -894,7 +894,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
                 $result['id'] = $d['id'];
                 $result['plugin'] = 'jojo_article';
-                $result['type'] = $d['category'];
+                $result['type'] = $d['pagetitle'];
                 $result['tags'] = isset($rawresults[$d['id']]['tags']) ? $rawresults[$d['id']]['tags'] : '';
                 $results[] = $result;
             }

@@ -91,8 +91,8 @@ $default_fd['article']['ar_seotitle'] = array(
 // Date Field
 $default_fd['article']['ar_date'] = array(
         'fd_name' => "Date",
-        'fd_type' => "date",
-        'fd_default' => "NOW()",
+        'fd_type' => "unixdate",
+        'fd_default' => "now",
         'fd_help' => "Date the article was published (defaults to Today)",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
