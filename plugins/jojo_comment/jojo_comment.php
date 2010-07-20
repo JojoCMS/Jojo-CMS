@@ -197,8 +197,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         if ($pagePermissions->hasPerm($_USERGROUPS, 'edit')) {
             $smarty->assign('editperms', true);
         }
-        $commenthtml = $smarty->fetch('jojo_comment.tpl');
-         $commenthtml .= $smarty->fetch('jojo_post_comment.tpl');
+        $commenthtml = $smarty->fetch('jojo_comment.tpl') . ($allowcomments ? $smarty->fetch('jojo_post_comment.tpl') : '');
        
         return  $commenthtml;
     }
