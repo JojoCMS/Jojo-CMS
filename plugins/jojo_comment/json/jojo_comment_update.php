@@ -6,6 +6,12 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 $action = $_POST['name'];
 $id = $_POST['value'];
 
+$page = Jojo_Plugin::getPage(Jojo::parsepage('admin'));
+if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
+  echo  json_encode("You do not have permission to use this function");
+  exit();
+}
+
 if ($action=='delete') {
   Jojo::deleteQuery("DELETE FROM {comment} WHERE commentid = ? LIMIT 1", array($id));
   exit;

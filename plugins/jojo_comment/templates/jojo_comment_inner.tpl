@@ -25,4 +25,8 @@
                 {/if}
             {/if}
         </div>
+        {elseif $user && $user.userid==$c.userid}
+        <div class="comment_actions">
+              <a href="#comments" onclick="frajax('jojo_edit_comment',{$c.commentid}, {$c.userid}); return false;" title="Edit Body"><img class="icon" src="images/cms/icons/comment_edit.png" alt="" /></a>
+        </div>
         {/if}

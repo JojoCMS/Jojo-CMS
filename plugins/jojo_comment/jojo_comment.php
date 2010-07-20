@@ -159,7 +159,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         global $smarty, $_USERGROUPS, $_USERID;
         /* assign user variables for pre-populating fields for logged in users */
         if (!empty($_USERID)) {
-            $user = Jojo::selectRow("SELECT userid, us_login, us_firstname, us_lastname, us_email, us_website FROM {user} WHERE userid = ?", array($_USERID));
+            $user = Jojo::selectRow("SELECT userid, us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ?", array($_USERID));
             $user['isadmin'] = (boolean)(in_array('admin', $_USERGROUPS));
             if (empty($_SESSION['name']) && (isset($user['us_firstname']) || isset($user['us_lastname']))) {
                 $_SESSION['name'] = (isset($user['us_firstname']) ? $user['us_firstname'] : '') . ' ' . (isset($user['us_lastname']) ? $user['us_lastname'] : '');
@@ -167,20 +167,18 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
                 $_SESSION['name'] = isset($user['us_login']) ? $user['us_login'] : 'admin';
             }
             if (empty($_SESSION['email']) && isset($user['us_email']))   $_SESSION['email'] = $user['us_email'];
-            if (empty($_SESSION['website']) && isset($user['website'])) $_SESSION['website'] = $user['website'];
 
             if (self::isSubscribed($_USERID, $itemid, $plugin)) {
                 $user['email_subscribe'] = true;
                 self::markSubscriptionsViewed($_USERID, $itemid, $plugin);
             }
             $smarty->assign('user', $user);
-        } else  {
-            /* Remember user fields from session */
-            if (!empty($_SESSION['name'])) $smarty->assign('name', $_SESSION['name']);
-            if (!empty($_SESSION['email'])) $smarty->assign('email', $_SESSION['email']);
-            if (!empty($_SESSION['website'])) $smarty->assign('website', $_SESSION['website']);
-            if (!empty($_SESSION['anchortext'])) $smarty->assign('anchortext', $_SESSION['anchortext']);
-        }
+        } 
+        /* Remember user fields from session */
+        if (!empty($_SESSION['name'])) $smarty->assign('name', $_SESSION['name']);
+        if (!empty($_SESSION['email'])) $smarty->assign('email', $_SESSION['email']);
+        if (!empty($_SESSION['website'])) $smarty->assign('website', $_SESSION['website']);
+        if (!empty($_SESSION['anchortext'])) $smarty->assign('anchortext', $_SESSION['anchortext']);
 
         $comments = Jojo::selectQuery("SELECT * FROM {comment} WHERE itemid = ? AND plugin = ? ORDER BY timestamp", array($itemid, $plugin));
         $smarty->assign('comments', $comments);
@@ -291,14 +289,14 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
             $deletecode = Jojo::randomString(16, '0123456789');
             $res = Jojo::selectQuery($query, array($deletecode, $deletecode, $deletecode));
         } while (count($res) > 0);
-
+        $userid = $_USERID ? $_USERID : '';
         Jojo::insertQuery("INSERT INTO {comment} SET
                 timestamp = UNIX_TIMESTAMP(), itemid = ?, plugin = ?,
-                name = ?, email = ?, website = ?, anchortext = ?,
+                userid = ?, name = ?, email = ?, website = ?, anchortext = ?,
                 ip = ?, useanchortext = '0', authorcomment = ?,
                 bbbody = ?, body = ?, approvecode = ?,
                 anchortextcode = ?, deletecode = ?",
-                array($itemid, $plugin, $name, $email, $website, $anchortext, Jojo::getIP(),
+                array($itemid, $plugin, $userid, $name, $email, $website, $anchortext, Jojo::getIP(),
                       $authorcomment, $bbcomment, $htmlcomment, $approvecode, $anchortextcode, $deletecode));
 
         /* Store details in the session so the user doesn't have to reenter on every comment */
@@ -370,10 +368,10 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
 
     static function getItemHtml($comment)
     {
-        global $smarty, $_USERGROUPS, $_USERID;
+        global $page, $smarty, $_USERGROUPS, $_USERID;
         /* Calculate if user is admin or not. Admins can edit comments */
         $pagePermissions = new JOJO_Permissions();
-        $pagePermissions->getPermissions('page', $pageid);
+        $pagePermissions->getPermissions('page', $page->page['pageid']);
         if ($pagePermissions->hasPerm($_USERGROUPS, 'edit')) {
             $smarty->assign('editperms', true);
         }

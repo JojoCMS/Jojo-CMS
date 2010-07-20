@@ -29,7 +29,7 @@ function deleteComment(id) {
        data = {name: 'delete', value: id };
         $.get(this.href, {}, function() {commentUpdate(data, id); });
         /* Don't go to the update page */
-        $('#comment-wrap-' + id ).hide();
+        $('#comment-wrap-' + id ).html(data);
         return false;
 }
 
