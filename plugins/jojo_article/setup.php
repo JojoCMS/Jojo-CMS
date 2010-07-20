@@ -37,22 +37,12 @@ if (!count($data)) {
     $editarticlepage = $data['pageid'];
 }
 
-
 /* Edit Article Page Options */
 $data = Jojo::selectRow("SELECT pg_url FROM {page} WHERE pg_url='admin/edit/articlecategory'");
 if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Adding <b>Article Page Options</b> Page to Edit Content menu<br />";
     Jojo::insertQuery("INSERT INTO {page} SET pg_title='Article Page Options', pg_link='Jojo_Plugin_Admin_Edit', pg_url='admin/edit/articlecategory', pg_parent=?, pg_order=3", $editarticlepage);
 }
-
-/* Article Admin Handler */
-$data = Jojo::selectRow("SELECT * FROM {page} WHERE pg_link='Jojo_Plugin_Jojo_article_admin'");
-if (!count($data)) {
-    echo "Jojo_Plugin_Jojo_Article: Adding <b>Articles Admin</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Articles', pg_link='Jojo_Plugin_Jojo_article_admin', pg_url='articles/admin', pg_parent=?, pg_sitemapnav='no', pg_xmlsitemapnav='no'", $_NOT_ON_MENU_ID);
-}
-/* ensure the article admin page doesn't show up in the sitemap / XML sitemap */
-Jojo::updateQuery("UPDATE {page} SET pg_sitemapnav='no', pg_xmlsitemapnav='no' WHERE pg_url='articles/admin'");
 
 /* Remove any old Article RSS pages */
 $data = Jojo::selectQuery("SELECT pageid FROM {page} WHERE pg_link='Jojo_Plugin_Jojo_article_rss'");
@@ -79,23 +69,6 @@ if (!count($data)) {
     VALUES (
     'Welcome to JojoCMS', 'test', 'A test article', 'Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by <a href=\"http://www.jojocms.org\">Jojo CMS</a>.', '[editor:bb]Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by [url=http://www.jojocms.org]Jojo CMS[/url].', '1', NULL , '', '', '', '', '', 'en'
     );");
-}
-
-
-/* create articlecommentsubscription table */
-if (!Jojo::tableExists('articlecommentsubscription')) {
-    echo "Table <b>articlecommentsubscription</b> Does not exist - creating empty table<br />";
-    $query = "
-        CREATE TABLE {articlecommentsubscription} (
-        `userid` INT NOT NULL DEFAULT '0',
-        `articleid` INT NOT NULL DEFAULT '0',
-        `lastviewed` INT NOT NULL DEFAULT '0',
-        `lastemailed` INT NOT NULL DEFAULT '0',
-        `lastupdated` INT NOT NULL DEFAULT '0',
-        `code` VARCHAR(16) NOT NULL DEFAULT ''
-        ) TYPE = MYISAM ;
-    ";
-    Jojo::structureQuery($query);
 }
 
 /* Regenerating HTML cache for Article */
