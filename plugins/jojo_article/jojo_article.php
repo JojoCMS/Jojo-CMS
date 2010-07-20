@@ -25,16 +25,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 * Core
 */
 
-    /* Gets $num articles sorted by date (desc) for use on homepages and sidebars */
-    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include = false) {
+    /* Get articles  */
+    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false) {
         global $page;
         $language = _MULTILANGUAGE ? (!empty($page->page['pg_language']) ? $page->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en')) : '';
         if (is_array($categoryid)) {
              $categoryquery = " AND ar_category IN ('" . implode("','", $categoryid) . "')";
-        } elseif (is_numeric($categoryid)) {
-            $categoryquery = " AND ar_category = '$categoryid'";
         } else {
-            $categoryquery = '';
+            $categoryquery = is_numeric($categoryid) ? " AND ar_category = '$categoryid'" : '';
         }
         /* if calling page is an article, Get current article, exclude from the list and up the limit by one */
         $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
@@ -91,6 +89,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['pagetitle'] = !empty($i['pg_menutitle']) ? htmlspecialchars($i['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
             $i['pageurl']   = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($i['pg_language'], true) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
             $i['plugin']     = 'jojo_article';
+            unset($items[$k]['ar_bbbody']);
         }
         return $items;
     }
@@ -409,6 +408,29 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return $content;
     }
 
+    static function getPluginPages($for=false)
+    {
+        $items =  Jojo::selectQuery("SELECT articlecategoryid, sortby, p.pageid, pg_title, pg_url, pg_language, pg_livedate, pg_expirydate, pg_status, pg_sitemapnav, pg_xmlsitemapnav  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
+        $now    = time();
+        global $_USERGROUPS;
+        $pagePermissions = new JOJO_Permissions();
+        foreach ($items as $k=>&$i){
+            $pagePermissions->getPermissions('page', $i['pageid']);
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive') {
+                unset($items[$k]);
+                continue;
+            }
+            if ($for && $for =='sitemap' && $i['pg_sitemapnav']=='no') {
+                unset($items[$k]);
+                continue;
+            } elseif ($for && $for =='xmlsitemap' && $i['pg_xmlsitemapnav']=='no') {
+                unset($items[$k]);
+                continue;
+            } 
+         }
+        return $items;
+    }
+
     static function admin_action_after_save()
     {
         Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
@@ -419,7 +441,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         global $page;
         /* See if we have any article sections to display and find all of them */
-        $indexes =  Jojo::selectQuery("SELECT articlecategoryid, sortby, p.pageid, pg_title, pg_url, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) WHERE pg_sitemapnav = 'yes' ORDER BY pg_language, pg_parent");
+        $indexes =  self::getPluginPages('sitemap');
         if (!count($indexes)) {
             return $sitemap;
         }
@@ -528,7 +550,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if (!is_array($urls)) {
             $urls = array();
-            $indexes =  Jojo::selectQuery("SELECT articlecategoryid, p.pageid, pg_title, pg_url, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) WHERE pg_sitemapnav = 'yes' ORDER BY pg_parent");
+            $indexes =  self::getPluginPages('sitemap');
             if (count($indexes)==0) {
                return $tree;
             }
@@ -561,12 +583,15 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* Get articles from database */
         $articles = self::getArticles('', '', 'all', '', '', 'alllanguages');
         $now = time();
-        $indexes =  Jojo::selectAssoc("SELECT p.pageid as id, p.pageid, pg_index, pg_xmlsitemapnav, pg_livedate, pg_expirydate, pg_status, articlecategoryid FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)");
+        $indexes =  self::getPluginPages('xmlsitemap');
+        $ids=array();
+        foreach ($indexes as $i) {
+            $ids[$i['articlecategoryid']] = true;
+        }
         /* Add articles to sitemap */
         foreach($articles as $k => $a) {
-            $apage =  $indexes[$a['pageid']];
             // strip out articles from expired pages
-            if ($apage['pg_index'] != 'yes' || $apage['pg_xmlsitemapnav'] != 'yes' || $apage['pg_livedate']>$now || (!empty($apage['pg_expirydate']) && $apage['pg_expirydate']<$now) || $apage['pg_status']!='active') {
+            if (!isset($ids[$a['ar_category']])) {
                 unset($articles[$k]);
                 continue;
             }
@@ -602,19 +627,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             return $_cache[$cacheKey];
         }
 
-        if (!in_array($for, array('article', 'admin'))) {
-            return '';
-        }
         /* Cache some stuff */
-        if ($for == 'article') {
-            $query = "SELECT p.pageid, pg_title, pg_url FROM {page} p LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE `articlecategoryid` = '$categoryid'";
-            $values = array('jojo_plugin_jojo_article');
-        } elseif ($for == 'admin') {
-            $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_link = ?";
-            $values = array('Jojo_Plugin_Jojo_article_admin');
-        }
-        $res = Jojo::selectRow($query, $values);
-        
+        $res = Jojo::selectRow("SELECT p.pageid, pg_title, pg_url FROM {page} p LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE `articlecategoryid` = '$categoryid'");
         if ($res) {
             $_cache[$cacheKey] = !empty($res['pg_url']) ? $res['pg_url'] : $res['pageid'] . '/' . $res['pg_title'];
         } else {
@@ -651,12 +665,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             return _SITEURL . '/' . self::getArticleUrl($article['articleid'], $article['ar_url'], $article['ar_title'], $article['ar_language'], $article['ar_category']);
         }
         $correcturl = self::getArticleUrl($id, $url, null, $language, $categoryid);
-
         if ($correcturl) {
             return _SITEURL . '/' . $correcturl;
         }
 
-        /* article index with pagination */
+        /* index with pagination */
         if ($pagenum > 1) return parent::getCorrectUrl() . 'p' . $pagenum . '/';
 
         if ($action == 'rss') return parent::getCorrectUrl() . 'rss/';
@@ -845,7 +858,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $result['url'] = $d['url'];
                 $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
                 $result['id'] = $d['id'];
-                $result['plugin'] = 'jojo_article';
+                $result['plugin'] = $d['plugin'];
                 $result['type'] = $d['pagetitle'];
                 $result['tags'] = isset($rawresults[$d['id']]['tags']) ? $rawresults[$d['id']]['tags'] : '';
                 $results[] = $result;
