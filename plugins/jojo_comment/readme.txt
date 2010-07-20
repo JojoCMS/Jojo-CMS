@@ -1,0 +1,1 @@
+Please read our documentation (http://www.jojocms.org/docs/jojo_article/) for full details of this plugin.

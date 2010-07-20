@@ -1,0 +1,41 @@
+
+#post-comment {
+  display:none;
+}
+
+#post-comment-link {
+  display:block;
+}
+
+#post-comment label {
+  float: left;
+  width: 150px;
+  display: block;
+  text-align: right;
+  margin-right: 5px;
+  margin-bottom: 3px;
+}
+
+#post-comment input, #post-comment select, #post-comment textarea {
+  float: left;
+  margin-bottom: 3px;
+}
+
+#post-comment br {
+  clear: left;
+  margin-bottom: 3px;
+}
+
+#post-comment div.post-comment-field {
+  float: left;
+  margin-bottom: 3px;
+  width: 300px;
+}
+
+#post-comment div.post-comment-field label {
+  float: none;
+  width: auto;
+  display: inline;
+  text-align: left;
+  margin-left: 5px;
+}

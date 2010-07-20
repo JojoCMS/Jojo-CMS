@@ -1,0 +1,1 @@
+A plugin for adding and managing comments to items from other plugins (like Articles).
