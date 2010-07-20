@@ -19,6 +19,10 @@ function checkComment(emailrequired) {
     }
 }
 
+function redirectSubmit(url) {
+        window.location.href = url;
+}
+
 function deleteComment(id) {
         $('#delete-comment-' + id ).html('Deleting comment...');
        data=new Array();

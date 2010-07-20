@@ -5,7 +5,7 @@
         {elseif $OPTIONS.comment_default_link_type == text}
         <h4>{$c.name}{if $c.website} - {$c.website}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
         {else}
-        <h4>{if $c.website}<form class="post_redirect_form" method="post" action="redirect/" target="_BLANK"><input type="hidden" name="uri" value="{$c.website}" /><button class="post_redirect_submit" title="{$c.website}"><span>{$c.name}</span></button></form>{else}{$c.name}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
+        <h4>{if $c.website}<a href="#comments" onclick="redirectSubmit('{$c.website}'); return false;" title="{$c.website}">{$c.name}</a>{else}{$c.name}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
         {/if}
         <p id="comment-{$c.commentid}" class="comment-text">{$c.body}</p>
         {if $editperms}
