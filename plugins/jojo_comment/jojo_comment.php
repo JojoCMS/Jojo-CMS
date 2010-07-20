@@ -359,6 +359,31 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         exit();
     }
 
+    static function getItemsById($ids)
+    {
+        $query  = "SELECT *";
+        $query .= " FROM {comment} ";
+        $query .=  is_array($ids) ? " WHERE commentid IN ('". implode("',' ", $ids) . "')" : " WHERE commentid=$ids";
+        $items = Jojo::selectQuery($query);
+        $items = is_array($ids) ? $items : $items[0];
+        return $items;
+    }
+
+    static function getItemHtml($comment)
+    {
+        global $smarty, $_USERGROUPS, $_USERID;
+        /* Calculate if user is admin or not. Admins can edit comments */
+        $pagePermissions = new JOJO_Permissions();
+        $pagePermissions->getPermissions('page', $pageid);
+        if ($pagePermissions->hasPerm($_USERGROUPS, 'edit')) {
+            $smarty->assign('editperms', true);
+        }
+        $smarty->assign('c', $comment);
+        $commenthtml = $smarty->fetch('jojo_comment_inner.tpl');
+        return $commenthtml;
+    }
+
+
     static function addSubscription($userid, $itemid, $plugin)
     {
         /* attempt to update existing subscription */
