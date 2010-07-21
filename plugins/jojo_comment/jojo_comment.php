@@ -368,11 +368,10 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
 
     static function getItemHtml($comment)
     {
-        global $page, $smarty, $_USERGROUPS, $_USERID;
+        global $smarty, $_USERGROUPS, $_USERID;
         /* Calculate if user is admin or not. Admins can edit comments */
-        $pagePermissions = new JOJO_Permissions();
-        $pagePermissions->getPermissions('page', $page->page['pageid']);
-        if ($pagePermissions->hasPerm($_USERGROUPS, 'edit')) {
+        $page = Jojo_Plugin::getPage(Jojo::parsepage('admin'));
+        if ($page->perms->hasPerm($_USERGROUPS, 'view')) {
             $smarty->assign('editperms', true);
         }
         $smarty->assign('c', $comment);

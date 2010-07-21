@@ -89,7 +89,8 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                 $results[$k]['body'] = Jojo_Plugin_Jojo_search::search_format_content($body, $keywords_str, $booleanphrase );
 
                 /* De-encode foreign text urls for display */
-                $results[$k]['displayurl'] = empty($results[$k]['displayurl']) ? urldecode($results[$k]['url']) : $results[$k]['displayurl'];
+                $results[$k]['displayurl'] = !isset($results[$k]['displayurl']) ? urldecode($results[$k]['url']) : $results[$k]['displayurl'];
+                $results[$k]['url'] = !isset($results[$k]['absoluteurl']) ? $results[$k]['absoluteurl'] : $results[$k]['url'];
 
                 /* Use relevance figure (x10) as a pixel width for displaying the relevance graphically */
                 $results[$k]['displayrelevance'] = !empty($results[$k]['relevance']) ? ($results[$k]['relevance'] * 10 ) : '0';
