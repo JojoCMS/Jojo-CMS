@@ -408,15 +408,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return $content;
     }
 
-    static function getPluginPages($for=false)
+    static function getPluginPages($for=false, $language=false)
     {
+        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
         $items =  Jojo::selectQuery("SELECT articlecategoryid, sortby, p.pageid, pg_title, pg_url, pg_language, pg_livedate, pg_expirydate, pg_status, pg_sitemapnav, pg_xmlsitemapnav  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
         $now    = time();
         global $_USERGROUPS;
         $pagePermissions = new JOJO_Permissions();
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive') {
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($language && $i['pg_language']!=$language) ) {
                 unset($items[$k]);
                 continue;
             }
@@ -426,8 +427,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             } elseif ($for && $for =='xmlsitemap' && $i['pg_xmlsitemapnav']=='no') {
                 unset($items[$k]);
                 continue;
-            } 
-         }
+            }
+        }
         return $items;
     }
 
@@ -822,8 +823,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if ($link) {
             $data['Articles'] =  $link;
         }
-        /* add category RSS feeds */
-        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
+        /* add RSS feeds for each page */
+        $categories =  self::getPluginPages('', (_MULTILANGUAGE ? $page->page['pg_language'] : ''));
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
             if ($prefix) {
