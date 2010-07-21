@@ -258,7 +258,8 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
                 }
             }
             foreach ($results as $k => $v) {
-                $results[$k]['displayurl'] = urldecode($results[$k]['url']);
+                $results[$k]['displayurl'] = urldecode($v['url']);
+                $results[$k]['text'] = isset($v['bodyplain']) ? $v['bodyplain'] : $results[$k]['text'];
             }
             $numresults = count($results);
             $smarty->assign('results', $results);
