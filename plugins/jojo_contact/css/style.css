@@ -57,3 +57,7 @@ form.contact-form div.captcha {
 form.contact-form input.button {
   cursor: pointer;
 }
+
+form span.required {
+    color: red;
+}

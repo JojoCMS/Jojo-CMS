@@ -11,15 +11,15 @@
 {foreach item=to from=$toaddresses}
           <option value="{$to.email}">{$to.name}</option>
 {/foreach}
-    </select>&nbsp;*<br />
+    </select>&nbsp;<span class="required">*</span><br />
 {/if}
-    <p class="note">Required fields are marked *</p>
+    <p class="note">Required fields are marked <span class="required">*</span></p>
 {foreach from=$fields key=k item=f }
     {assign var=x value=`$k-1`}
     {if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}<fieldset><legend>{$f.fieldset}</legend>{/if}
     {if !in_array($f.type,array('heading','note'))}<div><label for="form_{$f.field}">{if $f.display!=''}{$f.display}:{/if}</label>{/if}
     {if $f.type == 'textarea'}
-    <textarea class="textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}*{/if}</div>
+    <textarea class="textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}</div>
     {elseif $f.type == 'checkboxes'}
     <div class="form-field">
 {foreach from=$f.options item=fo }
@@ -39,7 +39,7 @@
     	<p>{$f.value}</p>
     {else}
     <input type="{$f.type}" class="{$f.type}" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />
-    {if $f.required}*{/if}</div>
+    {if $f.required}<span class="required">*</span>{/if}</div>
     {/if}
 
     {if $f.description}<div class="form-field-description">{$f.description}</div>{/if}<br />
@@ -51,10 +51,10 @@
     <br />
     <label for="CAPTCHA">Spam prevention:</label>
     <div class="form-field">
-        <input type="text" class="text" size="8" name="CAPTCHA" id="CAPTCHA" value="" />*<br />
-        Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam.<br />
+        <input type="text" class="text" size="8" name="CAPTCHA" id="CAPTCHA" value="" /> <span class="required">*</span>
+        <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em><br />
         <img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /><br />
-        <em>Code is not case-sensitive</em><br />
+        </p>
     </div>
 {/if}
     <br />
