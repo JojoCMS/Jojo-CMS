@@ -18,7 +18,7 @@
                             <li class="{if in_array($s.pageid, $selectedpages) } current{/if}"><a href="{$s.url}" title="{if $s.pg_desc}{$s.pg_desc|escape:"html"}{else}{$s.pg_title|escape:"html"}{/if}">{if $s.pg_menutitle}{$s.pg_menutitle}{else}{$s.pg_title}{/if}</a></li>
 {if $s.subnav}
                             <li class="subnavlist">
-                            <div id="adminsubsubnav">
+                            <div class="adminsubsubnav">
                                 <ul  {if in_array($s.pageid, $selectedpages) } class="current"{/if}>
 {foreach from=$s.subnav item=t}
                                     <li class="{if in_array($t.pageid, $selectedpages) } current{/if}"><a href="{$t.url}" title="{if $t.pg_desc}{$t.pg_desc|escape:"html"}{else}{$t.pg_title|escape:"html"}{/if}">{if $t.pg_menutitle}{$t.pg_menutitle}{else}{$t.pg_title}{/if}</a></li>

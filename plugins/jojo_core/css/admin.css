@@ -248,7 +248,7 @@ table td {
   color: #404886;
 }
 
-#adminsubsubnav {
+#menu div.adminsubsubnav {
   clear: both;
   position: absolute;
   top: 20px;
