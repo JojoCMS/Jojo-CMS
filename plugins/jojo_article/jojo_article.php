@@ -849,18 +849,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false);
         $data = $rawresults ? self::getItemsById(array_keys($rawresults)) : '';
         if ($data) {
-            foreach ($data as $d) {
-                $result = array();
-                $result['relevance'] = $rawresults[$d['id']]['relevance'];
-                $result['title'] = $d['title'];
-                $result['body'] = $d['bodyplain'];
-                $result['image'] = $d['image'];
-                $result['url'] = $d['url'];
-                $result['absoluteurl'] = _SITEURL. '/' . $result['url'];
-                $result['id'] = $d['id'];
-                $result['plugin'] = $d['plugin'];
-                $result['type'] = $d['pagetitle'];
-                $result['tags'] = isset($rawresults[$d['id']]['tags']) ? $rawresults[$d['id']]['tags'] : '';
+            foreach ($data as $result) {
+                $result['relevance'] = $rawresults[$result['id']]['relevance'];
+                $result['body'] = $result['bodyplain'];
+                $result['type'] = $result['pagetitle'];
+                $result['tags'] = isset($rawresults[$result['id']]['tags']) ? $rawresults[$result['id']]['tags'] : '';
                 $results[] = $result;
             }
         }
@@ -873,20 +866,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
     static function getTagSnippets($ids)
     {
-        /* Get the articles */
-        $articles = self::getItemsById($ids);
-        /* Create the snippets */
-        $snippets = array();
-        foreach ($articles as $i => $a) {
-            $snippets[] = array(
-                    'id'    => $a['id'],
-                    'image' => $a['image'],
-                    'title' => $a['title'],
-                    'text'  => $a['bodyplain'],
-                    'url'   => $a['url']
-                );
-        }
-        /* Return the snippets */
+        $snippets = self::getItemsById($ids);
         return $snippets;
     }
 }
