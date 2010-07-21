@@ -40,7 +40,7 @@ if (!count($data)) {
 $data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_SitemapXSL'");
 if (!count($data)) {
     echo "Adding <b>Google_sitemap_style.xsl</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Google_Sitemap_Style.xsl', pg_link = 'Jojo_Plugin_Jojo_SitemapXSL', pg_url = 'google_sitemap_style.xsl', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Google_Sitemap_Style.xsl', pg_link = 'Jojo_Plugin_Jojo_SitemapXSL', pg_url = 'google_sitemap_style.xsl', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 
