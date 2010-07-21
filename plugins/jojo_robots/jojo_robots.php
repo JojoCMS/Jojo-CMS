@@ -26,7 +26,7 @@ class Jojo_Plugin_Jojo_robots extends Jojo_Plugin
         global $smarty;
 
         /* An array of pages to exclude - in addition to any pages marked as noindex in the admin area */
-        $disallow = array('_docs','_htaccess','_stats','admin', 'actions',
+        $disallow = array('_docs','_htaccess','_stats', 'actions',
                           'classes','includes','install','js','css',
                           'config','external','login','templates',
                           'forgot-password','change-password','register');
