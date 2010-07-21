@@ -53,9 +53,13 @@ class Jojo_Field_internalurl extends Jojo_Field
 
         /* Remove some characters */
         $matches = array( '"', '!', '#', '$', '%', '^', '*', '<', '>',
-                          '=',  '\'', ',', '(', ')', '?', '.', '!',
+                          '=',  '\'', ',', '(', ')', '?', '!',
                           ',','[',']','{','}',':',';','`','~','|');
         $this->value = str_replace($matches, '', $this->value);
+        
+        if (strpos($this->value, '.')!=(strlen($this->value)-4)) {
+            $this->value = str_replace('.', '', $this->value);
+        }
 
         /* Replace some characters */
         $matches = array( ' - ', ' ', ', ', '&',   '@',  ':', '--' );
