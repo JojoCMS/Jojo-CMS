@@ -34,7 +34,7 @@
         {elseif $opt.op_type == 'select'}
           <select id="option-{$opt.op_name}" name="option-{$opt.op_name}" onchange="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#option-{$opt.op_name} :selected').val());">
           {foreach from=$opt.options item=option}
-            <option {if $option == $opt.op_value} selected="selected"{/if}/>{$option}</option>
+            <option{if $option == $opt.op_value} selected="selected"{/if}>{$option}</option>
           {/foreach}
           </select>
         {elseif $opt.op_type == 'checkbox'}
