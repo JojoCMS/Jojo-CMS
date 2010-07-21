@@ -20,7 +20,7 @@ function checkComment(emailrequired) {
 }
 
 function redirectSubmit(url) {
-        window.location.href = url;
+        window.location.href = 'http://' + url;
 }
 
 function deleteComment(id) {
