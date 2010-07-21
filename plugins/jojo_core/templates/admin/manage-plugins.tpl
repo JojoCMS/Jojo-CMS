@@ -113,7 +113,7 @@
     {if $plugins[p].readme}
     <div class="readme" id="readme-{$plugins[p].name}">
     <h4>readme.txt</h4>
-    {$plugins[p].readme|escape:'htmlall':'utf-8'|nl2br}
+    {$plugins[p].readme}
     </div>
     {/if}
 

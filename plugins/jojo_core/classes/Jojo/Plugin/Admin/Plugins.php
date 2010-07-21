@@ -46,7 +46,8 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
             /* Get plugin readme */
             $filename = $path . '/readme.txt';
             $readme = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
-            $readme = str_replace(array('[', ']'), array('\\[', '\\]'), $readme);
+            $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
+            $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
 
             /* Get plugin status */
             $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
@@ -75,7 +76,8 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
             /* Get plugin readme */
             $filename = $path . '/readme.txt';
             $readme = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
-            $readme = str_replace(array('[', ']'), array('\\[', '\\]'), $readme);
+            $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
+            $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
 
             /* Get plugin status */
             $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
