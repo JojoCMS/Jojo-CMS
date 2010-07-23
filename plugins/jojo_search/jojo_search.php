@@ -184,15 +184,21 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
      */
     static function searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false)
     {
-        $plugin = $searchfields['plugin'];
         $table = $searchfields['table'];
         $idfield = $searchfields['idfield'];
-        $languagefield = $searchfields['languagefield'];
         $primaryfields = $searchfields['primaryfields'];
         $secondaryfields = $searchfields['secondaryfields'];
         $fieldarray = explode(', ', $secondaryfields);
-        
+
         $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
+        if ($_TAGS) {
+            $plugin = $searchfields['plugin'];
+        }
+        if ($language) {
+            $languagefield = $searchfields['languagefield'];
+        }
+
+
         $boolean = ($booleankeyword_str) ? true : false;
         $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
         if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
@@ -249,10 +255,10 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                 }
             }
         }
-        
+
         return $rawresults;
     }
-    
+
     /*-
      * Copyright (c) 2005-2006 Vladimir Fedorkov (http://astellar.com/)
      * All rights reserved.
