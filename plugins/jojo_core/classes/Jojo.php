@@ -111,7 +111,7 @@ class Jojo {
                if ($group['groupid'] == 'admin') {
                    $smarty->assign('adminloggedin', true);
                    // allow admins to see hidden pages
-                   $_SESSION['showhidden'] = true;                   
+                   $_SESSION['showhidden'] = true;
                }
             }
         }
@@ -1462,7 +1462,6 @@ class Jojo {
         global $_contentvars;
         if (!is_array($_contentvars)) {
             $_contentvars = array();
-            //$_contentvars[$name] = array('name'=>'Youtube Video', 'format'=>'[[youtube:@Youtube link:@ @Another link:@]]', 'description'=>'', 'icon'=>'images/youtube.gif');
         }
         return $_contentvars;
     }
@@ -1473,10 +1472,10 @@ class Jojo {
      *
      * $tag          string Name of the filter to hook.
      * $functionname string Name of function to add
-     * $pluginname   string Name of the plugin providing the function
-     * $priority      int    Prority of this filter, default is 10
+     * $classname    string Name of the class providing the function
+     * $priority     int    Prority of this filter, default is 10
      */
-    static function addFilter($tag, $functionname, $pluginname, $priority = 10)
+    static function addFilter($tag, $functionname, $classname, $priority = 10)
     {
         global $_filters;
 
@@ -1492,7 +1491,7 @@ class Jojo {
             $_filters[$tag][$priority] = array();
         }
 
-        $_filters[$tag][$priority][serialize(array($pluginname, $functionname))] = array($pluginname, $functionname);
+        $_filters[$tag][$priority][serialize(array($classname, $functionname))] = array($classname, $functionname);
     }
 
     /**
@@ -1500,15 +1499,15 @@ class Jojo {
      *
      * $tag          string Name of the filter to remove.
      * $functionname string Name of function to remove
-     * $pluginname   string Name of the plugin providing the function
-     * $priority      int    Prority of this filter, default is 10
+     * $classname    string Name of the class providing the function
+     * $priority     int    Prority of this filter, default is 10
      */
-    static function removeFilter($tag, $functionname, $pluginname, $priority = 10)
+    static function removeFilter($tag, $functionname, $classname, $priority = 10)
     {
         global $_filters;
 
-        if (isset($_filters[$tag][$priority][serialize(array($pluginname, $functionname))])) {
-            unset($_filters[$tag][$priority][serialize(array($pluginname, $functionname))]);
+        if (isset($_filters[$tag][$priority][serialize(array($classname, $functionname))])) {
+            unset($_filters[$tag][$priority][serialize(array($classname, $functionname))]);
             return true;
         }
         return false;
@@ -1534,14 +1533,17 @@ class Jojo {
 
         foreach($_filters[$tag] as $priority => $phooks) {
             foreach($phooks as $hook) {
-                $classname = 'Jojo_Plugin_' . $hook[0];
+                $classname = $hook[0];
                 $functionname = $hook[1];
-
-                /* Is the class already available */
                 if (!class_exists($classname)) {
-                    /* Class not found, try including from plugin */
-                    $pluginfile = $hook[0] . '.php';
-                    foreach (Jojo::listPlugins($pluginfile) as $pluginfile) include($pluginfile);
+                    $classname = 'Jojo_Plugin_' . $hook[0];
+
+                    /* Is the class already available */
+                    if (!class_exists($classname)) {
+                        /* Class not found, try including from plugin */
+                        $pluginfile = $hook[0] . '.php';
+                        foreach (Jojo::listPlugins($pluginfile) as $pluginfile) include($pluginfile);
+                    }
                 }
 
                 /* Is function available */
@@ -1563,10 +1565,10 @@ class Jojo {
      *
      * $tag          string Name of the hook.
      * $functionname string Name of function to add
-     * $pluginname   string Name of the plugin providing the function
-     * $priority      int    Priority of this hook, default is 10
+     * $classname    string Name of the class providing the function
+     * $priority     int    Priority of this hook, default is 10
      */
-    static function addHook($tag, $functionname, $pluginname, $priority = 10)
+    static function addHook($tag, $functionname, $classname, $priority = 10)
     {
         global $_hooks;
 
@@ -1582,24 +1584,23 @@ class Jojo {
             $_hooks[$tag][$priority] = array();
         }
 
-        $_hooks[$tag][$priority][serialize(array($pluginname, $functionname))] = array($pluginname, $functionname);
+        $_hooks[$tag][$priority][serialize(array($classname, $functionname))] = array($classname, $functionname);
     }
 
-
-     /*
+    /**
      * Remove a hook call back. Called with same arguments as above.
      *
      * $tag          string Name of the hook.
      * $functionname string Name of function to add
-     * $pluginname   string Name of the plugin providing the function
-     * $priority      int    Priority of this hook, default is 10
+     * $classname    string Name of the class providing the function
+     * $priority     int    Priority of this hook, default is 10
      */
-    static function removeHook($tag, $functionname, $pluginname, $priority = 10)
+    static function removeHook($tag, $functionname, $classname, $priority = 10)
     {
         global $_hooks;
 
-        if (isset($_hooks[$tag][$priority][serialize(array($pluginname, $functionname))])) {
-            unset($_hooks[$tag][$priority][serialize(array($pluginname, $functionname))]);
+        if (isset($_hooks[$tag][$priority][serialize(array($classname, $functionname))])) {
+            unset($_hooks[$tag][$priority][serialize(array($classname, $functionname))]);
             return true;
         }
         return false;
@@ -1620,14 +1621,18 @@ class Jojo {
         ksort($_hooks[$tag]);
         foreach($_hooks[$tag] as $priority => $phooks) {
             foreach($phooks as $hook) {
-                $classname = 'Jojo_Plugin_' . $hook[0];
+                $classname = $hook[0];
                 $functionname = $hook[1];
 
-                /* Is the class already available */
                 if (!class_exists($classname)) {
-                    /* Class not found, try including from plugin */
-                    $pluginfile = $hook[0] . '.php';
-                    foreach (Jojo::listPlugins($pluginfile) as $pluginfile) include($pluginfile);
+                    $classname = 'Jojo_Plugin_' . $hook[0];
+
+                    /* Is the class already available */
+                    if (!class_exists($classname)) {
+                        /* Class not found, try including from plugin */
+                        $pluginfile = $hook[0] . '.php';
+                        foreach (Jojo::listPlugins($pluginfile) as $pluginfile) include($pluginfile);
+                    }
                 }
 
                 /* Is function available */
@@ -1667,14 +1672,18 @@ class Jojo {
         ksort($_hooks[$tag]);
         foreach($_hooks[$tag] as $priority => $phooks) {
             foreach($phooks as $hook) {
-                $classname = 'Jojo_Plugin_' . $hook[0];
+                $classname = $hook[0];
                 $functionname = $hook[1];
 
-                /* Is the class already available */
                 if (!class_exists($classname)) {
-                    /* Class not found, try including from plugin */
-                    $pluginfile = $hook[0] . '.php';
-                    foreach (Jojo::listPlugins($pluginfile) as $pluginfile) include($pluginfile);
+                    $classname = 'Jojo_Plugin_' . $hook[0];
+
+                    /* Is the class already available */
+                    if (!class_exists($classname)) {
+                        /* Class not found, try including from plugin */
+                        $pluginfile = $hook[0] . '.php';
+                        foreach (Jojo::listPlugins($pluginfile) as $pluginfile) include($pluginfile);
+                    }
                 }
 
                 /* Is function available */
@@ -1870,9 +1879,9 @@ class Jojo {
                     $uri_pieces = explode('/', $uri);
                     $uri_heirachy_list = array();
                     foreach ($uri_pieces as $slug) {
-                    	$values[] = implode('/', $uri_pieces);
-                    	$placeholders[] = '?';
-                    	array_pop($uri_pieces);
+                        $values[] = implode('/', $uri_pieces);
+                        $placeholders[] = '?';
+                        array_pop($uri_pieces);
                     }
                     $placeholders = implode(', ', $placeholders);
 
@@ -3134,7 +3143,7 @@ class Jojo {
                     $i['body'] = $irr[0];
                 }
                 $i['body'] = preg_replace('/\[\[.*?\]\]/', '',  $i['body']);
-            } 
+            }
             $source = _SITEURL . "/" . $i['url'];
             $i['body'] = mb_convert_encoding($i['body'], 'HTML-ENTITIES', 'UTF-8');
             $i['title'] = mb_convert_encoding($i[$titlefield], 'HTML-ENTITIES', 'UTF-8');
@@ -3159,10 +3168,10 @@ class Jojo {
         $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'Jojo::convertEntity4XML', $data);
         return str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', $xmldata)));
     }
-    
+
     /* Swap HTML named entity with its numeric equivalent. If the entity
      * isn't in the lookup table, this function returns a blank, which
-     * destroys the character in the output - this is probably the 
+     * destroys the character in the output - this is probably the
      * desired behaviour when producing XML. */
     static function convertEntity4XML($matches) {
       static $table = array('quot'    => '&#34;',
@@ -3417,7 +3426,7 @@ class Jojo {
                             'yacute'   => '&#253;',
                             'thorn'    => '&#254;',
                             'yuml'     => '&#255;'
-    
+
                             );
       // Entity not found? Destroy it.
       return isset($table[$matches[1]]) ? $table[$matches[1]] : '';
