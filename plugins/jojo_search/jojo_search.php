@@ -227,7 +227,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             foreach ($keywords as $keyword) {
                 foreach ($fieldarray as $k => $f) {
                     if ($k == 0) {
-                        $like .= sprintf(" OR %s LIKE '%%%%s%%'", $f, Jojo::clean($keyword));
+                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
                     } else {
                         $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
                     }
