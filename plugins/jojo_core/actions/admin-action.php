@@ -135,8 +135,8 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
             $frajax->script('parent.$("#btn_addchild").fadeIn("fast");');
 
             /* hook for plugins to do something after save is complete */
-            Jojo::runHook('admin_action_after_save_'.$table->getTableName());
-            Jojo::runHook('admin_action_after_save');
+            Jojo::runHook('admin_action_after_save_' . $table->getTableName(), array('id' => $table->getRecordID()));
+            Jojo::runHook('admin_action_after_save', array('table' => $table->getTableName(), 'id' => $table->getRecordID()));
 
             refreshMenu($table, $t, $frajax);
 
