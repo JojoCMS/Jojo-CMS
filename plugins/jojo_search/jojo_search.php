@@ -190,12 +190,12 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $secondaryfields = $searchfields['secondaryfields'];
         $fieldarray = explode(', ', $secondaryfields);
 
-        $_TAGS = class_exists('Jojo_Plugin_Jojo_Tags') ? true : false ;
+        $_TAGS = (boolean)(class_exists('Jojo_Plugin_Jojo_Tags') && isset($searchfields['plugin']));
         if ($_TAGS) {
             $plugin = $searchfields['plugin'];
         }
         if ($language) {
-            $languagefield = $searchfields['languagefield'];
+            $languagefield = isset($searchfields['languagefield']) ? $searchfields['languagefield'] : '';
         }
 
 
@@ -242,7 +242,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid)" : '';
         $query .= " WHERE ($like";
         $query .= $tagid ? " OR (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid))" : ')';
-        $query .= ($language) ? " AND `$languagefield` = '$language' " : '';
+        $query .= ($language && $languagefield) ? " AND `$languagefield` = '$language' " : '';
         $query .= " ORDER BY relevance DESC LIMIT 50";
         $rawresults = Jojo::selectAssoc($query, array($keywords_str, $keywords_str));
         if ($_TAGS) {
