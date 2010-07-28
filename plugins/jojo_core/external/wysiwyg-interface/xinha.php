@@ -5,15 +5,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Xinha WYSIWYG Editor</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="<?php echo _SITEURL ?>/css/styles.css" />
 <script type="text/javascript">
+/*<![CDATA[*/
     _editor_url  = document.location.href.replace(/wysiwyg-interface\/xinha\.php.*/, 'xinha/')
     _editor_lang = "en";
+/*]]>*/
 </script>
 
 <!-- Load up the actual editor core -->
 <script type="text/javascript" src="../xinha/XinhaCore.js"></script>
 <script type="text/javascript">
+/*<![CDATA[*/
     xinha_editors = null;
     xinha_init    = null;
     xinha_config  = null;
@@ -78,6 +81,7 @@
                     $IMConfig['resized_prefix'] = 'resized_';
                     $IMConfig['resized_dir'] = '';
                     $IMConfig['tmp_prefix'] = '_tmp';
+                    $IMConfig['view_type'] =  Jojo::getOption('xinha_viewtype','thumbview');
                     $IMConfig['allow_upload'] = true;
                     $IMConfig['max_filesize_kb_image'] = Jojo::getOption('max_imageupload_size','2000');           
                     $IMConfig['max_filesize_kb_link'] = Jojo::getOption('max_fileupload_size','5000');
@@ -118,7 +122,7 @@ function closing() {
    parent.$('.jpop_content').hide();
    parent.$('select.jpop_select').removeClass('jpop_select');
 }
-
+/*]]>*/
 </script>
 
 </head>
@@ -132,7 +136,9 @@ function closing() {
 </div>
 </form>
 <script type="text/javascript">
-<?php if (isset($_GET['field'])) {?>document.getElementById('myTextArea').value = parent.$('textarea[name=<?php echo $_GET['field']; ?>]').val();<?php } ?>
+/*<![CDATA[*/
+    <?php if (isset($_GET['field'])) {?>document.getElementById('myTextArea').value = parent.$('textarea[name=<?php echo $_GET['field']; ?>]').val();<?php } ?>
+/*]]>*/
 </script>
 </body>
 </html>

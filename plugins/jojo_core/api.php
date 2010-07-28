@@ -344,6 +344,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'xinha_viewtype',
+    'category'    => 'Xinha',
+    'label'       => 'Default image/file library view',
+    'description' => 'Set the default view for image and file libraries to either thumbnail or plain list (much faster for large libraries)',
+    'type'        => 'radio',
+    'default'     => 'thumbview',
+    'options'     => 'thumbview,listview',
+);
+
+$_options[] = array(
     'id'          => 'max_fileupload_size',
     'category'    => 'Config',
     'label'       => 'Maximum File Upload Size',
