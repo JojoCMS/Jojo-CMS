@@ -165,7 +165,9 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         }
         /* Create title and label for display */
         $n['title'] = ($n['pg_desc']) ? $n['pg_desc'] : $n['pg_title'];
+        $n['title'] = htmlspecialchars($n['title'], ENT_COMPAT, 'UTF-8', false);
         $n['label'] = ($n['pg_menutitle']) ? $n['pg_menutitle'] : $n['pg_title'];
+        $n['label'] = htmlspecialchars($n['label'], ENT_COMPAT, 'UTF-8', false);
 
         if ($subnavLevels) {
            /* Add sub pages to this page */
