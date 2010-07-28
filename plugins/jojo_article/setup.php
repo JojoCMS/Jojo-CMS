@@ -99,19 +99,19 @@ if (count($articles)) {
 
 //script to force articles into categories - should only run once
 if (Jojo::getOption('article_enable_categories')) {
-    $categories = Jojo::selectQuery("SELECT articlecategoryid, ac_pageid, ac_url FROM {articlecategory}");
+    $categories = Jojo::selectQuery("SELECT articlecategoryid, pageid, ac_url FROM {articlecategory}");
     //run through the categories and ensure each of them is tied to a pageid, grabbing the first one it finds for multiple page with the same url
     if ($categories) {
         foreach ($categories as $c) {
-            if (!$c['ac_pageid']) {
+            if (!$c['pageid']) {
                 $articlespage = Jojo::selectRow("SELECT pageid, pg_url FROM {page} WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_url = ? ", array($c['ac_url']));
                 if (count($articlespage)) {
-                    Jojo::updateQuery("UPDATE {articlecategory} SET ac_pageid = ? WHERE articlecategoryid = ? ", array($articlespage['pageid'], $c['articlecategoryid']));
+                    Jojo::updateQuery("UPDATE {articlecategory} SET pageid = ? WHERE articlecategoryid = ? ", array($articlespage['pageid'], $c['articlecategoryid']));
                 }
             }
         }
     }
-    $categories = jojo::selectAssoc("SELECT ac_pageid AS id, articlecategoryid, ac_pageid, ac_url FROM {articlecategory}");
+    $categories = jojo::selectAssoc("SELECT pageid AS id, articlecategoryid, pageid, ac_url FROM {articlecategory}");
     $articles = Jojo::selectQuery("SELECT articleid, ar_category, ar_language FROM {article}");
     $articlepages = Jojo::selectQuery("SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link LIKE 'jojo_plugin_jojo_article'"); 
     if (Jojo::getOption('article_enable_categories')=='no') {
@@ -125,10 +125,10 @@ if (Jojo::getOption('article_enable_categories')) {
                $pageurl = $page['pg_url'];
                 // if no category for this page id
                 if (!count($categories) || !isset($categories[$pageid])) { 
-                    $catid[$k] = Jojo::insertQuery("INSERT INTO {articlecategory} (ac_pageid, ac_url) VALUES ('$pageid', '$pageurl')");
+                    $catid[$k] = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
                 // category is set for this page id, check to see if the url needs updating
                 } elseif (isset($categories[$pageid]) && $categories[$pageid]['ac_url'] != $pageurl ) {
-                    jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE ac_pageid = ? ", array($pageurl, $pageid));
+                    jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
                     $catid[$k] = $categories[$pageid]['articlecategoryid'];
                 } else {
                     $catid[$k] = $categories[$pageid]['articlecategoryid'];        
@@ -150,11 +150,11 @@ if (Jojo::getOption('article_enable_categories')) {
                $pagelanguage = $page['pg_language'];
                 // if no category for this page id
                 if (!count($categories) || !isset($categories[$pageid])) { 
-                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (ac_pageid, ac_url) VALUES ('$pageid', '$pageurl')");
+                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
                 // category is set for this page id, check to see if the url needs updating
                 } else {
                     if ($categories[$pageid]['ac_url'] != $pageurl) {
-                        jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE ac_pageid = ? ", array($pageurl, $pageid));
+                        jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
                     }
                     $catid = $categories[$pageid]['articlecategoryid'];
                 } 
@@ -177,10 +177,10 @@ if (Jojo::getOption('article_enable_categories')) {
                $pageurl = $page['pg_url'];
                 // category is set for this page id, check to see if the url needs updating
                 if (isset($categories[$pageid]) && $categories[$pageid]['ac_url'] != $pageurl ) {
-                    jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE ac_pageid = ? ", array($pageurl, $pageid));
+                    jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
                 // no category is set for this page id
                 } elseif  (!isset($categories[$pageid])){
-                     $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (ac_pageid, ac_url) VALUES ('$pageid', '$pageurl')");
+                     $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
                     //update all articles with no category to use this one
                     if ($articles) {
                         foreach ($articles as $a) {
@@ -202,11 +202,11 @@ if (Jojo::getOption('article_enable_categories')) {
                 // category is set for this page id, check to see if the url needs updating
                 if (isset($categories[$pageid])) {
                     if ($categories[$pageid]['ac_url'] != $pageurl ) {
-                        Jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE ac_pageid = ? ", array($pageurl, $pageid));
+                        Jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
                     }
                 // no category is set for this page id
                 } else{
-                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (ac_pageid, ac_url) VALUES ('$pageid', '$pageurl')");
+                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
                 }
                 //update all articles with the pageid found for that language
                 if ($articles && $catid) {
