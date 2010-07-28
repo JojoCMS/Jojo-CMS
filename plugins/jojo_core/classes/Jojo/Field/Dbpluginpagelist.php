@@ -68,7 +68,8 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
             }
         }
         //Main query
-        $query = sprintf("SELECT %s AS id, %s AS display, %s AS parent, %s AS categoryfield, %s AS rollover %s FROM {page} WHERE %s ORDER BY %s %s display",
+        $query = sprintf("SELECT %s AS 'key', %s AS id, %s AS display, %s AS parent, %s AS categoryfield, %s AS rollover %s FROM {page} WHERE %s ORDER BY %s %s display",
+                            $idfield,
                             $idfield,
                             $displayfield,
                             $parentfield,
@@ -79,10 +80,15 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
                             Jojo::onlyIf($group1field, ' '.$group1field.', '),
                             Jojo::onlyIf($orderbyfield, ' '.$orderbyfield.', ')
                         );
-        $records = Jojo::selectQuery($query);
+        $records = Jojo::selectAssoc($query);
         $this->readonlydisplay = ($records && $this->readonly) ? $records[0]['display']: '';
         foreach ($records as $record) {
-            $this->tree->addnode($record['id'], $record['parent'], $record['display']);
+            if (!isset($records[$record['parent']])) {
+                $parent = 0;
+            } else {
+                $parent = $record['parent'];
+            }
+            $this->tree->addnode($record['id'], $parent, $record['display']);
         }
     }
 }
