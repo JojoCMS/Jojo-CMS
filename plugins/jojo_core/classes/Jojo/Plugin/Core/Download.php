@@ -54,7 +54,8 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
             }
             header("Content-Transfer-Encoding: binary");
             header('Pragma: public');
-            header('Cache-Control: max-age=0');
+            header('Cache-Control: public, max-age=28800');
+            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
 
             /* Send Conent */
             echo $content;
