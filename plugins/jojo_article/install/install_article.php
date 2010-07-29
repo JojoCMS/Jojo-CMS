@@ -47,7 +47,7 @@ $query = "
     ) TYPE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci  AUTO_INCREMENT=1000;";
 
 /* Convert mysql date format to unix timestamps */
-if (Jojo::getMySQLType($table, 'ar_date') == 'date') {
+if (Jojo::tableExists($table) && Jojo::getMySQLType($table, 'ar_date') == 'date') {
     date_default_timezone_set(Jojo::getOption('sitetimezone', 'Pacific/Auckland'));
     $articles = Jojo::selectQuery("SELECT articleid, ar_date FROM {article}");
     Jojo::structureQuery("ALTER TABLE  {article} CHANGE  `ar_date`  `ar_date` INT(11) NOT NULL DEFAULT '0'");
@@ -55,7 +55,7 @@ if (Jojo::getMySQLType($table, 'ar_date') == 'date') {
         if ($a['ar_date']!='0000-00-00') {
             $timestamp = strtotime($a['ar_date']);
         } else {
-            $timestamp = 0;        
+            $timestamp = 0;
         }
        Jojo::updateQuery("UPDATE {article} SET ar_date=? WHERE articleid=?", array($timestamp, $a['articleid']));
     }
