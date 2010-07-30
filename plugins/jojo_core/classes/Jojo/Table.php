@@ -40,9 +40,9 @@ class Jojo_Table {
         $this->table = $table;
 
         /* Get info about this table */
-        $rows = Jojo::selectQuery("SELECT * FROM {tabledata} WHERE td_name = ?", array($table));
-        if (isset($rows[0])) {
-            foreach($rows[0] as $k => $v) {
+        $tablerows = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ?", array($table));
+        if (isset($tablerows)) {
+            foreach($tablerows as $k => $v) {
                 $k = str_replace('td_', '', $k);
                 $this->setOption($k, $v);
             }
