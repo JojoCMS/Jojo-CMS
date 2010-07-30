@@ -19,17 +19,11 @@
  */
 
 /* Include config files or begin install process */
-if (file_exists('config.php')) {
-    require_once('config.php');
-} elseif (file_exists('config/config.php')) {
-    require_once('config/config.php');
-} else {
+if (!file_exists('config.php')) {
     header("Content-type: text/html; charset=utf-8");
     require(_BASEDIR . '/install.php');
     exit;
 }
-
-require_once(_BASEDIR . '/includes/defaultconfig.php');
 
 /* Include core code */
 require_once(_BASEPLUGINDIR . '/jojo_core/classes/Jojo.php');
@@ -225,7 +219,6 @@ switch ($templateEngine) {
     case 'dwoo':
     default:
         require_once(_BASEPLUGINDIR . '/jojo_core/external/dwoo/dwooAutoload.php');
-        require_once(_BASEPLUGINDIR . '/jojo_core/external/dwoo/Dwoo.php');
         $smarty = new Dwoo_Smarty_Adapter();
         $smarty->show_compat_errors = true;
         $smarty->compile_dir  = _CACHEDIR . '/dwoo/templates_c';
