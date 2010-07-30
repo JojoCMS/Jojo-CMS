@@ -98,9 +98,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function sortItems($items, $sortby=false) {
         if ($sortby) {
             $order = "date";
+            $reverse = false;
             switch ($sortby) {
               case "ar_date desc":
                 $order="date";
+                $reverse = true;
                 break;
               case "ar_title asc":
                 $order="name";
@@ -113,6 +115,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 break;
             }
             usort($items, array('Jojo_Plugin_Jojo_article', $order . 'sort'));
+            $items = $reverse ? array_reverse($items) : $items;
         }
         return $items;
     }
@@ -134,7 +137,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     private static function datesort($a, $b)
     {
          if ($a['ar_date']) {
-            return strcmp($b['ar_date'],$a['ar_date']);
+            return strnatcasecmp($a['ar_date'],$b['ar_date']);
          }
     }
 
