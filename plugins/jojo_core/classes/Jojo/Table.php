@@ -31,7 +31,7 @@ class Jojo_Table {
     /* Object of type Jojo_Field representing each field in this table */
     private $fields;
 
-    /* cached value of the first permissions field in table */
+    /* cached id of the first permissions field in table */
     private $permsfield;
 
     /* Constructor */
@@ -60,7 +60,7 @@ class Jojo_Table {
         $fieldlist = Jojo::selectQuery("SELECT * FROM {fielddata} WHERE fd_table = ? ORDER BY fd_order, fielddataid", array($table));
         $this->fields = array();
         foreach ($fieldlist as $field) {
-            $this->fields[$field['fd_field']] = Jojo_Field::factory($field['fd_type'], $field, $this);
+            $this->fields[$field['fd_field']] = $field;
             if (!isset($this->permsfield) && ($field['fd_type'] == 'permissions')) {
                 $this->permsfield = $field['fd_field'];
             }
@@ -104,7 +104,7 @@ class Jojo_Table {
                 if ($k == 'DISPLAYFIELDVALUE') {
                     $this->setOption('displayvalue', $v);
                 } else {
-                    $this->fields[$k]->setValueFromDB($v);
+                    $this->getField($k)->setValueFromDB($v);
                 }
             }
         }
@@ -127,14 +127,8 @@ class Jojo_Table {
     /* Return the name of the first permissions field */
     function getPermsField()
     {
-        if (isset($this->permsfield)) return $this->permsfield;
-
-        foreach ($this->fields as $fname => $field) {
-            //if (strtolower(get_class($field)) == 'jojo_field_permissions') {
-            if ($field->fd_type == 'permissions') {
-                $this->permsfield = $fname;
-                return $fname;
-            }
+        if (isset($this->permsfield)) {
+            return $this->permsfield;
         }
         return false;
     }
@@ -159,7 +153,8 @@ class Jojo_Table {
     {
         $html = '';
         $fieldHTML = array();
-        foreach($this->fields as $fieldname => $field) {
+        foreach($this->getFieldNames() as $fieldname) {
+            $field = $this->getField($fieldname);
             $fieldHTML[$fieldname] = array(
                                         'name'      => $field->getDisplayName(),
                                         'tabname'   => $field->getOption('tabname'),
@@ -180,35 +175,31 @@ class Jojo_Table {
     /* Return HTML view of the current record in this table, for a single field only */
     function getFieldHTML($fieldname, $mode = 'view')
     {
-        $field = $this->fields[$fieldname];
-            $fieldHTML = array(
-                                        'name' => $field->getDisplayName(),
-                                        'tabname'  => $field->getOption('tabname'),
-                                        'showlabel'  => $field->getOption('showlabel'),
-                                        'html' => $field->getHTML($mode),
-                                        'error' => $field->getError(),
-                                        'type' => $field->getOption('type'),
-                                        'required' => $field->getOption('required'),
-                                        );
-
+        $field = $this->getField($fieldname);
+        $fieldHTML = array(
+                                    'name' => $field->getDisplayName(),
+                                    'tabname'  => $field->getOption('tabname'),
+                                    'showlabel'  => $field->getOption('showlabel'),
+                                    'html' => $field->getHTML($mode),
+                                    'error' => $field->getError(),
+                                    'type' => $field->getOption('type'),
+                                    'required' => $field->getOption('required'),
+                                    );
         return $fieldHTML;
     }
 
     /* Return an array of all the field names */
     function getFieldNames()
     {
-        $names = array();
-        foreach($this->fields as $fieldname => $field) {
-            $names[] = $fieldname;
-        }
-        return $names;
+        return array_keys($this->fields);
     }
 
     /* Check all the fields and ensure there are no errors with any of them */
     function fieldErrors()
     {
         $errors = array();
-        foreach($this->fields as $fieldname => $field) {
+        foreach($this->getFieldNames() as $fieldname) {
+            $field = $this->getField($fieldname);
             $valid = $field->validate();
             if ($valid !== true) {
                 $errors[$fieldname] = sprintf('%s: %s', $field->getDisplayName(), $valid);
@@ -245,9 +236,10 @@ class Jojo_Table {
 
         /* Add all the values */
         $values = array();
-        foreach ($this->fields as $fieldname => $f) {
-            $value = $this->fields[$fieldname]->getValue();
-            switch ($this->fields[$fieldname]->getOption('type')) {
+        foreach ($this->getFieldNames() as $fieldname) {
+            $field = $this->getField($fieldname);
+            $value = $field->getValue();
+            switch ($field->getOption('type')) {
                 case 'readonly':
                     break;
 
@@ -295,8 +287,8 @@ class Jojo_Table {
         }
 
         /* Run any post-save procedures */
-        foreach ($this->fields as $k => $f) {
-            $this->fields[$k]->afterSave();
+        foreach ($this->getFieldNames() as $fieldname) {
+            $this->getField($fieldname)->afterSave();
         }
 
         return $result;
@@ -317,8 +309,8 @@ class Jojo_Table {
         if (Jojo::deleteQuery($query, $values)) {
             /* Run any post-delete procedures */
             $res = true;
-            foreach ($this->fields as $f) {
-                $res = $res && $f->onDelete();
+            foreach ($this->getFieldNames() as $fieldname) {
+                $res = $res && $this->getField($fieldname)->onDelete();
             }
             return $res;
         }
@@ -343,7 +335,20 @@ class Jojo_Table {
      */
     function getField($field)
     {
-        return (isset($this->fields[$field])) ? $this->fields[$field] : false;
+        /* Does the field exist? */
+        if (!isset($this->fields[$field])) {
+            /* No */
+            return false;
+        }
+
+        /* Is this a field object yet? */
+        if (is_array($this->fields[$field])) {
+            /* No, create it */
+            $this->fields[$field] = Jojo_Field::factory($this->fields[$field]['fd_type'], $this->fields[$field], $this);
+        }
+
+        /* Return the field */
+        return $this->fields[$field];
     }
 
     /**
@@ -351,7 +356,8 @@ class Jojo_Table {
      */
     function getFieldByType($type)
     {
-        foreach ($this->fields as $f) {
+        foreach ($this->getFieldNames() as $fieldname) {
+            $f = $this->getField($fieldname);
             if ($f instanceof $type) {
                 return $f;
             }
@@ -362,9 +368,10 @@ class Jojo_Table {
     /* Set the value of a field */
     function setFieldValue($field, $value)
     {
-        if (isset($this->fields[$field])) {
-            $this->fields[$field]->setPostData($value);
-            return $this->fields[$field]->setValue($value);
+        $field = $this->getField($field);
+        if ($field) {
+            $field->setPostData($value);
+            return $field->setValue($value);
         }
         return false;
     }
@@ -372,8 +379,9 @@ class Jojo_Table {
     /* Get the value of a field */
     function getFieldValue($field)
     {
-        if (isset($this->fields[$field])) {
-            return $this->fields[$field]->getValue();
+        $field = $this->getField($field);
+        if ($field) {
+            return $field->getValue();
         }
         return false;
     }
