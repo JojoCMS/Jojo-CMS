@@ -15,6 +15,8 @@
  */
 
 class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
+    /* File extensions to send inline */
+    private $inlineExtensions = array('jpg', 'gif', 'jpeg', 'png', 'swf', 'xml');
 
     /**
      * Serve an external file.
@@ -38,27 +40,21 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
         if (file_exists($file)) {
             Jojo::runHook('jojo_core:downloadFile', array('filename' => $file));
 
-            /* Get Content */
-            $content = file_get_contents($file);
-
             /* Send header */
-            $imgExtensions = array('jpg', 'gif', 'jpeg', 'png');
             header('Content-Type: ' . Jojo::getMimeType($file));
-            header('Content-Length: ' . strlen($content));
-            if(Jojo::getFileExtension($file)=='swf') {
+            header('Content-Length: ' . filesize($file));
+            if (in_array(Jojo::getFileExtension($file), $this->inlineExtensions)) {
                 header('Content-disposition: inline; filename="' . basename($file) . '"');
-            } elseif (in_array(Jojo::getFileExtension($file), $imgExtensions)) {
-                header('Content-disposition: inline; filename="' . basename($file) . '"');
-            } elseif(Jojo::getFileExtension($file)<>'xml') {
+            } else {
                 header('Content-disposition: attachment; filename="' . basename($file) . '"');
             }
-            header("Content-Transfer-Encoding: binary");
+            header('Content-Transfer-Encoding: binary');
             header('Pragma: public');
             header('Cache-Control: public, max-age=28800');
             header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
 
             /* Send Conent */
-            echo $content;
+            readfile($file, 'rb');
             exit;
         }
 
