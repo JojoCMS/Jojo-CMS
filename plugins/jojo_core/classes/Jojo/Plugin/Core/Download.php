@@ -49,7 +49,7 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
                 header('Content-disposition: inline; filename="' . basename($file) . '"');
             } elseif (in_array(Jojo::getFileExtension($file), $imgExtensions)) {
                 header('Content-disposition: inline; filename="' . basename($file) . '"');
-            } else {
+            } elseif(Jojo::getFileExtension($file)<>'xml') {
                 header('Content-disposition: attachment; filename="' . basename($file) . '"');
             }
             header("Content-Transfer-Encoding: binary");
