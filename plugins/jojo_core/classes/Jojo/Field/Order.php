@@ -37,7 +37,7 @@ class Jojo_Field_order extends Jojo_Field
         global $smarty;
 
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('size',     $this->size);
         $smarty->assign('fd_help',  htmlentities($this->fd_help));
         $smarty->assign('error',    $this->error);

@@ -32,7 +32,7 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
         $smarty->assign('fd_help',  htmlentities($this->fd_help));
         $smarty->assign('hktree',   $this->tree->printout_select(0, $this->value, $this->table->getRecordID()));
         $smarty->assign('error',    $this->error);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('readonlydisplay', $this->readonlydisplay);
 
         return  $smarty->fetch('admin/fields/dbpagelist.tpl');

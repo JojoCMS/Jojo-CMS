@@ -74,7 +74,7 @@ class Jojo_Field_encryptedtext extends Jojo_Field
         $smarty->assign('value', htmlentities($displayvalue, ENT_COMPAT, 'UTF-8'));
         $smarty->assign('class', $class);
         $smarty->assign('maxsize', $this->fd_maxsize);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('fd_help', htmlentities($this->fd_help));
 
         return  $smarty->fetch('admin/fields/encryptedtext.tpl');

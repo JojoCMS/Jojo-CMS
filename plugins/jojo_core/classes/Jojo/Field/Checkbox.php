@@ -49,7 +49,7 @@ class Jojo_Field_checkbox extends Jojo_Field
             $smarty->assign('show_on_false', explode(',', $optionarray[2]));
         }
 
-        $smarty->assign('readonly',    $this->readonly);
+        $smarty->assign('readonly',    $this->fd_readonly);
         $smarty->assign('fd_help',     htmlentities($this->fd_help));
         $smarty->assign('value',       $this->value);
         $smarty->assign('fd_field',    $this->fd_field);

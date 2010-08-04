@@ -39,7 +39,7 @@ class Jojo_Field_yesno extends Jojo_Field
         $smarty->assign('vals',        $vals);
         $smarty->assign('displayvals', $displayvals);
         $smarty->assign('fd_help',     htmlentities($this->fd_help));
-        $smarty->assign('readonly',    $this->readonly);
+        $smarty->assign('readonly',    $this->fd_readonly);
         $smarty->assign('value',       $this->value);
         $smarty->assign('fd_field',    $this->fd_field);
 

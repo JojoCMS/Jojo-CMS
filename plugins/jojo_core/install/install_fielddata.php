@@ -29,7 +29,7 @@ $query = "
       `fd_type` varchar(255) NOT NULL default '',
       `fd_options` text NULL,
       `fd_required` enum('yes','no') NOT NULL default 'no',
-      `fd_readonly` binary(1) default '0',
+      `fd_readonly` tinyint(1) default '0',
       `fd_showlabel` enum('yes','no') NOT NULL default 'yes',
       `fd_default` varchar(255) NOT NULL default '',
       `fd_maxvalue` varchar(20) NOT NULL default '',

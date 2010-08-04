@@ -28,7 +28,7 @@ class Jojo_Field_tag extends Jojo_Field
         global $smarty;
 
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $tags = Jojo_Plugin_Jojo_Tags::getTags(trim($this->getOption('options')), $this->table->getRecordID());
         $taglist = array();
         if (!empty($tags)) {

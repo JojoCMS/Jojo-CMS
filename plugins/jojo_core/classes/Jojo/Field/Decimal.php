@@ -45,7 +45,7 @@ class Jojo_Field_decimal extends Jojo_Field
         $smarty->assign('fd_help',     htmlentities($this->fd_help));
         $smarty->assign('value',       $this->value);
         $smarty->assign('fd_help',     $this->fd_help);
-        $smarty->assign('readonly',    $this->readonly);
+        $smarty->assign('readonly',    $this->fd_readonly);
         $smarty->assign('onlyIfUnits', Jojo::onlyIf($this->units, ' '.$this->units));
 
         return  $smarty->fetch('admin/fields/decimal.tpl');

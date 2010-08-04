@@ -56,7 +56,7 @@ class Jojo_Field_password extends Jojo_Field
         $this->fd_size = intval($this->fd_size / 2);
 
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('fd_size', $this->fd_size);
         $smarty->assign('fd_help', htmlentities($this->fd_help));
         $smarty->assign('error', $this->error);

@@ -50,7 +50,7 @@ class Jojo_Field_fieldtype extends Jojo_Field
 
         $smarty->assign('rows', $this->rows);
         $smarty->assign('_types', $this->_types);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('value', $this->value);
         $smarty->assign('rows', $this->rows);
         $smarty->assign('fd_field', $this->fd_field);

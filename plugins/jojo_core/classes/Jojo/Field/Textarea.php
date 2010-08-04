@@ -54,7 +54,7 @@ class Jojo_Field_textarea extends Jojo_Field
         $smarty->assign('value',         $this->value);
         $smarty->assign('counter',       $this->counter);
         $smarty->assign('fd_field',      $this->fd_field);
-        $smarty->assign('readonly',      $this->readonly);
+        $smarty->assign('readonly',      $this->fd_readonly);
         $smarty->assign('fd_help',       htmlentities($this->fd_help));
 
         return  $smarty->fetch('admin/fields/textarea.tpl');

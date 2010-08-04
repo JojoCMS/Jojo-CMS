@@ -60,7 +60,7 @@ class Jojo_Field_date extends Jojo_Field
         $smarty->assign('fd_size',       $this->fd_size);
         $smarty->assign('fd_help',       htmlentities($this->fd_help));
         $smarty->assign('value',         $this->value);
-        $smarty->assign('readonly',      $this->readonly);
+        $smarty->assign('readonly',      $this->fd_readonly);
         $smarty->assign('formatteddate', $formatted);
         $smarty->assign('mysql2date',    Jojo::mysql2date($this->value, 'medium'));
 

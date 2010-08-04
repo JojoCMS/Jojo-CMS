@@ -46,7 +46,7 @@ class Jojo_Field_fileupload extends Jojo_Field
     function displayedit()
     {
         $retval = '';
-        $readonly = ($this->readonly == 'yes') ? ' readonly="readonly"' : '';
+        $readonly = ($this->fd_readonly) ? ' readonly="readonly"' : '';
         if (!$this->isblank()) {
             /* Make sure the file exists */
             if (file_exists(_DOWNLOADDIR."/".$this->fd_table."s/".$this->value)) {

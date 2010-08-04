@@ -69,7 +69,7 @@ class Jojo_Field_radio extends Jojo_Field
         $smarty->assign('extras',      $extras);
         $smarty->assign('allextras',   $allextras);
         $smarty->assign('fd_help',     htmlentities($this->fd_help));
-        $smarty->assign('readonly',    $this->readonly);
+        $smarty->assign('readonly',    $this->fd_readonly);
         $smarty->assign('value',       $this->value);
         $smarty->assign('fd_field',    $this->fd_field);
 

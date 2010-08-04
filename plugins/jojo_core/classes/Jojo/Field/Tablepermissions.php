@@ -56,7 +56,7 @@ class Jojo_Field_tablepermissions extends Jojo_Field
         global $smarty;
         $smarty->assign('perms', $this->_getPerms());
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('groups', $groups);
         $smarty->assign('_permOptions', $this->_permOptions);
 

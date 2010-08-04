@@ -82,7 +82,7 @@ class Jojo_Field_texteditor extends Jojo_Field
         $smarty->assign('selectededitor', $selectededitor);
         $smarty->assign('editortype', $editortype);
         $smarty->assign('fd_name', $this->fd_name);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('fd_help', htmlentities($this->fd_help, ENT_COMPAT, 'UTF-8'));
         $smarty->assign('value', htmlentities($this->value, ENT_COMPAT, 'UTF-8'));
         $smarty->assign('valuehidden', htmlentities($this->value, ENT_QUOTES, 'UTF-8'));

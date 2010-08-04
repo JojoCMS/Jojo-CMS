@@ -48,7 +48,7 @@ class Jojo_Field_unixdate extends Jojo_Field
         $printabledate = ($this->value > 0) ? date('D, j F Y', $this->value) : '';
         $smarty->assign('printabledate', $printabledate);
 
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('error',    $this->error);
         $smarty->assign('fd_field', $this->fd_field);
         $smarty->assign('fd_help',  htmlentities($this->fd_help));

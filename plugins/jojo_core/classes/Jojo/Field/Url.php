@@ -59,7 +59,7 @@ class Jojo_Field_url extends Jojo_Field
         */
 
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         //$smarty->assign('urlcheck', $urlcheck);
         $smarty->assign('fd_size',  $this->fd_size);
         $smarty->assign('value',    $this->value);

@@ -62,7 +62,7 @@ class Jojo_Field_integer extends Jojo_Field
         global $smarty;
 
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('size',     $this->size);
         $smarty->assign('value',    $this->value);
         $smarty->assign('fd_type',  $this->fd_type);

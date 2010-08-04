@@ -47,7 +47,7 @@ class Jojo_Field_list extends Jojo_Field
 
         $smarty->assign('options', $this->options);
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('fd_help', htmlentities($this->fd_help));
         $smarty->assign('error', $this->error);
         $smarty->assign('rows', $this->rows);
