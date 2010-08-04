@@ -93,15 +93,19 @@ class Jojo_Field_internalurl extends Jojo_Field
         $class = 'Jojo_Plugin_' . $plugin;
         $id = $this->table->getRecordID();
         $url = str_replace('http://', '' ,_SITEURL) . '/';
+        if (_MULTILANGUAGE && isset($this->tableoptions['td_languagefield']) &&  !empty($this->tableoptions['td_languagefield']))  {
+           $language = $this->table->getFieldValue($this->tableoptions['td_languagefield']);
+           $url .= Jojo::getMultiLanguageString($language, false);
+        }
         if (class_exists($class) && method_exists($class, 'getPrefixById') && $id) { 
             $prefix = call_user_func_array($class . '::getPrefixById', array($id));
         } else   {
             $prefix = !empty($this->prefix) ? $this->prefix : '';
         }
-        $url = $url . ($prefix ? $prefix . '/' : '');        
+        $url .= $prefix ? $prefix . '/' : '';        
         $smarty->assign('url', $url);
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('size', $this->size);
         $smarty->assign('value', $this->value);
         $smarty->assign('fd_maxsize', $this->fd_maxsize);

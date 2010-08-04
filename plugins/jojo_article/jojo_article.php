@@ -413,7 +413,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
     static function getPluginPages($for=false, $language=false)
     {
-        $categories =  Jojo::selectQuery("SELECT articlecategoryid, pg_title, pg_language FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid)" . (_MULTILANGUAGE ? " WHERE pg_language = '" . $page->page['pg_language'] . "'" : ''));
         $items =  Jojo::selectQuery("SELECT articlecategoryid, sortby, p.pageid, pg_title, pg_url, pg_language, pg_livedate, pg_expirydate, pg_status, pg_sitemapnav, pg_xmlsitemapnav  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
         $now    = time();
         global $_USERGROUPS;
@@ -639,6 +638,17 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $_cache[$cacheKey] = '';
         }
         return $_cache[$cacheKey];
+    }
+
+    static function getPrefixById($id=false) {
+        if ($id) {
+            $data = Jojo::selectRow("SELECT ar_category FROM {article} WHERE articleid = ?", array($id));
+            if ($data) {
+                $prefix = self::_getPrefix('', $data['ar_category']);
+                return $prefix;
+            }
+        }
+        return false;
     }
 
     function getCorrectUrl()
