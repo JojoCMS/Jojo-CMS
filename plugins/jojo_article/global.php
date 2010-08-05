@@ -32,19 +32,21 @@ $num = $numarticles + 10;
         $smarty->assign('allarticles',  $allarticles);
         foreach ($categories as $c) {
             $catarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, $c['articlecategoryid'],  $c['sortby'], $exclude );
-            $smarty->assign('articles_' . str_replace('-', '_', $catarticles[0]['categoryurl']), $catarticles);
+            if (isset($catarticles[0])) {
+                $smarty->assign('articles_' . str_replace(array('-', '/'), array('_', ''), $catarticles[0]['pg_url']), $catarticles);
+            }
         }
     } else {
         if (Jojo::getOption('article_sidebar_randomise', 0) > 0) {
             $recentarticles = Jojo_Plugin_Jojo_article::getArticles(Jojo::getOption('article_sidebar_randomise', 0), 0, 'all',  'ar_date desc', $exclude);
             shuffle($recentarticles);
         } else {
-            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);       
-        }        
+            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);
+        }
         $recentarticles = array_slice($recentarticles, 0, $numarticles);
         $smarty->assign('articles', $recentarticles );
     }
-    
+
 }
 /** Example usage in theme template:
             {if $articles}
