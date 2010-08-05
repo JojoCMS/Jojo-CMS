@@ -42,7 +42,6 @@ if (isset($result['created'])) {
                         'jojo_core',
                         'jojo_sitemap',
                         'jojo_contact',
-                        'jojo_google_verficication',
                         'jojo_robots',
                      );
     foreach ($defaultPlugins as $p) {
