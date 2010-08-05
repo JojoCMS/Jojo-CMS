@@ -317,12 +317,12 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                  /* Uncomment this to speed-up search
                      $found = preg_match_all("/\s+" . $word . "\s+(.{0," . $SL . "})/ims", $content, $matches, PREG_SET_ORDER);
                  */
-                 $found = preg_match_all("#(.{0," . $SL . "})\s+" . $word . "\s+(.{0," . $SL . "})#ims", $content, $matches, PREG_SET_ORDER);
+                 $found = preg_match_all("#(.{0," . $SL . "})\s+" .  preg_quote($word) . "\s+(.{0," . $SL . "})#ims", $content, $matches, PREG_SET_ORDER);
              } else {
                  /* Uncomment this to speed-up search
                      $found = preg_match_all("/" . $word . "(.{0," . $SL . "})/ims", $content, $matches, PREG_SET_ORDER);
                  */
-                 $found = preg_match_all("#(.{0," . $SL . "})" . $word . "(.{0," . $SL . "})#ims", $content, $matches, PREG_SET_ORDER);
+                 $found = preg_match_all("#(.{0," . $SL . "})" . preg_quote($word) . "(.{0," . $SL . "})#ims", $content, $matches, PREG_SET_ORDER);
              }
              if ($found == 0 || $found === false) continue;
              foreach($matches as $dummy => $match)
@@ -395,9 +395,9 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             if (!$booleanphrase && (strlen($word) < 4 || in_array($word, $ignore))) continue;
             if ($CRAWL_SEARCH_STRICT_RESULTS)
             {
-                $shown_result = preg_replace ("#\s+{$word}\s+#ims", "<b>\\0</b>", $shown_result);
+                $shown_result = preg_replace ("#\s+" . preg_quote($word) . "\s+#ims", "<b>\\0</b>", $shown_result);
             } else {
-                $shown_result = preg_replace ("#{$word}#ims", "<b>\\0</b>", $shown_result);
+                $shown_result = preg_replace ("#" . preg_quote($word) . "#ims", "<b>\\0</b>", $shown_result);
             }
         }
         return $shown_result;
