@@ -56,7 +56,7 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
 
         //TODO - Add group2 logic
         $datafilter      = "pg_link = '" . $pluginname . "'"; //filter results by plugin
-        $datafilter .= ($this->readonly) ? ' AND ' . $idfield . ' = ' .  $this->value : '';
+        $datafilter .= ($this->fd_readonly) ? ' AND ' . $idfield . ' = ' .  $this->value : '';
         $rolloverfield   = Jojo::either($this->tableoptions['td_rolloverfield'], "''");
         $html            = '';
 
@@ -81,7 +81,7 @@ class Jojo_Field_dbpluginpagelist extends Jojo_Field_dblist
                             Jojo::onlyIf($orderbyfield, ' '.$orderbyfield.', ')
                         );
         $records = Jojo::selectAssoc($query);
-        $this->readonlydisplay = ($records && $this->readonly) ? $records[0]['display']: '';
+        $this->readonlydisplay = ($records && $this->fd_readonly) ? $records[$this->value]['display']: '';
         foreach ($records as $record) {
             if (!isset($records[$record['parent']])) {
                 $parent = 0;
