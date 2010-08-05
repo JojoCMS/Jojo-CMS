@@ -218,7 +218,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if ($action == 'unsubscribe') {
             $code      = Jojo::getFormData('code',      '');
             $articleid = Jojo::getFormData('articleid', '');
-            if (self::removeSubscriptionByCode($code, $articleid)) {
+            if (Jojo_Plugin_Jojo_comment::removeSubscriptionByCode($code, $articleid, 'jojo_article')) {
                 $content['content'] = 'Subscription removed.<br />';
             } else {
                 $content['content'] = 'This unsubscribe link is inactive, or you have already been unsubscribed.<br />';
