@@ -99,10 +99,10 @@ $default_fd['articlecategory']['thumbnail'] = array(
 
 // Show Rss link Field
 $default_fd['articlecategory']['rsslink'] = array(
-        'fd_name' => "Show Rss link",
+        'fd_name' => "Publish to Rss",
         'fd_type' => "yesno",
         'fd_readonly' => "0",
-        'fd_default' => "0",
+        'fd_default' => "1",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
     );

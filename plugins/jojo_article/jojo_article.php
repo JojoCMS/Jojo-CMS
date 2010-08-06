@@ -413,7 +413,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
     static function getPluginPages($for=false, $language=false)
     {
-        $items =  Jojo::selectQuery("SELECT articlecategoryid, sortby, p.pageid, pg_title, pg_url, pg_language, pg_livedate, pg_expirydate, pg_status, pg_sitemapnav, pg_xmlsitemapnav  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
+        $items =  Jojo::selectQuery("SELECT c.*, p.pageid, pg_title, pg_url, pg_language, pg_livedate, pg_expirydate, pg_status, pg_sitemapnav, pg_xmlsitemapnav  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
         $now    = time();
         global $_USERGROUPS;
         $pagePermissions = new JOJO_Permissions();
@@ -840,7 +840,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $categories =  self::getPluginPages('', (_MULTILANGUAGE ? $page->page['pg_language'] : ''));
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
-            if ($prefix) {
+            if ($prefix && $c['rsslink']==1) {
                 $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? Jojo::getMultiLanguageString($c['pg_language'], false) : '') . $prefix;
             }
         }
