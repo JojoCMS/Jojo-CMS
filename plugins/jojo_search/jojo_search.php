@@ -90,7 +90,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
 
                 /* De-encode foreign text urls for display */
                 $results[$k]['displayurl'] = !isset($results[$k]['displayurl']) ? urldecode($results[$k]['url']) : $results[$k]['displayurl'];
-                $results[$k]['url'] = !isset($results[$k]['absoluteurl']) ? $results[$k]['absoluteurl'] : $results[$k]['url'];
+                $results[$k]['url'] = isset($results[$k]['absoluteurl']) ? $results[$k]['absoluteurl'] : $results[$k]['url'];
 
                 /* Use relevance figure (x10) as a pixel width for displaying the relevance graphically */
                 $results[$k]['displayrelevance'] = !empty($results[$k]['relevance']) ? ($results[$k]['relevance'] * 10 ) : '0';
