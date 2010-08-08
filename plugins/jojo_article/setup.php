@@ -25,7 +25,7 @@ if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Adding <b>Articles</b> Page to menu<br />";
     $articlespage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Articles', pg_link='jojo_plugin_jojo_article', pg_url='articles'");
     // add a corresponding category
-    Jojo::insertQuery("INSERT INTO {articlecategory} SET pageid='$articlespage'");
+    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} SET pageid='$articlespage'");
 }
 
 /* Edit Articles */
@@ -67,8 +67,8 @@ if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Added sample article.<br/>";
     Jojo::insertQuery("INSERT INTO {article} ( `ar_title` , `ar_url`, `ar_desc` , `ar_body` , `ar_bbbody` , `ar_category` , `ar_date` , `ar_image` , `ar_author` , `ar_source` , `ar_seotitle` , `ar_metadesc` , `ar_language` )
     VALUES (
-    'Welcome to JojoCMS', 'test', 'A test article', 'Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by <a href=\"http://www.jojocms.org\">Jojo CMS</a>.', '[editor:bb]Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by [url=http://www.jojocms.org]Jojo CMS[/url].', '1', NULL , '', '', '', '', '', 'en'
-    );");
+    'Welcome to JojoCMS', 'test', 'A test article', 'Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by <a href=\"http://www.jojocms.org\">Jojo CMS</a>.', '[editor:bb]Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by [url=http://www.jojocms.org]Jojo CMS[/url].', ?, ? , '', '', '', '', '', ?
+    );", array((isset($catid) ? $catid : 1), time(), 'en'));
 }
 
 /* Regenerating HTML cache for Article */
@@ -99,19 +99,8 @@ if (count($articles)) {
 
 //script to force articles into categories - should only run once
 if (Jojo::getOption('article_enable_categories')) {
-    $categories = Jojo::selectQuery("SELECT articlecategoryid, pageid, ac_url FROM {articlecategory}");
-    //run through the categories and ensure each of them is tied to a pageid, grabbing the first one it finds for multiple page with the same url
-    if ($categories) {
-        foreach ($categories as $c) {
-            if (!$c['pageid']) {
-                $articlespage = Jojo::selectRow("SELECT pageid, pg_url FROM {page} WHERE pg_link = 'jojo_plugin_jojo_article' AND pg_url = ? ", array($c['ac_url']));
-                if (count($articlespage)) {
-                    Jojo::updateQuery("UPDATE {articlecategory} SET pageid = ? WHERE articlecategoryid = ? ", array($articlespage['pageid'], $c['articlecategoryid']));
-                }
-            }
-        }
-    }
-    $categories = jojo::selectAssoc("SELECT pageid AS id, articlecategoryid, pageid, ac_url FROM {articlecategory}");
+
+    $categories = jojo::selectAssoc("SELECT pageid AS id, articlecategoryid, pageid FROM {articlecategory}");
     $articles = Jojo::selectQuery("SELECT articleid, ar_category, ar_language FROM {article}");
     $articlepages = Jojo::selectQuery("SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link LIKE 'jojo_plugin_jojo_article'"); 
     if (Jojo::getOption('article_enable_categories')=='no') {
@@ -122,14 +111,9 @@ if (Jojo::getOption('article_enable_categories')) {
             but make categories for any others found anyway so they can be populated manually if desired */
             foreach($articlepages as $k => $page) {
                $pageid = $page['pageid'];
-               $pageurl = $page['pg_url'];
                 // if no category for this page id
                 if (!count($categories) || !isset($categories[$pageid])) { 
-                    $catid[$k] = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
-                // category is set for this page id, check to see if the url needs updating
-                } elseif (isset($categories[$pageid]) && $categories[$pageid]['ac_url'] != $pageurl ) {
-                    jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
-                    $catid[$k] = $categories[$pageid]['articlecategoryid'];
+                    $catid[$k] = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");
                 } else {
                     $catid[$k] = $categories[$pageid]['articlecategoryid'];        
                 }
@@ -146,16 +130,11 @@ if (Jojo::getOption('article_enable_categories')) {
             and assign all articles in that language to that category */
             foreach($articlepages as $k => $page) {
                $pageid = $page['pageid'];
-               $pageurl = $page['pg_url'];
                $pagelanguage = $page['pg_language'];
                 // if no category for this page id
-                if (!count($categories) || !isset($categories[$pageid])) { 
-                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
-                // category is set for this page id, check to see if the url needs updating
+                if (!isset($categories[$pageid])) { 
+                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");
                 } else {
-                    if ($categories[$pageid]['ac_url'] != $pageurl) {
-                        jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
-                    }
                     $catid = $categories[$pageid]['articlecategoryid'];
                 } 
                 //update all articles with the pageid found for that language
@@ -170,17 +149,11 @@ if (Jojo::getOption('article_enable_categories')) {
         //3rd case - categories enabled and no multilanguage
         if (Jojo::getOption('multilanguage', '') == 'no') {
             /* check if there are articles pages that don't have a category set ,
-            set a category for them and add any category-less articles to that category,
-            make sure that the pageids have been saved into existing categories */
+            set a category for them and add any category-less articles to that category */
             foreach($articlepages as $k => $page) {
                $pageid = $page['pageid'];
-               $pageurl = $page['pg_url'];
-                // category is set for this page id, check to see if the url needs updating
-                if (isset($categories[$pageid]) && $categories[$pageid]['ac_url'] != $pageurl ) {
-                    jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
-                // no category is set for this page id
-                } elseif  (!isset($categories[$pageid])){
-                     $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
+                if (!isset($categories[$pageid])){
+                     $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");
                     //update all articles with no category to use this one
                     if ($articles) {
                         foreach ($articles as $a) {
@@ -192,21 +165,13 @@ if (Jojo::getOption('article_enable_categories')) {
         //4th case - categories enabled and multilanguage
         } else {
             /* check if there are articles pages that don't have a category set ,
-            set a category for them and add any category-less articles to that category,
-            make sure that the pageids have been saved into existing categories */
+            set a category for them and add any category-less articles to that category */
             foreach($articlepages as $k => $page) {
                 $catid = '';
                $pageid = $page['pageid'];
-               $pageurl = $page['pg_url'];
                $pagelanguage = $page['pg_language'];
-                // category is set for this page id, check to see if the url needs updating
-                if (isset($categories[$pageid])) {
-                    if ($categories[$pageid]['ac_url'] != $pageurl ) {
-                        Jojo::updateQuery("UPDATE {articlecategory} SET ac_url = ? WHERE pageid = ? ", array($pageurl, $pageid));
-                    }
-                // no category is set for this page id
-                } else{
-                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid, ac_url) VALUES ('$pageid', '$pageurl')");
+                if (!isset($categories[$pageid])) {
+                    $catid = Jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");
                 }
                 //update all articles with the pageid found for that language
                 if ($articles && $catid) {
