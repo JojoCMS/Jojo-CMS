@@ -3116,12 +3116,12 @@ class Jojo {
         $urlfield = $fields['url'];
         $datefield = $fields['date'];
         $datetype = $fields['datetype']; // mysql or unix timestamp
-        $snip = $fields['snip']; // full or truncate length
-        $sourcelink = $fields['sourcelink']; // full or truncate length
+        $snip =  (Jojo::getOption('rss_full_description') == 'yes' ? 'full' : Jojo::getOption('rss_truncate', 800)); // full or truncate length
+        $sourcelink = (boolean)(Jojo::getOption('rss_source_link') == 'yes'); // add source link to each item
 
         $site = mb_convert_encoding(_SITETITLE, 'HTML-ENTITIES', 'UTF-8');
         $pagetitle = mb_convert_encoding($pagetitle, 'HTML-ENTITIES', 'UTF-8');
-        $description = mb_convert_encoding(Jojo::getOption('sitedesc', Jojo::getOption('sitetitle')), 'HTML-ENTITIES', 'UTF-8');
+        $description = mb_convert_encoding(Jojo::getOption('rss_sitedesc', Jojo::getOption('sitetitle')), 'HTML-ENTITIES', 'UTF-8');
         $rss  = "<?xml version=\"1.0\" ?".">\n";
         $rss .= "<rss version=\"2.0\">\n";
         $rss .= "<channel>\n";
