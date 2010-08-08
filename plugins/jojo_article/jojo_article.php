@@ -238,10 +238,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 'url' => 'url',
                 'date' => 'date',
                 'datetype' => 'unix',
-                'snip' => (Jojo::getOption('article_full_rss_description') == 'yes' ? 'full' : Jojo::getOption('article_rss_truncate', 800)),
-                'sourcelink' => (boolean)(Jojo::getOption('article_feed_source_link') == 'yes')
             );
-            $articles = array_slice($articles, 0, Jojo::getOption('article_rss_num_articles', 15));
+            $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
             Jojo::getFeed($articles, $rssfields);
         }        
         
@@ -832,7 +830,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function rssicon($data)
     {
         global $page;
-        $link = Jojo::getOption('article_external_rss');
+        $link = Jojo::getOption('rss_external_url');
         if ($link) {
             $data['Articles'] =  $link;
         }

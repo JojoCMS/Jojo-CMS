@@ -93,17 +93,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'article_feed_source_link',
-    'category'    => 'Articles',
-    'label'       => 'Append source link to RSS feed',
-    'description' => 'Appends a source link to the bottom of the article in the RSS feed. This is to ensure scraper sites are providing a link back to the original article.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'article_show_date',
     'category'    => 'Articles',
     'label'       => 'Show Date on posts',
@@ -148,50 +137,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'article_external_rss',
-    'category'    => 'Articles',
-    'label'       => 'External Article RSS URL',
-    'description' => 'The external URL (eg Feedburner) for the Article RSS feed (leave blank to use the Jojo defaults)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => '',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_rss_num_articles',
-    'category'    => 'Articles',
-    'label'       => 'Number of RSS articles',
-    'description' => 'The number of articles to be displayed in the RSS feed (more articles will use more bandwidth))',
-    'type'        => 'integer',
-    'default'     => '15',
-    'options'     => '',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_full_rss_description',
-    'category'    => 'Articles',
-    'label'       => 'Full Article RSS Description',
-    'description' => 'If YES, a full copy of the article is provided in the RSS feed. If NO, the RSS feed only includes content before the snip filter tag.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_rss_truncate',
-    'category'    => 'Articles',
-    'label'       => 'Article RSS default truncation',
-    'description' => 'If Full Description is set to No above, truncate articles with no embedded snip filter tag to this length',
-    'type'        => 'integer',
-    'default'     => '800',
-    'options'     => '',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'articlecomments',
     'category'    => 'Articles',
     'label'       => 'Article comments',
@@ -199,17 +144,6 @@ $_options[] = array(
     'type'        => 'radio',
     'default'     => 'yes',
     'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'sitedesc',
-    'category'    => 'Articles',
-    'label'       => 'Site description',
-    'description' => 'A one sentence unique description of what the site is about. Included in RSS feeds.',
-    'type'        => 'textarea',
-    'default'     => '',
-    'options'     => '',
     'plugin'      => 'jojo_article'
 );
 
