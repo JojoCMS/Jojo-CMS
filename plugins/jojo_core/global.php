@@ -38,35 +38,29 @@ if (_MULTILANGUAGE && isset($page)) {
 }
 
 /* Get one level of main navigation for the top navigation */
-$smarty->assign('mainnav', _getNav($root, 0));
+$smarty->assign('mainnav', _getNav($root, 0, 'mainnav', $selectedPages));
 
 /* Get one level of navigation for the footer */
-$smarty->assign('footernav', _getNav($root, 0, 'footernav'));
+$smarty->assign('footernav', _getNav($root, 0, 'footernav', $selectedPages));
 
-/* Get 2 levels of sub naviation */
+/* Get 2 levels of sub navigation */
 if ($page->getValue('pg_parent') != $root) {
     /* Get sister pages to this page */
-    $smarty->assign('subnav', _getNav($selectedPages[1], 2));
+    $smarty->assign('subnav', _getNav($selectedPages[1], 2, 'mainnav', $selectedPages));
 } else {
     /* Get children pages of this page */
-    $smarty->assign('subnav', _getNav($page->id, 2));
+    $smarty->assign('subnav', _getNav($page->id, 2, 'mainnav', $selectedPages));
 }
 
-/* Get tags for the page, if it has them (articles do this already) */
-   global $tags;
-   if (!isset($tags)) {
-    foreach (JOJO::listPlugins('jojo_tags.php') as $pluginfile) {
-        require_once($pluginfile);
-             $tags = JOJO_Plugin_Jojo_Tags::getTags('Core', $page->id);
-            if (count($tags) > 0) {
-                $smarty->assign('tags', $tags);
-            }
-        break;
-    }
+/* Get tags if used */
+if (class_exists('Jojo_Plugin_Jojo_Tags')) {
+    /* Split up tags for display */
+    $tags = Jojo_Plugin_Jojo_Tags::getTags('Core', $page->id);
+    $smarty->assign('tags', $tags);
 }
 
 /* Functions */
-function _getNav($root, $subnavLevels, $field = 'mainnav')
+function _getNav($root, $subnavLevels, $field = 'mainnav', $selectedPages = false)
 {
     global $_USERGROUPS;
 
@@ -93,7 +87,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         // those pages that are configured to appear in all main nav menus.
         if ((_MULTILANGUAGE) && (Jojo::fieldExists ( 'page', 'pg_mainnavalways' )) && ($field == 'mainnav')) {
             $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_followto, pg_mainnavalways, pg_secondarynav
+                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_followto, pg_mainnavalways, pg_secondarynav, pg_ssl
                          FROM
                            {page}
                          WHERE
@@ -101,8 +95,8 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
                          ORDER BY
                            pg_order", $field);
         } else {
-        $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_followto, pg_status, pg_livedate, pg_expirydate
+            $query = sprintf("SELECT
+                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_followto, pg_status, pg_livedate, pg_expirydate, pg_ssl
                          FROM
                            {page}
                          WHERE
@@ -141,7 +135,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         }
 
         /* Create the url for this page */
-        $n['url'] = _SITEURL . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($n['pg_language'], false) : '');
+        $n['url'] = ($n['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL ) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($n['pg_language'], false) : '');
         if ($n['pageid'] != $home) {
             /* Use page url is we have it, else generate something */
             $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
@@ -149,6 +143,8 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         /* Create title and label for display */
         $n['title'] = htmlspecialchars(($n['pg_desc'] ? $n['pg_desc'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
         $n['label'] = htmlspecialchars(($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
+        /* Add field for selectedPages tree */
+        $n['selected'] = (boolean)($selectedPages && in_array($n['pageid'], $selectedPages));
 
         if ($subnavLevels) {
            /* Add sub pages to this page */

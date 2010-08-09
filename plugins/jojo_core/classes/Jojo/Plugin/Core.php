@@ -20,22 +20,6 @@
 
 class Jojo_Plugin_Core extends Jojo_Plugin
 {
-    static function saveTags($record, $tags = array())
-    {
-        /* Ensure the tags class is available */
-        if (!class_exists('Jojo_Plugin_Jojo_Tags')) {
-            return false;
-        }
-
-        /* Delete existing tags for this item */
-        Jojo_Plugin_Jojo_Tags::deleteTags('Core', $record['pageid']);
-
-        /* Save all the new tages */
-        foreach($tags as $tag) {
-            Jojo_Plugin_Jojo_Tags::saveTag($tag, 'Core', $record['pageid']);
-        }
-    }
-
     static function getTagSnippets($ids)
     {
         /* Convert array of ids to a string */
