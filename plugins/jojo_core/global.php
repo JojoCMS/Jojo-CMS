@@ -44,7 +44,7 @@ $smarty->assign('mainnav', _getNav($root, Jojo::getOption('nav_mainnav', 0)));
 /* Get one level of navigation for the footer */
 $smarty->assign('footernav', _getNav($root, Jojo::getOption('nav_footernav', 0), 'footernav'));
 
-if (Jojo::getOption('nav_mainnav', 0)) {
+if (!Jojo::getOption('nav_mainnav', 0)) {
 /* Get 2 levels of sub navigation as a separate variable if mainnav is only one level*/
     if ($page->getValue('pg_parent') != $root) {
         /* Get sister pages to this page */
