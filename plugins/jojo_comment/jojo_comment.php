@@ -156,7 +156,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
     
     static function getComments($itemid, $plugin, $pageid, $allowcomments=false)
     {        
-        global $smarty, $_USERGROUPS, $_USERID;
+        global $smarty, $_USERGROUPS, $_USERID, $templateoptions;
         /* assign user variables for pre-populating fields for logged in users */
         if (!empty($_USERID)) {
             $user = Jojo::selectRow("SELECT userid, us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ?", array($_USERID));
@@ -195,6 +195,8 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         if ($pagePermissions->hasPerm($_USERGROUPS, 'edit')) {
             $smarty->assign('editperms', true);
         }
+        $templateoptions['frajax'] = true;
+        $smarty->assign('templateoptions', $templateoptions);
         $commenthtml = $smarty->fetch('jojo_comment.tpl') . ($allowcomments ? $smarty->fetch('jojo_post_comment.tpl') : '');
        
         return  $commenthtml;
