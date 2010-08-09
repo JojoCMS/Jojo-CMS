@@ -60,9 +60,9 @@ if (class_exists('Jojo_Plugin_Jojo_Tags')) {
 }
 
 /* Functions */
-function _getNav($root, $subnavLevels, $field = 'mainnav', $selectedPages = false)
+function _getNav($root, $subnavLevels, $field = 'mainnav')
 {
-    global $_USERGROUPS;
+    global $_USERGROUPS, $selectedPages;
 
     /* Create permissions object */
     static $perms;
