@@ -141,33 +141,14 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         }
 
         /* Create the url for this page */
-        if ($n['pageid'] == $home) {
-            $n['url'] = (_MULTILANGUAGE) ? Jojo::getMultiLanguageString ($n['pg_language'], false) : _SITEURL;
-        } else {
+        $n['url'] = _SITEURL . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($n['pg_language'], false) : '');
+        if ($n['pageid'] != $home) {
             /* Use page url is we have it, else generate something */
-            if ($n['pg_url']) {
-                $n['url'] = $n['pg_url'] . '/';
-            } else {
-                $n['url'] = Jojo::rewrite('page', $n['pageid'], $n['pg_title'] . '');
-            }
-
-            if (_MULTILANGUAGE) {
-                /* Insert Language Prefix */
-                $languagePrefix = (Jojo::getMultiLanguageString ($n['pg_language'], false));
-                if ($n['pageid'] == $mldata['homes'][$n['pg_language']]) {
-                    //This is a language homepage so just show the prefix
-                    $n['url'] = $languagePrefix;
-                } else {
-                    // Not a language homepage so include the rest of the url.
-                    $n['url'] = $languagePrefix . $n['url'];
-                }
-            }
+            $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
         }
         /* Create title and label for display */
-        $n['title'] = ($n['pg_desc']) ? $n['pg_desc'] : $n['pg_title'];
-        $n['title'] = htmlspecialchars($n['title'], ENT_COMPAT, 'UTF-8', false);
-        $n['label'] = ($n['pg_menutitle']) ? $n['pg_menutitle'] : $n['pg_title'];
-        $n['label'] = htmlspecialchars($n['label'], ENT_COMPAT, 'UTF-8', false);
+        $n['title'] = htmlspecialchars(($n['pg_desc'] ? $n['pg_desc'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
+        $n['label'] = htmlspecialchars(($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
 
         if ($subnavLevels) {
            /* Add sub pages to this page */
