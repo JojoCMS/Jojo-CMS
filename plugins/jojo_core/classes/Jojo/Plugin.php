@@ -127,7 +127,7 @@ class Jojo_Plugin {
         /* Get page tags if  the tags class is available */
         if (class_exists('Jojo_Plugin_Jojo_Tags')) {
             /* Split up tags for display */
-            $tags = Jojo_Plugin_Jojo_Tags::getTags('jojo_core', $this->page['pageid']);
+            $tags = Jojo_Plugin_Jojo_Tags::getTags('Core', $this->page['pageid']);
             if ($tags) {
                 $smarty->assign('tags', $tags);
             }
