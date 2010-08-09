@@ -38,18 +38,18 @@ if (_MULTILANGUAGE && isset($page)) {
 }
 
 /* Get one level of main navigation for the top navigation */
-$smarty->assign('mainnav', _getNav($root, 0, 'mainnav', $selectedPages));
+$smarty->assign('mainnav', _getNav($root, 0));
 
 /* Get one level of navigation for the footer */
-$smarty->assign('footernav', _getNav($root, 0, 'footernav', $selectedPages));
+$smarty->assign('footernav', _getNav($root, 0, 'footernav'));
 
 /* Get 2 levels of sub navigation */
 if ($page->getValue('pg_parent') != $root) {
     /* Get sister pages to this page */
-    $smarty->assign('subnav', _getNav($selectedPages[1], 2, 'mainnav', $selectedPages));
+    $smarty->assign('subnav', _getNav($selectedPages[1], 2));
 } else {
     /* Get children pages of this page */
-    $smarty->assign('subnav', _getNav($page->id, 2, 'mainnav', $selectedPages));
+    $smarty->assign('subnav', _getNav($page->id, 2));
 }
 
 /* Get tags if used */
