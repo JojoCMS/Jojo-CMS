@@ -343,6 +343,38 @@ $_options[] = array(
     'options'     => 'dwoo,smarty',
 );
 
+/* Navigation */
+
+$_options[] = array(
+    'id'          => 'nav_mainnav',
+    'category'    => 'Navigation',
+    'label'       => 'Mainnav levels',
+    'description' => 'How many levels of sub-navigation to include below the mainnav. 0 = just the top level. Disables separate subnav if >0 ',
+    'type'        => 'integer',
+    'default'     => '0',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'nav_subnav',
+    'category'    => 'Navigation',
+    'label'       => 'Subnav levels',
+    'description' => 'How many levels of sub-navigation to include below the subnav. 0 = just the top level. Disabled if mainnav not 0',
+    'type'        => 'integer',
+    'default'     => '2',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'nav_footernav',
+    'category'    => 'Navigation',
+    'label'       => 'Footernav levels',
+    'description' => 'How many levels of sub-navigation to include below the footernav. 0 = just the top level',
+    'type'        => 'integer',
+    'default'     => '0',
+    'options'     => ''
+);
+
 // HTML Editor
 $_options[] = array(
     'id'          => 'preferrededitor',

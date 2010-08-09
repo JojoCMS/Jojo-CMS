@@ -18,12 +18,10 @@
  * @package jojo_core
  */
 
-//$templateoptions['dateparse']      = false;
-
-$menu = Jojo::getOption('menu');
-
-/* Don't create default menus */
+$templateoptions['dateparse']  = false;
+$templateoptions['frajax'] = false;
 $templateoptions['menu'] = false;
+$smarty->assign('templateoptions', $templateoptions);
 
 /* Create current section/ current sub pages array to show cascading selected menu levels beyond child*/
 $selectedPages = _getSelected($page->id);
@@ -32,32 +30,32 @@ $smarty->assign('selectedpages', $selectedPages);
 /* Create navigation array */
 $root = 0;
 if (_MULTILANGUAGE && isset($page)) {
-    /* If on a multilanuage site, get the root for the current language */
+    /* If on a multi-language site, get the root for the current language */
     $mldata = Jojo::getMultiLanguageData();
     $root = $mldata['roots'][$page->getValue('pg_language')];
+    $smarty->assign('home', $mldata['homes'][$page->getValue('pg_language')]);
+    $smarty->assign('root', $root);
+    $smarty->assign('languagelist', $mldata['languagelist']);
 }
 
 /* Get one level of main navigation for the top navigation */
-$smarty->assign('mainnav', _getNav($root, 0));
+$smarty->assign('mainnav', _getNav($root, Jojo::getOption('nav_mainnav', 0)));
 
 /* Get one level of navigation for the footer */
-$smarty->assign('footernav', _getNav($root, 0, 'footernav'));
+$smarty->assign('footernav', _getNav($root, Jojo::getOption('nav_footernav', 0), 'footernav'));
 
-/* Get 2 levels of sub navigation */
-if ($page->getValue('pg_parent') != $root) {
-    /* Get sister pages to this page */
-    $smarty->assign('subnav', _getNav($selectedPages[1], 2));
-} else {
-    /* Get children pages of this page */
-    $smarty->assign('subnav', _getNav($page->id, 2));
+if (Jojo::getOption('nav_mainnav', 0)) {
+/* Get 2 levels of sub navigation as a separate variable if mainnav is only one level*/
+    if ($page->getValue('pg_parent') != $root) {
+        /* Get sister pages to this page */
+        $smarty->assign('subnav', _getNav($selectedPages[1], Jojo::getOption('nav_subnav', 2)));
+    } else {
+        /* Get children pages of this page */
+        $smarty->assign('subnav', _getNav($page->id, Jojo::getOption('nav_subnav', 2)));
+    }
 }
-
-/* Get tags if used */
-if (class_exists('Jojo_Plugin_Jojo_Tags')) {
-    /* Split up tags for display */
-    $tags = Jojo_Plugin_Jojo_Tags::getTags('Core', $page->id);
-    $smarty->assign('tags', $tags);
-}
+/* Current year (e.g. for copyright statement) */
+$smarty->assign('currentyear', date('Y'));
 
 /* Functions */
 function _getNav($root, $subnavLevels, $field = 'mainnav')
