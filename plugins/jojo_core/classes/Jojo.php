@@ -2107,46 +2107,6 @@ class Jojo {
         return $uri;
     }
 
-
-
-    /**
-     * Reteive the multilanuage data from the database
-     */
-    static function getMultiLanguageData()
-    {
-        // Modified 3 April 2009 by James Pluck, SearchMasters
-        // Added check for new LanguageCountry functionlity to split country codes for pages
-        // off from language codes for the page.
-        static $mldata;
-
-        if (!is_array($mldata)) {
-            $mldata = array(
-                            'roots' => array(),
-                            'homes' => array(),
-                            'longcodes' => array()
-                            );
-            // Check if language/country functionality exists.
-            if ( Jojo::tableexists('lang_country') ) {
-                // get language codes from new table
-                $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode FROM {lang_country}");
-                if (!count($res)) {
-                    // Oops - this lang code doesn't ext so we assume it's a legacy code from the language table.
-                    $res = Jojo::selectQuery("SELECT languageid, root, home, longcode FROM {language}");
-                }
-            } else {
-                // get language codes from existing language table
-                $res = Jojo::selectQuery("SELECT languageid, root, home, longcode FROM {language}");
-            }
-            foreach ($res as $r) {
-                $mldata['roots'][$r['languageid']] = $r['root'];
-                $mldata['homes'][$r['languageid']] = $r['home'];
-                $mldata['longcodes'][$r['languageid']] = (!empty($r['longcode'])) ? $r['longcode'] : $r['languageid'];
-            }
-        }
-
-        return $mldata;
-    }
-
     /**
      * Return a random string of $length charcters made up of $characters
      */
@@ -3021,6 +2981,51 @@ class Jojo {
         }
 
         return $password;
+    }
+
+    /**
+     * Retrieve the multilanguage data from the database
+     */
+    static function getMultiLanguageData()
+    {
+        // Modified 3 April 2009 by James Pluck, SearchMasters
+        // Added check for new LanguageCountry functionlity to split country codes for pages
+        // off from language codes for the page.
+        static $mldata;
+
+        if (!is_array($mldata)) {
+            $mldata = array(
+                            'roots' => array(),
+                            'homes' => array(),
+                            'longcodes' => array(),
+                            'languagelist' => array()
+                            );
+            $defaultLanguage = Jojo::getOption('multilanguage-default');
+            // Check if language/country functionality exists.
+            if ( Jojo::tableexists('lang_country') ) {
+                // get language codes from new table
+                $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name FROM {lang_country}");
+                if (!count($res)) {
+                    // Oops - this lang code doesn't ext so we assume it's a legacy code from the language table.
+                    $res = Jojo::selectQuery("SELECT languageid, root, home, longcode, name FROM {language}");
+                }
+            } else {
+                // get language codes from existing language table
+                $res = Jojo::selectQuery("SELECT languageid, root, home, longcode, name FROM {language}");
+            }
+            foreach ($res as $k=>$r) {
+                if (!empty($r['root'])){
+                    $mldata['roots'][$r['languageid']] = $r['root'];
+                    $mldata['homes'][$r['languageid']] = $r['home'];
+                    $mldata['longcodes'][$r['languageid']] = (!empty($r['longcode'])) ? $r['longcode'] : $r['languageid'];
+                    $res[$k]['url'] = $r['languageid']!=$defaultLanguage ? $r['languageid'] . '/' : '';
+                } else {
+                    unset($res[$k]);
+                }
+            }
+            $mldata['languagelist'] = $res;
+        }
+        return $mldata;
     }
 
     static function getMultiLanguageCode ($language) {
