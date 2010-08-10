@@ -3014,10 +3014,10 @@ class Jojo {
                 $res = Jojo::selectQuery("SELECT languageid, root, home, longcode, name FROM {language}");
             }
             foreach ($res as $k=>$r) {
+                $mldata['roots'][$r['languageid']] = $r['root'];
+                $mldata['homes'][$r['languageid']] = $r['home'];
+                $mldata['longcodes'][$r['languageid']] = (!empty($r['longcode'])) ? $r['longcode'] : $r['languageid'];
                 if (!empty($r['root'])){
-                    $mldata['roots'][$r['languageid']] = $r['root'];
-                    $mldata['homes'][$r['languageid']] = $r['home'];
-                    $mldata['longcodes'][$r['languageid']] = (!empty($r['longcode'])) ? $r['longcode'] : $r['languageid'];
                     $res[$k]['url'] = $r['languageid']!=$defaultLanguage ? $r['languageid'] . '/' : '';
                 } else {
                     unset($res[$k]);
