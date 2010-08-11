@@ -152,13 +152,6 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     /* clean items for output */
     static function cleanItems($items, $for=false) {
         global $_USERGROUPS;
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $homes = $mldata['homes'];
-            $roots = $mldata['roots'];
-        } else {
-            $homes = array(1);
-        }
         $now    = time();
         $pagePermissions = new JOJO_Permissions();
         foreach ($items as $k=>&$i){
@@ -170,28 +163,40 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $i['id'] = $i['pageid'];
             $i['title'] = htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
-            $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['pg_body']));
+            $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
-            $i['date'] = $i['pg_updated'];
+            $i['date'] = isset($i['pg_updated']) ? $i['pg_updated'] : '';
             $i['image'] = (isset($i['pg_image']) && !empty($i['pg_image'])) ? 'pages/' . $i['pg_image'] : '';
-            if (substr(strtolower($i['pg_link']), 0, 7) == 'http://') { 
-            //external pages
-                $i['absoluteurl'] = $i['url'] = $i['pg_link'];
-            } elseif  (_MULTILANGUAGE && in_array($i['pageid'], $roots)){  
-            //multi-language root pages
-                $i['absoluteurl'] = $i['url'] = false;
-            } elseif (in_array($i['pageid'], $homes)){  
-            // home pages
-                $i['absoluteurl'] = $i['url'] = ($i['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString($i['pg_language']) : '');
-            } else {
-                $i['url'] = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($i['pg_language']) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
-                $i['absoluteurl'] = ($i['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL) . '/' . $i['url'];
-            }
+            $i = self::getUrl($i);
             $i['plugin'] = 'Core';
             unset($items[$k]['pg_body_code']);
         }
         return $items;
+    }
+
+    static function getUrl($item) {
+        if (_MULTILANGUAGE) {
+            $mldata = Jojo::getMultiLanguageData();
+            $homes = $mldata['homes'];
+            $roots = $mldata['roots'];
+        } else {
+            $homes = array(1);
+        }
+        if (isset($item['pg_link']) && substr(strtolower($item['pg_link']), 0, 7) == 'http://') { 
+        //external pages
+            $item['absoluteurl'] = $item['url'] = $item['pg_link'];
+        } elseif  (_MULTILANGUAGE && in_array($item['pageid'], $roots)){  
+        //multi-language root pages
+            $item['absoluteurl'] = $item['url'] = false;
+        } elseif (in_array($item['pageid'], $homes)){  
+        // home pages
+            $item['absoluteurl'] = $item['url'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString($item['pg_language']) : '');
+        } else {
+            $item['url'] = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($item['pg_language']) : '') . (!empty($item['pg_url']) ? $item['pg_url'] : $item['pageid'] . '/' .  Jojo::cleanURL($item['pg_title'])) . '/';
+            $item['absoluteurl'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . $item['url'];
+        }
+        return $item;
     }
 
     /**
