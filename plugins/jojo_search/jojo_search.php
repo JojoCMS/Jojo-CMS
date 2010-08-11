@@ -77,7 +77,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
 
             /* Convert the Body Text to a non-html snippet */
             foreach ($results as $k => $res) {
-                $body = strip_tags($res['body']);
+                $body = isset($res['bodyplain']) ? $res['bodyplain'] : strip_tags($res['body']);
 
                 /* Strip any template include code ie [[ ]] */
                 $body = preg_replace('/\[\[.*?\]\]/', '', $body);
