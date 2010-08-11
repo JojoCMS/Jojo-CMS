@@ -38,7 +38,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
         if ($num && $exclude) $num++;
         $shownumcomments = (Jojo::getOption('articlecomments') == 'yes' && Jojo::getOption('comment_show_num', 'no') == 'yes') ? true : false;
-        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language";
+        $query  = "SELECT ar.*, ac.*, p.*";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
@@ -55,7 +55,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
      /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
     static function getItemsById($ids = false, $sortby='ar_date desc') {
-        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language";
+        $query  = "SELECT ar.*, ac.*, p.*";
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
@@ -67,15 +67,15 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
     /* clean items for output */
     static function cleanItems($items, $exclude=false) {
-        global $_USERGROUPS;
         $now    = time();
-        $pagePermissions = new JOJO_Permissions();
         foreach ($items as $k=>&$i){
-            $pagePermissions->getPermissions('page', $i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['ar_livedate']>$now || (!empty($i['ar_expirydate']) && $i['ar_expirydate']<$now) || (!empty($i['articleid']) && $i['articleid']==$exclude)  || (!empty($i['ar_url']) && $i['ar_url']==$exclude) || $i['pg_status']=='inactive') {
+            $pagedata = Jojo_Plugin_Core::cleanItems(array($i));
+            if (!$pagedata || $i['ar_livedate']>$now || (!empty($i['ar_expirydate']) && $i['ar_expirydate']<$now) || (!empty($i['articleid']) && $i['articleid']==$exclude)  || (!empty($i['ar_url']) && $i['ar_url']==$exclude)) {
                 unset($items[$k]);
                 continue;
             }
+            $i['pagetitle'] = $pagedata[0]['title'];
+            $i['pageurl']   = $pagedata[0]['url'];
             $i['id']           = $i['articleid'];
             $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
@@ -86,8 +86,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['datefriendly'] = Jojo::formatTimestamp($i['ar_date'], "medium");
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['ar_language'], $i['ar_category']);
-            $i['pagetitle'] = !empty($i['pg_menutitle']) ? htmlspecialchars($i['pg_menutitle'], ENT_COMPAT, 'UTF-8', false) : htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
-            $i['pageurl']   = (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($i['pg_language'], true) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
             $i['plugin']     = 'jojo_article';
             unset($items[$k]['ar_bbbody']);
         }
@@ -156,7 +154,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         if (_MULTILANGUAGE) {
             $language = !empty($language) ? $language : Jojo::getOption('multilanguage-default', 'en');
-            $multilangstring = Jojo::getMultiLanguageString($language, false);
+            $multilangstring = Jojo::getMultiLanguageString($language);
         }
         /* URL specified */
         if (!empty($url)) {
@@ -409,22 +407,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return $content;
     }
 
-    static function getPluginPages($for=false, $language=false)
+    static function getPluginPages($for='', $language=false)
     {
-        $items =  Jojo::selectQuery("SELECT c.*, p.pageid, pg_title, pg_url, pg_language, pg_livedate, pg_expirydate, pg_status, pg_sitemapnav, pg_xmlsitemapnav  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
-        $now    = time();
-        global $_USERGROUPS;
-        $pagePermissions = new JOJO_Permissions();
+        $items =  Jojo::selectQuery("SELECT c.*, p.*  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_language, pg_parent");
+        // use core function to clean out any pages based on permission, status, expiry etc
+        $items =  Jojo_Plugin_Core::cleanItems($items, $for);
         foreach ($items as $k=>&$i){
-            $pagePermissions->getPermissions('page', $i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($language && $i['pg_language']!=$language) ) {
-                unset($items[$k]);
-                continue;
-            }
-            if ($for && $for =='sitemap' && $i['pg_sitemapnav']=='no') {
-                unset($items[$k]);
-                continue;
-            } elseif ($for && $for =='xmlsitemap' && $i['pg_xmlsitemapnav']=='no') {
+            if ($language && $i['pg_language']!=$language) {
                 unset($items[$k]);
                 continue;
             }
@@ -462,20 +451,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $articlesperpage = Jojo::getOption('articlesperpage', 40);
          /* Make sitemap trees for each articles instance found */
         foreach($indexes as $k => $i){
-            /* Set language */
-            $language = (_MULTILANGUAGE && !empty($i['pg_language'])) ? $i['pg_language'] : '';
-            $multilangstring = Jojo::getMultiLanguageString($language, false);
-            /* Set category */
             $categoryid = $i['articlecategoryid'];
             $sortby = $i['sortby'];
 
             /* Create tree and add index and feed links at the top */
             $articletree = new hktree();
-            $indexurl = (_MULTILANGUAGE ? $multilangstring : '' ) . self::_getPrefix('article', $categoryid) . '/';
+            $indexurl = $i['url'];
             if ($_INPLACE) {
                 $parent = 0;
             } else {
-               $articletree->addNode('index', 0, $i['pg_title'], $indexurl);
+               $articletree->addNode('index', 0, $i['title'], $indexurl);
                $parent = 'index';
             }
 
@@ -494,35 +479,26 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($numpages > 1) {
                 for ($p=2; $p <= $numpages; $p++) {
                     $url = $indexurl .'p' . $p .'/';
-                    $nodetitle = $i['pg_title'] . '  - page '. $p;
+                    $nodetitle = $i['title'] . ' (p.' . $p . ')';
                     $articletree->addNode('p' . $p, $parent, $nodetitle, $url);
                 }
             }
             /* Add RSS link for the plugin page */
-           $articletree->addNode('rss', $parent, $i['pg_title'] . ' RSS Feed', $indexurl . 'rss/');
-
-            /* Check for child pages of the plugin page */
-            foreach (Jojo::selectQuery("SELECT pageid, pg_title, pg_url FROM {page} WHERE pg_parent = '" . $i['pageid'] . "' AND pg_sitemapnav = 'yes'") as $c) {
-                    if ($c['pg_url']) {
-                        $articletree->addNode($c['pageid'], $parent, $c['pg_title'], (_MULTILANGUAGE ? $multilangstring : '') . $c['pg_url'] . '/');
-                    } else {
-                        $articletree->addNode($c['pageid'], $parent, $c['pg_title'], (_MULTILANGUAGE ? $multilangstring : '') . $c['pageid']  . '/' .  Jojo::cleanURL($c['pg_title']) . '/');
-                    }
-            }
+           $articletree->addNode('rss', $parent, $i['title'] . ' RSS Feed', $indexurl . 'rss/');
 
             /* Add to the sitemap array */
             if ($_INPLACE) {
                 /* Add inplace */
-                $url = (_MULTILANGUAGE ? $multilangstring : '') . self::_getPrefix('article', $categoryid) . '/';
+                $url = $i['url'];
                 $sitemap['pages']['tree'] = self::_sitemapAddInplace($sitemap['pages']['tree'], $articletree->asArray(), $url);
             } else {
                 if (_MULTILANGUAGE) {
                     $mldata = Jojo::getMultiLanguageData();
-                    $lclanguage = $mldata['longcodes'][$language];
+                    $lclanguage = $mldata['names'][$i['pg_language']];
                 }
                 /* Add to the end */
                 $sitemap["articles$k"] = array(
-                    'title' => $i['pg_title'] . ( _MULTILANGUAGE ? ' (' . ucfirst($lclanguage) . ')' : ''),
+                    'title' => $i['title'] . ( _MULTILANGUAGE ? ' (' . ucfirst($lclanguage) . ')' : ''),
                     'tree' => $articletree->asArray(),
                     'order' => 3 + $k,
                     'header' => '',
@@ -537,7 +513,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         foreach ($sitemap as $k => $t) {
             if ($t['url'] == $url) {
-                $sitemap[$k]['children'] = $toadd;
+                $sitemap[$k]['children'] = isset($sitemap[$k]['children']) ? array_merge($toadd, $sitemap[$k]['children']): $toadd;
             } elseif (isset($sitemap[$k]['children'])) {
                 $sitemap[$k]['children'] = self::_sitemapAddInplace($t['children'], $toadd, $url);
             }
@@ -556,10 +532,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                return $tree;
             }
             foreach($indexes as $key => $i){
-                $language = (_MULTILANGUAGE && !empty($i['pg_language'])) ? $i['pg_language'] : '';
-                $multilangstring = Jojo::getMultiLanguageString($language, false);
-                $urls[] = (_MULTILANGUAGE ? $multilangstring : '')  . self::_getPrefix('article', $i['articlecategoryid']) . '/';
-                $urls[] = (_MULTILANGUAGE ? $multilangstring : '')  . self::_getPrefix('rss', $i['articlecategoryid']) . '/';
+                $urls[] = $i['url'];
             }
         }
 
@@ -863,7 +836,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if ($data) {
             foreach ($data as $result) {
                 $result['relevance'] = $rawresults[$result['id']]['relevance'];
-                $result['body'] = $result['bodyplain'];
                 $result['type'] = $result['pagetitle'];
                 $result['tags'] = isset($rawresults[$result['id']]['tags']) ? $rawresults[$result['id']]['tags'] : '';
                 $results[] = $result;
