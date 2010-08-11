@@ -3017,6 +3017,7 @@ class Jojo {
                 $mldata['roots'][$r['languageid']] = $r['root'];
                 $mldata['homes'][$r['languageid']] = $r['home'];
                 $mldata['longcodes'][$r['languageid']] = (!empty($r['longcode'])) ? $r['longcode'] : $r['languageid'];
+                $mldata['names'][$r['languageid']] = (!empty($r['name'])) ? $r['name'] : $r['longcode'];
                 if (!empty($r['root'])){
                     $res[$k]['url'] = $r['languageid']!=$defaultLanguage ? $r['languageid'] . '/' : '';
                 } else {
@@ -3031,42 +3032,21 @@ class Jojo {
     static function getMultiLanguageCode ($language) {
         $languageHeader = '';
         if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
             $defaultLanguage = Jojo::getOption('multilanguage-default');
-/*
-    LJP
-    1 April 2009
-    This section commented out to alter code to return short language codes only.
-
-            if (isset($mldata['longcodes'][$language])) {
-                $languageHeader = ($defaultLanguage==$language) ? '' : $mldata['longcodes'][$language] . '/';
-            } else {
-                $languageHeader = ($defaultLanguage==$language) ? '' : $language . '/';
-            }
-*/
-// remove this code below if returning functionality to long or short language codes
             $languageHeader = ($defaultLanguage==$language) ? '' : $language . '/';
-// end remove
         }
         return $languageHeader;
     }
 
-    static function getMultiLanguageString ($language, $short = true, $defReturnStr = '') {
-        $mldata = Jojo::getMultiLanguageData();
+    static function getMultiLanguageString ($language, $long = false, $defReturnStr = '') {
         $defaultLanguage = Jojo::getOption('multilanguage-default');
-/*
-    LJP
-    1 April 2009
-    This section commented out to alter code to return short language codes only.
-
-        if (!$short) {
-            // We want the long language codes
-            $languageHeader = ($defaultLanguage==$language) ? $defReturnStr : $mldata['longcodes'][$language] . '/';
-        } else {
-*/
-            // We want the short language codes.
+        if (!$long) {
             $languageHeader = ($defaultLanguage==$language) ? $defReturnStr : $language . '/';
-//        }
+        } else {
+            // We want the long language codes
+            $mldata = Jojo::getMultiLanguageData();
+            $languageHeader = ($defaultLanguage==$language) ? $defReturnStr : $mldata['longcodes'][$language] . '/';
+        }
         return $languageHeader;
     }
 
