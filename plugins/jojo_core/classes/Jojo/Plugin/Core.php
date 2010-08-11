@@ -20,70 +20,6 @@
 
 class Jojo_Plugin_Core extends Jojo_Plugin
 {
-    static function getTagSnippets($ids)
-    {
-        /* Convert array of ids to a string */
-        $ids = "'" . implode($ids, "', '") . "'";
-
-        /* Get the pages */
-        // build query to handle new language country functionality.
-        $query = 'SELECT * FROM {page} as page';
-        if ( _MULTILANGUAGE) {
-            if ( Jojo::tableexists ( 'lang_country' )) {
-                $query .= " LEFT JOIN {lang_country} as lang_country ON (page.pg_language = lc_code)
-                                LEFT JOIN {language} as language ON (lang_country.lc_defaultlang = languageid) ";
-            } else {
-                $query .= " LEFT JOIN {language} as language ON (page.pg_language = languageid)";
-            }
-        }
-        $query .= " WHERE pageid IN ($ids) AND pg_livedate < ? AND (pg_expirydate <= 0 OR pg_expirydate > ?)";
-        $query .= _MULTILANGUAGE ? " AND language.active = 'yes'" : '';
-        $query .= " ORDER BY pg_title DESC";
-        $pages = Jojo::selectQuery($query,  array(time(), time()));
-
-        /* Create the snippets */
-        $snippets = array();
-        foreach ($pages as $i => $p){
-            if (_MULTILANGUAGE) {
-                $mldata = Jojo::getMultiLanguageData();
-                $language = !empty($p['pg_language']) ? $p['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-                $lclanguage = $mldata['longcodes'][$language];
-            }
-            $url = (_MULTILANGUAGE) ? Jojo::getMultiLanguageString ($language, false) : '';
-            /* Calculate URL */
-            if ($p['pg_url']) {
-                // Discovery level
-                if ((isset($mldata['homes']) && !in_array($p['pageid'], $mldata['homes'])) || !isset($mldata['homes'])) {
-                    // This is not a language homepage so use the url.
-                    // A language homepage should only have url/languagecode/ to be SEO friendly.
-                   $url .= $p['pg_url'] . '/';
-                }
-            } else {
-                // Rewritten
-                if ((isset($mldata['homes']) && !in_array($p['pageid'], $mldata['homes'])) || !isset($mldata['homes'])) {
-                    // This is not a language homepage so build the url.
-                    // A language homepage should only have url/languagecode/ to be SEO friendly.
-                    $url .=  (_MULTILANGUAGE && $language != 'en') ? '/' . $p['pageid'] . '/' . urlencode($p['pg_title']) : Jojo::rewrite('page', $p['pageid'], $p['pg_title']);
-                }
-            }
-
-            $snippets[] = array(
-                    'title' => htmlspecialchars($p['pg_title'], ENT_COMPAT, 'UTF-8', false),
-                    'text'  => strip_tags($p['pg_body']),
-                    'url'   => $url,
-                    'absoluteurl' =>  ($p['pg_ssl'] == 'yes') ? _SECUREURL . '/' . $url : _SITEURL . '/' . $url,
-                );
-             if (substr(strtolower($p['pg_link']), 0, 7) == 'http://') {
-                // External
-                $snippets['url'] = $p['pg_link'];
-                $snippets['absoluteurl'] = $p['pg_link'];
-             }
-         }
-
-        /* Return the snippets */
-        return $snippets;
-    }
-
     static function applyContentVars($data)
     {
         global $smarty;
@@ -92,14 +28,12 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         foreach ($vars as $var) {
             $data = str_replace('[[' . $var['op_name'] . ']]', $var['op_value'], $data);
         }
-
         /* replace [[my-template.tpl]] with the output of the template */
         preg_match_all('/\\[\\[([0-9a-z-_\\/]+\\.tpl)\\]\\]/i', $data, $matches);
         foreach($matches[1] as $id => $v) {
             $html = $smarty->fetch($matches[1][$id]);
             $data = str_replace($matches[0][$id], $html, $data);
         }
-
         return $data;
     }
 
@@ -124,7 +58,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     {
         $blacklist = Jojo::getOption('nofollow_list');
         if (empty($blacklist)) return $data;
-
+        
         $blacklist = explode("\n", $blacklist);
         foreach ($blacklist as $dirtydomain) {
             $domain = str_replace('.', '\\.', trim($dirtydomain));
@@ -140,64 +74,13 @@ class Jojo_Plugin_Core extends Jojo_Plugin
      */
     static function sitemap($sitemap)
     {
-        global $_USERGROUPS;
-
-
-        $perms = new Jojo_Permissions();
         $pagetree = new hktree();
-        $now    = time();
-
-        // build query to handle new language/country functionality.
-        $query = 'SELECT pageid, pg_parent, pg_url, pg_link, pg_title, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_sitemapnav, pg_ssl FROM {page} as page';
-        if ( _MULTILANGUAGE) {
-            if ( Jojo::tableexists ( 'lang_country' )) {
-                $query .= " LEFT JOIN {lang_country} as lang_country ON (page.pg_language = lc_code)
-                                LEFT JOIN {language} as language ON (lang_country.lc_defaultlang = languageid) ";
-            } else {
-                $query .= " LEFT JOIN {language} as language ON (page.pg_language = languageid)";
-            }
-            $query .= " AND language.active = 'yes'";
+        $pages = self::getItems('sitemap', $sortby='pg_order');
+        /* Add pages to the sitemap */
+        foreach ($pages as $k => $p) {
+            $p['title'] = !empty($p['pg_menutitle']) ? htmlspecialchars($p['pg_menutitle'],ENT_COMPAT,'UTF-8',false) : $p['title'];
+            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], $p['url']);
         }
-        $query .= " ORDER BY pg_order";
-        $sitemappages = Jojo::selectQuery($query);
-        foreach ($sitemappages as $k => $sp) {
-            // strip out expired pages
-            if ($sp['pg_sitemapnav'] != 'yes' || $sp['pg_livedate']>$now || (!empty($sp['pg_expirydate']) && $sp['pg_expirydate']<$now) || ($sp['pg_status']=='inactive' || ($sp['pg_status']=='hidden' && !isset($_SESSION['showhidden'])))) {
-                unset($sitemappages[$k]);
-                continue;
-            }
-            if (_MULTILANGUAGE) {
-                $language = !empty($sp['pg_language']) ? $sp['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-                $mldata = Jojo::getMultiLanguageData();
-                $lclanguage = $mldata['longcodes'][$language];
-                $home = $mldata['homes'][$language];
-                $root = $mldata['roots'][$language];
-            }
-            $link  =  Jojo::urlPrefix( Jojo::yes2true($sp['pg_ssl']));
-            if (_MULTILANGUAGE && $sp['pageid'] == $root) { //language root - no link
-                $link = false;
-            } elseif (_MULTILANGUAGE && $sp['pageid'] == $home) { //language homepage
-                $link = _SITEURL . '/' . Jojo::getMultiLanguageString($language,false);
-            } elseif ($sp['pageid'] == 1 ) { //homepage
-                $link = _SITEURL;
-            } elseif (substr(strtolower($sp['pg_link']), 0, 7) == 'http://') { //external
-                $link .= $sp['pg_link'];
-            } elseif ($sp['pg_url']) { //discovery level
-                $link .= (_MULTILANGUAGE) ? Jojo::getMultiLanguageString($language,false) : '';
-                $link .= $sp['pg_url'] . '/';
-            } else { //rewritten
-                $link .= (_MULTILANGUAGE) ? Jojo::getMultiLanguageString($language,false) : '';
-                $link .=  Jojo::rewrite('page', $sp['pageid'], $sp['pg_title']);
-            }
-            $perms->getPermissions('page', $sp['pageid']);
-            if ($perms->hasPerm($_USERGROUPS, 'show')) {
-                $sp['title'] = !empty($sp['pg_menutitle']) ? $sp['pg_menutitle'] : $sp['pg_title'];
-                $sp['title'] = htmlspecialchars($sp['title'],ENT_COMPAT,'UTF-8',false);
-                $pagetree->addNode($sp['pageid'], $sp['pg_parent'], $sp['title'], $link);
-            }
-
-        }
-
         /* Add to the sitemap array */
         $sitemap['pages'] = array(
                     'title' => 'Pages',
@@ -206,7 +89,6 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                     'header' => '',
                     'footer' => ''
                     );
-
         return $sitemap;
     }
 
@@ -217,75 +99,13 @@ class Jojo_Plugin_Core extends Jojo_Plugin
      */
     static function xmlsitemap($sitemap)
     {
-        /* Get pages from database */
-        $perms = new Jojo_Permissions();
-        $now    = time();
-
-        // build query to handle new language country functionality.
-        $query = 'SELECT * FROM {page} as page';
-        if ( _MULTILANGUAGE) {
-            if ( Jojo::tableexists ( 'lang_country' )) {
-                $query .= " LEFT JOIN {lang_country} as lang_country ON (page.pg_language = lc_code)
-                                LEFT JOIN {language} as language ON (lang_country.lc_defaultlang = languageid) ";
-            } else {
-                $query .= " LEFT JOIN {language} as language ON (page.pg_language = languageid)";
-            }
-            $query .= " WHERE language.active = 'yes'";
-        }
-        $sitemappages = Jojo::selectQuery($query);
+        $pages = self::getItems('xmlsitemap');
         /* Add pages to the sitemap */
-        foreach ($sitemappages as $k =>$p) {
-            // strip out expired pages
-            if ($p['pg_index'] != 'yes' || $p['pg_xmlsitemapnav'] != 'yes' || $p['pg_livedate']>$now || (!empty($p['pg_expirydate']) && $p['pg_expirydate']<$now) || $p['pg_status']!='active') {
-                unset($sitemappages[$k]);
-                continue;
-            }
-            // Get multilanguage data for this page
-            if (_MULTILANGUAGE) {
-                $language = !empty($p['pg_language']) ? $p['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-                $mldata = Jojo::getMultiLanguageData();
-                $lclanguage = $mldata['longcodes'][$language];
-                $home = $mldata['homes'][$language];
-                $root = $mldata['roots'][$language];
-            }
-            /* Check permissions to ensure page is public */
-            $perms->getPermissions('page', $p['pageid']);
-            if (!$perms->hasPerm(array('everyone'), 'show')) {
-                continue;
-            }
-
-            /* Calculate URL */
-            $url  =  _SITEURL . '/' . Jojo::urlPrefix( Jojo::yes2true($p['pg_ssl']));
-            if (_MULTILANGUAGE && ($p['pageid'] == $home || $p['pageid'] == $root)) { //language homepage or root
-                $url = _SITEURL . '/' . Jojo::getMultiLanguageString($p['pg_language']);
-            } elseif ($p['pageid'] == 1 ) { //homepage
-                $url = _SITEURL;
-            } elseif (substr(strtolower($p['pg_link']), 0, 7) == 'http://') { //external
-                $url .= $p['pg_link'];
-            } elseif (_MULTILANGUAGE && ($p['pageid'] == $home || $p['pageid'] == $root)) { //Is this a language homepage or root page?
-                $url .= Jojo::getMultiLanguageString ( $p['pg_language'], true );
-            } elseif ($p['pg_url']) {
-                // Discovery level
-                if (_MULTILANGUAGE) {
-                    $url .= Jojo::getMultiLanguageString ( $p['pg_language'], true );
-                    if ( !in_array ($p['pageid'], $mldata['homes'])) {
-                        // not a homepage so show the full url for the page.
-                        $url .= $p['pg_url'] . '/';
-                    }
-                } else {
-                    $url .= $p['pg_url'] . '/';
-                }
-            } else {
-                // Rewritten
-                $url .= (_MULTILANGUAGE ) ? Jojo::getMultiLanguageString ( $p['pg_language'], true ) : '';
-                $url .=  Jojo::rewrite('page',$p['pageid'],$p['pg_title']);
-            }
-
+        foreach ($pages as $k =>$p) {
             /* Calculate last modified date */
             $p['pg_xmlsitemap_lastmod']=="yes" ? $lastmod = strtotime($p['pg_updated']):$lastmod='';
-
             if($p['pg_url']=="lx" or $p['pg_url']=="search" or $p['pg_url']=="sitemap" or $p['pg_url']=="robots.txt" or $p['pg_url']=="tags" ) $lastmod='';
-
+            
             /* Set priority */
             if($p['pg_xmlsitemap_priority']) {
                 $priority = $p['pg_xmlsitemap_priority'];
@@ -301,103 +121,122 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                     $priority = 0.7;
                 }
             }
-
             /* Set changefreq */
             $changefreq = $p['pg_xmlsitemap_changefreq'];
-
+            $url = $p['absoluteurl'];
             /* Add pages to sitemap */
             $sitemap[$url] = array($url, $lastmod, $changefreq, $priority);
         }
-
         return $sitemap;
     }
 
-    /**
-     * Site Search
-     *
-     */
-    static function search($results, $keywords, $language, $booleankeyword_str=false)
-    {
+    static function getItems($for=false, $sortby = false) {
+        $query = 'SELECT * FROM {page} p';
+        $query .= _MULTILANGUAGE ? " LEFT JOIN {lang_country}  lc ON (p.pg_language = lc_code) LEFT JOIN {language} as l ON (lc.lc_defaultlang = l.languageid) WHERE l.active = 'yes'" : '';
+        $query .= $sortby ? " ORDER BY " . $sortby : '';
+        $items = Jojo::selectQuery($query);
+        $items = self::cleanItems($items, $for);
+        return $items;
+    }
+
+    static function getItemsById($ids = false) {
+        $query  = "SELECT *";
+        $query .= " FROM {page}";
+        $query .=  is_array($ids) ? " WHERE pageid IN ('". implode("',' ", $ids) . "')" : " WHERE pageid=$ids";
+        $items = Jojo::selectQuery($query);
+        $items = self::cleanItems($items);
+        $items = is_array($ids) ? $items : $items[0];
+        return $items;
+    }
+
+    /* clean items for output */
+    static function cleanItems($items, $for=false) {
         global $_USERGROUPS;
-
-        $data = Jojo::selectQuery("SELECT pageid FROM {page} WHERE pg_title = 'Not on Menu'");
-        $_NOT_ON_MENU_ID = isset($data[0]['pageid']) ? $data[0]['pageid'] : 99999; //if for some reason this page doesn't exist, don't let it default to 0 (which would block all top-level pages from search results)
-
-        $pagePermissions = new JOJO_Permissions();
-        $boolean = ($booleankeyword_str) ? true : false;
-        $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
-        if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
-            $like = '1';
-            foreach ($keywords as $keyword) {
-                $like .= sprintf(" AND (pg_body LIKE '%%%s%%' OR pg_title LIKE '%%%s%%')", Jojo::clean($keyword), Jojo::clean($keyword));
-            }
-        } elseif ($boolean && stripos($booleankeyword_str, '"') === 0) {
-            $like = "(pg_body LIKE '%%%". implode(' ', $keywords). "%%' OR pg_title LIKE '%%%". implode(' ', $keywords) . "%%')";
-        } else {
-            $like = '(0';
-            foreach ($keywords as $keyword) {
-                $like .= sprintf(" OR pg_body LIKE '%%%s%%' OR pg_title LIKE '%%%s%%'", Jojo::clean($keyword), Jojo::clean($keyword));
-            }
-            $like .= ')';
-        }
-        $query = "SELECT pageid, pg_title, pg_body, pg_link, pg_url, pg_language, pg_expirydate, pg_livedate, pg_ssl, ( (MATCH(pg_title) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH(pg_title, pg_desc, pg_body) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") ) AS relevance ";
-        $query .= "FROM {page} AS page ";
-        $query .= "LEFT JOIN {language} AS language ON (page.pg_language = languageid) ";
-        $query .= "WHERE $like";
-        $query .= ($language) ? "AND pg_language = '$language' " : '';
-        $query .= "AND language.active = 'yes' ";
-        $query .= "AND pg_livedate<" . time() . " AND (pg_expirydate<=0 OR pg_expirydate>" . time() . ") ";
-        $query .= "AND pg_link!='Jojo_Plugin_Jojo_search' ";
-        $query .= "AND pg_parent != $_NOT_ON_MENU_ID ";
-        $query .= " ORDER BY relevance DESC LIMIT 100";
-
-        $data = Jojo::selectQuery($query, array($keywords_str, $keywords_str));
-
         if (_MULTILANGUAGE) {
-            global $page;
             $mldata = Jojo::getMultiLanguageData();
             $homes = $mldata['homes'];
             $roots = $mldata['roots'];
         } else {
             $homes = array(1);
         }
-
-        foreach ($data as $d) {
-            $pagePermissions->getPermissions('page', $d['pageid']);
-            /* If its not permitted to view then omit the result*/
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view')) continue;
-            /* If its a root page for the language then omit the result*/
-            if  (_MULTILANGUAGE && in_array($d['pageid'], $roots)) continue;
-            /* If its a multilanguage site then check for the longcode language name for the url*/
-            if (_MULTILANGUAGE) {
-                $language = !empty($d['pg_language']) ? $d['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
-                $lclanguage = $mldata['longcodes'][$language];
+        $now    = time();
+        $pagePermissions = new JOJO_Permissions();
+        foreach ($items as $k=>&$i){
+            $pagePermissions->getPermissions('page', $i['pageid']);
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']!='active' || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no'))) {
+                unset($items[$k]);
+                continue;
             }
-            $result = array();
-            $result['relevance'] = $d['relevance'];
-            $result['title'] = $d['pg_title'];
-            $result['body'] = $d['pg_body'];
-            $result['url'] = (_MULTILANGUAGE) ? Jojo::getMultiLanguageString ( $language, false ) : '';
-            /* If its a root level page, just return the root and set the display url to 'home'*/
-            if (in_array($d['pageid'], $homes)) {
-                $result['displayurl'] = (_MULTILANGUAGE) ? Jojo::getMultiLanguageString ( $language, false ) . ' (home page)' : ' (home page)';
-           /* Use page url if we have it*/
-            } elseif (!empty($d['pg_url'])) {
-                $result['url'] .= $d['pg_url'].'/';
-            /* else generate a URL from the data */
+            $i['id'] = $i['pageid'];
+            $i['title'] = htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
+            // Snip for the index description
+            $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['pg_body']));
+            /* Strip all tags and template include code ie [[ ]] */
+            $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
+            $i['date'] = $i['pg_updated'];
+            $i['image'] = (isset($i['pg_image']) && !empty($i['pg_image'])) ? 'pages/' . $i['pg_image'] : '';
+            if (substr(strtolower($i['pg_link']), 0, 7) == 'http://') { 
+            //external pages
+                $i['absoluteurl'] = $i['url'] = $i['pg_link'];
+            } elseif  (_MULTILANGUAGE && in_array($i['pageid'], $roots)){  
+            //multi-language root pages
+                $i['absoluteurl'] = $i['url'] = false;
+            } elseif (in_array($i['pageid'], $homes)){  
+            // home pages
+                $i['absoluteurl'] = $i['url'] = ($i['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString($i['pg_language']) : '');
             } else {
-                $result['url'] .= Jojo::rewrite('page', $d['pageid'], $d['pg_title']);
+                $i['url'] = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($i['pg_language']) : '') . (!empty($i['pg_url']) ? $i['pg_url'] : $i['pageid'] . '/' .  Jojo::cleanURL($i['pg_title'])) . '/';
+                $i['absoluteurl'] = ($i['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL) . '/' . $i['url'];
             }
-            $result['absoluteurl'] =  ($d['pg_ssl'] == 'yes') ? _SECUREURL . '/' . $result['url'] : _SITEURL . '/' . $result['url'];
-            $result['id'] = $d['pageid'];
-            $result['plugin'] = 'Core';
-            $result['type'] = 'General Content';
-            $results[] = $result;
+            $i['plugin'] = 'Core';
+            unset($items[$k]['pg_body_code']);
         }
+        return $items;
+    }
 
-
+    /**
+     * Site Search
+     */
+    static function search($results, $keywords, $language, $booleankeyword_str=false)
+    {
+        $searchfields = array(
+            'plugin' => 'Core',
+            'table' => 'page',
+            'idfield' => 'pageid',
+            'languagefield' => 'pg_htmllang',
+            'primaryfields' => 'pg_title',
+            'secondaryfields' => 'pg_title, pg_desc, pg_body',
+        );
+        $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false);
+        $data = $rawresults ? self::getItemsById(array_keys($rawresults)) : '';
+        if (_MULTILANGUAGE) {
+            $mldata = Jojo::getMultiLanguageData();
+            $homes = $mldata['homes'];
+            $roots = $mldata['roots'];
+        } else {
+            $homes = array(1);
+        }
+        if ($data) {
+            foreach ($data as $result) {
+                $result['relevance'] = $rawresults[$result['id']]['relevance'];
+                $result['type'] = 'General Content';
+                $result['tags'] = isset($rawresults[$result['id']]['tags']) ? $rawresults[$result['id']]['tags'] : '';
+               /* If its a root level page, just return the root and set the display url to 'home'*/
+                if (in_array($result['pageid'], $homes)) $result['displayurl'] = $result['absoluteurl'];
+                $results[] = $result;
+            }
+        }
         /* Return results */
         return $results;
+    }
+
+    /*
+    * Tags
+    */
+    static function getTagSnippets($ids)
+    {
+        $snippets = self::getItemsById($ids);
+        return $snippets;
     }
 
     /* Add a message a the bottom of the site to alert to debug mode being enabled on this site */
