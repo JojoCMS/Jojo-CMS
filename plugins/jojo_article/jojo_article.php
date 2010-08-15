@@ -38,7 +38,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
         if ($num && $exclude) $num++;
         $shownumcomments = (Jojo::getOption('articlecomments') == 'yes' && Jojo::getOption('comment_show_num', 'no') == 'yes') ? true : false;
-        $query  = "SELECT ar.*, ac.*, p.*";
+        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language, pg_livedate, pg_expirydate";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
@@ -48,14 +48,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
         $query .= $num ? " ORDER BY $sortby LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
-        $articles = self::cleanItems($articles, $exclude);
+        $articles = self::cleanItems($articles, $exclude, $include);
         if (!$num)  $articles = self::sortItems($articles, $sortby);
         return $articles;
     }
 
      /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
     static function getItemsById($ids = false, $sortby='ar_date desc') {
-        $query  = "SELECT ar.*, ac.*, p.*";
+        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language, pg_livedate, pg_expirydate";
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
@@ -66,10 +66,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
     /* clean items for output */
-    static function cleanItems($items, $exclude=false) {
+    static function cleanItems($items, $exclude=false, $include=false) {
         $now    = time();
         foreach ($items as $k=>&$i){
-            $pagedata = Jojo_Plugin_Core::cleanItems(array($i));
+            $pagedata = Jojo_Plugin_Core::cleanItems(array($i), $include);
             if (!$pagedata || $i['ar_livedate']>$now || (!empty($i['ar_expirydate']) && $i['ar_expirydate']<$now) || (!empty($i['articleid']) && $i['articleid']==$exclude)  || (!empty($i['ar_url']) && $i['ar_url']==$exclude)) {
                 unset($items[$k]);
                 continue;
@@ -225,7 +225,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             return $content;
         } 
 
-        $articles = self::getArticles('', '', $categoryid, $sortby);
+        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden');
 
         if ($action == 'rss') {
             $rssfields = array(
