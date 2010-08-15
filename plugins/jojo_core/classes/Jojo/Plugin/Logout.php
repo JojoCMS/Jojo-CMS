@@ -28,13 +28,13 @@ class Jojo_Plugin_Logout extends Jojo_Plugin
         setcookie("jojoR", "", time() - 3600, '/' . _SITEFOLDER);
 
         /* Delete session values */
-        $userid = $_SESSION['userid'];
-        unset($_SESSION['userid']);
-        unset($_SESSION['showhidden']);
-
-        $_SESSION['loggingout'] = true;
-        
-        Jojo::runHook('after_logout', array($userid));        
+        if (isset($_SESSION['userid'])) {
+            $userid = $_SESSION['userid'];
+            unset($_SESSION['userid']);
+            unset($_SESSION['showhidden']);
+            $_SESSION['loggingout'] = true;
+            Jojo::runHook('after_logout', array($userid));
+        }
 
         /* Redirect */
         header('Location: ' . _SITEURL);
