@@ -554,7 +554,9 @@ foreach ($tabledatas as $t) {
         }
 
         /* Map field name to default field type */
-        if (isset($_typeMap[strtolower($f['fd_name'])]) && ($f['fd_type'] != $_typeMap[strtolower($f['fd_name'])])) {
+        if (isset($_typeMap[strtolower($f['fd_name'])]) &&
+                ($f['fd_type'] != $_typeMap[strtolower($f['fd_name'])]) &&
+                !isset($default_fd[$tablename][$f['fd_field']])) {
             /* Update values */
             $f['fd_type'] = $_typeMap[strtolower($f['fd_name'])];
         }
