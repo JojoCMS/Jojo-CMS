@@ -45,8 +45,7 @@ class Jojo_Plugin {
     {
         $this->id = $id;
 
-        $pages = Jojo::selectQuery(sprintf('SELECT * FROM {page} WHERE pageid = %d', $id));
-        $this->page = $pages[0];
+        $this->page = Jojo::selectRow(sprintf('SELECT * FROM {page} WHERE pageid = %d', $id));
 
         $this->perms = new Jojo_Permissions();
         $this->perms->getPermissions('page', $id);
@@ -374,5 +373,5 @@ class Jojo_Plugin {
         }
         return $uribits;
     }
-        
+
 }
