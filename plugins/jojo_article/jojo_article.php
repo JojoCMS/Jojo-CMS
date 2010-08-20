@@ -303,12 +303,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
 
             /* Get Comments if used */
-            if (class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('articlecomments') == 'yes') {
+            if (class_exists('Jojo_Plugin_Jojo_comment') && (!isset($article['comments']) || $article['comments']) ) {
                 /* Was a comment submitted? */
                 if (Jojo::getFormData('submit', false)) {
                     Jojo_Plugin_Jojo_comment::postComment($article);
                 }
-               $articlecommentsenabled = !empty($article['ar_comments']) ? Jojo::yes2True($article['ar_comments']) : true;
+               $articlecommentsenabled = (boolean)(isset($article['ar_comments']) && $article['ar_comments']=='yes');
                $commenthtml = Jojo_Plugin_Jojo_comment::getComments($article['id'], $article['plugin'], $article['pageid'], $articlecommentsenabled);
                $smarty->assign('commenthtml', $commenthtml);
             }
@@ -570,7 +570,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 continue;
             }
             $url = _SITEURL . '/'. $a['url'];
-            $lastmod = strtotime($a['ar_date']);
+            $lastmod = $a['date'];
             $priority = 0.6;
             $changefreq = '';
             $sitemap[$url] = array($url, $lastmod, $changefreq, $priority);

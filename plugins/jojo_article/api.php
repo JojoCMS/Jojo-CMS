@@ -137,17 +137,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'articlecomments',
-    'category'    => 'Articles',
-    'label'       => 'Article comments',
-    'description' => 'Allows user comments to be added to articles / blog posts.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'article_anchor_text',
     'category'    => 'Articles',
     'label'       => 'Article Anchor Text',

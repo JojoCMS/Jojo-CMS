@@ -31,8 +31,12 @@ $query = "
       `ar_image` varchar(255) NOT NULL default '',
       `ar_livedate` int(11) NOT NULL default '0',
       `ar_expirydate` int(11) NOT NULL default '0',
-      `ar_bbbody` text NULL,
-      `ar_comments` enum('yes','no') NOT NULL default 'yes',
+      `ar_bbbody` text NULL,";
+if (class_exists('Jojo_Plugin_Jojo_comment')) {
+    $query .= "
+     `ar_comments` enum('yes','no') NOT NULL default 'yes',";
+}      
+$query .= " 
       `ar_author` varchar(255) NOT NULL default '',
       `ar_source` varchar(255) NOT NULL default '',
       `ar_seotitle` varchar(255) NOT NULL default '',
@@ -94,7 +98,12 @@ $query = "
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
       `weighting` tinyint(1) default '1',
       `rsslink` tinyint(1) default '1',
-      `thumbnail` varchar(255) NOT NULL default '',
+      `thumbnail` varchar(255) NOT NULL default '',";
+if (class_exists('Jojo_Plugin_Jojo_comment')) {
+    $query .= "
+     `comments` tinyint(1) NOT NULL default '1',";
+}      
+$query .= "
       PRIMARY KEY  (`articlecategoryid`),
       KEY `id` (`pageid`)
     ) TYPE=MyISAM ;";
