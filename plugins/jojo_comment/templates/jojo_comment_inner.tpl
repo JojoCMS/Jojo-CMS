@@ -5,7 +5,7 @@
         {elseif $OPTIONS.comment_default_link_type == text}
         <h4>{$c.name}{if $c.website} - {$c.website}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
         {else}
-        <h4>{if $c.website}<a href="#comments" rel="nofollow" onclick="redirectSubmit('{str_replace('http://', '', $c.website)}'); return false;" title="{str_replace('http://', '', $c.website)}">{$c.name}</a>{else}{$c.name}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
+        <h4>{if $c.website}<a href="#comments" rel="nofollow" onclick="redirectSubmit('{$c.website|replace:'http://':''}'); return false;" title="{$c.website|replace:'http://':''}">{$c.name}</a>{else}{$c.name}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
         {/if}
         <p id="comment-{$c.commentid}" class="comment-text">{$c.body}</p>
         {if $editperms}
