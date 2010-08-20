@@ -1,6 +1,6 @@
 {include file="head.tpl"}
 <body>
-    
+
     <div id="wrap">
         <div id="header">
             <a href="{$SITEURL}/" title="Back to Homepage">{$sitetitle}</a>
@@ -23,13 +23,13 @@
         <!-- [Breadcrumb Navigation] -->
         {if $numbreadcrumbs > 1}
         <div id="breadcrumbs">
-            {section name=bc loop=$breadcrumbs}
-                {if $smarty.section.bc.index == ($numbreadcrumbs-1)}
-                                {$breadcrumbs[bc].name|escape:"htmlall":$charset}
-                {else}
-                <a href="{$breadcrumbs[bc].url}" title="{$breadcrumbs[bc].rollover|escape:"html":$charset}">{$breadcrumbs[bc].name|escape:"html":$charset}</a> &gt;
-                {/if}
-            {/section}
+    			{foreach from=$breadcrumbs item=bc name=bc}
+    				{if $smarty.foreach.bc.index == ($numbreadcrumbs-1)}
+    				                {$bc.name|escape:"htmlall":$charset}
+    				{else}
+    				<a href="{$bc.url}" title="{$bc.rollover|escape:"html":$charset}">{$bc.name|escape:"html":$charset}</a> &gt;
+    				{/if}
+    			{/foreach}
         </div>
         {/if}
         <!-- [End Breadcrumb Navigation] -->
@@ -39,7 +39,7 @@
         {include file="content.tpl"}
         </div>
     </div>
-    
+
     <div id="sidebar">
             <h2>Sidebar</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non orci at lectus semper congue. Mauris dapibus gravida purus. Aenean molestie est tincidunt est. Nulla a metus. Duis eu quam. Vivamus mollis feugiat ipsum. Phasellus vel arcu. Nullam scelerisque velit quis sem. Duis porttitor. Phasellus porttitor massa pharetra ligula. In non erat. </p>
@@ -50,7 +50,7 @@
 </div>
 
     <div id="footer">
-        <p>&copy; 2009 <strong>{$sitetitle}</strong> |
+        <p>&copy; {$smarty.now|date_format:"%Y"} <strong>{$sitetitle}</strong> |
         {***********************************************************
         About the "Powered by Jojo CMS" link
         ====================================
@@ -75,10 +75,10 @@
         ***********************************************************} Powered by:
         <a href="http://www.jojocms.org/">Jojo CMS</a><br />
 
-{assign var='_footerClass' value='first-child'}
-{foreach from=$footernav item=n}
-            <a class="{$_footerClass}" href="{$n.url}" title="{$n.title|escape:"html"}"{if $n.pg_followto=='no'} rel="nofollow"{/if}>{$n.label}</a>
-{assign var='_footerClass' value=''}{/foreach}
+            {foreach from=$footernav item=n name=footer}
+            <a {if $smarty.foreach.footer.first}class='first-child'{/if} href="{$n.url}" title="{$n.title|escape:"html"}"{if $n.pg_followto=='no'} rel="nofollow"{/if}>{$n.label}</a>
+            {if !$smarty.foreach.footer.last}|{/if}
+            {/foreach}
         </p>
     </div>
 

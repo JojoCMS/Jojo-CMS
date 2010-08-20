@@ -1,8 +1,5 @@
 <?php
 
-/* Create navigation array */
-$smarty->assign('nav', _getNav(0, 0));
-
 if ($page->getValue('pg_parent') > 0) {
     /* Get sister pages to this page */
         $smarty->assign('subnav', _getNav($page->getValue('pg_parent'), 0));

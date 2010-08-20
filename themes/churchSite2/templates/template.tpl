@@ -3,22 +3,21 @@
 <body>
 <div id="wrap">
 	<div id="header">
-  		<div id="logo-text"><a href="{$basedir}" alt="Back to Homepage" title="Back to Homepage">{$sitetitle}</a></div>
+  		<div id="logo-text"><a href="{$SITEURL}/" title="Back to Homepage">{$sitetitle}</a></div>
   		<div id="header-form">
-  		<form class="search" method="post" action="search/">
-		<p><input class="textbox" type="text" name="q" value="{$keywords}" />
-		<input class="button" type="submit" name="Submit" value="Search" /></p>
-		</form>
+        <form name="search" class="search" method="post" action="search/">
+          <input class="searchbox" type="text" name="q" value="Search" onclick="if(this.value=='Search')this.value='';" onblur="if(this.value=='')this.value='Search';"/>
+          <input type="image" src="images/searchsubmit.gif" name="Submit" class="searchinput"/><br />
+          <a class="searchwhitetext" href="search/">Advanced search</a>
+        </form>
 		</div>
 	</div>
 
 	<div id="menu">
 		<ul>
-			{foreach from=$nav item=n}
-				<li {if $n.pageid== $pageid} id="current"{/if}><a href="{$n.url}"
-				title="{if $n.pg_desc}{$n.pg_desc|escape:"html"}{else}{$n.pg_title|escape:"html"}{/if}">{if
-				$n.pg_menutitle}{$n.pg_menutitle}{else}{$n.pg_title}{/if}</a></li>
-			{/foreach}
+        {foreach from=$mainnav item=n}
+            <li{if in_array($n.pageid, $selectedpages)} class="selected"{/if}><a href="{$n.url}" title="{$n.title|escape:"html"}"{if $n.pg_followto=='no'} rel="nofollow"{/if}>{$n.label}</a></li>
+        {/foreach}
 		</ul>
 	</div>
 
@@ -51,13 +50,13 @@
 			 <!-- [Breadcrumb Navigation] -->
 			{if $numbreadcrumbs > 1}
 				<div id="breadcrumbs">
-				{section name=bc loop=$breadcrumbs}
-					{if $smarty.section.bc.index == ($numbreadcrumbs-1)}
-			    	{$breadcrumbs[bc].name|escape:"htmlall":$charset}
-					{else}
-					<a href="{$breadcrumbs[bc].url}" title="{$breadcrumbs[bc].rollover|escape:"html":$charset}">{$breadcrumbs[bc].name|escape:"html":$charset}</a> &gt;
-					{/if}
-				{/section}
+    			{foreach from=$breadcrumbs item=bc name=bc}
+    				{if $smarty.foreach.bc.index == ($numbreadcrumbs-1)}
+    				                {$bc.name|escape:"htmlall":$charset}
+    				{else}
+    				<a href="{$bc.url}" title="{$bc.rollover|escape:"html":$charset}">{$bc.name|escape:"html":$charset}</a> &gt;
+    				{/if}
+    			{/foreach}
 				</div>
 			{/if}
         <!-- [End Breadcrumb Navigation] -->
@@ -72,10 +71,10 @@
 			{include file="article-summary.tpl"}
 			</div>
 		</div>
-	<br style="clear:both;">
+	<br style="clear:both;" />
 	<div id="footer">
 		<div id="footer_text">
-		<p>&copy; 2006 <strong>{$sitetitle}</strong> | Design by: <a
+		<p>&copy; {$smarty.now|date_format:"%Y"} <strong>{$sitetitle}</strong> | Design by: <a
 			href="http://refueled.net">RFDN</a> |
 		{***********************************************************
 		About the "Powered by Jojo CMS" link
@@ -103,15 +102,18 @@
         <a href="http://validator.w3.org/check?uri=referer">XHTML</a> |
         <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a><br />
 
-        {assign var=gap value=''} {foreach from=$footernav item=n} {$gap}
-        <a href="{$n.url}" title="{if $n.pg_desc}{$n.pg_desc|escape:"html"}{else}{$n.pg_title|escape:"html"}{/if}">{if
-        $n.pg_menutitle}{$n.pg_menutitle}{else}{$n.pg_title}{/if}</a> {assign
-        var=gap value='&nbsp;|&nbsp;'} {/foreach}</p>
+            {foreach from=$footernav item=n name=footer}
+            <a {if $smarty.foreach.footer.first}class='first-child'{/if} href="{$n.url}" title="{$n.title|escape:"html"}"{if $n.pg_followto=='no'} rel="nofollow"{/if}>{$n.label}</a>
+            {if !$smarty.foreach.footer.last}|{/if}
+            {/foreach}
+
+     </p>
 		</div>
 	</div>
 </div>
 
 
 {include file="foot.tpl"}
+</div>
 </body>
 </html>

@@ -383,3 +383,14 @@ input.button:hover {
 #breadcrumbs {
 	padding-bottom: 10px;
 }
+
+.searchinput {
+  border:0;
+  position:relative;
+  top:3px;
+}
+
+.searchwhitetext {
+  color:#FFFFFF;
+  font-size:0.8em;
+}

@@ -685,3 +685,14 @@ ul.submenu2 a:hover {
 #breadcrumbs {
 	padding-top: 8px;
 }
+
+.searchinput {
+  border:0;
+  position:relative;
+  top:3px;
+}
+
+.searchwhitetext {
+  color:#FFFFFF;
+  font-size:0.8em;
+}

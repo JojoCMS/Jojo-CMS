@@ -436,3 +436,14 @@ em{
     color:#636363;
     line-height:130%;
 }
+
+.searchinput {
+  border:0;
+  position:relative;
+  top:3px;
+}
+
+.searchwhitetext {
+  color:#FFFFFF;
+  font-size:0.8em;
+}
