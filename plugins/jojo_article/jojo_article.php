@@ -122,7 +122,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
          if ($a['ar_title']) {
             return strcmp($a['ar_title'],$b['ar_title']);
-        } 
+        }
     }
 
     private static function authorsort($a, $b)
@@ -145,7 +145,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             return strcmp($b['ar_livedate'],$a['ar_livedate']);
          }
     }
-    
+
     /*
      * calculates the URL for the article - requires the article ID, but works without a query if given the URL or title from a previous query
      *
@@ -182,7 +182,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         global $smarty;
         $content = array();
-        
+
         if (_MULTILANGUAGE) {
             $language = !empty($this->page['pg_language']) ? $this->page['pg_language'] : Jojo::getOption('multilanguage-default', 'en');
             $multilangstring = Jojo::getMultiLanguageString($language, false);
@@ -211,7 +211,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $categoryid = $categorydata['articlecategoryid'];
         }
         $sortby = $categorydata ? $categorydata['sortby'] : '';
-        
+
         /* handle unsubscribes */
         if ($action == 'unsubscribe') {
             $code      = Jojo::getFormData('code',      '');
@@ -223,7 +223,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
             $content['content'] .= 'Return to <a href="' . self::getArticleUrl($articleid) . '">article</a>.';
             return $content;
-        } 
+        }
 
         $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden');
 
@@ -239,8 +239,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             );
             $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
             Jojo::getFeed($articles, $rssfields);
-        }        
-        
+        }
+
         if ($articleid || !empty($url)) {
             /* find the current, next and previous items */
             $article = array();
@@ -340,14 +340,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $meta_description_template = Jojo::getOption('article_meta_description', '[article] - [body]... ');
                 $articlebody = (strlen($article['bodyplain']) >400) ?  substr($mbody=wordwrap($article['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $article['bodyplain'];
                 $metafilters = array(
-                        '[title]', 
-                        '[site]', 
-                        '[body]', 
+                        '[title]',
+                        '[site]',
+                        '[body]',
                         '[author]'
                         );
                 $metafilterreplace = array(
-                        $article['title'], 
-                        _SITETITLE, 
+                        $article['title'],
+                        _SITETITLE,
                         !empty($article['description']) ? $article['description'] : $articlebody,
                         $article['ar_author']
                         );
@@ -394,7 +394,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
             $smarty->assign('pagination', $pagination);
             $smarty->assign('pagenum', $pagenum);
- 
+
             /* clear the meta description to avoid duplicate content issues */
             $content['metadescription'] = '';
 
@@ -435,7 +435,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if (!count($indexes)) {
             return $sitemap;
         }
-        
+
         if (Jojo::getOption('article_inplacesitemap', 'separate') == 'separate') {
             /* Remove any existing links to the articles section from the page listing on the sitemap */
             foreach($sitemap as $j => $section) {
@@ -765,7 +765,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 0,  // Parent - don't do anything smart, just put it at the top level for now
                 'hidden' // hide new page so it doesn't show up on the live site until it's been given a proper title and url
             )
-        );        
+        );
         // If we successfully added the page, update the category with the new pageid
         if ($newpageid) {
             jojo::updateQuery(
@@ -790,7 +790,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
            $pageid = $page['pageid'];
         }
         // no category for this page id
-        if (!count($categories) || !isset($categories[$pageid])) { 
+        if (!count($categories) || !isset($categories[$pageid])) {
             jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");
         }
         return true;
@@ -803,16 +803,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function rssicon($data)
     {
         global $page;
-        $link = Jojo::getOption('rss_external_url');
-        if ($link) {
-            $data['Articles'] =  $link;
-        }
+
         /* add RSS feeds for each page */
         $categories =  self::getPluginPages('', (_MULTILANGUAGE ? $page->page['pg_language'] : ''));
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
-            if ($prefix && (!isset($c['rsslink']) || $c['rsslink']==1)) {
+            if ($prefix && $c['externalrsslink'] && (!isset($c['rsslink']) || $c['rsslink'] == 1)) {
+              $data[$c['pg_title']] = $c['externalrsslink'];
+            } elseif($prefix && (!isset($c['rsslink']) || $c['rsslink']==1)) {
                 $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? Jojo::getMultiLanguageString($c['pg_language'], false) : '') . $prefix;
+
             }
         }
         return $data;

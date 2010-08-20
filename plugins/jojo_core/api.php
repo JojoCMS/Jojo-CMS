@@ -725,16 +725,6 @@ $_options[] = array(
 /* RSS */
 
 $_options[] = array(
-    'id'          => 'rss_external_url',
-    'category'    => 'RSS',
-    'label'       => 'External RSS URL',
-    'description' => 'The external URL (eg Feedburner) for RSS feeds (leave blank to use the Jojo defaults)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
     'id'          => 'rss_num_items',
     'category'    => 'RSS',
     'label'       => 'Number of RSS items',
