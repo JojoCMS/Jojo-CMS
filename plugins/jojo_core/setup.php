@@ -290,7 +290,7 @@ if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'Jojo_Plugin_Cha
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_url = 'styleguide'")) {
     $styleguidehtml = file_get_contents(_BASEPLUGINDIR . '/jojo_core/install/styleguide.html');
     echo "Adding <b>Style Guide</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Style Guide', pg_link = '', pg_url = 'styleguide', pg_parent = ?, pg_order=0, pg_mainnav='yes', pg_xmlsitemapnav='no', pg_body = ?, pg_body_code = ?", array($_NOT_ON_MENU_ID, $styleguidehtml, '[editor:html]
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Style Guide', pg_link = '', pg_url = 'styleguide', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_body = ?, pg_body_code = ?", array($_NOT_ON_MENU_ID, $styleguidehtml, '[editor:html]
     ' . $styleguidehtml));
 }
 

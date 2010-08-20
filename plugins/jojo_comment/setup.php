@@ -23,11 +23,11 @@ $data = Jojo::selectRow("SELECT * FROM {page}  WHERE pg_url='admin/edit/comment'
 if (!count($data)) {
     echo "Comments: Adding <b>Edit Comments</b> Page to menu<br />";
     $editCommentspage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Edit Comments', pg_link='Jojo_Plugin_Admin_Edit', pg_url='admin/edit/comment', pg_parent=?, pg_order=2", array($_ADMIN_CONTENT_ID));
-} 
+}
 
 /* Comment Handler */
 $data = Jojo::selectRow("SELECT * FROM {page} WHERE pg_link='jojo_plugin_jojo_comment'");
 if (!count($data)) {
     echo "Comments: Adding <b>Comments Admin</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Comment Handler', pg_link='jojo_plugin_jojo_comment', pg_url='commentadmin', pg_parent=?, pg_sitemapnav='no', pg_xmlsitemapnav='no'", $_NOT_ON_MENU_ID);
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Comment Handler', pg_link='jojo_plugin_jojo_comment', pg_url='commentadmin', pg_parent=?, pg_mainnav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no'", $_NOT_ON_MENU_ID);
 }
