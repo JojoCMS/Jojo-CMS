@@ -39,7 +39,6 @@ class Jojo_Field_url extends Jojo_Field
         if (!$this->isblank() && !Jojo::checkUrlFormat($this->value)) {
             $this->error = 'The URL format is invalid';
         }
-
         return ($this->error == '');
     }
 
@@ -77,6 +76,8 @@ class Jojo_Field_url extends Jojo_Field
         /* Ensures that http:// is added to the url if not already */
         if (!empty($newvalue)) {
             $this->value = Jojo::addHttp($newvalue);
+        } else {
+            $this->value = '';
         }
     }
 }
