@@ -808,7 +808,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $categories =  self::getPluginPages('', (_MULTILANGUAGE ? $page->page['pg_language'] : ''));
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
-            if ($prefix && $c['externalrsslink'] && (!isset($c['rsslink']) || $c['rsslink'] == 1)) {
+            if ($prefix && (isset($c['externalrsslink']) && $c['externalrsslink']) && (!isset($c['rsslink']) || $c['rsslink'] == 1)) {
               $data[$c['pg_title']] = $c['externalrsslink'];
             } elseif($prefix && (!isset($c['rsslink']) || $c['rsslink']==1)) {
                 $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? Jojo::getMultiLanguageString($c['pg_language'], false) : '') . $prefix;
