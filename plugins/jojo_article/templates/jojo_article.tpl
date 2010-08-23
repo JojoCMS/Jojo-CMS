@@ -8,8 +8,8 @@
     {if $nextarticle || $prevarticle}<div class="clear"></div>{/if}
     </div>
     {if $OPTIONS.article_show_date=='yes'}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
-
     {jojoHook hook="articleBeforeBody"}
+    {if $jojo_article.image}<img src="images/v60000/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}
     {$jojo_article.ar_body}
     {jojoHook hook="articleAfterBody"}
 
@@ -34,7 +34,6 @@
 {/if}
 
 {if $commenthtml}{$commenthtml}{/if}
-
     <div id="article-bottomlinks">
         <p class="links">&lt;&lt; <a href="{if $multilangstring}{$multilangstring}{/if}{if $pg_url}{$pg_url}/{else}{$pageid}/{$pg_title|strtolower}{/if}" title="{$pg_title}">{$pg_title}</a>&nbsp; {if $prevarticle}&lt; <a href="{$prevarticle.url}" title="Previous">{$prevarticle.title}</a>{/if}{if $nextarticle} | <a href="{$nextarticle.url}" title="Next">{$nextarticle.title}</a> &gt;{/if}</p>
     </div>

@@ -107,20 +107,21 @@ $default_fd['articlecategory']['rsslink'] = array(
         'fd_tabname' => "Content",
     );
 
+// external rss feed url ie feedburner per category
+$default_fd['articlecategory']['externalrsslink'] = array(
+        'fd_name' => "External RSS url",
+        'fd_type' => "url",
+        'fd_readonly' => "0",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+    
 // Allow Comments
 $default_fd['articlecategory']['comments'] = array(
         'fd_name' => "Allow comments",
         'fd_type' => "yesno",
         'fd_readonly' => "0",
         'fd_default' => "1",
-        'fd_order' => $o++,
-        'fd_tabname' => "Content",
-    );
-// external rss feed url ie feedburner per category
-$default_fd['articlecategory']['externalrsslink'] = array(
-        'fd_name' => "External RSS url",
-        'fd_type' => "url",
-        'fd_readonly' => "0",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
     );
