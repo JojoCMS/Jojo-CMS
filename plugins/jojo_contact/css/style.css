@@ -1,3 +1,8 @@
+form.contact-form {
+  clear: left;
+  margin: 5px 0;
+}
+
 form.contact-form label {
   float: left;
   width: 150px;
@@ -13,9 +18,9 @@ form.contact-form input, form.contact-form select, form.contact-form textarea {
   margin-right: 5px;
 }
 
-form.contact-form br {
+form.contact-form div.form-fieldset{
   clear: left;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
 }
 
 form.contact-form div.form-field {
@@ -51,7 +56,8 @@ form.contact-form div.form-field label {
 }
 
 form.contact-form div.captcha {
-  margin: 7px 0;
+    margin:0 0 0 155px;
+    width:300px;
 }
 
 form.contact-form input.button {

@@ -187,9 +187,13 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $sent = $this->sendEnquiry();
         }
         $smarty->assign('sent', $sent);
-        $smarty->assign('content', $this->page['pg_body']);
-
-        $content['content']    = $smarty->fetch('jojo_contact.tpl');
+        if (strpos($this->page['pg_body'], '[[contactform]]')===false) {
+            $smarty->assign('content', $this->page['pg_body']);
+            $content['content']    = $smarty->fetch('jojo_contact.tpl');
+        } else {
+            $formhtml = $smarty->fetch('jojo_contact.tpl');
+            $content['content']    = str_replace('[[contactform]]', $formhtml, $this->page['pg_body']);
+        }
         $content['javascript'] = $smarty->fetch('jojo_contact_js.tpl');
 
         return $content;
