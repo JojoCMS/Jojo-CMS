@@ -37,7 +37,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* if calling page is an article, Get current article, exclude from the list and up the limit by one */
         $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
         if ($num && $exclude) $num++;
-        $shownumcomments = (Jojo::getOption('articlecomments') == 'yes' && Jojo::getOption('comment_show_num', 'no') == 'yes') ? true : false;
+        $shownumcomments = (boolean)(class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
         $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_language, pg_livedate, pg_expirydate";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
