@@ -427,14 +427,14 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
     }
 
     static function processSubscriptionEmails($limit=3) {
-        $subscriptions = Jojo::selectQuery("SELECT cs.*, us_firstname, us_login, us_email FROM {commentsubscription} cs LEFT JOIN {user} us ON (cs.userid=us.userid) WHERE (lastupdated > lastviewed) AND (lastviewed > lastemailed) LIMIT ?", $limit);
+        $subscriptions = Jojo::selectQuery("SELECT cs.*, us_firstname, us_login, us_email FROM {commentsubscription} cs LEFT JOIN {user} us ON (cs.userid=us.userid) WHERE (lastupdated > lastviewed) AND (lastupdated > lastemailed) LIMIT ?", $limit);
         $from_name = Jojo::either(_FROMNAME, _WEBMASTERNAME);
         $from_email = Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS);
         foreach ($subscriptions as $sub) {
             $class = 'Jojo_Plugin_' . $sub['plugin'];
             $id = $sub['itemid'];
             if (class_exists($class) && method_exists($class, 'getItemsById') && $id) { 
-                $item = call_user_func_array($class . '::getItemsById', $id);
+                $item = call_user_func($class . '::getItemsById', $id);
                 $subject  = 'New comment notification: ' . $item['title'];
                 $message  = 'A new comment has been added to "' . $item['title'] . '" on ' . Jojo::getOption('sitetitle') . '. You are subscribed to receive email notifications notifications of any new comments on this post.';
                 $message .= "To view the new comments, please visit the following link.\n";
