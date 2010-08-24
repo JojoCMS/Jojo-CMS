@@ -96,7 +96,8 @@ $query = "
       `pageid` int(11) NOT NULL default '0',
       `type` enum('normal','parent','index') NOT NULL default 'normal',
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
-      `weighting` tinyint(1) default '1',
+      `weighting` tinyint(1) NOT NULL default '1',
+      `showdate` tinyint(1) NOT NULL default '1',
       `externalrsslink` varchar(255) NOT NULL default '',
       `rsslink` tinyint(1) default '1',
       `thumbnail` varchar(255) NOT NULL default '',";

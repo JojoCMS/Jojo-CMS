@@ -20,12 +20,10 @@
 
 $_provides['pluginClasses'] = array(
         'Jojo_Plugin_Jojo_article'       => 'Article - Article Listing and View',
-        'Jojo_Plugin_Jojo_article_admin' => 'Article - Article Comment Admin',
         );
 
 /* Register URI handlers */
 Jojo::registerURI(null, 'jojo_plugin_jojo_article', 'isArticleUrl');
-Jojo::registerURI(null, 'Jojo_Plugin_Jojo_article_admin', 'isArticleUrl');
 
 /* Article RSS icon filter */
 Jojo::addFilter('rssicon', 'rssicon', 'jojo_article');
@@ -49,28 +47,6 @@ Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'j
 Jojo::addHook('admin_action_after_save_articlecategory', 'admin_action_after_save_articlecategory', 'jojo_article');
 
 $_options[] = array(
-    'id'          => 'article_comment_subscriptions',
-    'category'    => 'Articles',
-    'label'       => 'Comment subscriptions',
-    'description' => 'Commenters can subscribe to comments and receive email notifications.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_show_comment_form',
-    'category'    => 'Articles',
-    'label'       => 'Show comments form',
-    'description' => 'When this option is enabled, the Post Comment form will be visible by default. Otherwise, the form is available by clicking a link / button',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'article_show_num_comments',
     'category'    => 'Articles',
     'label'       => 'Show number of comments on posts',
@@ -89,17 +65,6 @@ $_options[] = array(
     'type'        => 'integer',
     'default'     => '0',
     'options'     => '',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_show_date',
-    'category'    => 'Articles',
-    'label'       => 'Show Date on posts',
-    'description' => 'Shows the publish date at the top of each article page',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
     'plugin'      => 'jojo_article'
 );
 
@@ -210,28 +175,6 @@ $_options[] = array(
     'type'        => 'radio',
     'default'     => 'separate',
     'options'     => 'separate,inplace',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_optional_email',
-    'category'    => 'Articles',
-    'label'       => 'Optional email address',
-    'description' => 'Allows users to comment without leaving their email address, which is usually a required field.',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
-    'id'          => 'article_default_link_type',
-    'category'    => 'Articles',
-    'label'       => 'Nofollow link type',
-    'description' => 'As of June 2009, nofollowing links is no longer recommended as they bleed pagerank. To avoid this, POST links are recommended.',
-    'type'        => 'radio',
-    'default'     => 'post',
-    'options'     => 'post,nofollow,text',
     'plugin'      => 'jojo_article'
 );
 

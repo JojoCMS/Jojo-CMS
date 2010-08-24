@@ -86,9 +86,20 @@ $default_fd['articlecategory']['weighting'] = array(
         'fd_tabname' => "Content",
     );
 
+// Show Date
+$default_fd['articlecategory']['showdate'] = array(
+        'fd_name' => "Show Post Date",
+        'fd_type' => "yesno",
+        'fd_readonly' => "0",
+        'fd_default' => "1",
+        'fd_help' => "Show date added on posts",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
 // Thumbnail sizing Field
 $default_fd['articlecategory']['thumbnail'] = array(
-        'fd_name' => "Thumbnail sizing",
+        'fd_name' => "Thumbnail Size",
         'fd_type' => "text",
         'fd_readonly' => "0",
         'fd_default' => "s150",
@@ -118,7 +129,7 @@ $default_fd['articlecategory']['externalrsslink'] = array(
     
 // Allow Comments
 $default_fd['articlecategory']['comments'] = array(
-        'fd_name' => "Allow comments",
+        'fd_name' => "Enable comments",
         'fd_type' => "yesno",
         'fd_readonly' => "0",
         'fd_default' => "1",

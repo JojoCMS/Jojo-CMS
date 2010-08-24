@@ -12,11 +12,23 @@
   font-size: 0.9em;
 }
 
-.article-date {
-  text-align:right;
+#articles .article-date, #article .article-date {
+  float:right;
   font-size: 0.9em;
   font-style: italic;
-  margin:20px 0 30px;
+  margin: 0 0 7px;
+}
+
+#article .article-date {
+  float:none;
+}
+
+#articles .article-numcomments {
+  float:right;
+  font-size: 0.9em;
+  font-style: italic;
+  margin: 0 15px 7px;
+
 }
 
 .links {

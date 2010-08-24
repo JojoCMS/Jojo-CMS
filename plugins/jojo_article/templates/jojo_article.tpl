@@ -7,7 +7,7 @@
     {if $nextarticle}<a href="{$nextarticle.url}" class="next-article" title="Next">{$nextarticle.title} &gt;&gt;</a>{/if}
     {if $nextarticle || $prevarticle}<div class="clear"></div>{/if}
     </div>
-    {if $OPTIONS.article_show_date=='yes'}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
+    {if $jojo_article.showdate}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
     {jojoHook hook="articleBeforeBody"}
     {if $jojo_article.image}<img src="images/v60000/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}
     {$jojo_article.ar_body}
