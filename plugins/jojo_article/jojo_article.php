@@ -228,23 +228,17 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden');
 
         if ($action == 'rss') {
-            if (isset($articles[0]['externalrsslink']) && $articles[0]['externalrsslink'] && (!isset($articles[0]['rsslink']) || $articles[0]['rsslink'] == 1)) {
-                        $url = $articles[0]['externalrsslink'];
-                        header("Location: $url");
-                        exit();
-            } else {
-                $rssfields = array(
-                    'pagetitle' => $this->page['pg_title'],
-                    'pageurl' => _SITEURL . '/' . (_MULTILANGUAGE ? $multilangstring : '') . $this->page['pg_url'] . '/',
-                    'title' => 'ar_title',
-                    'body' => 'ar_body',
-                    'url' => 'url',
-                    'date' => 'date',
-                    'datetype' => 'unix',
-                );
-                $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
-                Jojo::getFeed($articles, $rssfields);
-            }
+            $rssfields = array(
+                'pagetitle' => $this->page['pg_title'],
+                'pageurl' => _SITEURL . '/' . (_MULTILANGUAGE ? $multilangstring : '') . $this->page['pg_url'] . '/',
+                'title' => 'ar_title',
+                'body' => 'ar_body',
+                'url' => 'url',
+                'date' => 'date',
+                'datetype' => 'unix',
+            );
+            $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
+            Jojo::getFeed($articles, $rssfields);
         }
 
         if ($articleid || !empty($url)) {
