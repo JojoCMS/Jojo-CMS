@@ -23,7 +23,7 @@
     <div class="form-fieldset">
         <label for="form_{$f.field}">{if $f.display}{$f.display}:{/if}</label>{/if}
     {if $f.type == 'textarea'}
-        <textarea class="textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
+        <textarea class="input textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     </div>
     {elseif $f.type == 'checkboxes'}
         <div class="form-field">
@@ -45,7 +45,7 @@
     {elseif $f.type=='note'}
         <p>{$f.value}</p>
     {else}
-        <input type="{$f.type}" class="{$f.type}" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
+        <input type="{$f.type}" class="input {$f.type}" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
     </div>
     {/if}
 
@@ -57,7 +57,7 @@
 {if $OPTIONS.contactcaptcha == 'yes'}
     <div class="form-fieldset">
         <label for="CAPTCHA">Spam prevention:</label>
-        <input type="text" class="text" size="8" name="CAPTCHA" id="CAPTCHA" value="" /> <span class="required">*</span>
+        <input type="text" class="input text" size="8" name="CAPTCHA" id="CAPTCHA" value="" /> <span class="required">*</span>
     </div>
     <div class="form-fieldset captcha">
         <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
