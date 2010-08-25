@@ -112,7 +112,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         if (_MULTILANGUAGE) {
             /* Get list of languages for drop down */
             $languages = array();
-            foreach (Jojo::selectQuery("SELECT * FROM {language} WHERE active='yes' ORDER BY english_name") as $l) {
+            foreach (Jojo::selectQuery("SELECT * FROM {language} WHERE active='1' ORDER BY english_name") as $l) {
                 $languages[$l['languageid']] = $l['name'];
             }
             $smarty->assign('languages', $languages);
