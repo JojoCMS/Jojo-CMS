@@ -112,7 +112,7 @@ $default_fd['lang_country']['lc_defaultlang'] = array(
 
 // Active Field
 $default_fd['lang_country']['default'] = array(
-        'fd_name' => "Active",
+        'fd_name' => "Default",
         'fd_type' => "yesno",
         'fd_options' => '',
         'fd_default' => 0,
