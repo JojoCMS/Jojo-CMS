@@ -3001,18 +3001,8 @@ class Jojo {
                             'languagelist' => array()
                             );
             $defaultLanguage = Jojo::getOption('multilanguage-default');
-            // Check if language/country functionality exists.
-            if ( Jojo::tableexists('lang_country') ) {
-                // get language codes from new table
-                $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name FROM {lang_country}");
-                if (!count($res)) {
-                    // Oops - this lang code doesn't ext so we assume it's a legacy code from the language table.
-                    $res = Jojo::selectQuery("SELECT languageid, root, home, longcode, name FROM {language}");
-                }
-            } else {
-                // get language codes from existing language table
-                $res = Jojo::selectQuery("SELECT languageid, root, home, longcode, name FROM {language}");
-            }
+            // get language codes from new table
+            $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name FROM {lang_country}");
             foreach ($res as $k=>$r) {
                 $mldata['roots'][$r['languageid']] = $r['root'];
                 $mldata['homes'][$r['languageid']] = $r['home'];

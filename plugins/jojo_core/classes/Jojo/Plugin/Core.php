@@ -132,7 +132,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
     static function getItems($for=false, $sortby = false) {
         $query = 'SELECT * FROM {page} p';
-        $query .= _MULTILANGUAGE ? " LEFT JOIN {lang_country}  lc ON (p.pg_language = lc_code) LEFT JOIN {language} as l ON (lc.lc_defaultlang = l.languageid) WHERE l.active = 'yes'" : '';
+        $query .= _MULTILANGUAGE ? " LEFT JOIN {lang_country}  lc ON (p.pg_language = lc_code) LEFT JOIN {language} as l ON (lc.lc_defaultlang = l.languageid) WHERE l.active = '1'" : '';
         $query .= $sortby ? " ORDER BY " . $sortby : '';
         $items = Jojo::selectQuery($query);
         $items = self::cleanItems($items, $for);
