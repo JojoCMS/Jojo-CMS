@@ -69,10 +69,10 @@ class Jojo_Field_order extends Jojo_Field
             $values = array($record[$td['td_group1']]);
         }
         $values[] = $this->table->getRecordID();
-        $query = "SELECT * FROM {".$this->fd_table."} WHERE ".$where." AND `".$td['td_primarykey']."`!=? ORDER BY ".$this->fd_field."";
+        $query = "SELECT * FROM {".$this->fd_table."} WHERE ".$where." AND `".$td['td_primarykey']."`!=? ORDER BY `".$this->fd_field."`";
         $siblings = Jojo::selectQuery($query, $values);
 
-        $min_order_query = "SELECT MIN(".$this->fd_field.") as min_order FROM {".$this->fd_table."} WHERE ".$where." AND `".$td['td_primarykey']."`!=? ORDER BY ".$this->fd_field."";
+        $min_order_query = "SELECT MIN(`".$this->fd_field."`) as min_order FROM {".$this->fd_table."} WHERE ".$where." AND `".$td['td_primarykey']."`!=? ORDER BY `".$this->fd_field."`";
         $min_sibling_order = Jojo::selectQuery($min_order_query, $values);
         $neworder_start = is_array($min_sibling_order) ?   min($min_sibling_order[0]['min_order'],$this->value) : 0;
 
