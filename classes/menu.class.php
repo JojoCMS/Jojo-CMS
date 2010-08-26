@@ -181,7 +181,7 @@ class menu
 
             /* Add the language code if multilanguage */
             if (_MULTILANGUAGE) {
-                $link = Jojo::getMultiLanguageCode($this->data[$pageid]['pg_language']) . $link;
+                $link = Jojo::getMultiLanguageString($this->data[$pageid]['pg_language']) . $link;
             }
 
 
@@ -191,7 +191,7 @@ class menu
                 $mldata = Jojo::getMultiLanguageData();
                 if ($mldata['homes'][$this->data[$pageid]['pg_language']] == $pageid) {
                     /* Are on the homepage */
-                    $link = Jojo::getMultiLanguageCode($this->data[$pageid]['pg_language']);
+                    $link = Jojo::getMultiLanguageString($this->data[$pageid]['pg_language']);
                 }
             }
 
