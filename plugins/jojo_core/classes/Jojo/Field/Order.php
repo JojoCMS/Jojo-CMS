@@ -50,31 +50,34 @@ class Jojo_Field_order extends Jojo_Field
 
     function afterSave()
     {
-      if ($this->table->getRecordID()) {
-        $query     = "SELECT * FROM {tabledata} WHERE td_name='".$this->fd_table."' LIMIT 1";
+        if (!$this->table->getRecordID()) {
+            return true;
+        }
+
+        $query     = "SELECT * FROM {tabledata} WHERE td_name='" . $this->fd_table . "' LIMIT 1";
         $tabledata = Jojo::selectQuery($query);
         $td        = $tabledata[0];
-        $query     = "SELECT * FROM {".$this->fd_table."} WHERE `".$td['td_primarykey']."`=? LIMIT 1";
+        $query     = "SELECT * FROM {" . $this->fd_table . "} WHERE `" . $td['td_primarykey'] . "`=? LIMIT 1";
         $records   = Jojo::selectQuery($query, $this->table->getRecordID());
         $record    = $records[0];
         $where     = '1';
 
         if ($td['td_parentfield']) {
-            $where = ' `'.$td['td_parentfield'].'`= '.$record[$td['td_parentfield']].'';
+            $where = ' `' . $td['td_parentfield'] . '`= ' . $record[$td['td_parentfield']] . '';
         }
 
         $values = array();
         if ($td['td_group1']) {
-            $where = ' `'.$td['td_group1'].'`= ?';
+            $where = ' `' . $td['td_group1'] . '`= ?';
             $values = array($record[$td['td_group1']]);
         }
         $values[] = $this->table->getRecordID();
-        $query = "SELECT * FROM {".$this->fd_table."} WHERE ".$where." AND `".$td['td_primarykey']."`!=? ORDER BY `".$this->fd_field."`";
+        $query = "SELECT * FROM {" . $this->fd_table . "} WHERE " . $where." AND `" . $td['td_primarykey'] . "`!=? ORDER BY `" . $this->fd_field . "`";
         $siblings = Jojo::selectQuery($query, $values);
 
-        $min_order_query = "SELECT MIN(`".$this->fd_field."`) as min_order FROM {".$this->fd_table."} WHERE ".$where." AND `".$td['td_primarykey']."`!=? ORDER BY `".$this->fd_field."`";
+        $min_order_query = "SELECT MIN(`" . $this->fd_field . "`) as min_order FROM {" . $this->fd_table . "} WHERE " . $where . " AND `" . $td['td_primarykey'] . "`!=? ORDER BY `" . $this->fd_field . "`";
         $min_sibling_order = Jojo::selectQuery($min_order_query, $values);
-        $neworder_start = is_array($min_sibling_order) ?   min($min_sibling_order[0]['min_order'],$this->value) : 0;
+        $neworder_start = is_array($min_sibling_order) ?   min($min_sibling_order[0]['min_order'], $this->value) : 0;
 
         $n = count($siblings);
         $neworder = $neworder_start;
@@ -83,8 +86,8 @@ class Jojo_Field_order extends Jojo_Field
 
         while ($i<$n) {
             /* for the current record */
-            if ($neworder==$this->value) {
-                $query = "UPDATE {".$this->fd_table."} SET `".$this->fd_field."`=".($neworder-$neworder_start)." WHERE `".$td['td_primarykey']."`=? LIMIT 1";
+            if ($neworder == $this->value) {
+                $query = "UPDATE {" . $this->fd_table . "} SET `" . $this->fd_field . "`=" . ($neworder-$neworder_start) . " WHERE `" . $td['td_primarykey'] . "`=? LIMIT 1";
                 Jojo::updateQuery($query, $this->table->getRecordID());
                 ++$neworder;
                 $done = true;
@@ -92,20 +95,19 @@ class Jojo_Field_order extends Jojo_Field
 
             /* for other records */
             if (($neworder-$neworder_start) != $siblings[$i][$this->fd_field]) {
-                $query = "UPDATE {".$this->fd_table."} SET `".$this->fd_field."`=".($neworder-$neworder_start)." WHERE `".$td['td_primarykey']."`=? LIMIT 1";
+                $query = "UPDATE {" . $this->fd_table . "} SET `" . $this->fd_field . "`=" . ($neworder-$neworder_start) . " WHERE `" . $td['td_primarykey'] . "`=? LIMIT 1";
                 Jojo::updateQuery($query, $siblings[$i][$td['td_primarykey']]);
             }
 
             ++$neworder;
             ++$i;
         }
+
         /* only happens when order is off the chart */
         if (!$done) {
-            $query = "UPDATE {".$this->fd_table."} SET `".$this->fd_field."`=".($neworder-$neworder_start)." WHERE `".$td['td_primarykey']."`=? LIMIT 1";
-         Jojo::updateQuery($query, $this->table->getRecordID());
+            $query = "UPDATE {" . $this->fd_table . "} SET `" . $this->fd_field . "`=" . ($neworder-$neworder_start) . " WHERE `" . $td['td_primarykey'] . "`=? LIMIT 1";
+            Jojo::updateQuery($query, $this->table->getRecordID());
         }
-
-      }
-      return true;
+        return true;
     }
 }
