@@ -3000,32 +3000,45 @@ class Jojo {
                             'longcodes' => array(),
                             'languagelist' => array()
                             );
-            $defaultLanguage = Jojo::getOption('multilanguage-default');
             // get language codes from new table
-            $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name FROM {lang_country}");
+            $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc");
+            $default = !isset($res[0]['default']) ? Jojo::getOption('multilanguage-default') : '';
             foreach ($res as $k=>$r) {
                 $mldata['roots'][$r['languageid']] = $r['root'];
                 $mldata['homes'][$r['languageid']] = $r['home'];
                 $mldata['longcodes'][$r['languageid']] = (!empty($r['longcode'])) ? $r['longcode'] : $r['languageid'];
-                $mldata['names'][$r['languageid']] = (!empty($r['name'])) ? $r['name'] : $r['longcode'];
+                $mldata['names'][$r['languageid']] = !empty($r['name']) ? $r['name'] : $r['longcode'];
+                $mldata['languages'][$r['languageid']] = !empty($r['lc_defaultlang']) ? $r['lc_defaultlang'] : 'en';
+                if (isset($r['default']) && $r['default']) $default = $r['languageid'];
                 if (!empty($r['root'])){
-                    $res[$k]['url'] = $r['languageid']!=$defaultLanguage ? $r['languageid'] . '/' : '';
+                    $res[$k]['url'] = $r['languageid']!=$default ? $r['languageid'] . '/' : '';
                 } else {
                     unset($res[$k]);
                 }
             }
+            $mldata['default'] = $default;
             $mldata['languagelist'] = $res;
         }
         return $mldata;
     }
 
-    static function getMultiLanguageCode ($language) {
-        $languageHeader = '';
+    static function getPageUrlPrefix($pageid) {
+        $prefix = '';
+        $default=true;
         if (_MULTILANGUAGE) {
-            $defaultLanguage = Jojo::getOption('multilanguage-default');
-            $languageHeader = ($defaultLanguage==$language) ? '' : $language . '/';
+            $pagetree = _getSelected($pageid); 
+            $sectionroot = $pagetree[0];
+            $mldata = self::getMultiLanguageData();
+            foreach ($mldata['roots'] as $code => $pageid) {
+                if ($pageid==$sectionroot) {
+                    $rootsectioncode = $code;
+                    $default = (boolean)($code==$mldata['default']);
+                    break;
+                }
+            }
+            $prefix = ($default) ? '' : $rootsectioncode . '/';
         }
-        return $languageHeader;
+        return $prefix;
     }
 
     static function getMultiLanguageString ($language, $long = false, $defReturnStr = '') {
@@ -3040,30 +3053,30 @@ class Jojo {
         return $languageHeader;
     }
 
-    static function getPageLanguageCode ( $pageid ) {
-        $page = Jojo::selectRow ( "SELECT * FROM {page} where pageid = ?", $pageid );
-        // Get the language code for this page
-        $pageLanguageCode = $page [ 'pg_language' ];
-        if ( Jojo::tableexists('lang_country') ) {
-            // Ok.  The new language country functionality is here.  Check if the page has a language override
-            if ( $page ['pg_htmllang']) {
-                // Override exists.  Let's return this code...
-                $pageLanguageCode = $page [ 'pg_htmllang' ];
-            } else {
-                // No override exists for the page.  Let's get the default language code for the language/country setting
-                $languageCountry = Jojo::selectRow ( "SELECT * FROM {lang_country} where lc_code = ?", $pageLanguageCode );
-                $pageLanguageCode = !empty($languageCountry [ 'lc_defaultlang' ])?$languageCountry [ 'lc_defaultlang' ] : '';
+    static function getPageHtmlLanguage() {
+        global $page, $root;
+        $languagedata = array();
+        // if the page had an html language set, use that
+        if ($page->page['pg_htmllang']) {
+            $pagehtmllang = $page->page['pg_htmllang'];
+        // otherwise, find the default language for this section from its root
+        } else if ($root) {
+            $mldata = self::getMultiLanguageData();
+            foreach ($mldata['roots'] as $k => $id) {
+                if ($id==$root) {
+                    $rootsectioncode = $k;
+                    break;
+                }
             }
+            $pagehtmllang = $mldata['languages'][$rootsectioncode];
         } else {
-            // No added language country functionality.  Use older functionality
-            $languages = Jojo::selectRow("SELECT * FROM {language} WHERE languageid = ?", $pageLanguageCode );
-            // is there an overide on the language table for this language?
-            if ($languages['lang_htmllanguage']) {
-                // Yes, so return the overridden code
-                $pageLanguageCode = !empty($languages['lang_htmllanguage']) ? $languages['lang_htmllanguage'] : '';
-            }
+            $pagehtmllang = 'en';
         }
-        return $pageLanguageCode;
+        $languagedata = Jojo::selectRow("SELECT * FROM {language} WHERE languageid = ?", array($pagehtmllang));
+        $languagedata['longlanguage']  = ($languagedata && $languagedata['name']) ? $languagedata['name'] : $pagehtmllang;
+        $languagedata['charset'] = ($languagedata['charset']) ? $languagedata['charset'] : 'utf-8';
+        $languagedata['direction'] = ($languagedata['direction']) ? $languagedata['direction'] : 'ltr';
+        return $languagedata;
     }
 
     /*

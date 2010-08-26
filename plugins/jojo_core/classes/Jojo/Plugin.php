@@ -117,10 +117,9 @@ class Jojo_Plugin {
         if (_MULTILANGUAGE) {
             /* Load Languages */
             // new language/country functionality.  Get actual language for the page but identify the language
-            $language = Jojo::selectRow("SELECT * FROM {language} WHERE languageid = ?", Jojo::getPageLanguageCode( $this->page ['pageid']));
-            $charset = isset($language) ? $language['charset'] : 'utf-8';
-            $result['longlanguage']  = $language['name'] != '' ?  Jojo::cleanURL($language['name']) : $this->page['pg_language'];
-            $result['charset'] = $charset;
+            $language = Jojo::getPageHtmlLanguage();
+            $result['longlanguage']  = $language['longlanguage'];
+            $result['charset'] = $language['charset'];
         }
 
         /* Get page tags if  the tags class is available */

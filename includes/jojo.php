@@ -415,32 +415,25 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
 foreach($page->page as $key => $value) {
     $smarty->assign($key, $value);
 }
-// Check if this is the language setting for the page and set it instead as the HTML lang if it exists
-// James Pluck - Searchmasters
-// 1 Apr 2009
-$languageCode = Jojo::getPageLanguageCode( $page->page [ 'pageid' ]);
-$smarty->assign ( 'pg_htmllang', $languageCode );
-// JP - Searchmasters - ends.
+// Set the html language for the page
+$languagedata = Jojo::getPageHtmlLanguage();
+$smarty->assign ('pg_htmllang', $languagedata['languageid'] );
 
-/* Load Languages */
+$charset = 'utf-8'; //Default to UTF
+
 if (_MULTILANGUAGE) {
-    $language = Jojo::selectRow("SELECT * FROM {language} WHERE languageid = ?", $languageCode );
-    $charset = isset($language) ? $language['charset'] : 'utf-8';
-    $direction = isset($language) ? $language['direction'] : 'ltr';
+    $charset = $languagedata['charset'];
+    $direction = $languagedata['direction'];
     if ($direction == 'rtl') {
         $smarty->assign('rtl', true);
     }
 }
 
-/* Assign the character set and output this to the browser */
-if ($charset == '')  {
-    $charset = 'utf-8'; //Default to UTF
-}
 if ($templateEngine == 'dwoo') {
     $smarty->setCharset($charset);
 }
-
 $smarty->assign('charset', $charset);
+
 if(substr($page->page [ 'pg_url' ],-4,4)=='.txt') {
   header('Content-type: text/plain; charset=' . $charset);
 } else {
