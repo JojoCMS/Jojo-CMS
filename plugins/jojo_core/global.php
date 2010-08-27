@@ -24,7 +24,7 @@ $templateoptions['menu'] = false;
 $smarty->assign('templateoptions', $templateoptions);
 
 /* Create current section/ current sub pages array to show cascading selected menu levels beyond child*/
-$selectedPages = _getSelected($page->id);
+$selectedPages = Jojo::getSelectedPages($page->id);
 $smarty->assign('selectedpages', $selectedPages);
 
 /* Create navigation array */
@@ -32,10 +32,11 @@ $root = 0;
 if (_MULTILANGUAGE && isset($page)) {
     /* If on a multi-language site, get the root for the current language */
     $mldata = Jojo::getMultiLanguageData();
-    $root = $mldata['roots'][$page->getValue('pg_language')];
-    $smarty->assign('home', $mldata['homes'][$page->getValue('pg_language')]);
+    $root = $selectedPages[1];
+    $sectiondata =  isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root] : '';
+    $smarty->assign('home', ($sectiondata ? $sectiondata['home'] : 1));
     $smarty->assign('root', $root);
-    $smarty->assign('languagelist', $mldata['languagelist']);
+    $smarty->assign('languagelist', $mldata['sectiondata']);
 }
 
 /* Get one level of main navigation for the top navigation */
@@ -54,6 +55,7 @@ if (!Jojo::getOption('nav_mainnav', 0)) {
         $smarty->assign('subnav', _getNav($page->id, Jojo::getOption('nav_subnav', 2)));
     }
 }
+
 /* Current year (e.g. for copyright statement) */
 $smarty->assign('currentyear', date('Y'));
 
@@ -103,7 +105,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
                            pg_order", $field);
         }
         $_cached[$field] = array();
-        $result = Jojo::selectquery($query);
+        $result = Jojo::selectQuery($query);
         foreach ($result as $k => $row) {
             // strip out expired pages
             if ($row['pg_livedate']>$now || (!empty($row['pg_expirydate']) && $row['pg_expirydate']<$now) || ($row['pg_status']=='inactive' || ($row['pg_status']=='hidden' && !isset($_SESSION['showhidden'])))) {
@@ -114,10 +116,10 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
             if (!isset($_cached[$field][$r])) {
                 $_cached[$field][$r] = array();
             }
-            $_cached[$field][$r][] = $row;
+            $_cached[$field][$r][$row['pageid']] = $row;
             if ((_MULTILANGUAGE) && (isset($row['pg_mainnavalways'])) && ($row['pg_mainnavalways'] == 'yes') && ($r != $root)) {
                 if ((($field == 'mainnav') && ((in_array ($r, $mldata['roots'])) || ($r == 1)))) {
-                    $_cached[$field][$root][] = $row;
+                    $_cached[$field][$root][$row['pageid']] = $row;
                 }
             }
         }

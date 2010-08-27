@@ -193,7 +193,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         // home pages
             $item['absoluteurl'] = $item['url'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString($item['pg_language']) : '');
         } else {
-            $item['url'] = (_MULTILANGUAGE ? Jojo::getMultiLanguageString($item['pg_language']) : '') . (!empty($item['pg_url']) ? $item['pg_url'] : $item['pageid'] . '/' .  Jojo::cleanURL($item['pg_title'])) . '/';
+            $item['url'] = (_MULTILANGUAGE ? $pageprefix = Jojo::getPageUrlPrefix($item['pageid']) : '') . (!empty($item['pg_url']) ? $item['pg_url'] : $item['pageid'] . '/' .  Jojo::cleanURL($item['pg_title'])) . '/';
             $item['absoluteurl'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . $item['url'];
         }
         return $item;

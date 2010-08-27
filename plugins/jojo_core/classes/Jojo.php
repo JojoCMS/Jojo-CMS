@@ -3001,7 +3001,7 @@ class Jojo {
                             'languagelist' => array()
                             );
             // get language codes from new table
-            $res = Jojo::selectQuery("SELECT lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc");
+            $res = Jojo::selectAssoc("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc");
             $default = !isset($res[0]['default']) ? Jojo::getOption('multilanguage-default') : '';
             foreach ($res as $k=>$r) {
                 $mldata['roots'][$r['languageid']] = $r['root'];
@@ -3017,28 +3017,32 @@ class Jojo {
                 }
             }
             $mldata['default'] = $default;
-            $mldata['languagelist'] = $res;
+            $mldata['sectiondata'] = $res;
         }
         return $mldata;
     }
 
     static function getPageUrlPrefix($pageid) {
-        $prefix = '';
+        $thisprefix = '';
         $default=true;
         if (_MULTILANGUAGE) {
-            $pagetree = _getSelected($pageid); 
-            $sectionroot = $pagetree[0];
+            $thisroot = Jojo::getSectionRoot($pageid); 
             $mldata = self::getMultiLanguageData();
-            foreach ($mldata['roots'] as $code => $pageid) {
-                if ($pageid==$sectionroot) {
-                    $rootsectioncode = $code;
-                    $default = (boolean)($code==$mldata['default']);
-                    break;
-                }
-            }
-            $prefix = ($default) ? '' : $rootsectioncode . '/';
+            if (!isset($mldata['sectiondata'][$thisroot])) return '';
+            $thisprefix = !$mldata['sectiondata'][$thisroot]['default'] ? $mldata['sectiondata'][$thisroot]['lc_code'] . '/' : '';
         }
-        return $prefix;
+        return $thisprefix;
+    }
+
+    static function getSectionRoot($pageid) {
+        $thispagetree = Jojo::getSelectedPages($pageid); 
+        return $thispagetree[1];
+    }
+
+    static function isSectionPage($pageid, $sectionroot=0) {
+        $thisroot = Jojo::getSectionRoot($pageid); 
+        if ($thisroot==$sectionroot) return true;
+        return false;
     }
 
     static function getMultiLanguageString ($language, $long = false, $defReturnStr = '') {
@@ -3054,21 +3058,14 @@ class Jojo {
     }
 
     static function getPageHtmlLanguage() {
-        global $page, $root;
+        global $page, $sectiondata;
         $languagedata = array();
         // if the page had an html language set, use that
         if ($page->page['pg_htmllang']) {
             $pagehtmllang = $page->page['pg_htmllang'];
         // otherwise, find the default language for this section from its root
-        } else if ($root) {
-            $mldata = self::getMultiLanguageData();
-            foreach ($mldata['roots'] as $k => $id) {
-                if ($id==$root) {
-                    $rootsectioncode = $k;
-                    break;
-                }
-            }
-            $pagehtmllang = $mldata['languages'][$rootsectioncode];
+        } else if ($sectiondata) {
+            $pagehtmllang = $sectiondata['lc_defaultlang'];
         } else {
             $pagehtmllang = 'en';
         }
@@ -3079,6 +3076,39 @@ class Jojo {
         return $languagedata;
     }
 
+/* Get currently selected page and step back up through parents to build a current section/sub pages array */
+function getSelectedPages($pageid, $root=0) {
+    if (!$pageid) {
+        return array();
+    }
+
+    /* Cache the page parents */
+    static $_pageParent;
+    if (!is_array($_pageParent)) {
+       $query = "SELECT
+                       pageid, pg_parent
+                     FROM
+                      {page}";
+       $_pageParent = Jojo::selectAssoc($query);
+    }
+
+    /* Start with the current page */
+    $selectedPages = array($pageid);
+    $depth = 0;
+
+    while (($selectedPages[0] != $root) && ($selectedPages[0] != 0) && ($depth < 10)) {
+       /* Find the parent of this iteration's top page */
+       if (!isset($_pageParent[$selectedPages[0]])) {
+           return $selectedPages;
+       }
+       $pg_parent = $_pageParent[$selectedPages[0]];
+
+       /* Add new parent to top of array and move others down */
+       array_unshift($selectedPages, $pg_parent);
+       $depth ++;
+    }
+    return $selectedPages;
+}
     /*
      * This function prevents content from being cached, regardless of other settings within Jojo.
      * Whenever code is executed that outputs content that should not be cached, run Jojo::noCache(true);
