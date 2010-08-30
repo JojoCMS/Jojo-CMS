@@ -78,6 +78,7 @@ a:hover {
 
 #menu ul li {
   float: left;
+  list-style-type: none;
 }
 
 #menu ul li a {
