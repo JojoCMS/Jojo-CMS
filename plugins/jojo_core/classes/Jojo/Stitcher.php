@@ -332,7 +332,7 @@ class Jojo_Stitcher {
         }
 
         /* Nothing has changed since their last request - serve a 304 and exit */
-        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', $timestamp + _CONTENTCACHETIME));
+        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + _CONTENTCACHETIME));
         header('Cache-Control: private, max-age=' . _CONTENTCACHETIME);
         header('HTTP/1.0 304 Not Modified');
         exit;
