@@ -23,6 +23,11 @@ div.message {
   margin-bottom: 20px;
 }
 
+div.message ul li {
+  color: #fff;
+  list-style: none;
+}
+
 div.error, div.errors {
   border: 3px solid #EA0505;
   background: red url('../images/cms/bg-error.gif') left top repeat;
