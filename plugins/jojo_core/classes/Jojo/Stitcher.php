@@ -26,10 +26,12 @@ class Jojo_Stitcher {
     var $numfiles = 0;
     var $header = '';
 
-    function Jojo_Stitcher($modified=0)
+    function Jojo_Stitcher($modified = 0)
     {
-        $this->modified = ($modified == 0) ? strtotime('00:00') : $modified;
-        if (!defined('_PROTOCOL')) define('_PROTOCOL', 'http://');
+        $this->modified = $modified;
+        if (!defined('_PROTOCOL')) {
+            define('_PROTOCOL', 'http://');
+        }
     }
 
     function addFile($file)
@@ -48,7 +50,10 @@ class Jojo_Stitcher {
         $this->data .= $data . "\n";
         $this->numfiles++;
         $this->dirty = true;
-        $_added[$file] = true;;
+        $_added[$file] = true;
+
+        /* Set the modified to this file if it's the most recent */
+        $this->modified = max($this->modified, filemtime($file));
     }
 
     function addText($text)
@@ -122,16 +127,21 @@ class Jojo_Stitcher {
 
     function output($optimize = true)
     {
+        header('Content-type: text/' . $this->type);
+        $this->sendCacheHeaders($this->modified);
+
         if ($optimize) {
             $this->optimize();
         }
-        $this->sendCacheHeaders($this->modified);
-        if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
-        header('Content-type: text/'.$this->type);
+
+        if (Jojo::getOption('enablegzip') == 1) {
+            Jojo::gzip();
+        }
+
         header('Cache-Control: ');
         header('Pragma: ');
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s \G\M\T',$this->modified));
         header('Expires: ');
+
         if (_DEBUG) {
             echo $this->header . $this->data;
             return;
@@ -176,7 +186,7 @@ class Jojo_Stitcher {
         /* Remove commented out blocks of code */
         $css = preg_replace('#/\*(.*)\*/#Ums', '', $css);
 
-        preg_match_all('/^([\r\n\s\S]*)\{([\r\n\s\S]*)}/Um', $css, $matches);
+        preg_match_all('/([\r\n\s\S]*)\{([\r\n\s\S]*)}/Um', $css, $matches);
 
         $temp = array();
         $css = array();
@@ -269,7 +279,7 @@ class Jojo_Stitcher {
             if (_DEBUG) {
                 $optimizedText .= sprintf("%s{\n%s\n}\n", $c['class'], $c['attribs']);
             } else {
-                $optimizedText .= sprintf("%s{%s}\n", $c['class'], str_replace("\n", '', $c['attribs']));
+                $optimizedText .= sprintf("%s{%s}", $c['class'], str_replace("\n", '', $c['attribs']));
             }
         }
 
@@ -296,35 +306,34 @@ class Jojo_Stitcher {
         return $optimizedText;
     }
 
-    //http://simonwillison.net/2003/Apr/23/conditionalGet/
     function sendCacheHeaders($timestamp)
     {
-        // A PHP implementation of conditional get, see
-        //   http://fishbowl.pastiche.org/archives/001132.html
-        if (empty($timestamp)) $timestamp = time();
-        $last_modified = gmdate('D, d M Y H:i:s', $timestamp).' GMT';//substr(date('r', $timestamp), 0, -5) . 'GMT';
-        $etag = '"'.md5($last_modified) . '"';
-        // Send the headers
+        /* Send last modified headers */
+        $timestamp = $timestamp ? $timestamp : strtotime('00:00');
+        $last_modified = gmdate('D, d M Y H:i:s', $timestamp) . ' GMT';
+        $etag = '"' . md5($last_modified) . '"';
         header("Last-Modified: $last_modified");
         header("ETag: $etag");
-        // See if the client has provided the required headers
-        $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ?
-            stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE']) :
-            false;
-        $if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ?
-            stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) :
-            false;
-        if (!$if_modified_since && !$if_none_match) {
+        header('X-Jojo-Plugin: Jojo_Stitcher');
+
+        if (!isset($_SERVER['HTTP_IF_NONE_MATCH']) && !isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+            /* Client doesn't indicate it has a chached copy */
             return;
         }
-        // At least one of the headers is there - check them
-        if ($if_none_match && $if_none_match != $etag) {
-            return; // etag is there but doesn't match
+
+        if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] != $etag) {
+            /* Client sent and etag but different to the current one */
+            return;
         }
-        if ($if_modified_since && $if_modified_since != $last_modified) {
-            return; // if-modified-since is there but doesn't match
+
+        if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] != $last_modified) {
+            /* Client sent a date but it's different to our current one */
+            return;
         }
-        // Nothing has changed since their last request - serve a 304 and exit
+
+        /* Nothing has changed since their last request - serve a 304 and exit */
+        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', $timestamp + _CONTENTCACHETIME));
+        header('Cache-Control: private, max-age=' . _CONTENTCACHETIME);
         header('HTTP/1.0 304 Not Modified');
         exit;
     }
