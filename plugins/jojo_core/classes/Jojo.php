@@ -3025,18 +3025,16 @@ class Jojo {
     static function getPageUrlPrefix($pageid) {
         $thisprefix = '';
         $default=true;
-        if (_MULTILANGUAGE) {
-            $thisroot = Jojo::getSectionRoot($pageid); 
-            $mldata = self::getMultiLanguageData();
-            if (!isset($mldata['sectiondata'][$thisroot])) return '';
-            $thisprefix = !$mldata['sectiondata'][$thisroot]['default'] ? $mldata['sectiondata'][$thisroot]['lc_code'] . '/' : '';
-        }
+        $thisroot = Jojo::getSectionRoot($pageid); 
+        $mldata = self::getMultiLanguageData();
+        if (!isset($mldata['sectiondata'][$thisroot])) return '';
+        $thisprefix = !$mldata['sectiondata'][$thisroot]['default'] ? $mldata['sectiondata'][$thisroot]['lc_code'] . '/' : '';
         return $thisprefix;
     }
 
     static function getSectionRoot($pageid) {
         $thispagetree = Jojo::getSelectedPages($pageid); 
-        return $thispagetree[1];
+        return $thispagetree[0];
     }
 
     static function isSectionPage($pageid, $sectionroot=0) {
@@ -3081,6 +3079,7 @@ function getSelectedPages($pageid, $root=0) {
     if (!$pageid) {
         return array();
     }
+    $mldata = Jojo::getMultiLanguageData();
 
     /* Cache the page parents */
     static $_pageParent;
@@ -3096,7 +3095,7 @@ function getSelectedPages($pageid, $root=0) {
     $selectedPages = array($pageid);
     $depth = 0;
 
-    while (($selectedPages[0] != $root) && ($selectedPages[0] != 0) && ($depth < 10)) {
+    while ( !in_array($selectedPages[0], $mldata['roots']) && ($selectedPages[0] != 0) && ($depth < 10)) {
        /* Find the parent of this iteration's top page */
        if (!isset($_pageParent[$selectedPages[0]])) {
            return $selectedPages;

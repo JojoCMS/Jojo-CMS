@@ -93,8 +93,8 @@ class Jojo_Table {
             if ($displayfieldtype == 'dbpluginpagelist') {
                 $pageid = isset($fieldvalues[$this->getOption('displayfield')]) ? $fieldvalues[$this->getOption('displayfield')] : '';
                 if ($pageid) {
-                    $page = Jojo::selectRow("SELECT pg_title FROM {page} WHERE pageid = ? ", array($pageid));
-                    $fieldvalues['DISPLAYFIELDVALUE'] = $page['pg_title'];
+                    $page = Jojo::selectRow("SELECT pg_title, pg_menutitle FROM {page} WHERE pageid = ? ", array($pageid));
+                    $fieldvalues['DISPLAYFIELDVALUE'] = Jojo::either($page['pg_menutitle'], $page['pg_title']);
                 }
             }
         }
@@ -473,9 +473,9 @@ class Jojo_Table {
                 $displayfieldtype = isset($displayfielddata['fd_type']) ? $displayfielddata['fd_type'] : '';
                 $displayfieldoptions = isset($displayfielddata['fd_options']) ? $displayfielddata['fd_options'] : '';
                 if ($displayfieldtype == 'dbpluginpagelist') {
-                    $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
+                    $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_menutitle, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
                     foreach ($records as &$r) {
-                        $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? $displaytitles[$r['display']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
+                        $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? ($displaytitles[$r['display']]['pg_menutitle'] ? $displaytitles[$r['display']]['pg_menutitle'] : $displaytitles[$r['display']]['pg_title']) . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
                     }
                 }
            }

@@ -24,15 +24,14 @@ $templateoptions['menu'] = false;
 $smarty->assign('templateoptions', $templateoptions);
 
 /* Create current section/ current sub pages array to show cascading selected menu levels beyond child*/
-$selectedPages = Jojo::getSelectedPages($page->id);
+$root = Jojo::getSectionRoot($page->id);
+$selectedPages = Jojo::getSelectedPages($page->id, $root);
 $smarty->assign('selectedpages', $selectedPages);
 
 /* Create navigation array */
-$root = 0;
 if (_MULTILANGUAGE && isset($page)) {
     /* If on a multi-language site, get the root for the current language */
     $mldata = Jojo::getMultiLanguageData();
-    $root = $selectedPages[1];
     $sectiondata =  isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root] : '';
     $smarty->assign('home', ($sectiondata ? $sectiondata['home'] : 1));
     $smarty->assign('root', $root);
@@ -74,7 +73,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
     if (_MULTILANGUAGE) {
         global $page;
         $mldata = Jojo::getMultiLanguageData();
-        $home = $mldata['homes'][$page->getValue('pg_language')];
+        $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;
     } else {
         $home = 1;
     }
@@ -133,9 +132,8 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
            unset($nav[$id]);
            continue;
         }
-
         /* Create the url for this page */
-        $n['url'] = ($n['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL ) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString ($n['pg_language'], false) : '');
+        $n['url'] = ($n['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL ) . '/' . Jojo::getPageUrlPrefix($n['pageid']);
         if ($n['pageid'] != $home) {
             /* Use page url is we have it, else generate something */
             $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
@@ -145,10 +143,14 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         $n['label'] = htmlspecialchars(($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
         /* Add field for selectedPages tree */
         $n['selected'] = (boolean)($selectedPages && in_array($n['pageid'], $selectedPages));
-
         if ($subnavLevels) {
-           /* Add sub pages to this page */
-           $n['subnav'] = _getNav($n['pageid'], $subnavLevels - 1, $field);
+            /* Add sub pages to this page */
+            $n['subnav'] = _getNav($n['pageid'], $subnavLevels - 1, $field);
+            $plugin = $n['pg_link'];
+             if ($plugin && class_exists($plugin) && method_exists($plugin, 'getNavItems')) {
+                $pluginsubnav = $plugin::getNavItems($n['pageid'], $n['selected']);
+                $n['subnav'] = array_merge($pluginsubnav, $n['subnav']);
+            }
         }
     }
     return $nav;

@@ -78,7 +78,6 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pages = self::getItems('sitemap', $sortby='pg_order');
         /* Add pages to the sitemap */
         foreach ($pages as $k => $p) {
-            $p['title'] = !empty($p['pg_menutitle']) ? htmlspecialchars($p['pg_menutitle'],ENT_COMPAT,'UTF-8',false) : $p['title'];
             $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], $p['url']);
         }
         /* Add to the sitemap array */
@@ -132,20 +131,31 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
     static function getItems($for=false, $sortby = false) {
         $query = 'SELECT * FROM {page} p';
-        $query .= _MULTILANGUAGE ? " LEFT JOIN {lang_country}  lc ON (p.pg_language = lc_code) LEFT JOIN {language} as l ON (lc.lc_defaultlang = l.languageid) WHERE l.active = '1'" : '';
         $query .= $sortby ? " ORDER BY " . $sortby : '';
         $items = Jojo::selectQuery($query);
         $items = self::cleanItems($items, $for);
         return $items;
     }
 
-    static function getItemsById($ids = false) {
+    static function getItemsById($ids=false) {
+        $items = array();
         $query  = "SELECT *";
         $query .= " FROM {page}";
         $query .=  is_array($ids) ? " WHERE pageid IN ('". implode("',' ", $ids) . "')" : " WHERE pageid=$ids";
         $items = Jojo::selectQuery($query);
+        if (!$items) return false;
         $items = self::cleanItems($items);
+        if (!$items) return false;
         $items = is_array($ids) ? $items : $items[0];
+        return $items;
+    }
+
+    static function getChildrenById($id=false) {
+        $query  = "SELECT *";
+        $query .= " FROM {page}";
+        $query .=  " WHERE pg_parent = '$id'";
+        $items = Jojo::selectQuery($query);
+        $items = self::cleanItems($items);
         return $items;
     }
 
@@ -156,12 +166,13 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pagePermissions = new JOJO_Permissions();
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no'))) {
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no')) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
             $i['id'] = $i['pageid'];
-            $i['title'] = htmlspecialchars($i['pg_title'], ENT_COMPAT, 'UTF-8', false);
+            $i['title'] = htmlspecialchars( (isset($i['pg_menutitle']) && !empty($i['pg_menutitle']) ? $i['pg_menutitle'] : $i['pg_title']), ENT_COMPAT, 'UTF-8', false);
+            $i['desc'] = isset($i['pg_desc']) ? htmlspecialchars($i['pg_desc'], ENT_COMPAT, 'UTF-8', false) : '';
             // Snip for the index description
             $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
             /* Strip all tags and template include code ie [[ ]] */
@@ -176,24 +187,21 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     }
 
     static function getUrl($item) {
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $homes = $mldata['homes'];
-            $roots = $mldata['roots'];
-        } else {
-            $homes = array(1);
-        }
+        $mldata = Jojo::getMultiLanguageData();
+        $homes = $mldata['homes'];
+        $roots = $mldata['roots'];
+        $pageprefix = Jojo::getPageUrlPrefix($item['pageid']);
         if (isset($item['pg_link']) && substr(strtolower($item['pg_link']), 0, 7) == 'http://') { 
         //external pages
             $item['absoluteurl'] = $item['url'] = $item['pg_link'];
-        } elseif  (_MULTILANGUAGE && in_array($item['pageid'], $roots)){  
-        //multi-language root pages
+        } elseif  (in_array($item['pageid'], $roots)){  
+        //root page
             $item['absoluteurl'] = $item['url'] = false;
         } elseif (in_array($item['pageid'], $homes)){  
         // home pages
-            $item['absoluteurl'] = $item['url'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . (_MULTILANGUAGE ? Jojo::getMultiLanguageString($item['pg_language']) : '');
+            $item['absoluteurl'] = $item['url'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . $pageprefix;
         } else {
-            $item['url'] = (_MULTILANGUAGE ? $pageprefix = Jojo::getPageUrlPrefix($item['pageid']) : '') . (!empty($item['pg_url']) ? $item['pg_url'] : $item['pageid'] . '/' .  Jojo::cleanURL($item['pg_title'])) . '/';
+            $item['url'] = $pageprefix . (!empty($item['pg_url']) ? $item['pg_url'] : $item['pageid'] . '/' .  Jojo::cleanURL($item['pg_title'])) . '/';
             $item['absoluteurl'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . $item['url'];
         }
         return $item;
@@ -214,13 +222,8 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         );
         $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false);
         $data = $rawresults ? self::getItemsById(array_keys($rawresults)) : '';
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $homes = $mldata['homes'];
-            $roots = $mldata['roots'];
-        } else {
-            $homes = array(1);
-        }
+        $mldata = Jojo::getMultiLanguageData();
+        $homes = $mldata['homes'];
         if ($data) {
             foreach ($data as $result) {
                 $result['relevance'] = $rawresults[$result['id']]['relevance'];

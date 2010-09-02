@@ -53,37 +53,25 @@ class Jojo_Plugin {
         $this->qt = 'page';
         $this->qid = $id;
 
+        if (!defined('_MULTILANGUAGE')) define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage'))); //TODO - why is this not defined on some sites?
+
         /* Populate info on subpages belonging to this page */
-        $subpages = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_parent = ? AND pg_mainnav = 'yes' ORDER BY pg_order", array($id));
+        $subpages = Jojo_Plugin_Core::getChildrenById($id);
         foreach ($subpages as $k => $sub) {
             $subpage = array();
             $subpage['pageid'] = $sub['pageid'];
-            $subpage['name'] = $sub['pg_title'];
-            $subpage['description'] = $sub['pg_desc'];
-            if (!defined('_MULTILANGUAGE')) define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage'))); //TODO - why is this not defined on some sites?
-            if (_MULTILANGUAGE) {
-                $languageheader = Jojo::getMultiLanguageString( $sub['pg_language'], true );
-                $mldata = Jojo::getMultiLanguageData();
-                if ( $sub['pageid'] == $mldata['homes'][$sub['pg_language']]) {
-                    // this is a language/country homepage
-                    $langCountryURL = $languageheader;
-                } else {
-                    $langCountryURL = $languageheader . $sub['pg_url'].'/';
-                }
-                $subpage['url'] =  Jojo::either( Jojo::onlyif($sub['pg_url'], $langCountryURL ), $sub['pg_link'], Jojo::rewrite('page',$subpage['pageid'],$subpage['name']));
-            } else {
-                $subpage['url'] =  Jojo::either( Jojo::onlyif($sub['pg_url'],$sub['pg_url'].'/'),$sub['pg_link'], Jojo::rewrite('page',$subpage['pageid'],$subpage['name']));
-            }
-            $subpage['rollover'] =  Jojo::either($sub['pg_desc'],$sub['pg_title']);
+            $subpage['name'] = $sub['title'];
+            $subpage['description'] = $sub['desc'];
+            $subpage ['url']= $sub['url'];
+            $subpage['rollover'] =  Jojo::either($sub['desc'],$sub['title']);
             $subpage['hyperlink'] = "<a href = '" . $subpage['url']."' title = '" . $subpage['rollover']."'>" . $subpage['name']."</a>";
             $this->page['subpages'][] = $subpage;
         }
 
-        $now = strtotime('now');
+        $now = time();
         if (($this->page['pg_status'] == 'inactive') || ($now < $this->page['pg_livedate']) || (($now > $this->page['pg_expirydate']) && ($this->page['pg_expirydate'] > 0)) ) {
             $this->expired = true;
         }
-
     }
 
     function getContent()
@@ -106,21 +94,13 @@ class Jojo_Plugin {
         $result['head']             = isset($this->page["pg_head"]) ? $this->page["pg_head"] : '';
         $result = Jojo::applyFilter('jojo_plugin:result', $result);
 
-        $root = 0;
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $root = $mldata['roots'][$this->getValue('pg_language')];
-            $home = $mldata['homes'][$this->getValue('pg_language')];
-        }
-        $result['breadcrumbs'] = $this->_getBreadcrumbs($root);
+        $pageroot = Jojo::getSectionRoot($this->page['pageid']);
+        $result['breadcrumbs'] = $this->_getBreadcrumbs($pageroot);
 
-        if (_MULTILANGUAGE) {
-            /* Load Languages */
-            // new language/country functionality.  Get actual language for the page but identify the language
-            $language = Jojo::getPageHtmlLanguage();
-            $result['longlanguage']  = $language['longlanguage'];
-            $result['charset'] = $language['charset'];
-        }
+        // Get HTML language for the page
+        $language = Jojo::getPageHtmlLanguage();
+        $result['longlanguage']  = $language['longlanguage'];
+        $result['charset'] = $language['charset'];
 
         /* Get page tags if  the tags class is available */
         if (class_exists('Jojo_Plugin_Jojo_Tags')) {
@@ -183,15 +163,8 @@ class Jojo_Plugin {
         $breadcrumbs = array();
         $pageid = $this->page['pageid'];
         $maxDepth = 50;
-
-        /* Get multilanguage data */
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $root = $mldata['roots'][$this->getValue('pg_language')];
-            $home = $mldata['homes'][$this->getValue('pg_language')];
-        } else {
-            $home = 1;
-        }
+        $mldata = Jojo::getMultiLanguageData();
+        $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;
 
         /* Skip if we are on the homepage */
         if ($pageid == $home) {
@@ -204,40 +177,21 @@ class Jojo_Plugin {
             if (!$pageid) {
                 break;
             }
-            $bcpage = Jojo::selectQuery("SELECT pageid, pg_title, pg_menutitle, pg_title, pg_breadcrumbnav, pg_language, pg_url, pg_ssl, pg_desc, pg_parent FROM {page} WHERE pageid = ? LIMIT 1", $pageid);
-            if (!isset($bcpage[0])) {
+            $bcpage = Jojo_Plugin_Core::getItemsById($pageid, 'breadcrumbs');
+            if (!isset($bcpage)) {
                 break;
             }
-            $page = $bcpage[0];
-            $pageid = $page['pg_parent'];
-
-            /* Set to not show on the bread crumb nav so skip */
-            if ($page['pg_breadcrumbnav'] != 'yes') {
-                continue;
-            }
-
-            /* Create the URL */
-            $link = Jojo::urlPrefix(Jojo::yes2true($page['pg_ssl']));
-            if ($page['pageid'] == $home) {
-                $link = (_MULTILANGUAGE) ? (Jojo::getMultiLanguageString($page['pg_language'], false)) : _SITEURL . '/';
-                $added_home = true;
-            } elseif ($page['pg_url']) {
-                $link .= (_MULTILANGUAGE) ? (Jojo::getMultiLanguageString ($page['pg_language'], false)) : '';
-                $link .= $page['pg_url'] . '/';
-            } else {
-                $link .= (_MULTILANGUAGE) ? Jojo::getMultiLanguageString ($page['pg_language'], false) : '';
-                $link .= Jojo::rewrite('page', $page['pageid'], $page['pg_title']);
-            }
+            $pageid = $bcpage['pg_parent'];
 
             /* Add the bread crumb */
             $breadcrumbs[] = array(
-                               'name' => ($page['pg_menutitle']) ? $page['pg_menutitle'] : $page['pg_title'],
-                               'rollover' => ($page['pg_desc']) ? $page['pg_desc'] : $page['pg_title'],
-                               'url' => $link
+                               'name' => $bcpage['title'],
+                               'rollover' => Jojo::either($bcpage['desc'], $bcpage['title']),
+                               'url' => $bcpage['url']
                                );
 
             /* Are we done? */
-            if ($added_home || $page['pg_parent'] == '' || !--$maxDepth) {
+            if ($added_home || $bcpage['pg_parent'] == '' || !--$maxDepth) {
                 /* No parent, too deep or added home page so stop */
                 break;
             }
@@ -269,14 +223,9 @@ class Jojo_Plugin {
         if (Jojo::yes2true(Jojo::getOption('menuuseindex'))) $menu->useindex = true;
         $menu->populate();
         $menu->activepageid = $this->id;
-
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $root = $mldata['roots'][$this->getValue('pg_language')];
-            return $menu->display($root);
-        }
-
-        return $menu->display();
+        $mldata = Jojo::getMultiLanguageData();
+        $root = Jojo::getSectionRoot($this->page['pageid']);
+        return $menu->display($root);
     }
 
     function getCorrectUrl()
@@ -291,6 +240,8 @@ class Jojo_Plugin {
             }
         }
 
+        $pageprefix = Jojo::getPageUrlPrefix($this->page['pageid']);
+        $pageroot = Jojo::getSectionRoot($this->page['pageid']);
          /* Use the page url if we have it, else generate something */
         $link = '';
         if ($this->page['pg_url']) {
@@ -298,21 +249,16 @@ class Jojo_Plugin {
         } else {
             $link .=  Jojo::rewrite('page', $this->page['pageid'], $this->page['pg_title']);
         }
-
-        /* Add the language prefix if we need it */
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
-            $home = $mldata['homes'][$this->getValue('pg_language')];
-            $link = Jojo::getMultiLanguageString ($this->page['pg_language'], false) . $link;
-        } else {
-            $home = 1;
-        }
+        /* Add the section prefix if we need it */
+        $mldata = Jojo::getMultiLanguageData();
+        $home = isset($mldata['sectiondata'][$pageroot]) ? $mldata['sectiondata'][$pageroot]['home'] : 1;
+        $link = $pageprefix . $link;
 
         /* Are we on the homepage? */
         $expecteduri = '/' . $link;
         if ($this->id == $home) {
-            /* We are on a langauge homepage */
-            $expecteduri = (_MULTILANGUAGE) ? '/' . Jojo::getMultiLanguageString($this->page['pg_language'], false) : '';
+            /* We are on a non-default section homepage */
+            $expecteduri = $pageprefix ? '/' . $pageprefix : '';
         }
 
         /* recalculate admin links */
