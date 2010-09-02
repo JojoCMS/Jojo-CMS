@@ -1,15 +1,13 @@
-
 {** Displays content if available, otherwise displays a list of sub-pages (if available) **}
 {if $innertemplate}
     {include file=$innertemplate}
 {elseif $content}
     {$content}
-{elseif $subpages}
-    <br />
+{elseif $subpages}<br />
     <h3>{$title} - Sub Pages</h3>
     <ul>
-    {section name=sub loop=$subpages}
-      <li><a href="{$subpages[sub].url}" title="{$subpages[sub].rollover}">{$subpages[sub].name}</a></li>
-    {/section}
+    {foreach from=$subpages item=p}
+      <li><a href="{$p.url}" title="{$p.rollover}">{$p.name}</a></li>
+    {/foreach}
     </ul>
 {/if}
