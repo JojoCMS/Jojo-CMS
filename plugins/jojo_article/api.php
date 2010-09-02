@@ -42,7 +42,7 @@ if (class_exists('Jojo_Plugin_Jojo_search')) {
 Jojo::addFilter('content', 'removesnip', 'jojo_article');
 
 /* capture the button press in the admin section */
-Jojo::addHook('admin_action_after_save', 'admin_action_after_save', 'jojo_article');
+Jojo::addHook('admin_action_after_save_article', 'admin_action_after_save_article', 'jojo_article');
 Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'jojo_article');
 Jojo::addHook('admin_action_after_save_articlecategory', 'admin_action_after_save_articlecategory', 'jojo_article');
 

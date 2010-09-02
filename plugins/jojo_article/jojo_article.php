@@ -422,12 +422,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return $items;
     }
 
-    static function admin_action_after_save()
-    {
-        Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
-        return true;
-    }
-
     public static function sitemap($sitemap)
     {
         global $page;
@@ -640,9 +634,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $pagenum = substr($pagenum, 1);
         }
 
-        /* approving and deleting comments */
-        if ($action == 'admin') return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-
         /* unsubscribing */
         if ($action == 'unsubscribe') return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
@@ -662,7 +653,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         if ($action == 'rss') return parent::getCorrectUrl() . 'rss/';
 
-        /* article index - default */
+        /* index - default */
         return parent::getCorrectUrl();
     }
 
@@ -733,31 +724,28 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return false;
     }
 
+    static function admin_action_after_save_article()
+    {
+        Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
+        return true;
+    }
+
     // Sync the articategory data over to the page table
-    static function admin_action_after_save_articlecategory() {
+    static function admin_action_after_save_articlecategory($id) {
         if (!Jojo::getFormData('fm_pageid', 0)) {
             // no pageid set for this category (either it's a new category or maybe the original page was deleted)
-            self::sync_category_to_page();
+            self::sync_category_to_page($id);
        }
     }
 
     // Sync the category data over from the page table
-    static function admin_action_after_save_page() {
+    static function admin_action_after_save_page($id) {
         if (strtolower(Jojo::getFormData('fm_pg_link',    ''))=='jojo_plugin_jojo_article') {
-           self::sync_page_to_category();
+           self::sync_page_to_category($id);
        }
     }
 
-    static function sync_category_to_page() {
-        // Get the category id (if an existing category being saved where the page has been deleted)
-        $catid = Jojo::getFormData('fm_articlecategoryid', 0);
-        if (!$catid) {
-        // no id because this is a new category - shouldn't really be done this way, new categories should be added by adding a new page
-            $cats = Jojo::selectQuery("SELECT articlecategoryid FROM {articlecategory} ORDER BY articlecategoryid");
-            // grab the highest id (assumes this is the newest one just created)
-            $cat = array_pop($cats);
-            $catid = $cat['articlecategoryid'];
-        }
+    static function sync_category_to_page($catid) {
         // add a new hidden page for this category and make up a title
             $newpageid = Jojo::insertQuery(
             "INSERT INTO {page} SET pg_title = ?, pg_link = ?, pg_url = ?, pg_parent = ?, pg_status = ?",
@@ -782,16 +770,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     return true;
     }
 
-    static function sync_page_to_category() {
-        // Get the list of categories and the page id if available
+    static function sync_page_to_category($pageid) {
+        // Get the list of categories by page id
         $categories = jojo::selectAssoc("SELECT pageid AS id, pageid FROM {articlecategory}");
-        $pageid = Jojo::getFormData('fm_pageid', 0);
-        // if it's a new page it won't have an id in the form data, so get it from the title
-        if (!$pageid) {
-           $title = Jojo::getFormData('fm_pg_title', 0);
-           $page =  Jojo::selectRow("SELECT pageid, pg_url FROM {page} WHERE pg_title= ? AND pg_link = ? ", array($title, Jojo::getFormData('fm_pg_link', '')));
-           $pageid = $page['pageid'];
-        }
         // no category for this page id
         if (!count($categories) || !isset($categories[$pageid])) {
             jojo::insertQuery("INSERT INTO {articlecategory} (pageid) VALUES ('$pageid')");

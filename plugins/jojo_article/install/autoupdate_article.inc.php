@@ -204,27 +204,27 @@ $default_fd['article']['ar_image'] = array(
         'fd_mode' => "standard",
     );
 
-// Language Field
+// Language Field  (deprecated)
 $default_fd['article']['ar_language'] = array(
         'fd_name' => "Language/Country",
-        'fd_type' => "dblist",
-        'fd_options' => "lang_country",
+        'fd_type' => "hidden",
+        'fd_options' => "",
         'fd_default' => "en",
         'fd_size' => "20",
-        'fd_help' => "The language or country of the article",
+        'fd_help' => "The language/country of the article",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
     );
 
-// HTMLLang Field (to allow user to override the default language for the language/country chosen.
+// HTMLLang Field (to allow user to override the default language for the section chosen.
 $default_fd['article']['ar_htmllang'] = array(
         'fd_name' => "HTML Language",
         'fd_type' => "dblist",
         'fd_options' => "language",
         'fd_default' => "",
         'fd_size' => "20",
-        'fd_help' => "The language of the article - if different from the default language for the language/country chosen above.",
+        'fd_help' => "The language of the article - if different from the default language for this section.",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "advanced",
