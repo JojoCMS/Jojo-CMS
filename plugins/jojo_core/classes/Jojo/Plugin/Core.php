@@ -166,7 +166,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pagePermissions = new JOJO_Permissions();
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || in_array( $_ADMIN_ROOT_ID, Jojo::getSelectedPages($i['pageid'])) ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
