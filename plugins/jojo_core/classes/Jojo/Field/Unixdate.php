@@ -42,10 +42,10 @@ class Jojo_Field_unixdate extends Jojo_Field
         global $smarty;
 
         //TODO: Add handlers so that initial date is the same format as the Javascript, and Today, tomorrow, yesterday are handled
-        $formatteddate = ($this->value > 0) ? date("d/m/Y", $this->value) : '';
+        $formatteddate = ($this->value > 0) ? strftime("%Y-%m-%d %T", $this->value) : '';
         $smarty->assign('formatteddate', $formatteddate);
 
-        $printabledate = ($this->value > 0) ? date('D, j F Y', $this->value) : '';
+        $printabledate = ($this->value > 0) ? strftime("%c", $this->value) : '';
         $smarty->assign('printabledate', $printabledate);
 
         $smarty->assign('readonly', $this->fd_readonly);
@@ -58,21 +58,24 @@ class Jojo_Field_unixdate extends Jojo_Field
 
     function displayView()
     {
-        return ($this->value > 0) ? date("d/m/Y", $this->value) : '';
+        return ($this->value > 0) ? strftime("%c", $this->value) : '';
     }
 
     function displayJs()
     {
-        global $smarty;
-        return $smarty->fetch('admin/fields/unixdate_js.tpl');
+//        global $smarty;
+//        return $smarty->fetch('admin/fields/unixdate_js.tpl');
     }
 
     function setValue($newvalue)
     {
-        $this->value = is_numeric($newvalue) ? $newvalue : Jojo::strToTimeUK($newvalue);
-        if ($newvalue == '' && $this->fd_default=='now')  $this->value = time();
-        return true;
-        if (($newvalue == '') || ($newvalue == 'n/a') || ($newvalue == 'na')) $this->value = 0;
+        if (!empty($newvalue) && ($newvalue != 'n/a' || $newvalue != 'na') && strtotime($newvalue)) {
+            $this->value = strtotime($newvalue);
+        } elseif ($this->fd_default=='now') {
+            $this->value = time();
+        } else {
+            $this->value = 0;
+        }
         return true;
     }
 }
