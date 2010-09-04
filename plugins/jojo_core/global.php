@@ -148,7 +148,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
             $n['subnav'] = _getNav($n['pageid'], $subnavLevels - 1, $field);
             $plugin = $n['pg_link'];
              if ($plugin && class_exists($plugin) && method_exists($plugin, 'getNavItems')) {
-                $pluginsubnav = $plugin::getNavItems($n['pageid'], $n['selected']);
+                $pluginsubnav = call_user_func($plugin . '::getNavItems', $n['pageid'], $n['selected']);
                 $n['subnav'] = array_merge($pluginsubnav, $n['subnav']);
             }
         }
