@@ -6,12 +6,12 @@
         <!-- [[CACHE INFORMATION]] -->
         <!-- Page generation time: {$GENERATIONTIME|round:3}s -->
         {if $pageid}<!-- PageID: *{$pageid}* -->{/if}
-        <title>{$displaytitle|escape:"html":$charset}</title>
+        <title>{if $displaytitle}{$displaytitle}{/if}</title>
         <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />
         <link rel="Shortcut icon" href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/favicon.ico" />
         <meta http-equiv="content-Type" content="text/html; charset={if $charset}{$charset}{else}utf-8{/if}" />
-        {if $metadescription}<meta name="description" content="{$metadescription|escape:'htmlall':$charset}" />{elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc|escape:'htmlall':$charset}" />{/if}
-        <meta name="keywords" content="{if $pg_metakeywords}{$pg_metakeywords|escape:'htmlall':$charset}{else}{$metakeywords|escape:'htmlall':$charset}{/if}" />
+        {if $metadescription}<meta name="description" content="{$metadescription}" />{elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />{/if}
+        <meta name="keywords" content="{if $pg_metakeywords}{$pg_metakeywords}{elseif $metakeywords}{$metakeywords}{/if}" />
         <meta name="mssmarttagspreventparsing" content="true" />
         <meta name="generator" content="Jojo CMS http://www.jojocms.org" />
         {if !$robots_index || !$robots_follow || $isadmin}<meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}
