@@ -52,6 +52,7 @@ class Jojo_Plugin {
 
         $this->qt = 'page';
         $this->qid = $id;
+        $this->page['root'] = Jojo::getSectionRoot($this->page['pageid']);
 
         if (!defined('_MULTILANGUAGE')) define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage'))); //TODO - why is this not defined on some sites?
 
@@ -78,24 +79,23 @@ class Jojo_Plugin {
     {
         global $smarty;
         $result = array();
-        $result['title']            = $this->page["pg_title"];
-        $result['menutitle']        =  Jojo::either($this->page["pg_menutitle"],$this->page["pg_title"]);
-        $result['seotitle']         =  Jojo::either($this->page["pg_seotitle"],$this->page["pg_title"]);
-        $result['desc']             = $this->page["pg_desc"];
-        $result['metadescription']  =  Jojo::either($this->page["pg_metadesc"],$this->page["pg_desc"]);
-        $result['metakeywords']     = '';
-        $result['content']          = $this->page["pg_body"];
-        $result['rssicon']          = array();
-        $result['index']            = isset($this->page["pg_index"]) && ($this->page["pg_index"] == 'no') ? false : true;
-        $result['followto']         = isset($this->page["pg_followto"]) && ($this->page["pg_followto"] == 'no') ? false : true;
+        $result['title']                = htmlspecialchars($this->page["pg_title"], ENT_COMPAT, 'UTF-8', false);
+        $result['menutitle']        =  htmlspecialchars(Jojo::either($this->page["pg_menutitle"],$this->page["pg_title"]), ENT_COMPAT, 'UTF-8', false);
+        $result['seotitle']           =  htmlspecialchars(Jojo::either($this->page["pg_seotitle"],$this->page["pg_title"]), ENT_COMPAT, 'UTF-8', false);
+        $result['desc']               = htmlspecialchars($this->page["pg_desc"], ENT_COMPAT, 'UTF-8', false);
+        $result['metadescription']  =  htmlspecialchars(Jojo::either($this->page["pg_metadesc"],$this->page["pg_desc"]), ENT_COMPAT, 'UTF-8', false);
+        $result['metakeywords'] = '';
+        $result['content']           = $this->page["pg_body"];
+        $result['rssicon']            = array();
+        $result['index']              = isset($this->page["pg_index"]) && ($this->page["pg_index"] == 'no') ? false : true;
+        $result['followto']           = isset($this->page["pg_followto"]) && ($this->page["pg_followto"] == 'no') ? false : true;
         $result['followfrom']       = isset($this->page["pg_followfrom"]) && ($this->page["pg_followfrom"] == 'no') ? false : true;
-        $result['javascript']       = '';
-        $result['css']              = '';
-        $result['head']             = isset($this->page["pg_head"]) ? $this->page["pg_head"] : '';
+        $result['javascript']        = '';
+        $result['css']                 = '';
+        $result['head']               = isset($this->page["pg_head"]) ? $this->page["pg_head"] : '';
         $result = Jojo::applyFilter('jojo_plugin:result', $result);
 
-        $pageroot = Jojo::getSectionRoot($this->page['pageid']);
-        $result['breadcrumbs'] = $this->_getBreadcrumbs($pageroot);
+        $result['breadcrumbs'] = $this->_getBreadcrumbs();
 
         // Get HTML language for the page
         $language = Jojo::getPageHtmlLanguage();
@@ -158,10 +158,11 @@ class Jojo_Plugin {
         return new $class($page['pageid']);
     }
 
-    function _getBreadcrumbs($root = 0)
+    function _getBreadcrumbs()
     {
         $breadcrumbs = array();
         $pageid = $this->page['pageid'];
+        $root = $this->page['root'];
         $maxDepth = 50;
         $mldata = Jojo::getMultiLanguageData();
         $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;

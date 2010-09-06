@@ -28,9 +28,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     /* Get articles  */
     static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false) {
         global $page;
-        if (_MULTILANGUAGE && $categoryid == 'all' && $include != 'alllanguages') {
+        if ($categoryid == 'all' && $include != 'alllanguages') {
             $categoryid = array();
-            $sectionpages = self::getPluginPages('', Jojo::getSectionRoot($page->page['pageid']));
+            $sectionpages = self::getPluginPages('', $page->page['root']);
             foreach ($sectionpages as $s) {
                 $categoryid[] = $s['articlecategoryid'];
             }
@@ -184,11 +184,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         global $smarty;
         $content = array();
         $pageid = $this->page['pageid'];
-        
-        if (_MULTILANGUAGE) {
-            $pageprefix = Jojo::getPageUrlPrefix($pageid);
-            $smarty->assign('multilangstring', $pageprefix);
-        }
+        $pageprefix = Jojo::getPageUrlPrefix($pageid);
+        $smarty->assign('multilangstring', $pageprefix);
+
         if (class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_subscriptions', 'no') == 'yes') {
             Jojo_Plugin_Jojo_comment::processSubscriptionEmails();
         }
@@ -230,7 +228,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if ($action == 'rss') {
             $rssfields = array(
                 'pagetitle' => $this->page['pg_title'],
-                'pageurl' => _SITEURL . '/' . (_MULTILANGUAGE ? $pageprefix : '') . $this->page['pg_url'] . '/',
+                'pageurl' => _SITEURL . '/' . $pageprefix . $this->page['pg_url'] . '/',
                 'title' => 'ar_title',
                 'body' => 'ar_body',
                 'url' => 'url',
@@ -374,13 +372,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($numpages == 1) {
                 $pagination = '';
             } elseif ($numpages == 2 && $pagenum == 2) {
-                $pagination = sprintf('<a href="%s/p1/">previous...</a>', (_MULTILANGUAGE ? $pageprefix : '') . self::_getPrefix('article', $categoryid) );
+                $pagination = sprintf('<a href="%s/p1/">previous...</a>', $pageprefix . self::_getPrefix('article', $categoryid) );
             } elseif ($numpages == 2 && $pagenum == 1) {
-                $pagination = sprintf('<a href="%s/p2/">more...</a>', (_MULTILANGUAGE ? $pageprefix : '') . self::_getPrefix('article', $categoryid) );
+                $pagination = sprintf('<a href="%s/p2/">more...</a>', $pageprefix . self::_getPrefix('article', $categoryid) );
             } else {
                 $pagination = '<ul>';
                 for ($p=1;$p<=$numpages;$p++) {
-                    $url = (_MULTILANGUAGE ? $pageprefix : '') . self::_getPrefix('article', $categoryid) . '/';
+                    $url = $pageprefix . self::_getPrefix('article', $categoryid) . '/';
                     if ($p > 1) {
                         $url .= 'p' . $p . '/';
                     }
@@ -414,7 +412,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         // use core function to clean out any pages based on permission, status, expiry etc
         $items =  Jojo_Plugin_Core::cleanItems($items, $for);
         foreach ($items as $k=>$i){
-            if ($section && $section != Jojo::getSectionRoot($i['pageid'])) {
+            if ($section && $section != $i['root']) {
                 unset($items[$k]);
                 continue;
             }
@@ -487,11 +485,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $url = $i['url'];
                 $sitemap['pages']['tree'] = self::_sitemapAddInplace($sitemap['pages']['tree'], $articletree->asArray(), $url);
             } else {
-                if (_MULTILANGUAGE) {
-                    $mldata = Jojo::getMultiLanguageData();
-                    $sectroot = Jojo::getSectionRoot($i['pageid']);
-                    $sectname = $mldata['sectiondata'][$sectroot]['name'];
-                }
+                $mldata = Jojo::getMultiLanguageData();
+                $sectname = $mldata['sectiondata'][$i['root']]['name'];
                 /* Add to the end */
                 $sitemap["articles$k"] = array(
                     'title' => $i['title'] . ( _MULTILANGUAGE ? ' (' . ucfirst($sectname) . ')' : ''),
@@ -609,10 +604,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
     static function getPrefixById($id=false) {
         if ($id) {
-            $data = Jojo::selectRow("SELECT ar_category FROM {article} WHERE articleid = ?", array($id));
+            $data = Jojo::selectRow("SELECT articlecategoryid, pageid FROM {article} LEFT JOIN {articlecategory} ON (ar_category=articlecategoryid) WHERE articleid = ?", array($id));
             if ($data) {
-                $prefix = self::_getPrefix('', $data['ar_category']);
-                return $prefix;
+                $fullprefix = Jojo::getPageUrlPrefix($data['pageid']) . self::_getPrefix('', $data['articlecategoryid']);
+                return $fullprefix;
             }
         }
         return false;
@@ -789,13 +784,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         global $page;
 
         /* add RSS feeds for each page */
-        $categories =  self::getPluginPages('', (_MULTILANGUAGE ? Jojo::getSectionRoot($page->page['pageid']) : ''));
+        $categories =  self::getPluginPages('', $page->page['root']);
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
             if ($prefix && (isset($c['externalrsslink']) && $c['externalrsslink']) && (!isset($c['rsslink']) || $c['rsslink'] == 1)) {
               $data[$c['pg_title']] = $c['externalrsslink'];
             } elseif($prefix && (!isset($c['rsslink']) || $c['rsslink']==1)) {
-                $data[$c['pg_title']] = _SITEURL . '/' .  (_MULTILANGUAGE ? Jojo::getPageUrlPrefix($c['pageid']) : '') . $prefix;
+                $data[$c['pg_title']] = _SITEURL . '/' .  Jojo::getPageUrlPrefix($c['pageid']) . $prefix;
 
             }
         }

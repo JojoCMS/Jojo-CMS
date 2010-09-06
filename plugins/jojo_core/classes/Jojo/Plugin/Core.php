@@ -171,6 +171,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 continue;
             }
             $i['id'] = $i['pageid'];
+            $i['root'] = Jojo::getSectionRoot($i['pageid']);
             $i['title'] = htmlspecialchars( (isset($i['pg_menutitle']) && !empty($i['pg_menutitle']) ? $i['pg_menutitle'] : $i['pg_title']), ENT_COMPAT, 'UTF-8', false);
             $i['desc'] = isset($i['pg_desc']) ? htmlspecialchars($i['pg_desc'], ENT_COMPAT, 'UTF-8', false) : '';
             // Snip for the index description
