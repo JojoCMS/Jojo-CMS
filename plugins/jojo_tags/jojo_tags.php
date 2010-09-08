@@ -220,6 +220,10 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
         $sqltags = array();
         if ($tags) {
             foreach ($tags as $k => $v) {
+                    if (!$v) {
+                        unset($tags[$k]);
+                        continue;
+                    }
                     $tags[$k] = Jojo::getOption('tag_stricturl', 'yes') == 'yes' ? str_replace('-', ' ', $v) : urldecode($v);
                     $sqltags[$k] = '"' . str_replace('"', '\"', $tags[$k]) . '"';
             }
@@ -241,6 +245,12 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
             $ids = array();
             foreach ($res as $t) {
                 $ids[$t['plugin']][$t['itemid']] = true;
+            }
+            
+            /* If the item can't be found and it's not the index page, return a 404 */
+            if (!empty($tags) && !$ids) {
+                include(_BASEPLUGINDIR . '/jojo_core/404.php');
+                exit;
             }
 
             $results = array();

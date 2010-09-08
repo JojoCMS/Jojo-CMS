@@ -18,19 +18,11 @@
  * @package jojo_tags
  */
 
-/* Delete old Tags {page} */
-$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'tags.php'");
-if (count($data)) {
-    echo "jojo_tags: Deleting old <b>Tags</b> {page} from menu<br />";
-    Jojo::deleteQuery("DELETE FROM {page} WHERE pg_link = 'tags.php'");
-}
-
 /* Tags {page} */
-Jojo::updateQuery("UPDATE {page} SET pg_link='Jojo_Plugin_Jojo_tags' WHERE pg_link='jojo_tags.php'");
-$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_Tags'");
+$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'jojo_plugin_jojo_tags'");
 if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Tags: Adding <b>Tags</b> {page} to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Tags', pg_link = 'Jojo_Plugin_Jojo_Tags', pg_url = 'tags', pg_parent= ? , pg_order=0, pg_mainnav='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Tags', pg_link = 'jojo_plugin_jojo_tags', pg_url = 'tags', pg_parent= ? , pg_order=0, pg_mainnav='no', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 /* Edit Tags */

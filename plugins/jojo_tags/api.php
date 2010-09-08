@@ -23,8 +23,8 @@ Jojo::addFilter('output', 'tagcloudfilter', 'jojo_tags');
 Jojo::addFilter('jojo_xml_sitemap', 'xmlsitemap', 'jojo_tags');
 
 /* Register URI patterns for all languages */
-foreach(Jojo::selectQuery('SELECT DISTINCT pg_url FROM {page} where pg_link = ?', 'Jojo_Plugin_Jojo_tags') as $row) {
-    Jojo::registerURI($row['pg_url'] . "/[tags:(.*)]", 'Jojo_Plugin_Jojo_tags'); // "tags/name-of-tag/"
+foreach(Jojo::selectQuery('SELECT DISTINCT pg_url FROM {page} where pg_link = ?', 'jojo_plugin_jojo_tags') as $row) {
+    Jojo::registerURI($row['pg_url'] . "/[tags:(.*)]", 'jojo_plugin_jojo_tags'); // "tags/name-of-tag/"
 }
 
 $_provides['fieldTypes'] = array(
