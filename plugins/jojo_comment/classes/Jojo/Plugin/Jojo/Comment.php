@@ -18,9 +18,8 @@
  * @package jojo_comment
  */
 
-class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
+class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
 {
-
     function _getContent()
     {
         global $smarty, $_USERGROUPS;
@@ -144,7 +143,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         /* Cache some stuff */
         $query = "SELECT pageid, pg_title, pg_url FROM {page} WHERE `pg_link` = 'jojo_plugin_jojo_comment'";
         $res = Jojo::selectRow($query);
-        
+
         if ($res) {
             $_cache[$cacheKey] = !empty($res['pg_url']) ? $res['pg_url'] : $res['pageid'] . '/' . $res['pg_title'];
         } else {
@@ -153,9 +152,9 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         return $_cache[$cacheKey];
     }
 
-    
+
     static function getComments($itemid, $plugin, $pageid, $allowcomments=false)
-    {        
+    {
         global $smarty, $_USERGROUPS, $_USERID, $templateoptions;
         /* assign user variables for pre-populating fields for logged in users */
         if (!empty($_USERID)) {
@@ -173,7 +172,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
                 self::markSubscriptionsViewed($_USERID, $itemid, $plugin);
             }
             $smarty->assign('user', $user);
-        } 
+        }
         /* Remember user fields from session */
         if (!empty($_SESSION['name'])) $smarty->assign('name', $_SESSION['name']);
         if (!empty($_SESSION['email'])) $smarty->assign('email', $_SESSION['email']);
@@ -190,15 +189,22 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         }
 
         /* Calculate if user is admin or not. Admins can edit comments */
-        $pagePermissions = new JOJO_Permissions();
+        $pagePermissions = new Jojo_Permissions();
         $pagePermissions->getPermissions('page', $pageid);
         if ($pagePermissions->hasPerm($_USERGROUPS, 'edit')) {
             $smarty->assign('editperms', true);
         }
         $templateoptions['frajax'] = true;
         $smarty->assign('templateoptions', $templateoptions);
-        $commenthtml = $smarty->fetch('jojo_comment.tpl') . ($allowcomments ? $smarty->fetch('jojo_post_comment.tpl') : '');
-       
+
+        if (Jojo::getOption('new_comment_position', 'below') == 'above') {
+            /* New Comment form above the existing comments */
+            $commenthtml = ($allowcomments ? $smarty->fetch('jojo_post_comment.tpl') : '') . $smarty->fetch('jojo_comment.tpl');
+        } else {
+            /* New Comment form below the existing comments */
+            $commenthtml = $smarty->fetch('jojo_comment.tpl') . ($allowcomments ? $smarty->fetch('jojo_post_comment.tpl') : '');
+        }
+
         return  $commenthtml;
     }
 
@@ -209,7 +215,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         $itemid = $item['id'];
         $title = $item['title'];
         $url = $item['url'];
-        
+
         if (!$itemid || !$plugin) return false;
         global $smarty, $_USERID;
 
@@ -433,7 +439,7 @@ class Jojo_Plugin_Jojo_comment extends Jojo_Plugin
         foreach ($subscriptions as $sub) {
             $class = 'Jojo_Plugin_' . $sub['plugin'];
             $id = $sub['itemid'];
-            if (class_exists($class) && method_exists($class, 'getItemsById') && $id) { 
+            if (class_exists($class) && method_exists($class, 'getItemsById') && $id) {
                 $item = call_user_func($class . '::getItemsById', $id);
                 $subject  = 'New comment notification: ' . $item['title'];
                 $message  = 'A new comment has been added to "' . $item['title'] . '" on ' . Jojo::getOption('sitetitle') . '. You are subscribed to receive email notifications notifications of any new comments on this post.';

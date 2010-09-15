@@ -37,6 +37,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'new_comment_position',
+    'category'    => 'Comments',
+    'label'       => 'New Comment Form Position',
+    'description' => 'Should the New Comment form be above or below the existing comments?',
+    'type'        => 'radio',
+    'default'     => 'below',
+    'options'     => 'above,below',
+    'plugin'      => 'jojo_comment'
+);
+
+$_options[] = array(
     'id'          => 'comment_show_form',
     'category'    => 'Comments',
     'label'       => 'Show comments form',
