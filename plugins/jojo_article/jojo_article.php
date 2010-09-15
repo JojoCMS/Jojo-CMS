@@ -158,7 +158,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function getArticleUrl($id=false, $url=false, $title=false, $pageid=false, $category=false )
     {
         $pageprefix = Jojo::getPageUrlPrefix($pageid);
-        
+
         /* URL specified */
         if (!empty($url)) {
             return $pageprefix . self::_getPrefix('article', $category) . '/' . $url . '/';
@@ -303,7 +303,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Get Comments if used */
             if (class_exists('Jojo_Plugin_Jojo_comment') && (!isset($article['comments']) || $article['comments']) ) {
                 /* Was a comment submitted? */
-                if (Jojo::getFormData('submit', false)) {
+                if (Jojo::getFormData('comment', false)) {
                     Jojo_Plugin_Jojo_comment::postComment($article);
                 }
                $articlecommentsenabled = (boolean)(isset($article['ar_comments']) && $article['ar_comments']=='yes');
