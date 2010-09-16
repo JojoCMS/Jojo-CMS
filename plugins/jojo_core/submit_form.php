@@ -21,7 +21,7 @@
 /*
  A generic form handler script. Point any form at "http://www.domain.com/submit-form/", and it will send the contents of the POST array to the admin email.
  */
-class Jojo_Plugin_Submit_form extends Jojo_Plugin
+class Jojo_Plugin_Submit_Form extends Jojo_Plugin
 {
     function _getContent()
     {
@@ -32,71 +32,125 @@ class Jojo_Plugin_Submit_form extends Jojo_Plugin
         /* Check for form injection attempts */
         Jojo::noFormInjection();
 
-        if (isset($_POST['submit']) || isset($_POST['Submit']) || isset($_POST['btn_submit'])) {
-            if (isset($_POST['subject'])) {
-                $subject_line = $_POST['subject'];
-                unset($_POST['subject']);
-            } else {
+        if (count($_POST) >= 2) {
+            /* Look for a subject */
+            $subject_line = isset($_POST['subject']) ? $_POST['subject'] : _SITETITLE . " Form Submission";
+            unset($_POST['subject']);
 
-                $subject_line = _SITETITLE . " Form Submission";
+            /* Look for an email address */
+            $contact_email = _FROMADDRESS;
+            foreach (array('emailsender', 'email', 'Email', 'form_Email') as $field) {
+                if (isset($_POST[$field])) {
+                    $contact_email = $_POST[$field];
+                    break;
+                }
             }
 
-            if (isset($_POST['emailsender'])) {
-                $contact_email = $_POST['emailsender'];
-                unset($_POST['emailsender']);
-            } elseif (isset($_POST['Email'])) {
-                $contact_email = $_POST['Email'];
-                //unset($_POST['Email']);
-            } else {
-                $contact_email = _FROMADDRESS;
+            /* Look for a name */
+            $contact_name = _FROMNAME;
+            foreach (array('name', 'Name', 'form_Name') as $field) {
+                if (isset($_POST[$field])) {
+                    $contact_name = $_POST[$field];
+                    break;
+                }
             }
 
-            if (isset($_POST['name'])) {
-                $contact_name = $_POST['name'];
-                unset($_POST['name']);
-            } else {
-                $contact_name = _FROMNAME;
-            }
+            /* Who are we sending it to */
+            $send_to = isset($_POST['sendtoemail']) ? $_POST['sendtoemail'] : Jojo::either(_CONTACTADDRESS, _FROMADDRESS);
 
+            /* Put the message content together */
             $referring_page = $_SERVER['HTTP_REFERER'];
-
-            if (isset($_POST['sendtoemail'])) {
-                $send_to = $_POST['sendtoemail'];
-            } else {
-                //default to admin person
-                $send_to = Jojo::either(_CONTACTADDRESS, _FROMADDRESS);
-            }
-
             $contact_message = "This is an automated response, please do not reply. \n\n" . "A visitor to " . _SITETITLE . " submitted the following information on your form. The address of the form is $referring_page.\n\n";
-            // Add form values
+
+            /* Add form values */
             foreach ($_POST as $k => $v) {
-                $contact_message .= sprintf("%s: %s\n", $k, $v);
-                //assign post variables to smarty
-                $smarty->assign('post_' . $k, $v);
+                if ($k == 'MAX_FILE_SIZE') {
+                    continue;
+                }
+                if (is_array($v)) {
+                    $text = "\n";
+                    foreach ($v as $k2 => $v2) {
+                         $text .= sprintf("    %s: %s\n", $k2, $v2);
+                    }
+                    $contact_message .= sprintf("%s: %s\n", $k, $text);
+                } else {
+                    $contact_message .= sprintf("%s: %s\n", $k, $v);
+                }
             }
 
-            // Create message headers
-            $headers = "From: $contact_name <$contact_email>\r\n";
-            $headers .= "X-Sender: <$contact_email>\r\n";
-            //mailer
-            $headers .= "X-Mailer: PHP\r\n";
-            //1 UrgentMessage, 3 Normal
-            $headers .= "X-Priority: 3\r\n";
-            $headers .= "Return-Path: <$contact_email>\r\n";
+            /* Add files */
+            $toAttach = array();
+            foreach ($_FILES as $k => $v) {
+                if ($v['error'] == UPLOAD_ERR_INI_SIZE || $v['error'] == UPLOAD_ERR_FORM_SIZE || $v['error'] == UPLOAD_ERR_PARTIAL) {
+                    /* We didn't get all of the file */
+                    return array('content' => 'There was a problem recieving you file/image. Please go back and try again or try sending a smaller file');
+                }
+                if ($v['error'] != 0 || !is_uploaded_file($v['tmp_name'])) {
+                    /* No file was selected, not an error, just ignore it */
+                    continue;
+                }
+                $contact_message .= sprintf("%s: %s\n", $k, 'Attached file "' . $v['name'] . '"');
+                $toAttach[] = $v;
+            }
 
-            $contact_message .= Jojo::emailFooter();
+            /* Protect against email injection */
+            $badStrings = array("Content-Type:",
+                             "MIME-Version:",
+                             "Content-Transfer-Encoding:",
+                             "bcc:",
+                             "cc:",
+                             "%0A");
+            foreach($badStrings as $v){
+                if ((strpos($contact_name, $v) !== false) || (strpos($contact_email, $v) !== false) ){
+                    header('location: http://en.wikipedia.org/wiki/Email_injection');
+                    exit;
+                }
+            }
 
-            // Send email
-            $res = mail($send_to, $subject_line, $contact_message, $headers);
+            $smtp = Jojo::getOption('smtp_mail_enabled', 'no');
+            if ($smtp == 'yes') {
+                /* Create the email */
+                $mail = new htmlMimeMail();
+                if (Jojo::getOption('smtp_mail_user', '')) {
+                    $mail->setSMTPParams(Jojo::getOption('smtp_mail_host', 'localhost'), Jojo::getOption('smtp_mail_port', 25), _SITEURL, true, Jojo::getOption('smtp_mail_user', ''), Jojo::getOption('smtp_mail_pass', ''));
+                } else {
+                    $mail->setSMTPParams(Jojo::getOption('smtp_mail_host', 'localhost'), Jojo::getOption('smtp_mail_port', 25), _SITEURL);
+                }
+                $mail->setFrom('"' . $contact_name . '" <' . $contact_email . '>');
+                $mail->setText($contact_message . Jojo::emailFooter());
+                $mail->setSubject($subject_line);
 
-            //send to webmaster
-            $res = mail(Jojo::getOption('webmasteraddress'), $subject_line, $contact_message, $headers);
+                /* Add the attachments */
+                foreach($toAttach as $file) {
+                    $mail->addAttachment($mail->getFile($file['tmp_name']), $file['name'], $file['type']);
+                }
 
-            if ($res) {
-                $smarty->assign('message', 'Your message has been sent.');
+                /* Send email */
+                $result = $mail->send(array($send_to), 'smtp');
+
+                /* Send to Webmaster */
+                if ($send_to != Jojo::getOption('webmasteraddress')) {
+                    $contact_message .= "\n\n This is a copy of the message sent to $sendto\n";
+                    $mail->setText($contact_message . Jojo::emailFooter());
+                    $result = $mail->send(array(Jojo::getOption('webmasteraddress')), 'smtp');
+                }
+                exit;
             } else {
-                $smarty->assign('message', 'There was an error processing the form.');
-                echo "There was an error processing the form.";
+                /* Email headers */
+                $headers = "From: $contact_name <$contact_email>\r\n";
+                $headers .= "X-Sender: <$contact_email>\r\n";
+                $headers .= "X-Mailer: PHP\r\n";
+                $headers .= "X-Priority: 3\r\n";
+                $headers .= "Return-Path: <$contact_email>\r\n";
+
+                /* Send email */
+                $res = mail($send_to, $subject_line, $contact_message . Jojo::emailFooter(), $headers);
+
+                /* Send to Webmaster */
+                if ($send_to != Jojo::getOption('webmasteraddress')) {
+                    $contact_message .= "\n\n This is a copy of the message sent to $sendto\n";
+                    $res = mail(Jojo::getOption('webmasteraddress'), $subject_line, $contact_message . Jojo::emailFooter(), $headers);
+                }
             }
 
             if (_MULTILANGUAGE) {
@@ -113,30 +167,6 @@ class Jojo_Plugin_Submit_form extends Jojo_Plugin
             exit();
         }
 
-        echo "There may have been an error submitting the form. Please press back and try again.";
-        exit;
-        return $content;
-    }
-
-    function getCorrectUrl()
-    {
-        global $secure;
-        $link = Jojo::urlPrefix(Jojo::yes2true($this->page['pg_ssl']));
-        if ($this->page['pg_url']) {
-            $link .= $this->page['pg_url'] . '/';
-        } else {
-            $link .= Jojo::rewrite('page', $this->page['pageid'], 'index');
-        }
-
-        /* Are we on the homepage? */
-        $expectedurl = '/' . $link;
-
-        /* Is this a secure page? */
-        if ($secure) {
-            $expectedurl = _SECUREURL . $expectedurl;
-        } else {
-            $expectedurl = _SITEURL . $expectedurl;
-        }
-        return $expectedurl;
+        return array('content' => "There may have been an error submitting the form. Please press back and try again.");
     }
 }
