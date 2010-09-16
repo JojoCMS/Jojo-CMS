@@ -212,22 +212,22 @@ class Jojo_Field_fileupload extends Jojo_Field
                 }
 
                 /* All appears good, so prepare to move file to final resting place */
-                $destination = _DOWNLOADDIR."/".$this->fd_table."s/".basename($filename);
+                $destination = _DOWNLOADDIR . "/" . $this->fd_table . "s/" . basename($filename);
 
                 /* create the folder if it does not already exist */
                 Jojo::RecursiveMkdir(dirname($destination));
-                
+
                 /* Ensure file does not already exist on server, rename if it does */
                 $newname = '';
-                $i=1;
-                while (file_exists($destination)){
-                    $i++;
-                    $newname = $i."_".$filename;
+                $i = 1;
+                $newMD5 = md5_file($tmpfilename);
+                while (file_exists($destination) && $newMD5 != md5_file($destination)){
+                    $newname = ++$i . "_" . $filename;
                     $destination = _DOWNLOADDIR . "/" . $this->fd_table . "s/" . $newname;
                 }
 
                 /* move to final location */
-                if (move_uploaded_file($tmpfilename, $destination)) {
+                if (file_exists($destination) || move_uploaded_file($tmpfilename, $destination)) {
                     $message = "Upload successful";
                     $this->value =  !empty($newname) ? $newname : $filename;
                 } else {
@@ -262,19 +262,29 @@ class Jojo_Field_fileupload extends Jojo_Field
             return false;
         }
 
-        /* delete the file */
-        if (!unlink(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value)) {
-            $this->error = "Unable to delete the specified file. The file permissions may not be set correctly.";
-            return false;
+        /* Check the file isn't used by any other records */
+        $query = sprintf("SELECT `%s` FROM {%s} WHERE `%s` = ? AND `%s` != ?",
+                            $this->table->getOption('primarykey'),
+                            $this->fd_table,
+                            $this->fd_field,
+                            $this->table->getOption('primarykey')
+                        );
+        $row = Jojo::selectRow($query, array($this->value, $this->table->getRecordID()));
+        if (!$row) {
+            /* Not used by other records so delete the file */
+            if (!unlink(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value)) {
+                $this->error = "Unable to delete the specified file. The file permissions may not be set correctly.";
+                return false;
+            }
+
+            /* Check file exists again (it shouldn't because we just deleted it) */
+            if (file_exists(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value)) {
+                $this->error = "The file still exists on the server. It may not have been deleted properly.";
+                return false;
+            }
         }
 
-        /* check file exists again (it shouldn't because we just deleted it) */
-        if (file_exists(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value)) {
-            $this->error = "The file still exists on the server. It may not have been deleted properly.";
-            return false;
-        }
-
-        /* clear field in database to reflect deleted file */
+        /* Clear field in database to reflect deleted file */
         if ($this->table->getRecordID() != 0) {
             $query = sprintf("UPDATE {%s} SET `%s` = '' WHERE `%s` = ? LIMIT 1",
                                 $this->fd_table,
@@ -285,11 +295,11 @@ class Jojo_Field_fileupload extends Jojo_Field
         }
         $this->value = '';
 
-        /* file is gone */
+        /* File is gone */
         return true;
     }
 
-    /* delete the file when the database record is deleted */
+    /* Delete the file when the database record is deleted */
     function ondelete()
     {
         $this->deletefile();
