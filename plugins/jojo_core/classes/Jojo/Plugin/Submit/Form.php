@@ -134,7 +134,6 @@ class Jojo_Plugin_Submit_Form extends Jojo_Plugin
                     $mail->setText($contact_message . Jojo::emailFooter());
                     $result = $mail->send(array(Jojo::getOption('webmasteraddress')), 'smtp');
                 }
-                exit;
             } else {
                 /* Email headers */
                 $headers = "From: $contact_name <$contact_email>\r\n";
