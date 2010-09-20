@@ -95,7 +95,7 @@ class Jojo_Field_permissions extends Jojo_Field
         $smarty->assign('defaultperms', $this->_getInheritedPerms());
 
         /* Output permissions for each group */
-        if ($this->readonly != 'yes') {
+        if ($this->fd_readonly != 'yes') {
             foreach($groups as $group => $groupname) {
                 foreach($this->_permOptions as $perm => $name) {
                     $permName = $group . '.' . $perm;
@@ -112,7 +112,7 @@ class Jojo_Field_permissions extends Jojo_Field
             }
         }
         $smarty->assign('fd_field', $this->fd_field);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
         $smarty->assign('groups', $groups);
         $smarty->assign('_permOptions', $this->_permOptions);
         $smarty->assign('defaultperms_group', isset($defaultperms[$group]));
