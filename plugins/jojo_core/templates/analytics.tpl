@@ -18,7 +18,7 @@
                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             {literal}}{/literal})();
-        /*]]>*/</script>{$OPTIONS.contact_tracking_code}
+        /*]]>*/</script>{if $OPTIONS.contact_tracking_code}{$OPTIONS.contact_tracking_code}{/if}
 {else}
 {* old Google analytics code *}
 <script type="text/javascript">
@@ -38,7 +38,7 @@
     pageTracker._setAllowLinker(true);
 {/if}
 {jojoHook hook="analytics_trackPageview"}
-{if $sent and $OPTIONS.contact_tracking_code_analytics}
+{if $sent && $OPTIONS.contact_tracking_code_analytics}
     pageTracker._trackPageview("{$OPTIONS.contact_tracking_code_analytics}");
 {else}
     pageTracker._trackPageview();
