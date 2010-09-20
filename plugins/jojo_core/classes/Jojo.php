@@ -1257,7 +1257,7 @@ class Jojo {
     /* Turns a number in bytes to either XXb, XXkb, XXmb, XXgb depending what is appropriate. Decimal Cutoff will reduce the decimal places by one for larger numbers (for example when you want the decimal place in 1.3Mb but not in 345.4kb) */
     static function roundBytes($bytes, $decimals = 1, $decimalcutoff=false)
     {
-        $sizes = array('TB' => 1099511627776, 'GB' => 1073741824, 'MB' => 1048576, 'KB' => 1024, 'B' => 0);
+        $sizes = array('TB' => 1099511627776, 'GB' => 1073741824, 'MB' => 1048576, 'KB' => 1024, 'B' => 1);
         foreach ($sizes as $unit => $b) {
             if ($bytes >= $b) {
                 $num = number_format($bytes/$b, $decimals);
