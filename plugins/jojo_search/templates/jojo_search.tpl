@@ -29,9 +29,8 @@
     </p>
 {/if}
 
-
 {foreach item=res from=$results}
-  <div class="search-result search-cat-{$res.type|strtolower|replace:' ':'-'} clear">
+  <div class="search-result search-cat-{$res.type|strtolower|replace:' ':'-'}">
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance-display" style="width:{$res.displayrelevance|string_format:"%d"}px;" title="Search relevance: {$res.relevance|string_format:"%.1f"}"></div>{/if}
     <h3><a href="{$res.url}" title="{$res.title}">{$res.title}</a></h3>
     {if $res.image && $OPTIONS.search_images =='yes'}<a href="{$res.url}" title="{$res.title}" rel="nofollow"><img src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}v6000{/if}/{$res.image}" class="float-right" alt="{$res.title}" /></a>{/if}
