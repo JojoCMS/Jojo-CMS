@@ -180,7 +180,11 @@ class hktree
 
         $class = array();
         if (isset($this->statuses[$start]) && ($this->statuses[$start] == 'expired')) {
-          $class[] = 'expired';
+            $class[] = 'expired';
+        }
+
+        if (substr($start, 0, 1) == 'c') {
+            $class[] = 'category';
         }
 
         if (($this->disabled == $start || $disable) && $start!=0 && strstr($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
@@ -200,7 +204,7 @@ class hktree
                 $this->bulletlist .= " selected=\"selected\"";
             }
             if (count($class)) {
-                $this->bulletlist .= 'class="'.implode(' ',$class).'"';
+                $this->bulletlist .= ' class="'.implode(' ',$class).'"';
             }
             //on mozilla, opera etc. use disable-attribute to set option disabled in select box
             if (($this->disabled == $start || $disable) && $start != 0) {

@@ -478,7 +478,8 @@ class Jojo_Table {
                         $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? ($displaytitles[$r['display']]['pg_menutitle'] ? $displaytitles[$r['display']]['pg_menutitle'] : $displaytitles[$r['display']]['pg_title']) . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
                     }
                 }
-           }
+            }
+
             //get the TABLEDATA options for the category
             $catidfield = '';
             $catoptions = Jojo::selectQuery("SELECT * FROM {tabledata} WHERE td_name = ? LIMIT 1", array($categorytable));
@@ -533,6 +534,8 @@ class Jojo_Table {
             }
 
             /* Add items to HKTree */
+            global $_USERGROUPS;
+            $perms = new Jojo_Permissions();
             for ($i = 0; $i < count($records); $i++) {
                 if (($records[$i]['categoryfield'] != "") and ($records[$i]['categoryfield'] != "0")) {
                     $parent = "c" . $records[$i]['categoryfield'];
@@ -562,8 +565,6 @@ class Jojo_Table {
                 }
 
                 /* check permissions */
-                global $_USERGROUPS;
-                $perms = new Jojo_Permissions();
                 $perms->getPermissions($this->table, $records[$i]['id']);
                 /*
                 A quick hack so that the list type will show record in the list after a frajax save.
