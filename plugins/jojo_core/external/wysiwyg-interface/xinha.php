@@ -56,11 +56,23 @@
 
        xinha_config = xinha_config ? xinha_config : new Xinha.Config();
         <?php Jojo::runHook('xinha_config_start'); ?>
+        xinha_config.toolbar =
+         [
+           ["popupeditor"],
+           ["separator","formatblock","bold","italic","underline","strikethrough"],
+           ["separator","subscript","superscript"],
+           ["separator","justifyleft","justifycenter","justifyright","justifyfull"],
+           ["separator","insertorderedlist","insertunorderedlist","outdent","indent"],
+           ["separator","inserthorizontalrule","createlink","insertimage","inserttable"],
+           ["separator","undo","redo"],
+           ["separator","killword","clearfonts","removeformat","toggleborders","splitblock"],
+           ["separator","htmlmode","showhelp","about"]
+         ];	
         xinha_config.stylistLoadStylesheet("<?php echo _SITEURL ?>/css/styles.css");
         xinha_config.pageStyleSheets = ["<?php echo _SITEURL ?>/css/styles.css", "<?php echo _SITEURL ?>/css/xinha.css"];
         xinha_config.baseHref = "<?php echo _SITEURL ?>/";
         xinha_config.sevenBitClean = false;
-	
+
         <?php 	$xinhastriphref = Jojo::getOption('xinha_strip_href','yes');
         if($xinhastriphref=='no'){ ?>	
                 xinha_config.stripBaseHref = false;	
