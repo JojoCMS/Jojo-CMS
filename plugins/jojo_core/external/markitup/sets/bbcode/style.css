@@ -1,0 +1,67 @@
+/* -------------------------------------------------------------------
+// markItUp!
+// By Jay Salvat - http://markitup.jaysalvat.com/
+// ------------------------------------------------------------------*/
+.BBEditor .markItUp .markItUpButton1 a	{
+	background-image:url(images/h2.png);
+}
+.BBEditor .markItUp .markItUpButton2 a	{
+	background-image:url(images/h3.png);
+}
+.BBEditor .markItUp .markItUpButton3 a	{
+	background-image:url(images/h4.png);
+}
+.BBEditor .markItUp .markItUpButton4 a	{
+	background-image:url(images/h5.png);
+}
+.BBEditor .markItUp .markItUpButton5 a	{
+	background-image:url(images/h6.png);
+}
+.BBEditor .markItUp .markItUpButton6 a	{
+	background-image:url(images/bold.png);
+}
+.BBEditor .markItUp .markItUpButton7 a	{
+	background-image:url(images/italic.png);
+}
+.BBEditor .markItUp .markItUpButton8 a	{
+	background-image:url(images/underline.png);
+}
+
+.BBEditor .markItUp .markItUpButton9 a	{
+	background-image:url(images/picture.png);
+}
+.BBEditor .markItUp .markItUpButton10 a	{
+	background-image:url(images/link.png);
+}
+.BBEditor .markItUp .markItUpButton11 a	{
+	background-image:url(images/link.png);
+}
+.BBEditor .markItUp .markItUpButton12 a	{
+	background-image:url(images/link.png);
+}
+.BBEditor .markItUp .markItUpButton13 a	{
+	background-image:url(images/fonts.png);
+}
+.BBEditor .markItUp .markItUpButton14 a	{
+	background-image:url(images/list-bullet.png);
+}
+.BBEditor .markItUp .markItUpButton15 a	{
+	background-image:url(images/list-numeric.png);
+}
+.BBEditor .markItUp .markItUpButton16 a	{
+	background-image:url(images/list-item.png);
+}
+
+.BBEditor .markItUp .markItUpButton17 a	{
+	background-image:url(images/quotes.png);
+}
+.BBEditor .markItUp .markItUpButton18 a	{
+	background-image:url(images/code.png);
+}
+	
+.BBEditor .markItUp .clean a {
+	background-image:url(images/clean.png);
+}
+.BBEditor .markItUp .preview a {
+	background-image:url(images/preview.png);
+}
