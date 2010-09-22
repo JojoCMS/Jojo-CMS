@@ -41,8 +41,8 @@ class Jojo_Field_unixdate extends Jojo_Field
     {
         global $smarty;
 
-        //TODO: Add handlers so that initial date is the same format as the Javascript, and Today, tomorrow, yesterday are handled
-        $formatteddate = ($this->value > 0) ? strftime("%Y-%m-%d %T", $this->value) : '';
+        //template uses Any+Time: documentation at http://www.ama3.com/anytime/
+        $formatteddate = ($this->value > 0) ? strftime("%Y-%m-%d %H:%M", $this->value) : '';
         $smarty->assign('formatteddate', $formatteddate);
 
         $printabledate = ($this->value > 0) ? strftime("%c", $this->value) : '';
@@ -63,8 +63,8 @@ class Jojo_Field_unixdate extends Jojo_Field
 
     function displayJs()
     {
-//        global $smarty;
-//        return $smarty->fetch('admin/fields/unixdate_js.tpl');
+        global $smarty;
+        return $smarty->fetch('admin/fields/unixdate_js.tpl');
     }
 
     function setValue($newvalue)

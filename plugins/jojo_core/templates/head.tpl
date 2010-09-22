@@ -19,14 +19,19 @@
         <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/jpop.css" />
         <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin.css?v=3" />
         <link rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin-print.css" type="text/css" media="print" />
-        <link rel="stylesheet" type="text/css" href="external/jtageditor/jojobbcode/jojobbcode-skin.css.php" />
-        <link rel="stylesheet" type="text/css" href="external/jtageditor/jojohtml/jojohtml-skin.css.php" />
+        <link rel="stylesheet" type="text/css" href="external/anytime/anytimec.css" />
+        <link rel="stylesheet" type="text/css" href="external/markitup/skins/markitup/style.css" />
+        <link rel="stylesheet" type="text/css" href="external/markitup/sets/html/style.css" />
+        <link rel="stylesheet" type="text/css" href="external/markitup/sets/bbcode/style.css" />
         <!--[if IE]>
         <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin_ie.css" />
         <![endif]-->
-        {if $OPTIONS.googleajaxlibs == "yes"}<script type="text/javascript" src="http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>{else}<script type="text/javascript" src="{cycle values=$NEXTASSET}external/jquery/jquery-1.3.2.min.js"></script>{/if}
+        {if $OPTIONS.googleajaxlibs == "yes"}<script type="text/javascript" src="http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>{else}<script type="text/javascript" src="{cycle values=$NEXTASSET}external/jquery/jquery-1.4.2.min.js"></script>{/if}
         <script type="text/javascript" src="{cycle values=$NEXTASSET}js/jpop.js"></script>
-        <script type="text/javascript" src="external/jtageditor/jquery.jtageditor.js"></script>
+        <script type="text/javascript" src="external/anytime/anytimec.js"></script>
+        <script type="text/javascript" src="external/markitup/jquery.markitup.js"></script>
+        <script type="text/javascript" src="external/markitup/sets/html/set.js"></script>
+        <script type="text/javascript" src="external/markitup/sets/bbcode/set.js"></script>
         <script type="text/javascript" src="{cycle values=$NEXTASSET}js/admin.js?v=3"></script>
 {else}
         {* Manage the Open Directory Project and Yahoo Directory options *}{if $pageid == 1 }
@@ -38,7 +43,7 @@
         {if $include_print_css}<link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/print.css" media="print" />{/if}
         {if $include_handheld_css}<link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/handheld.css" media="handheld" />{/if}
         {if $rtl}<link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/rtl.css" />{/if}
-        {if $OPTIONS.googleajaxlibs == "yes"}<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>{else}<script type="text/javascript" src="{cycle values=$NEXTASSET}external/jquery/jquery-1.3.2.min.js"></script>{/if}
+        {if $OPTIONS.googleajaxlibs == "yes"}<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>{else}<script type="text/javascript" src="{cycle values=$NEXTASSET}external/jquery/jquery-1.4.2.min.js"></script>{/if}
 {/if}
         <script type="text/javascript" src="{cycle values=$NEXTASSET}js/common.js"></script>
 {if !$templateoptions || $templateoptions.menu}

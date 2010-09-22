@@ -15,7 +15,7 @@
 </div>
 
 {* HTML Editor *}
-<div id="editor_{$fd_field}_html" style="display: none;color:#666677;">{$fd_name}:
+<div id="editor_{$fd_field}_html" class="HTMLEditor"  style="display: none;color:#666677;">{$fd_name}:
     <button class="jojo-admin-button-launcheditor" onclick="{strip}
         $('#xinha-iframe').attr('src','{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html');
         jpop($('#wysiwyg-popup'),820,525);
@@ -24,12 +24,12 @@
         Open Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_html_outer">
-        <textarea class="jTagEditor jTagHTML" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
+        <textarea class="markItUp" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
 
 {* BB Editor *}
-<div id="editor_{$fd_field}_bb" style="display: none;color:#666677;">{$fd_name}:
+<div id="editor_{$fd_field}_bb" class="BBEditor" style="display: none;color:#666677;">{$fd_name}:
 
     <button class="jojo-admin-button-launcheditor" onclick="{strip}
         jpop($('#fm_{$fd_field}_bb_outer'),800,500);
@@ -39,7 +39,7 @@
         <img class="icon" src="images/cms/icons/page_white_wrench.png" alt="Launch Fullscreen Editor" />Launch Fullscreen Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_bb_outer" style="overflow: auto;">
-        <textarea class="jTagEditor jTagBB" style="width:90%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_bb" id="fm_{$fd_field}_bb" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if}></textarea>
+        <textarea class="markItUp" istyle="width:90%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_bb" id="fm_{$fd_field}_bb" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if}></textarea>
     </div>
 </div>
 
@@ -49,31 +49,15 @@
 {* Initialize editors *}
 
 <script type="text/javascript">
-$('#fm_{$fd_field}_bb').jTagEditor({ldelim}
-        tagSet:"external/jtageditor/jojobbcode/jojobbcode-tags.js.php",
-        tagMask:"\\[(.*?)\\]",
-        insertOnShiftEnter:"",
-        insertOnCtrlEnter:"",
-        previewParser:"external/jtageditor/jojobbcode/jojobbcode-parser.php"
-    {rdelim});
-
-$('#fm_{$fd_field}_html').jTagEditor({ldelim}
-        tagSet:"external/jtageditor/jojohtml/jojohtml-tags.js.php",
-        tagMask:"\\[(.*?)\\]",
-        insertOnShiftEnter:"",
-        insertOnCtrlEnter:""
-    {rdelim});
-
 $('textarea[name=fm_{$fd_field}_bb]').change(function(){ldelim}if($('#type_fm_{$fd_field}_bb').attr('checked')){ldelim}$('#fm_{$fd_field}').val($(this).val());{rdelim}{rdelim});
 $('textarea[name=fm_{$fd_field}_html]').change(function(){ldelim}if($('#type_fm_{$fd_field}_html').attr('checked')){ldelim}$('#fm_{$fd_field}').val($(this).val());{rdelim}{rdelim});
-{*
-$('#fm_{$fd_field}_html').bind('change', function() {ldelim}
-  $('#fm_{$fd_field}').val($('textarea[name=fm_{$fd_field}_html]').val());
-{rdelim});
-*}
+
 $(document).ready(function() {ldelim}
+       $("#fm_{$fd_field}_html").markItUp(myHtmlSettings);
+       $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
         setTextEditorContent("fm_{$fd_field}");
         $('#editor_{$fd_field}_{$editortype}').show();
+//        $.get('{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html',  function(data) {ldelim}$('#editor_{$fd_field}_html').html(data);{rdelim});
     {rdelim}
 );
 

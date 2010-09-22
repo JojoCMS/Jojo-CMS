@@ -74,6 +74,10 @@ foreach ($allfields as $fieldname => $f) {
         $start = Jojo::timer();
     }
 
+    if ($f['type'] == 'unixdate') {
+        $frajax->script("parent.$('#fm_".$fieldname."').AnyTime_noPicker();");
+    }
+
     if ($f['type'] == 'texteditor') {
         /* find out if editor is html, bb, or other */
         $editortype = 'html';
