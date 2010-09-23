@@ -243,7 +243,6 @@ if (Jojo::getPost('btn_addchild', false)) {
     $languagefield = $table->getOption('languagefield');
      if ($languagefield) {
         $parentlanguage = Jojo::getFormData('fm_' . $languagefield, '');
-        if ($parentlanguage) $table->setFieldValue($fieldname, $parentlanguage);
     }
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn("slow");');
@@ -251,6 +250,7 @@ if (Jojo::getPost('btn_addchild', false)) {
 
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();
+    $i=0;
     foreach ($allfields as $fieldname => $f) {
         /* if execution is going to be especially slow, display some progress information */
         $i++;
