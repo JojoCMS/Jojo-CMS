@@ -486,10 +486,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $sitemap['pages']['tree'] = self::_sitemapAddInplace($sitemap['pages']['tree'], $articletree->asArray(), $url);
             } else {
                 $mldata = Jojo::getMultiLanguageData();
-                $sectname = $mldata['sectiondata'][$i['root']]['name'];
                 /* Add to the end */
                 $sitemap["articles$k"] = array(
-                    'title' => $i['title'] . ( _MULTILANGUAGE ? ' (' . ucfirst($sectname) . ')' : ''),
+                    'title' => $i['title'] . ( _MULTILANGUAGE ? ' (' . ucfirst($mldata['sectiondata'][$i['root']]['name']) . ')' : ''),
                     'tree' => $articletree->asArray(),
                     'order' => 3 + $k,
                     'header' => '',

@@ -128,7 +128,7 @@ if (isset($result['different'])) Jojo::printTableDifference($table, $result['dif
 
 /* convert old rss_external_url to being set in the article category table */
 $rsscat=Jojo::selectRow("SELECT externalrsslink from {articlecategory} where articlecategoryid = 1");
-if(!$rsscat['externalrsslink']) {
+if(isset($rsscat['externalrsslink']) && !$rsscat['externalrsslink']) {
   $rssexternal=Jojo::selectRow("SELECT op_value from {option} where op_name='rss_external_url'");
   if(isset($rssexternal['op_value'])) {
     Jojo::updateQuery("UPDATE {articlecategory} set externalrsslink=? where articlecategoryid=1",$rssexternal['op_value']);
