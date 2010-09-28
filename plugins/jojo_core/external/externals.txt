@@ -3,7 +3,7 @@
 #   svn propset svn:externals -F externals.txt .
 # in this folder to update. Then commit changes to this file and the folder
 #
-jsmin http://svn.github.com/rgrove/jsmin-php.git
+#jsmin http://svn.github.com/rgrove/jsmin-php.git
 xinha http://svn.xinha.webfactional.com/trunk/
 smarty http://smarty-php.googlecode.com/svn/trunk/libs/
 jsTree -r149 http://jstree.googlecode.com/svn/trunk/
