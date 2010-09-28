@@ -115,10 +115,10 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
             if (!isset($_cached[$field][$r])) {
                 $_cached[$field][$r] = array();
             }
-            $_cached[$field][$r][$row['pageid']] = $row;
+            $_cached[$field][$r][] = $row;
             if ((_MULTILANGUAGE) && (isset($row['pg_mainnavalways'])) && ($row['pg_mainnavalways'] == 'yes') && ($r != $root)) {
                 if ((($field == 'mainnav') && ((in_array ($r, $mldata['roots'])) || ($r == 1)))) {
-                    $_cached[$field][$root][$row['pageid']] = $row;
+                    $_cached[$field][$root][] = $row;
                 }
             }
         }

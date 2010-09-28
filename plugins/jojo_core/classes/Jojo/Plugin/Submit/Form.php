@@ -143,26 +143,37 @@ class Jojo_Plugin_Submit_Form extends Jojo_Plugin
                 $headers .= "Return-Path: <$contact_email>\r\n";
 
                 /* Send email */
-                $res = mail($send_to, $subject_line, $contact_message . Jojo::emailFooter(), $headers);
+                $result = mail($send_to, $subject_line, $contact_message . Jojo::emailFooter(), $headers);
 
                 /* Send to Webmaster */
                 if ($send_to != Jojo::getOption('webmasteraddress')) {
-                    $contact_message .= "\n\n This is a copy of the message sent to $sendto\n";
-                    $res = mail(Jojo::getOption('webmasteraddress'), $subject_line, $contact_message . Jojo::emailFooter(), $headers);
+                    $contact_message .= "\n\n This is a copy of the message sent to $send_to\n";
+                    $result = mail(Jojo::getOption('webmasteraddress'), $subject_line, $contact_message . Jojo::emailFooter(), $headers);
                 }
             }
 
-            if (_MULTILANGUAGE) {
-                if (isset($longcodes[$this->page['pg_language']])) {
-                    /* Long Language Code */
-                    header('location: ' . _SITEURL . '/' . $longcodes[$this->page['pg_language']] . '/thank-you/');
-                } else {
-                    /* Short Language code */
-                    header('location: ' . _SITEURL . '/' . $this->page['pg_language'] . '/thank-you/');
-                }
+            if ($result) {
+                /* log a copy of the message */
+                $log             = new Jojo_Eventlog();
+                $log->code       = 'form submission';
+                $log->importance = 'normal';
+                $log->shortdesc  = 'Form submission from '.$contact_name.' '.$contact_email;
+                $log->desc       = $contact_message;
+                $log->savetodb();
+                unset($log);
             } else {
-                header('location: ' . _SITEURL . '/thank-you/');
+                $smarty->assign('message', 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.');
+                /* log a copy of the message */
+                $log             = new Jojo_Eventlog();
+                $log->code       = 'form submission';
+                $log->importance = 'high';
+                $log->shortdesc  = 'Failed form submission from ' . $contact_name . ' (' . $contact_email . ') to ' .  $send_to ;
+                $log->desc       = $contact_message;
+                $log->savetodb();
+                unset($log);
             }
+
+            header('location: ' . _SITEURL . (_MULTILANGUAGE ? '/' . $this->page['pg_language'] : '') . '/thank-you/');
             exit();
         }
 

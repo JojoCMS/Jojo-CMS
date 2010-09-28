@@ -3034,7 +3034,8 @@ class Jojo {
 
     static function getSectionRoot($pageid) {
         $thispagetree = Jojo::getSelectedPages($pageid); 
-        return $thispagetree[0];
+        $thisroot = $thispagetree ? $thispagetree[0] : 0;
+        return $thisroot;
     }
 
     static function isSectionPage($pageid, $sectionroot=0) {
