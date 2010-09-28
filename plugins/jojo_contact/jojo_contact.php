@@ -38,7 +38,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
        foreach ($fields as &$field) {
             /* set field value from POST */
-            if (is_array($_POST['form_' . $field['field']])) {
+            if (isset($_POST['form_' . $field['field']]) && is_array($_POST['form_' . $field['field']])) {
                 /* convert array to string */
                 $field['value'] = implode(', ', $_POST['form_' . $field['field']]);
                 /* create an assoc array for resetting the value of checkboxes when server-side checking fails */
@@ -93,8 +93,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         if ((Jojo::getOption('contact_choice') == 'yes') && (Jojo::getOption('contact_choice_list') != '')) {
             $to       =  explode(",", $_POST['form_sendto']);
-            $to_name  =  $to[0];
-            $to_email =  $to[1];
+            $to_name  =  trim($to[0]);
+            $to_email =  trim($to[1]);
         } else {
             $to_email       =  empty($to_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $to_email;
             $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
@@ -138,7 +138,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $log             = new Jojo_Eventlog();
                 $log->code       = 'enquiry';
                 $log->importance = 'normal';
-                $log->shortdesc  = 'Enquiry from '.$from_name.' '.$from_email;
+                $log->shortdesc  = 'Enquiry from '.$from_name.' '.$from_email . ' to ' . $to_name . ' ' . $to_email;
                 $log->desc       = $message;
                 $log->savetodb();
                 unset($log);
@@ -207,18 +207,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         /* Fetch options from database if we don't have them */
         if (!is_array($_toAddresses)) {
             $_toAddresses = array();
-            $rawList = Jojo::getOption('contact_choice_list');
-            $list = explode(",", $rawList);
-            $n = count($list);
-            $i = 0;
-            $j = 0;
-            while($i < $n) {
-                $_toAddresses[$j]['name'] = trim($list[$i]);
-                $_toAddresses[$j]['email'] = trim($list[$i]);
-                $i++;
-                $_toAddresses[$j]['email'] .= ",".trim($list[$i]);
-                $i++;
-                $j++;
+            $rawList = explode("\n", Jojo::getOption('contact_choice_list'));
+            foreach ($rawList as $k=>$l) {
+                $parts = explode(",", $l);
+                $_toAddresses[$k]['name'] = trim(htmlspecialchars($parts[0], ENT_COMPAT, 'UTF-8', false));
+                $_toAddresses[$k]['email'] = trim($_toAddresses[$k]['name'] . ', ' . $parts[1], ',');
             }
         }
 
