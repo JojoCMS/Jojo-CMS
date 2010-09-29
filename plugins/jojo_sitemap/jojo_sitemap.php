@@ -69,7 +69,7 @@ class Jojo_Plugin_Jojo_sitemap extends Jojo_Plugin
 
         $html = '<ul>';
         foreach ($tree as $t) {
-            $html .= "<li>" . ($t['url']!='' ? '<a href="' . $t['url'] . '">' . $t['name'] . '</a>' : $t['name'] ) . Jojo_Plugin_Jojo_sitemap::_htmlSitemap($t['children']) . "</li>\n";
+            $html .= "<li>" . ($t['url']!='' ? '<a href="' . $t['url'] . '">' . $t['name'] . '</a>' : $t['name'] ) . Jojo_Plugin_Jojo_sitemap::_htmlSitemap(isset($t['children']) ? $t['children'] : array()) . "</li>\n";
         }
         $html .= '</ul>';
         return $html;
