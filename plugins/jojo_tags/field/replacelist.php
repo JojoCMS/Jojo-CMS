@@ -40,7 +40,7 @@ class Jojo_Field_replacelist extends Jojo_Field_list
         $smarty->assign('fd_help',  htmlentities($this->fd_help));
         $smarty->assign('hktree',   $this->tree->printout_select(0, $this->value));
         $smarty->assign('error',    $this->error);
-        $smarty->assign('readonly', $this->readonly);
+        $smarty->assign('readonly', $this->fd_readonly);
 
         return  $smarty->fetch('admin/fields/dblist.tpl');
     }
