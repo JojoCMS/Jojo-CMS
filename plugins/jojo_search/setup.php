@@ -19,8 +19,8 @@
  */
 
 /* Site Search (Search Results) Page */
-$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_Search'");
+$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_Search' OR pg_link = 'jojo_plugin_jojo_search' ");
 if (!count($data)) {
     echo "Adding <b>Site Search</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Search Results', pg_link = 'Jojo_Plugin_Jojo_Search', pg_url = 'search', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Search Results', pg_link = 'jojo_plugin_jojo_search', pg_url = 'search', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_body = ''", array($_NOT_ON_MENU_ID));
 }

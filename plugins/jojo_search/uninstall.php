@@ -19,4 +19,4 @@
  */
 
 /* remove the page from the menu */
-Jojo::deleteQuery("DELETE FROM `page` WHERE pg_link='Jojo_Plugin_Jojo_Search'");
+Jojo::deleteQuery("DELETE FROM {page} WHERE pg_link='jojo_plugin_jojo_search'");
