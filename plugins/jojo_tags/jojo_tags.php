@@ -264,8 +264,13 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
                 }
 
                 if (class_exists($classname)) {
-                    $results = array_merge($results, call_user_func(array($classname, 'getTagSnippets'), array_keys($pluginids)));
+                    $pluginresults = call_user_func(array($classname, 'getTagSnippets'), array_keys($pluginids));
+                    $results = $pluginresults ? ( $results ? array_merge($results, $pluginresults) : $pluginresults ) : $results;
                 }
+            }
+            if (!$results) {
+                include(_BASEPLUGINDIR . '/jojo_core/404.php');
+                exit;
             }
             foreach ($results as $k => $v) {
                 $results[$k]['displayurl'] = urldecode($v['url']);
