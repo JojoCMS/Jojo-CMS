@@ -57,7 +57,7 @@ if ($table->getOption('parentfield')) {
     $nodes = array();
     foreach ($res as $r) {
         $nodes[$r['id']] = array(
-                            'attributes' => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                            'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
                             'data'     => $r['title'],
                             'state'    => 'closed',
                            );
@@ -75,7 +75,7 @@ if ($table->getOption('parentfield')) {
 
     $res = Jojo::selectQuery($query, array($node));
     foreach ($res as $r) {
-        $nodes[$r['parent']]['attributes']['class'] = "folder";
+        $nodes[$r['parent']]['attr'    ]['class'] = "folder";
     }
     echo json_encode(array_values($nodes));
     exit;
@@ -108,12 +108,12 @@ if ($table->getOption('categorytable')) {
                 foreach ($res as &$r) {
                     $r['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
                 }
-            } 
+            }
        }
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes[$r['id']] = array(
-                                'attributes' => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
+                                'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
                                 'data'     => $r['title'],
                                 'state'    => 'closed',
                                );
@@ -131,7 +131,7 @@ if ($table->getOption('categorytable')) {
 
         $res = Jojo::selectQuery($query, array($node));
         foreach ($res as $r) {
-            $nodes[$r['parent']]['attributes']['class'] = "folder";
+            $nodes[$r['parent']]['attr'    ]['class'] = "folder";
         }
 
         /* Find out which ones have child nodes */
@@ -146,7 +146,7 @@ if ($table->getOption('categorytable')) {
 
         $res = Jojo::selectQuery($query, array($node));
         foreach ($res as $r) {
-            $nodes[$r['parent']]['attributes']['class'] = "folder";
+            $nodes[$r['parent']]['attr'    ]['class'] = "folder";
         }
 
         /* Add nodes */
@@ -163,7 +163,7 @@ if ($table->getOption('categorytable')) {
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes[$r['id']] = array(
-                                'attributes' => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                                'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
                                 'data'     => $r['title'],
                                 'state'    => 'closed',
                                );
@@ -189,12 +189,12 @@ if ($table->getOption('categorytable')) {
                     foreach ($res as $k=>$r) {
                         $res[$k]['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
                     }
-                } 
+                }
            }
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes[$r['id']] = array(
-                                    'attributes' => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
+                                    'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
                                     'data'     => $r['title'],
                                     'state'    => 'closed',
                                    );
@@ -215,7 +215,7 @@ if ($table->getOption('categorytable')) {
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes[$r['id']] = array(
-                                'attributes' => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                                'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
                                 'data'     => $r['title'],
                                 'state'    => 'closed',
                                );
@@ -245,7 +245,7 @@ if ($table->getOption('group1') && !$node) {
     foreach ($res as $r) {
         $r['id'] = ($r['id'] != '') ? $r['id'] : 'noname';
         $nodes[$r['id']] = array(
-                            'attributes' => array (
+                            'attr'     => array (
                                                 'id' => '|' . $r['id'],
                                                 'class' => 'locked',
                                                 'parentid' => ''
@@ -280,7 +280,7 @@ if ($table->getOption('group1') && $table->getOption('group2') && $node[0] == '|
     foreach ($res as $r) {
         $r['id'] = ($r['id'] != '') ? $r['id'] : 'noname';
         $nodes[$r['id']] = array(
-                            'attributes' => array (
+                            'attr'     => array (
                                                 'id' => '~' . $r['id'] . '|' . $node,
                                                 'class' => 'locked',
                                                 'parentid' => 'g' . $node
@@ -315,7 +315,7 @@ if ($table->getOption('group1') && $node[0] == '|') {
     $nodes = array();
     foreach ($res as $r) {
         $nodes[$r['id']] = array(
-                            'attributes' => array (
+                            'attr'     => array (
                                                 'id' => $r['id'],
                                                 'class' => 'page',
                                                 'pos' => $pos++,
@@ -355,7 +355,7 @@ if ($table->getOption('group1') && $table->getOption('group2') && $node[0] == '~
     $nodes = array();
     foreach ($res as $r) {
         $nodes[$r['id']] = array(
-                            'attributes' => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                            'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
                             'data'     => $r['title'],
                             'state'    => 'closed',
                            );

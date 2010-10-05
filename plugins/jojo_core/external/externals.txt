@@ -6,4 +6,4 @@
 #jsmin http://svn.github.com/rgrove/jsmin-php.git
 xinha http://svn.xinha.webfactional.com/trunk/
 smarty http://smarty-php.googlecode.com/svn/trunk/libs/
-jsTree -r149 http://jstree.googlecode.com/svn/trunk/
+jsTree -r222 http://jstree.googlecode.com/svn/trunk/
