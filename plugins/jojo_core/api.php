@@ -58,6 +58,7 @@ Jojo::registerURI("login/[redirect:(.*)]",                                      
 $_provides['fieldTypes'] = array(
         'birthday'         => 'Birthday',
         'checkbox'         => 'Check Box',
+        'checkboxes'       => 'Check Boxes',
         'date'             => 'MySQL Date',
         'dblist'           => 'Database List',
         'dbpagelist'       => 'Database List For Pages',
