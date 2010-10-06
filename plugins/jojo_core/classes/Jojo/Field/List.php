@@ -44,6 +44,11 @@ class Jojo_Field_list extends Jojo_Field
     {
         global $smarty;
         $this->populate();
+        
+        $allextras = array();
+        foreach ($this->options as $o) {
+            if (!empty($o['extra'])) $allextras[] = $o['extra'];
+        }
 
         $smarty->assign('options', $this->options);
         $smarty->assign('fd_field', $this->fd_field);
@@ -52,8 +57,15 @@ class Jojo_Field_list extends Jojo_Field
         $smarty->assign('error', $this->error);
         $smarty->assign('rows', $this->rows);
         $smarty->assign('value', $this->value);
+        $smarty->assign('allextras',   $allextras);
 
         return  $smarty->fetch('admin/fields/list.tpl');
+    }
+    
+    function displayJs()
+    {
+        global $smarty;
+        return $smarty->fetch('admin/fields/list_js.tpl');
     }
 
     function displayView()
