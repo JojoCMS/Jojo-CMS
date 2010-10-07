@@ -889,8 +889,10 @@ div.theme-box button {
 
 #treediv li.page a ins, #treediv li ul li.page a ins {
     background-image: url(../images/default/cms/icons/page.png);
+    background-position: top left;
 }
 
 #treediv li.folder a ins {
     background-image: url(../images/default/cms/icons/folder.png);
+    background-position: top left;
 }
