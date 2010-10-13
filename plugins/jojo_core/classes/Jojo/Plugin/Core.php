@@ -166,12 +166,13 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pagePermissions = new JOJO_Permissions();
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            $mldata = Jojo::getMultiLanguageData();
+            $i['root'] = Jojo::getSectionRoot($i['pageid']);
+            if ((isset($mldata['sectiondata'][$i['root']]) && !$mldata['sectiondata'][$i['root']]['active']) || !$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
             $i['id'] = $i['pageid'];
-            $i['root'] = Jojo::getSectionRoot($i['pageid']);
             $i['title'] = htmlspecialchars( (isset($i['pg_menutitle']) && !empty($i['pg_menutitle']) ? $i['pg_menutitle'] : $i['pg_title']), ENT_COMPAT, 'UTF-8', false);
             $i['desc'] = isset($i['pg_desc']) ? htmlspecialchars($i['pg_desc'], ENT_COMPAT, 'UTF-8', false) : '';
             // Snip for the index description
