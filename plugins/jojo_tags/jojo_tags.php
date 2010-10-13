@@ -432,10 +432,20 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
             }
         } else {
             /* Create overall tag cloud */
-            $query = "SELECT tg_tag, COUNT(*) as frequency
+            $query = "SELECT tg_tag, COUNT(*) as frequency,
+                CASE WHEN SUBSTRING_INDEX(tg_tag, ' ', 1)
+                        IN ('a', 'an', 'the')
+                    THEN CONCAT(
+                        SUBSTRING(tg_tag, INSTR(tg_tag, ' ') + 1),
+                        ', ',
+                        SUBSTRING_INDEX(tg_tag, ' ', 1)
+                    )
+                    ELSE tg_tag
+                END AS tg_tagsort
                        FROM {tag_item} ti
                        INNER JOIN {tag} t ON ti.tagid = t.tagid
-                       GROUP BY tg_tag;";
+                       GROUP BY tg_tag
+                       ORDER BY tg_tagsort;";
             $res = Jojo::selectQuery($query);
         }
 
