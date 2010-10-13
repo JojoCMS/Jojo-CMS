@@ -23,7 +23,7 @@ $numarticles = Jojo::getOption('article_num_sidebar_articles', 3);
 if ($numarticles) {
 $exclude = (boolean)(Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes');
 //some of the articles we're getting might have expired or not yet gone live, so put in a buffer
-$num = $numarticles + 10;
+$num = $numarticles + 20;
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
     if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
         $categories = Jojo::selectQuery("SELECT * FROM {articlecategory}");
@@ -38,7 +38,9 @@ $num = $numarticles + 10;
         }
     } else {
         if (Jojo::getOption('article_sidebar_randomise', 0) > 0) {
-            $recentarticles = Jojo_Plugin_Jojo_article::getArticles(Jojo::getOption('article_sidebar_randomise', 0), 0, 'all',  'ar_date desc', $exclude);
+            $num = Jojo::getOption('article_sidebar_randomise', 0) + 20;
+            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
+            $recentarticles = array_slice ($recentarticles, 0, Jojo::getOption('article_sidebar_randomise', 0));
             shuffle($recentarticles);
         } else {
             $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);
