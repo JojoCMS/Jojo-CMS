@@ -408,6 +408,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'xinha_allowstyling',
+    'category'    => 'HTML Editor',
+    'label'       => 'Allow font styling in Xinha',
+    'description' => 'if yes the editor wil allow the use of font face/size/colour styling.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'xinha_viewtype',
     'category'    => 'HTML Editor',
     'label'       => 'Default image/file library view',
