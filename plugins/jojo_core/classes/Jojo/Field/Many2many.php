@@ -98,7 +98,7 @@ class Jojo_Field_many2many extends Jojo_Field
 
         /* Create the html */
         foreach ($records as $record) {
-            $item = sprintf("<label><input type='checkbox' name='fm_%s_%s' id='fm_%s_%s' value='%s' onchange='fullsave = true;'%s />%s</label><br />\n",
+            $item = sprintf("<label><input type='checkbox' name='fm_%s_%s' id='fm_%s_%s' value='%s' onchange='fullsave = true;'%s /> %s</label><br />\n",
                         $this->fd_field,
                         $record['id'],
                         $this->fd_field,
@@ -108,7 +108,7 @@ class Jojo_Field_many2many extends Jojo_Field
                         $record['display']);
             $tree->addNode($record['id'], $record['parent'], $item);
         }
-        $output = '<input type="hidden" name="fm_'.$this->fd_field.'" value="1" />'.$tree->printout_plain();
+        $output = '<input type="hidden" name="fm_'.$this->fd_field.'" value="1" /> '.$tree->printout_plain();
 
         return $output;
     }
