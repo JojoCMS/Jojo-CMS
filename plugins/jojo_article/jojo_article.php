@@ -809,7 +809,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             'primaryfields' => 'ar_title',
             'secondaryfields' => 'ar_title, ar_desc, ar_body',
         );
-        $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false);
+        $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str);
         $data = $rawresults ? self::getItemsById(array_keys($rawresults)) : '';
         if ($data) {
             foreach ($data as $result) {
