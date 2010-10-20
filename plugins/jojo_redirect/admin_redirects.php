@@ -30,6 +30,8 @@ class Jojo_Plugin_Admin_Redirects extends Jojo_Plugin
 
         Jojo_Plugin_Admin::adminMenu();
         $content['content'] = $smarty->fetch('admin/redirects.tpl');
+        
+        if (isset($_SESSION['redirects'])) unset($_SESSION['redirects']);
 
         return $content;
     }

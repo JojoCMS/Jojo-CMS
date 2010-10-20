@@ -80,5 +80,5 @@ if ($save) {
         $frajax->assign("redirect-content", "innerHTML", $smarty->fetch('admin/redirects-inner.tpl'));
     }
 }
-
+if (isset($_SESSION['redirects'])) unset($_SESSION['redirects']);
 $frajax->sendFooter();

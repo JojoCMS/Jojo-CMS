@@ -25,5 +25,3 @@ if (!$data) {
    Jojo::insertQuery('INSERT INTO {page} SET pg_title = ?, pg_url = ?, pg_link = ?, pg_order = ?, pg_parent = ?, pg_contentcache = ?',
         array("Edit Redirects", "admin/redirects", "Jojo_Plugin_Admin_Redirects", "4", $_ADMIN_CONFIGURATION_ID, "no"));
 }
-
-if (isset($_SESSION['redirects'])) unset($_SESSION['redirects']);
