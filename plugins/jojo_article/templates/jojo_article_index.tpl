@@ -19,7 +19,7 @@
     <div class="article_intro">
     <h3 class="clear"><a href="{$a.url}" title="{$a.title}">{$a.title}</a></h3>
     <div>
-          {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="images/{if $a.thumbnail}{$a.thumbnail}{else}s150{/if}/{$a.image}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
+          {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="images/{if $a.thumbnail}{$a.thumbnail}{else}s150{/if}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
           <p>{$a.bodyplain|truncate:300} <a href="{$a.url}" title="View full article" class="more">&gt;&nbsp;read&nbsp;more</a></p>
           {if $a.showdate}<div class="article-date">Added: {$a.datefriendly}</div>{/if}
           <div class="clear"></div>
@@ -29,7 +29,7 @@
     <div class="article_intro">
     <h3 class="clear"><a href="{$a.url}" title="{$a.title}">{$a.title}</a></h3>
     <div>
-        {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="images/{if $a.thumbnail}{$a.thumbnail}{else}s150{/if}/{$a.image}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
+        {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="images/{if $a.thumbnail}{$a.thumbnail}{else}s150{/if}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
         <p>{$a.bodyplain|truncate:200} <a href="{$a.url}" title="View full article" class="more">&gt;&nbsp;read&nbsp;more</a></p>
         {if $a.showdate}<div class="article-date">Added: {$a.datefriendly}</div>{/if}
         <div class="clear"></div>
