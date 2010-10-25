@@ -27,6 +27,7 @@ $smarty->assign('templateoptions', $templateoptions);
 $root = Jojo::getSectionRoot($page->id);
 $selectedPages = Jojo::getSelectedPages($page->id, $root);
 $smarty->assign('selectedpages', $selectedPages);
+$smarty->assign('pageurlprefix', Jojo::getPageUrlPrefix($page->id));
 
 /* Create navigation array */
 if (_MULTILANGUAGE && isset($page)) {
