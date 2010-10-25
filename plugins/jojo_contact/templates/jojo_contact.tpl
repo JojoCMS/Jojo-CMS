@@ -40,8 +40,11 @@
                 {/foreach}
         </select>
     </div>
-    {elseif $f.type=='heading'}{if in_array($f.size, array(1,2,3,4,5,6))}{$size=$f.size}{else}{$size=2}{/if}
-        <h{$size}>{$f.value}</h{$size}>
+    {elseif $f.type=='heading'}
+      {if in_array($f.size, array(1,2,3,4,5,6))}
+        <h{$f.size}>{$f.value}</h{$f.size}>{else}
+        <h1>{$f.value}</h1>
+        {/if}
     {elseif $f.type=='note'}
         <p>{$f.value}</p>
     {else}
