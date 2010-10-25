@@ -245,7 +245,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $query .= ($language && $languagefield) ? " AND `$languagefield` = '$language' " : '';
         $query .= " ORDER BY relevance DESC LIMIT 50";
         $rawresults = Jojo::selectAssoc($query, array($keywords_str, $keywords_str));
-        if ($_TAGS) {
+        if ($_TAGS && count($rawresults)) {
             foreach ($rawresults as $k => $r) {
                 $rawresults[$k]['tags'] = Jojo_Plugin_Jojo_Tags::getTags($plugin, $k);
                 if ($rawresults[$k]['tags']) {
@@ -255,7 +255,6 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                 }
             }
         }
-
         return $rawresults;
     }
 
