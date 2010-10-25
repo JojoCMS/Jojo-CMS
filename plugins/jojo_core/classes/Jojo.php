@@ -2611,11 +2611,13 @@ class Jojo {
             }
             $mail->setFrom('"'.$fromname.'" <'.$fromaddress.'>');
             $mail->setSubject($subject);
+            $mail->setTextCharset('UTF-8');
+
             $result = $mail->send(array($toaddress), 'smtp');
             return $result;
         } else {
             $headers  = "MIME-Version: 1.0\n";
-            $headers .= "Content-type: text/plain; charset=iso-8859-1\n";
+            $headers .= "Content-Type: text/plain;charset=\"UTF-8\"\n";
             $headers .= "X-Priority: 3\n";
             $headers .= "X-MSMail-Priority: Normal\n";
             $headers .= "X-Mailer: php\n";
@@ -3025,7 +3027,7 @@ class Jojo {
     static function getPageUrlPrefix($pageid) {
         $thisprefix = '';
         $default=true;
-        $thisroot = Jojo::getSectionRoot($pageid); 
+        $thisroot = Jojo::getSectionRoot($pageid);
         $mldata = self::getMultiLanguageData();
         if (!isset($mldata['sectiondata'][$thisroot])) return '';
         $thisprefix = !$mldata['sectiondata'][$thisroot]['default'] ? $mldata['sectiondata'][$thisroot]['lc_code'] . '/' : '';
@@ -3033,13 +3035,13 @@ class Jojo {
     }
 
     static function getSectionRoot($pageid) {
-        $thispagetree = Jojo::getSelectedPages($pageid); 
+        $thispagetree = Jojo::getSelectedPages($pageid);
         $thisroot = $thispagetree ? $thispagetree[0] : 0;
         return $thisroot;
     }
 
     static function isSectionPage($pageid, $sectionroot=0) {
-        $thisroot = Jojo::getSectionRoot($pageid); 
+        $thisroot = Jojo::getSectionRoot($pageid);
         if ($thisroot==$sectionroot) return true;
         return false;
     }
