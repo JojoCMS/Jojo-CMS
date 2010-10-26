@@ -161,7 +161,7 @@ if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'Jojo_Plugin_Log
 // Logout page
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'Jojo_Plugin_Logout'")) {
     echo "Adding <b>Logout</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Logout', pg_url = 'logout', pg_link = 'Jojo_Plugin_Logout', pg_parent = ?, pg_order=100, pg_permissions = 'notloggedin.show = 1\neveryone.view = 1'", array($_ADMIN_ROOT_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Logout', pg_url = 'logout', pg_link = 'Jojo_Plugin_Logout', pg_parent = ?, pg_order=100, pg_index='no', pg_permissions = 'notloggedin.show = 1\neveryone.view = 1'", array($_ADMIN_ROOT_ID));
 }
 
 // Edit Tabledata
@@ -307,7 +307,9 @@ Jojo::updateQuery("UPDATE {page} SET pg_sitemapnav='yes' WHERE pg_sitemapnav='au
 Jojo::updateQuery("UPDATE {page} SET pg_xmlsitemapnav ='yes' WHERE pg_xmlsitemapnav ='auto'");
 
 /* Remove certain pages from XML sitemap */
-Jojo::updateQuery("UPDATE {page} SET pg_index='no', pg_index='no', pg_xmlsitemapnav='no', pg_followto='no', pg_followfrom='yes' WHERE pg_link='register.php' OR pg_link='user-profile.php' OR pg_link='submit-form.php' OR pg_link='404.php' OR pg_link='forgot-password.php' OR pg_link='change-password.php' OR pg_link='jojo_plugin_jojo_sitemapxml' or pg_url='styleguide'");
+Jojo::updateQuery("UPDATE {page} SET pg_index='no', pg_xmlsitemapnav='no', pg_followto='no', pg_followfrom='yes' WHERE pg_link='register.php' OR pg_link='user-profile.php' OR pg_link='submit-form.php' OR pg_link='404.php' OR pg_link='forgot-password.php' OR pg_link='change-password.php' or pg_url='styleguide' or pg_url='Jojo_Plugin_Logout'");
+/* add back xmlsitemap, was previously excluded in above, which stopped Google from spidering xmlsitemap  */
+Jojo::updateQuery("UPDATE {page} SET pg_index='yes' WHERE pg_link='Jojo_Plugin_Jojo_SitemapXML' ");
 
 /* Clear plugin / theme cache files */
 if (Jojo::fileExists(_CACHEDIR . '/api.txt')) {

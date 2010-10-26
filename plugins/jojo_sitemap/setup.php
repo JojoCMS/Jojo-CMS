@@ -27,7 +27,7 @@ if (!count($data)) {
 }
 
 /* Update for old filename */
-Jojo::updateQuery("UPDATE {page} SET pg_link = 'Jojo_Plugin_Jojo_SitemapXML' WHERE pg_link = 'xml_sitemap.php' OR pg_link = 'Jojo_Plugin_Xml_sitemap'");
+Jojo::updateQuery("UPDATE {page} SET pg_link = 'Jojo_Plugin_Jojo_SitemapXML' WHERE pg_link = 'xml_sitemap.php' OR pg_link = 'Jojo_Plugin_Xml_sitemap' or pg_link = 'jojo_plugin_jojo_sitemapxml'");
 
 /* Add Google sitemap (sitemap.xml) page if one does not exist */
 $data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_SitemapXML'");
