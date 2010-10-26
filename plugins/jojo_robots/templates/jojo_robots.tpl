@@ -4,4 +4,5 @@ User-agent: *
 Disallow: /{$d}{if strpos($d, '.')===false}/{/if}
 {/foreach}
 
+
 {$rules}
