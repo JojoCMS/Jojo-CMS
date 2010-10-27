@@ -1568,7 +1568,7 @@ class Jojo {
      * $classname    string Name of the class providing the function
      * $priority     int    Priority of this hook, default is 10
      */
-    static function addHook($tag, $functionname, $classname, $priority = 10)
+    static function addHook($tag, $functionname, $classname = null, $priority = 10)
     {
         global $_hooks;
 
@@ -1584,7 +1584,11 @@ class Jojo {
             $_hooks[$tag][$priority] = array();
         }
 
-        $_hooks[$tag][$priority][serialize(array($classname, $functionname))] = array($classname, $functionname);
+        if ($classname) {
+            $_hooks[$tag][$priority][serialize(array($classname, $functionname))] = array($classname, $functionname);
+        } else {
+            $_hooks[$tag][$priority][] = $functionname;
+        }
     }
 
     /**
@@ -1672,6 +1676,10 @@ class Jojo {
         ksort($_hooks[$tag]);
         foreach($_hooks[$tag] as $priority => $phooks) {
             foreach($phooks as $hook) {
+                if (!is_array($hook)) {
+                    $result .= $hook();
+                    continue;
+                }
                 $classname = $hook[0];
                 $functionname = $hook[1];
 
@@ -1900,11 +1908,13 @@ class Jojo {
                         } else {
                             return  $res[0]['pageid'];
                         }
-                    } else {
+                    } elseif (isset($res[0]['pageid'])) {
                         $pageid = $res[0]['pageid'];
                         preg_match('#([a-z0-9-_/]*)\/#', $uri, $matches);
                         foreach ($res as $r){
-                           if ( $r['pg_url'] == $matches[1] && $r['pg_language'] == $language) $pageid = $r['pageid'];
+                            if ($r['pg_url'] == $matches[1] && $r['pg_language'] == $language) {
+                                $pageid = $r['pageid'];
+                            }
                         }
                         if ($getall) {
                             $allmatches[] = $pageid;
