@@ -213,7 +213,7 @@ class Jojo_Stitcher {
             $attribs = trim($attribs);
 
             /* Check for a class already being declared */
-            if (isset($temp[$class])) {
+            if (isset($temp[$class]) && $class!='@font-face') {
                 /* Check for overwritten attributes */
                 foreach ($temp[$class] as $tk => $tattribs) {
                     if ($tattribs == $attribs) {
