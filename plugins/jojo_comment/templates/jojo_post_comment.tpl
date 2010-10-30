@@ -1,6 +1,6 @@
 <a name="add-comment"></a>
-{if $OPTIONS.comment_show_form == 'no'}<a href="#" id="post-comment-link" onclick="$('#post-comment').show(); $('#post-comment-link').hide(); return false;">{if $commentbutton}<img src="images/post-comment.gif" alt="Post Comment" style="border: 0;" />{else}post a comment{/if}</a>{/if}
-<div class="post-comment" id="post-comment" style="clear: both;{if $OPTIONS.comment_show_form == 'yes'}display:block;{/if}">
+{if $OPTIONS.comment_show_form == 'no'}<a href="#" id="post-comment-link" onclick="$('#post-comment').show(); $('#post-comment-link').hide(); return false;">{if $commentbutton}<img src="images/post-comment.gif" alt="Post Comment" style="border: 0;" />{else}<img src="images/blog_comment_icon.gif" alt="Post Comment" class="icon-image" />post a comment{/if}</a>{/if}
+<div class="post-comment" id="post-comment" style="clear: both;{if $OPTIONS.comment_show_form == 'yes'}display:block;{else}display:none;{/if}">
   <h3>Post Comment</h3>
   <form method="post" action="" onsubmit="return checkComment({if $OPTIONS.comment_optional_email != 'yes'}true{else}false{/if});">
     {if !$user}<input type="hidden" name="userid" id="userid" value="{if $userid}{$userid}{/if}" />{/if}

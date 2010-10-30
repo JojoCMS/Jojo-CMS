@@ -235,7 +235,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $ip = Jojo::getIP();
 
         /* Check CAPTCHA is entered correctly */
-        if (empty($_USERID) && !PhpCaptcha::Validate($captchacode)) {
+        if (empty($_USERID) && Jojo::getOption('contactcaptcha') == 'yes' && !PhpCaptcha::Validate($captchacode)) {
             $errors[] = 'Invalid code entered';
         }
 
