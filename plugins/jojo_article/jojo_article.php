@@ -629,11 +629,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
         /* unsubscribing */
-        if ($action == 'unsubscribe') return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        if ($action == 'unsubscribe') {
+            return _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        }
 
         /* the special URL for the latest article */
         if ($action == 'latest') {
-            $article = Jojo::selectRow("SELECT a.*, p.pageid FROM {article} a  LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid) ORDER BY ar_date DESC, ar_title");
+            $article = Jojo::selectRow("SELECT a.*, p.pageid FROM {article} a  LEFT JOIN {articlecategory} ac ON (a.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid) ORDER BY ar_date DESC, ar_title");
             return _SITEURL . '/' . self::getArticleUrl($article['articleid'], $article['ar_url'], $article['ar_title'], $article['pageid'], $article['ar_category']);
         }
         $correcturl = self::getArticleUrl($id, $url, null, $pageid, $categoryid);
@@ -678,7 +680,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* Check the prefix matches */
         if ($res = self::checkPrefix($prefix)) {
             /* If full uri matches a prefix it's an index page so ignore it and let the page plugin handle it */
-            if (self::checkPrefix(trim($uri, '/'))) return false;
+            if (self::checkPrefix(trim($uri, '/'))) {
+                return false;
+            }
+
             /* The prefix is good, pass through uri parts */
             foreach($getvars as $k => $v) {
                 $_GET[$k] = $v;
@@ -761,7 +766,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 )
             );
        }
-    return true;
+       return true;
     }
 
     static function sync_page_to_category($pageid) {
