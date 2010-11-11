@@ -3168,7 +3168,7 @@ function getSelectedPages($pageid, $root=0) {
             } else {
                 $irr = Jojo::iExplode('[[snip]]', $i['body']);
                 if (count($irr) === 1 && is_numeric($snip)) {
-                    $i['body'] = substr($i['body'], 0, $snip) . ' ...';
+                    $i['body'] = substr($mbody=wordwrap($i['body'], $snip, '$$'), 0, strpos($mbody,'$$')) . ' ...';
                 } else {
                     $i['body'] = $irr[0];
                 }
