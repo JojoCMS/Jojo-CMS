@@ -94,6 +94,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['plugin']     = 'jojo_article';
             unset($items[$k]['ar_bbbody']);
         }
+        $items = array_values($items);
         return $items;
     }
 
