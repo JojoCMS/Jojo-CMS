@@ -1349,11 +1349,15 @@ class Jojo {
 
         /* Return option value if we have it */
         if (isset($_options[$name])) {
-            return $_options[$name];
+            $value = $_options[$name];
+        } else {
+            /* Return the default value */
+            $value = $default;
         }
-
-        /* Return the default value */
-        return $default;
+        /* allow plugins to override the value of an option */
+        $value = Jojo::applyFilter('get_option', $value, array($name, $default));
+        
+        return $value;
     }
 
     /**
