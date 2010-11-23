@@ -11,6 +11,7 @@
     {jojoHook hook="articleBeforeBody"}
     {if $jojo_article.image}<img src="images/v60000/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}
     {$jojo_article.ar_body}
+    {if $jojo_article.author}<div id="article-author"><p>{$jojo_article.author}</p></div>{/if}
     {jojoHook hook="articleAfterBody"}
 
 {if $related}

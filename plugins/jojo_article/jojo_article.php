@@ -83,6 +83,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['pageurl']   = $pagedata[0]['url'];
             $i['id']           = $i['articleid'];
             $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
+            $i['author']        = htmlspecialchars($i['ar_author'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
             $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
