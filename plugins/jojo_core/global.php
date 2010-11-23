@@ -29,15 +29,11 @@ $selectedPages = Jojo::getSelectedPages($page->id, $root);
 $smarty->assign('selectedpages', $selectedPages);
 $smarty->assign('pageurlprefix', Jojo::getPageUrlPrefix($page->id));
 
-/* Create navigation array */
-if (_MULTILANGUAGE && isset($page)) {
-    /* If on a multi-language site, get the root for the current language */
-    $mldata = Jojo::getMultiLanguageData();
-    $sectiondata =  isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root] : '';
-    $smarty->assign('home', ($sectiondata ? $sectiondata['home'] : 1));
-    $smarty->assign('root', $root);
-    $smarty->assign('languagelist', $mldata['sectiondata']);
-}
+$mldata = Jojo::getMultiLanguageData();
+$sectiondata =  isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root] : '';
+$smarty->assign('home', ($sectiondata ? $sectiondata['home'] : 1));
+$smarty->assign('root', $root);
+$smarty->assign('languagelist', $mldata['sectiondata']);
 
 /* Get one level of main navigation for the top navigation */
 $smarty->assign('mainnav', _getNav($root, Jojo::getOption('nav_mainnav', 0)));

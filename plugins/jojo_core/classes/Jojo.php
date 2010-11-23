@@ -3026,7 +3026,7 @@ class Jojo {
                 $mldata['names'][$r['languageid']] = !empty($r['name']) ? $r['name'] : $r['longcode'];
                 $mldata['languages'][$r['languageid']] = !empty($r['lc_defaultlang']) ? $r['lc_defaultlang'] : 'en';
                 if (isset($r['default']) && $r['default']) $default = $r['languageid'];
-                if (!empty($r['root'])){
+                if (!empty($r['root']) && $r['active']){
                     $res[$k]['url'] = $r['languageid']!=$default ? $r['languageid'] . '/' : '';
                 } else {
                     unset($res[$k]);
