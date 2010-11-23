@@ -1,0 +1,9 @@
+p.tags a {
+  text-decoration: none;
+  padding: 0 6px;
+  border-right: 1px solid #b2b2b2; 
+}
+
+p.tags a:last-child {
+  border-right: none; 
+}
