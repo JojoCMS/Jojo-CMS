@@ -750,6 +750,10 @@ input.counter {
   padding: 0 2px;
 }
 
+input.date {
+  background: url('../images/cms/icons/calendar_view_day.png') no-repeat top right;
+}
+
 #help-text {
   position: fixed;
   bottom: 0;
