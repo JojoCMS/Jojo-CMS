@@ -22,6 +22,9 @@ $templateoptions['dateparse']  = false;
 $templateoptions['frajax'] = false;
 $templateoptions['menu'] = false;
 $smarty->assign('templateoptions', $templateoptions);
+$smarty->assign('htmldoctype', (boolean)(Jojo::getOption('doctype', 'xhtml')=='html5'));
+$smarty->assign('boilerplatehtmltag', (boolean)(Jojo::getOption('boilerplate_htmltag', 'no')=='yes'));
+$smarty->assign('modernizr', (boolean)(Jojo::getOption('modernizr', 'no')=='yes'));
 
 /* Create current section/ current sub pages array to show cascading selected menu levels beyond child*/
 $root = Jojo::getSectionRoot($page->id);

@@ -155,6 +155,36 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'doctype',
+    'category'    => 'Site',
+    'label'       => 'Doctype',
+    'description' => 'Declare Doctype as XHTML or HTML5.',
+    'type'        => 'radio',
+    'default'     => 'xhtml',
+    'options'     => 'xhtml,html5',
+);
+
+$_options[] = array(
+    'id'          => 'boilerplate_htmltag',
+    'category'    => 'Site',
+    'label'       => 'Bolierplate Html tag',
+    'description' => 'Add browser conditionals to html tag',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'modernizr',
+    'category'    => 'Site',
+    'label'       => 'Use Modernizr',
+    'description' => 'Add modernizr script classes to html tag',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'shorttitle',
     'category'    => 'Site',
     'label'       => 'Short Title',
