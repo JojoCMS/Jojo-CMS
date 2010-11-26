@@ -23,6 +23,7 @@ $templateoptions['frajax'] = false;
 $templateoptions['menu'] = false;
 $smarty->assign('templateoptions', $templateoptions);
 $smarty->assign('htmldoctype', (boolean)(Jojo::getOption('doctype', 'xhtml')=='html5'));
+$smarty->assign('xmldoctype', '<?xml version="1.0" encoding="utf-8" ?>');
 $smarty->assign('boilerplatehtmltag', (boolean)(Jojo::getOption('boilerplate_htmltag', 'no')=='yes'));
 $smarty->assign('modernizr', (boolean)(Jojo::getOption('modernizr', 'no')=='yes'));
 
