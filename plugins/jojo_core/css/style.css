@@ -124,10 +124,6 @@ img.icon-image
     margin-top: -3px;
 }
 
-.links {
-    font-style: italic;
-}
-
 .caption {
     font-style: italic;
 }
@@ -149,3 +145,8 @@ button.post_redirect_submit span {
 button.post_redirect_submit span:hover {
   text-decoration: underline;
 }
+
+input.checkbox {
+  margin-right: 5px;
+}
+

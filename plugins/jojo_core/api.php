@@ -175,6 +175,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'boilerplate_cssreset',
+    'category'    => 'Site',
+    'label'       => 'Bolierplate CSS Reset',
+    'description' => 'Add Boilerplate CSS (reset, media etc) to style.css',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'modernizr',
     'category'    => 'Site',
     'label'       => 'Use Modernizr',

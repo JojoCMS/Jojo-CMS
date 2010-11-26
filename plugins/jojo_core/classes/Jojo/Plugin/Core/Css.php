@@ -46,6 +46,17 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         $css->getServerCache();
         switch($file) {
             case 'styles':
+                /* Include Boilerplate css reset */
+                if  (Jojo::getOption('boilerplate_cssreset', 'no')=='yes') {
+                    foreach (Jojo::listPlugins('css/boilerplate_reset.css', 'all', true) as $pluginfile) {
+                        $css->addFile($pluginfile);
+                    }
+                    if  (Jojo::getOption('modernizr', 'no')=='yes') {
+                        foreach (Jojo::listPlugins('css/boilerplate_modernizr.css', 'all', true) as $pluginfile) {
+                            $css->addFile($pluginfile);
+                        }
+                    }
+                }
                 /* Include css from each plugin */
                 foreach (Jojo::listPlugins('css/style_default.css', 'all', true) as $pluginfile) {
                     $css->addFile($pluginfile);
