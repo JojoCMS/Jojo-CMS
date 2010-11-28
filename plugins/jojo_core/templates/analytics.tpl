@@ -1,22 +1,21 @@
 <!-- [Google Analytics] -->
-{if $OPTIONS.analyticscodetype=='async'}
-<script type="text/javascript">/*<![CDATA[*/
+{if $OPTIONS.analyticscodetype=='async'}    <script{if !$htmldoctype} type="text/javascript"{/if}>
+    /*<![CDATA[*/
     var _gaq = [];
     _gaq.push(['_setAccount', '{$OPTIONS.analyticscode}']{if $OPTIONS.crossdomainanalytics=="yes"}, ['_setDomainName', 'none'], ['_setAllowLinker', true]
     {/if}{if $sent and $OPTIONS.contact_tracking_code_analytics}, ['_trackPageview',"{$OPTIONS.contact_tracking_code_analytics}"]
-    {else}, ['_trackPageview']{/if});
-    {if $success and $google_ecommerce}{$google_ecommerce}{/if}
+    {else}, ['_trackPageview']{/if});{if $success and $google_ecommerce}
+    {$google_ecommerce}{/if}
     (function() {literal}{{/literal}
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        var ga = document.createElement('script');{if !$htmldoctype} ga.type = 'text/javascript';{/if} ga.async = true;
         ga.src = '{if $issecure}https://ssl.{else}http://www.{/if}google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     {literal}}{/literal})();
-    /*]]>*/</script>
-    {if $OPTIONS.contact_tracking_code}{$OPTIONS.contact_tracking_code}{/if}
-{else}
-{* old Google analytics code *}
-<script type="text/javascript">
-        /*<![CDATA[*/
+    /*]]>*/
+    </script>{if $OPTIONS.contact_tracking_code}
+    {$OPTIONS.contact_tracking_code}{/if}
+{else}{* old Google analytics code *}   <script type="text/javascript">
+    /*<![CDATA[*/
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
     /*]]>*/
@@ -40,6 +39,6 @@
     {/if}
     {literal}} catch(err) {}{/literal}
     /*]]>*/
-    </script>
-    {if $sent && $OPTIONS.contact_tracking_code}{$OPTIONS.contact_tracking_code}{/if}
+    </script>{if $sent && $OPTIONS.contact_tracking_code}
+    {$OPTIONS.contact_tracking_code}{/if}
 {/if}
