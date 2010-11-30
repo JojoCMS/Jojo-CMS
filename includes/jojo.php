@@ -101,9 +101,10 @@ define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
 define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
 define('_SITETITLE',        Jojo::getOption('sitetitle'));
 define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
-define('_MULTILANGUAGE',    Jojo::yes2true(Jojo::getOption('multilanguage')));
 define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
 define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
+$mldata = Jojo::getMultiLanguageData();
+define('_MULTILANGUAGE',    (boolean)(count($mldata['sectiondata'])>1));
 
 if (Jojo::usingSslConnection()) {
     define('_PROTOCOL', 'https://');
@@ -128,8 +129,6 @@ if (preg_match('%^/?' . _SITEFOLDER . '/?(.*)%', $_SERVER['REQUEST_URI'], $regs)
 /* Remove the langauge code off the front of the URI if this is a multi language site */
 $uri = $fullSiteUri;
 if (_MULTILANGUAGE) {
-    $mldata = Jojo::getMultiLanguageData();
-
     /* Find the first part of the uri */
     $urlParts = explode('/', $uri);
     $urlPrefix = $urlParts[0];
@@ -405,6 +404,7 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
     Jojo::runHook('after_fetch_template');
     /* Allow output to be filtered */
     $html = Jojo::applyFilter('output', $html);
+    $html = str_replace('##', '', $html);
     /* Output the html to the browser */
     header('Content-Length: ' . strlen($html));
     echo $html;
@@ -419,14 +419,10 @@ foreach($page->page as $key => $value) {
 $languagedata = Jojo::getPageHtmlLanguage();
 $smarty->assign ('pg_htmllang', $languagedata['languageid'] );
 
-$charset = 'utf-8'; //Default to UTF
-
-if (_MULTILANGUAGE) {
-    $charset = $languagedata['charset'];
-    $direction = $languagedata['direction'];
-    if ($direction == 'rtl') {
-        $smarty->assign('rtl', true);
-    }
+$charset = !empty($languagedata['charset']) ? $languagedata['charset'] : 'utf-8';
+$direction = $languagedata['direction'];
+if ($direction == 'rtl') {
+    $smarty->assign('rtl', true);
 }
 
 if ($templateEngine == 'dwoo') {
@@ -551,6 +547,7 @@ Jojo::runHook('after_fetch_template');
 
 /* Allow output to be filtered */
 $html = Jojo::applyFilter('output', $html);
+$html = str_replace('##', '', $html);
 
 /* Cache the page */
 if (_CONTENTCACHE && !Jojo::noCache() && ($page->page['pg_contentcache'] != 'no')) {

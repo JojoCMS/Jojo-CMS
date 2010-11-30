@@ -54,8 +54,6 @@ class Jojo_Plugin {
         $this->qid = $id;
         $this->page['root'] = Jojo::getSectionRoot($this->page['pageid']);
 
-        if (!defined('_MULTILANGUAGE')) define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage'))); //TODO - why is this not defined on some sites?
-
         /* Populate info on subpages belonging to this page */
         $subpages = Jojo_Plugin_Core::getChildrenById($id);
         foreach ($subpages as $k => $sub) {
