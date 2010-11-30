@@ -26,6 +26,7 @@ $smarty->assign('htmldoctype', (boolean)(Jojo::getOption('doctype', 'xhtml')=='h
 $smarty->assign('xmldoctype', '<?xml version="1.0" encoding="utf-8" ?>');
 $smarty->assign('boilerplatehtmltag', (boolean)(Jojo::getOption('boilerplate_htmltag', 'no')=='yes'));
 $smarty->assign('modernizr', (boolean)(Jojo::getOption('modernizr', 'no')=='yes'));
+$smarty->assign('jqueryhead', (boolean)(Jojo::getOption('jquery_head', 'yes')=='yes'));
 
 /* Create current section/ current sub pages array to show cascading selected menu levels beyond child*/
 $root = Jojo::getSectionRoot($page->id);

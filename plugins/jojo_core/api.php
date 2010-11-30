@@ -195,6 +195,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'jquery_head',
+    'category'    => 'Site',
+    'label'       => 'jQuery in head',
+    'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'shorttitle',
     'category'    => 'Site',
     'label'       => 'Short Title',
