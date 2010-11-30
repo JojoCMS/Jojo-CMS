@@ -42,7 +42,7 @@
                 },
 
                 "ui" : {
-                    "select_limit" : 1,
+                    "select_limit" : 1
                 },
 
                 "themes" : {
@@ -65,10 +65,10 @@
                 },
                 "dnd" : {
                     "drop_target" : false,
-                    "drag_target" : false,
+                    "drag_target" : false
                 },
 {/literal}{/if}{literal}
-                "plugins" : [ "themes", "json_data", "cookies", "ui"{/literal}{if $draggable}{literal}, "dnd", "crrm"{/literal}{/if}{literal} ],
+                "plugins" : [ "themes", "json_data", "cookies", "ui"{/literal}{if $draggable}{literal}, "dnd", "crrm"{/literal}{/if}{literal} ]
             });
         });
     {/literal}</script>
