@@ -51,7 +51,7 @@ class Jojo_Field_texteditor extends Jojo_Field
                 $selectededitor = Jojo::getOption('preferrededitor');
             } elseif ($this->value != '') {
             //if ($this->value != '') {
-                $selectededitor = 'bbcode';
+                $selectededitor = 'wysiwyg';
             } else {
                 /* get value of WYSIWYG field */
                 $data = Jojo::selectQuery("SELECT `" . $this->fd_options . "` FROM {" . $this->table->getTableName() . "} WHERE `" . $this->table->getOption('primarykey') . "` = ? LIMIT 1", array($this->table->getRecordID()));
