@@ -1,6 +1,6 @@
     {if !$templateoptions || $templateoptions.frajax || $isadmin}<iframe src="javascript:false;" name="frajax-iframe" id="frajax-iframe" style="display:none; height: 0; width: 0; border: 0;"></iframe>
     {/if}{if !$jqueryhead && !$isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js{else}"{cycle values=$NEXTASSET}external/jquery/jquery-1.4.2.min.js{/if}"></script>
-    {/if}{if !$isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}js/common.js"></script>
+    {/if}{if !$commonhead && !$isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}js/common.js"></script>
     {/if}{if !$templateoptions || $templateoptions.menu}
             <!--[if lte IE 7]>
             <script type="text/javascript">

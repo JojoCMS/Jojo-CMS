@@ -205,6 +205,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'commonjs_head',
+    'category'    => 'Site',
+    'label'       => 'Common.js in head',
+    'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'shorttitle',
     'category'    => 'Site',
     'label'       => 'Short Title',

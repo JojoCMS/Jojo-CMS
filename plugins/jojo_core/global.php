@@ -27,6 +27,7 @@ $smarty->assign('xmldoctype', '<?xml version="1.0" encoding="utf-8" ?>');
 $smarty->assign('boilerplatehtmltag', (boolean)(Jojo::getOption('boilerplate_htmltag', 'no')=='yes'));
 $smarty->assign('modernizr', (boolean)(Jojo::getOption('modernizr', 'no')=='yes'));
 $smarty->assign('jqueryhead', (boolean)(Jojo::getOption('jquery_head', 'yes')=='yes'));
+$smarty->assign('commonhead', (boolean)(Jojo::getOption('commonjs_head', 'yes')=='yes'));
 
 /* Create current section/ current sub pages array to show cascading selected menu levels beyond child*/
 $root = Jojo::getSectionRoot($page->id);
@@ -72,13 +73,9 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
     }
 
     /* Get multilanguage data */
-    if (_MULTILANGUAGE) {
         global $page;
         $mldata = Jojo::getMultiLanguageData();
         $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;
-    } else {
-        $home = 1;
-    }
 
     /* Get pages from database */
     static $_cached;

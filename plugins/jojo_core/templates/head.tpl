@@ -28,6 +28,7 @@
     {elseif !$templateoptions || $templateoptions.rss}<link rel="alternate" type="application/rss+xml" title="{$sitetitle} RSS Feed" href="{$SITEURL}/articles/rss/" />
     {/if}{if $modernizr}<script src="{$SITEURL}/external/modernizr-1.6.min.js"></script>
     {/if}{if $jqueryhead || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js{else}"{cycle values=$NEXTASSET}external/jquery/jquery-1.4.2.min.js{/if}"></script>
+    {/if}{if $commonhead || $isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}js/common.js"></script>
     {/if}{if $head}{$head}{/if}{if $css}
     <style type="text/css">
         {$css}
@@ -39,7 +40,6 @@
     <script type="text/javascript" src="external/markitup/sets/html/set.js"></script>
     <script type="text/javascript" src="external/markitup/sets/bbcode/set.js"></script>
     <script type="text/javascript" src="{cycle values=$NEXTASSET}js/admin.js?v=3"></script>
-    <script type="text/javascript" src="{cycle values=$NEXTASSET}js/common.js"></script>
     {else}{if $customhead}
 {$customhead}{/if}{jojoHook hook="customhead"}{if $OPTIONS.analyticscode && $OPTIONS.analyticsposition == 'top'}
     {include file="analytics.tpl"}
