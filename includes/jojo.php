@@ -103,8 +103,7 @@ define('_SITETITLE',        Jojo::getOption('sitetitle'));
 define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
 define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
 define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
-$mldata = Jojo::getMultiLanguageData();
-define('_MULTILANGUAGE',    (boolean)(count($mldata['sectiondata'])>1));
+define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
 
 if (Jojo::usingSslConnection()) {
     define('_PROTOCOL', 'https://');
@@ -127,21 +126,20 @@ if (preg_match('%^/?' . _SITEFOLDER . '/?(.*)%', $_SERVER['REQUEST_URI'], $regs)
 }
 
 /* Remove the langauge code off the front of the URI if this is a multi language site */
+$mldata = Jojo::getMultiLanguageData();
 $uri = $fullSiteUri;
-if (_MULTILANGUAGE) {
-    /* Find the first part of the uri */
-    $urlParts = explode('/', $uri);
-    $urlPrefix = $urlParts[0];
+/* Find the first part of the uri */
+$urlParts = explode('/', $uri);
+$urlPrefix = $urlParts[0];
 
-    if (isset($mldata['roots'][$urlPrefix])) {
-        /* Check if the prefix is a language short code */
-        $uri = (string)substr($uri, strlen($urlPrefix));
-        $uri = trim($uri, '/');
-    } elseif ($l = array_search($urlPrefix, $mldata['longcodes'])) {
-        /* Check if the prefix is a language long code */
-        $uri = (string)substr($uri, strlen($urlPrefix));
-        $uri = trim($uri, '/');
-    }
+if (isset($mldata['roots'][$urlPrefix])) {
+    /* Check if the prefix is a section short code */
+    $uri = (string)substr($uri, strlen($urlPrefix));
+    $uri = trim($uri, '/');
+} elseif ($l = array_search($urlPrefix, $mldata['longcodes'])) {
+    /* Check if the prefix is a section long code */
+    $uri = (string)substr($uri, strlen($urlPrefix));
+    $uri = trim($uri, '/');
 }
 
 define('_SITEURI', $uri); // Site URI without the language prefix

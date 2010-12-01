@@ -1808,10 +1808,6 @@ class Jojo {
 
         if ($getall) $allmatches = array();
 
-        if (!defined('_MULTILANGUAGE')) {
-            define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
-        }
-
         /* Strip the query string off the url */
         $uriParts = explode('?', $uri);
         if(isset($uriParts[1])) {
@@ -1834,42 +1830,32 @@ class Jojo {
         }
         $uri = preg_replace('%^'.$basefolder.'/(.*)$%', '$1', $uri);
 
-        /* Strip the language prefix off the URI */
-        $language = Jojo::getOption('multilanguage-default', 'en');
-        if (_MULTILANGUAGE) {
-            $mldata = Jojo::getMultiLanguageData();
+        /* Strip the section prefix off the URI if there is one*/
+        $mldata = Jojo::getMultiLanguageData();
+        $section = $mldata['default'] ;
 
-            /* Find the first part of the URI */
-            $uriParts = explode('/', $uri);
-            $uriPrefix = $uriParts[0];
+        /* Find the first part of the URI */
+        $uriParts = explode('/', $uri);
+        $uriPrefix = $uriParts[0];
 
-            if (isset($mldata['roots'][$uriPrefix])) {
-                /* Check if the prefix is a language short code */
-                $uri = (string)substr($uri, strlen($uriPrefix));
-                $uri = trim($uri, '/');
-                $language = $uriPrefix;
-            } elseif ($l = array_search($uriPrefix, $mldata['longcodes'])) {
-                /* Check if the prefix is a language long code */
-                $uri = (string)substr($uri, strlen($uriPrefix));
-                $uri = trim($uri, '/');
-                $language = $l;
-            }
+        if (isset($mldata['roots'][$uriPrefix])) {
+            /* Check if the prefix is a section short code */
+            $uri = (string)substr($uri, strlen($uriPrefix));
+            $uri = trim($uri, '/');
+            $section = $uriPrefix;
+        } elseif ($l = array_search($uriPrefix, $mldata['longcodes'])) {
+            /* Check if the prefix is a section long code */
+            $uri = (string)substr($uri, strlen($uriPrefix));
+            $uri = trim($uri, '/');
+            $section = $l;
+        }
 
-
-            if (trim($uri) == '') {
-                /* We are on a homepage */
-                if ($getall) {
-                    $allmatches[] = $mldata['homes'][$language];
-                } else {
-                    return $mldata['homes'][$language];
-                }
-            }
-        } elseif (trim($uri) == '') {
+        if (trim($uri) == '') {
             /* We are on a homepage */
             if ($getall) {
-                $allmatches[] = 1;
+                $allmatches[] = $mldata['homes'][$section];
             } else {
-                return 1;
+                return $mldata['homes'][$section];
             }
         }
 
@@ -1897,15 +1883,8 @@ class Jojo {
                     }
                     $placeholders = implode(', ', $placeholders);
 
-                    $query = 'SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link = ? AND pg_url IN ('.$placeholders.') ORDER BY LENGTH(pg_url) DESC';
-                    if ($language && _MULTILANGUAGE) {
-                        /* Order by $language then english, then anything else that matches */
-                        $query .= ", field(pg_language, ?, ?) DESC";
-                        $values[] = Jojo::getOption('multilanguage-default');
-                        $values[] = $language;
-                    }
-                    $res = Jojo::selectQuery($query, $values);
-
+                    $res = Jojo::selectQuery('SELECT pageid, pg_url FROM {page} WHERE pg_link = ? AND pg_url IN ('.$placeholders.') ORDER BY LENGTH(pg_url) DESC', $values);
+ 
                     if (isset($res[0]['pageid']) && count($res) == 1 ) {
                         if ($getall) {
                             $allmatches[] =  $res[0]['pageid'];
@@ -1913,10 +1892,18 @@ class Jojo {
                             return  $res[0]['pageid'];
                         }
                     } elseif (isset($res[0]['pageid'])) {
-                        $pageid = $res[0]['pageid'];
+                       $root = $mldata['roots'][$section];
+                        foreach ($res as $k=>$r){
+                            /* remove any pages not from this section */
+                            if ($root != Jojo::getSectionRoot($r['pageid']) ) {
+                                unset($res[$k]);
+                            }
+                        }
+                        $page1 = array_shift($res);
+                        $pageid = $page1['pageid'];
                         preg_match('#([a-z0-9-_/]*)\/#', $uri, $matches);
                         foreach ($res as $r){
-                            if ($r['pg_url'] == $matches[1] && $r['pg_language'] == $language) {
+                            if ($r['pg_url'] == $matches[1]) {
                                 $pageid = $r['pageid'];
                             }
                         }
@@ -2003,14 +1990,8 @@ class Jojo {
             }
 
             /* Find the page in the database */
-            $query = 'SELECT pageid, pg_url, pg_language FROM {page} WHERE pg_link = ?';
+            $query = 'SELECT pageid, pg_url FROM {page} WHERE pg_link = ?';
             $values = array($uriPattern['class']);
-            if ($language && _MULTILANGUAGE) {
-                /* Order by $language then english, then anything else that matches */
-                $query .= " ORDER BY field(pg_language, ?, ?) DESC";
-                $values[] = Jojo::getOption('multilanguage-default');
-                $values[] = $language;
-            }
             $res = Jojo::selectQuery($query, $values);
             if (isset($res[0]['pageid']) && count($res) == 1 ) {
                 if ($getall) {
@@ -2019,10 +2000,18 @@ class Jojo {
                     return $res[0]['pageid'];
                 }
             } else {
-                $pageid = $res[0]['pageid'];
+               $root = $mldata['roots'][$section];
+                foreach ($res as $k=>$r){
+                    /* remove any pages not from this section */
+                    if ($root != Jojo::getSectionRoot($r['pageid']) ) {
+                        unset($res[$k]);
+                    }
+                }
+                $page1 = array_shift($res);
+                $pageid = $page1['pageid'];
                 preg_match('#([a-z0-9-_]*)\/#', $uri, $matches);
                 foreach ($res as $r){
-                   if ( $r['pg_url'] == $matches[1] && $r['pg_language'] == $language) $pageid = $r['pageid'];
+                   if ( $r['pg_url'] == $matches[1]) $pageid = $r['pageid'];
                 }
                 if ($getall) {
                     $allmatches[] = $pageid;
@@ -2047,19 +2036,20 @@ class Jojo {
         /* convert admin URIs (if the Admin section is not set to the default of /admin/) */
         $uri = Jojo::getAdminUriReverse($uri);
         $values = array($uri);
-        if ($language && _MULTILANGUAGE) {
-            /* Order by $language then english, then anything else that matches */
-            $query .= " ORDER BY field(pg_language, ?, ?) DESC";
-            $values[] = Jojo::getOption('multilanguage-default');
-            $values[] = $language;
-        }
-        $query .= ' LIMIT 1';
         $res = Jojo::selectQuery($query, $values);
-        if (isset($res[0]['pageid'])) {
+        $root = isset($mldata['roots'][$section]) ? $mldata['roots'][$section] : 0;
+        foreach ($res as $k=>$r){
+            /* remove any pages not from this section */
+            if ($root != Jojo::getSectionRoot($r['pageid']) && strpos($uri, 'admin')===false) {
+                unset($res[$k]);
+            }
+        }
+        $page1 = array_shift($res);
+        if (isset($page1['pageid'])) {
             if ($getall) {
-                $allmatches[] = $res[0]['pageid'];
+                $allmatches[] = $page1['pageid'];
             } else {
-                return $res[0]['pageid'];
+                return $page1['pageid'];
             }
         }
 
@@ -3017,7 +3007,7 @@ class Jojo {
                             'languagelist' => array()
                             );
             // get language codes from new table
-            $res = Jojo::selectAssoc("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc");
+            $res = Jojo::selectAssoc("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc WHERE active=1");
             $default = !isset($res[0]['default']) ? Jojo::getOption('multilanguage-default') : '';
             foreach ($res as $k=>$r) {
                 $mldata['roots'][$r['languageid']] = $r['root'];
@@ -3026,7 +3016,7 @@ class Jojo {
                 $mldata['names'][$r['languageid']] = !empty($r['name']) ? $r['name'] : $r['longcode'];
                 $mldata['languages'][$r['languageid']] = !empty($r['lc_defaultlang']) ? $r['lc_defaultlang'] : 'en';
                 if (isset($r['default']) && $r['default']) $default = $r['languageid'];
-                if (!empty($r['root']) && $r['active']){
+                if (!empty($r['root'])){
                     $res[$k]['url'] = $r['languageid']!=$default ? $r['languageid'] . '/' : '';
                 } else {
                     unset($res[$k]);
