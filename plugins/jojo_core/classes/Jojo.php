@@ -1348,7 +1348,7 @@ class Jojo {
         $_options = Jojo::getOptions($forceclean);
 
         /* Return option value if we have it */
-        if (isset($_options[$name])) {
+        if (isset($_options[$name]) && !empty($_options[$name])) {
             $value = $_options[$name];
         } else {
             /* Return the default value */
@@ -1356,7 +1356,7 @@ class Jojo {
         }
         /* allow plugins to override the value of an option */
         $value = Jojo::applyFilter('get_option', $value, array($name, $default));
-        
+
         return $value;
     }
 
