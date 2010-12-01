@@ -76,7 +76,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             case 'common':
                 /* Dynamic Javascript */
                 $js->addText("var siteurl = '" . Jojo::getOption('siteurl') . "';");
-                $js->addText("var secureurl = '" . Jojo::getOption('secureurl', Jojo::getOption('siteurl')) . "';");
+                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , Jojo::getOption('siteurl')) . "';");
 
                 /* Core functions */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
