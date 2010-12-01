@@ -1348,7 +1348,7 @@ class Jojo {
         $_options = Jojo::getOptions($forceclean);
 
         /* Return option value if we have it */
-        if (isset($_options[$name]) && !empty($_options[$name])) {
+        if (isset($_options[$name])) {
             $value = $_options[$name];
         } else {
             /* Return the default value */
