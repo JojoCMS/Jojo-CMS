@@ -108,7 +108,7 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                     /* also anything with .pack.js in the filename can't be jsminned */
 
 
-                    if (!in_array(basename($file), $nojsmin) && !preg_match('/\\.pack\\.js$/i', $file)) {
+                    if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
                         set_time_limit(180);
                         require_once(_BASEPLUGINDIR . '/jojo_core/external/jsmin/jsmin.php');
                         try {
@@ -120,7 +120,7 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                         if (strlen($newContent) <= strlen($content)) {
                             $content = $newContent;
                         } else {
-                            $content = sprintf('/* JSMIN englared file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
+                            $content = sprintf('/* JSMIN enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
                         }
                     }
                 }
