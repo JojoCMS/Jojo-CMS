@@ -138,7 +138,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
     function getCorrectUrl()
     {
         global $page;
-        $pagelanguage = Jojo::getMultiLanguageString( $page->page['pg_language'], false );
+        $prefix = Jojo::getPageUrlPrefix($page->page['pageid']);
 
         /* Include any get variables in request_uri, this allows for rewrites */
         $t = strstr($_SERVER['REQUEST_URI'], '?');
@@ -155,9 +155,8 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         if ($q) {
 
             if (Jojo::getOption('search_urlquery', 'url')=='query' || !preg_match('/^([a-zA-Z0-9 -]*)$/', $q)) {
-                return _SITEURL . '/' . $pagelanguage . 'search/?q=' . urlencode($q);
+                return _SITEURL . '/' . $prefix . 'search/?q=' . urlencode($q);
             }
-
 
             /* Remove dashs from url rewriting */
             $keywords = str_replace('-', ' ', $q);
@@ -165,7 +164,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             /* Separate keywords */
             $keywords = explode(' ', $keywords);
 
-            $correcturl =  $pagelanguage . 'search/' . implode('-', $keywords) . '/';
+            $correcturl =  $prefix . 'search/' . implode('-', $keywords) . '/';
             if ($correcturl) {
                 return _SITEURL . '/' . $correcturl;
                 exit;
@@ -198,7 +197,6 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             $languagefield = isset($searchfields['languagefield']) ? $searchfields['languagefield'] : '';
         }
 
-
         $boolean = ($booleankeyword_str) ? true : false;
         $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
         if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
@@ -206,9 +204,9 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             foreach ($keywords as $keyword) {
                 foreach ($fieldarray as $k => $f) {
                     if ($k == 0) {
-                        $like .= sprintf(" AND (%s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
+                        $like .= sprintf(" AND (%s LIKE '%%%s%%'", $f, Jojo::clean(str_replace('?', '', $keyword)));
                     } else {
-                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
+                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean(str_replace('?', '', $keyword)));
                     }
                 }
                 $like .= ') ';
@@ -216,9 +214,9 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         } elseif ($boolean && stripos($booleankeyword_str, '"') === 0) {
             foreach ($fieldarray as $k => $f) {
                 if ($k == 0) {
-                    $like = sprintf("(%s LIKE '%%%s%%'", $f, implode(' ', $keywords));
+                    $like = sprintf("(%s LIKE '%%%s%%'", $f, implode(' ', str_replace('?', '', $keywords)));
                 } else {
-                    $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, implode(' ', $keywords));
+                    $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, implode(' ', str_replace('?', '', $keywords)));
                 }
             }
             $like .= ') ';
@@ -226,11 +224,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             $like = '(0';
             foreach ($keywords as $keyword) {
                 foreach ($fieldarray as $k => $f) {
-                    if ($k == 0) {
-                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
-                    } else {
-                        $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean($keyword));
-                    }
+                    $like .= sprintf(" OR %s LIKE '%%%s%%'", $f, Jojo::clean(str_replace('?', '', $keyword)));
                 }
             }
             $like .= ')';
@@ -240,12 +234,12 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $query = "SELECT `$idfield` AS id, `$idfield`, ((MATCH($primaryfields) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH($secondaryfields) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
         $query .= " FROM {$table} ";
         $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid)" : '';
-        $query .= " WHERE ($like";
+        $query .= " WHERE (" . $like;
         $query .= $tagid ? " OR (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid))" : ')';
         $query .= ($language && $languagefield) ? " AND `$languagefield` = '$language' " : '';
-        $query .= " ORDER BY relevance DESC LIMIT 50";
+        $query .= " ORDER BY relevance DESC LIMIT 100";
         $rawresults = Jojo::selectAssoc($query, array($keywords_str, $keywords_str));
-        if ($_TAGS && count($rawresults)) {
+        if ($_TAGS && is_array($rawresults)) {
             foreach ($rawresults as $k => $r) {
                 $rawresults[$k]['tags'] = Jojo_Plugin_Jojo_Tags::getTags($plugin, $k);
                 if ($rawresults[$k]['tags']) {
@@ -285,7 +279,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
      */
     function search_format_content($content, $q, $booleanphrase=false)
     {
-        $CRAWL_SEARCH_TEXT_SURROUNDING_LENGHT = 50;
+        $CRAWL_SEARCH_TEXT_SURROUNDING_LENGHT = 48;
         $CRAWL_SEARCH_MAX_RES_WORD_COUNT = 10;
 
         $CRAWL_SEARCH_STRICT_RESULTS = false;
@@ -375,7 +369,6 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                 $marks[$chunk_counter]["end"] = (($text_pos + $chunk_len) > $content_len) ? $content_len : $text_pos + $chunk_len;
                 $chunk_counter++;
             }
-
         }
 
         // *** making content
@@ -403,4 +396,3 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
 
     }
 }
-
