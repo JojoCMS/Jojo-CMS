@@ -109,7 +109,8 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             exit;
         }
         $js->setServerCache();
-        $js->output();
+        $optimise = (boolean)(strpos($f, 'pack')===false && strpos($f, 'min')===false);
+        $js->output($optimise);
 
         /* Cache a copy for later */
         if ($cachefile) {
