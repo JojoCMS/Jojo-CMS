@@ -725,8 +725,15 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return false;
     }
 
-    static function admin_action_after_save_article()
+    static function admin_action_after_save_article($id)
     {
+        $article = self::getItemsById($id);
+        if (empty($article['ar_htmllang'])) {
+            $mldata = Jojo::getMultiLanguageData();
+            $htmllanguage =  $mldata['sectiondata'][Jojo::getSectionRoot($article['pageid'])]['lc_defaultlang'];
+            Jojo::updateQuery("UPDATE {article} SET `ar_htmllang`=? WHERE `articleid`=?", array($htmllanguage, $id));
+        }
+        
         Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
         return true;
     }
