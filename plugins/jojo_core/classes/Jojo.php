@@ -1356,7 +1356,7 @@ class Jojo {
         }
         /* allow plugins to override the value of an option */
         $value = Jojo::applyFilter('get_option', $value, array($name, $default));
-
+        
         return $value;
     }
 
@@ -1832,7 +1832,7 @@ class Jojo {
 
         /* Strip the section prefix off the URI if there is one*/
         $mldata = Jojo::getMultiLanguageData();
-        $section = $mldata['default'] ;
+        $section = $mldata['default'];
 
         /* Find the first part of the URI */
         $uriParts = explode('/', $uri);
@@ -1894,19 +1894,22 @@ class Jojo {
                     } elseif (isset($res[0]['pageid'])) {
                        $root = $mldata['roots'][$section];
                         foreach ($res as $k=>$r){
-                            /* remove any pages not from this section */
+                            /* push any pages not from this section to the end of the array */
                             if ($root != Jojo::getSectionRoot($r['pageid']) ) {
                                 unset($res[$k]);
+                                array_push($res, $r);
                             }
                         }
-                        $page1 = array_shift($res);
-                        $pageid = $page1['pageid'];
                         preg_match('#([a-z0-9-_/]*)\/#', $uri, $matches);
+                        $pageid ='';
                         foreach ($res as $r){
                             if ($r['pg_url'] == $matches[1]) {
                                 $pageid = $r['pageid'];
+                                break;
                             }
                         }
+                        $page1 = array_shift($res);
+                        $pageid = !$pageid ? $page1['pageid'] : $pageid;
                         if ($getall) {
                             $allmatches[] = $pageid;
                         } else {
@@ -2002,17 +2005,22 @@ class Jojo {
             } else {
                $root = $mldata['roots'][$section];
                 foreach ($res as $k=>$r){
-                    /* remove any pages not from this section */
+                    /* push any pages not from this section to the end of the array */
                     if ($root != Jojo::getSectionRoot($r['pageid']) ) {
                         unset($res[$k]);
+                        array_push($res, $r);
+                    }
+                }
+                preg_match('#([a-z0-9-_/]*)\/#', $uri, $matches);
+                $pageid ='';
+                foreach ($res as $r){
+                    if ($r['pg_url'] == $matches[1]) {
+                        $pageid = $r['pageid'];
+                        break;
                     }
                 }
                 $page1 = array_shift($res);
-                $pageid = $page1['pageid'];
-                preg_match('#([a-z0-9-_]*)\/#', $uri, $matches);
-                foreach ($res as $r){
-                   if ( $r['pg_url'] == $matches[1]) $pageid = $r['pageid'];
-                }
+                $pageid = !$pageid ? $page1['pageid'] : $pageid;
                 if ($getall) {
                     $allmatches[] = $pageid;
                 } else {
@@ -2039,9 +2047,10 @@ class Jojo {
         $res = Jojo::selectQuery($query, $values);
         $root = isset($mldata['roots'][$section]) ? $mldata['roots'][$section] : 0;
         foreach ($res as $k=>$r){
-            /* remove any pages not from this section */
-            if ($root != Jojo::getSectionRoot($r['pageid']) && strpos($uri, 'admin')===false) {
+            /* push any pages not from this section to the end of the array */
+            if ($root != Jojo::getSectionRoot($r['pageid']) ) {
                 unset($res[$k]);
+                array_push($res, $r);
             }
         }
         $page1 = array_shift($res);
@@ -3016,7 +3025,7 @@ class Jojo {
                 $mldata['names'][$r['languageid']] = !empty($r['name']) ? $r['name'] : $r['longcode'];
                 $mldata['languages'][$r['languageid']] = !empty($r['lc_defaultlang']) ? $r['lc_defaultlang'] : 'en';
                 if (isset($r['default']) && $r['default']) $default = $r['languageid'];
-                if (!empty($r['root'])){
+                if ($r['active']){
                     $res[$k]['url'] = $r['languageid']!=$default ? $r['languageid'] . '/' : '';
                 } else {
                     unset($res[$k]);
