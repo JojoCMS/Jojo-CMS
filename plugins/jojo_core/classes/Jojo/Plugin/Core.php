@@ -67,6 +67,17 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         return $data;
     }
 
+    static function admin_action_after_save_page($id)
+    {
+        $p = self::getItemsById($id, 'showhidden');
+        if ($p && (!$p['pg_htmllang'] || !$p['pg_language'])) {
+            $mldata = Jojo::getMultiLanguageData();
+            $htmllanguage =  !$p['pg_htmllang'] ? $mldata['sectiondata'][Jojo::getSectionRoot($id)]['lc_defaultlang'] : $p['pg_htmllang'];
+            $section =  !$p['pg_language'] ? $mldata['sectiondata'][Jojo::getSectionRoot($id)]['lc_code'] : $p['pg_language'];
+            Jojo::updateQuery("UPDATE {page} SET `pg_htmllang`=?, `pg_language`=? WHERE `pageid`=?", array($htmllanguage, $section, $id));
+        }
+    }
+    
     /**
      * Sitemap filter
      *
@@ -137,25 +148,25 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         return $items;
     }
 
-    static function getItemsById($ids=false) {
+    static function getItemsById($ids=false, $for=false) {
         $items = array();
         $query  = "SELECT *";
         $query .= " FROM {page}";
         $query .=  is_array($ids) ? " WHERE pageid IN ('". implode("',' ", $ids) . "')" : " WHERE pageid=$ids";
         $items = Jojo::selectQuery($query);
         if (!$items) return false;
-        $items = self::cleanItems($items);
+        $items = self::cleanItems($items, $for);
         if (!$items) return false;
         $items = is_array($ids) ? $items : $items[0];
         return $items;
     }
 
-    static function getChildrenById($id=false) {
+    static function getChildrenById($id=false, $for=false) {
         $query  = "SELECT *";
         $query .= " FROM {page}";
         $query .=  " WHERE pg_parent = '$id'";
         $items = Jojo::selectQuery($query);
-        $items = self::cleanItems($items);
+        $items = self::cleanItems($items, $for);
         return $items;
     }
 

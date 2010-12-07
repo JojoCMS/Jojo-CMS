@@ -42,6 +42,8 @@ Jojo::addFilter('jojo_search', 'search', 'Core');
 /* Debug Mode Hook */
 Jojo::addHook('foot', 'debugmodestatus', 'Core');
 
+Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'Core');
+
 /* Register URI patterns */
 Jojo::registerURI("css/[file:([^\/]*)$]",                                            'Jojo_Plugin_Core_Css');             // "css/something.css" for css files
 Jojo::registerURI("json/[file:([^\/]*)$]",                                           'Jojo_Plugin_Core_Json');            // "json/something.php" for json requests
