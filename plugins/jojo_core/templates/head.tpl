@@ -3,6 +3,7 @@
     <!-- [[CACHE INFORMATION]] --><!-- Page generation time: {$GENERATIONTIME|round:3}s{if $pageid}; PageID: *{$pageid}* {/if}-->
     <title>{if $displaytitle}{$displaytitle}{/if}</title>
     <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />
+    <link rel="Shortcut icon" href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/favicon.ico" />
     {if $htmldoctype}<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
