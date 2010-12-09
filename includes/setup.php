@@ -120,6 +120,19 @@ $default_td = array();
 
 echo '<h1 id="h1">Running setup<div id="setup_loading"></div></h1><p>The Jojo setup script is an important part of the system. It applies version upgrades to the database, refreshes the cache, and performs other important housekeeping tasks. It is highly recommended that you run setup after every Jojo upgrade, and after adding any new files to plugins.</p><p>Consider running setup to be the equivalent of restarting Windows - it will fix all manner of problems, and is a good thing to do before seeking support.</p><p>If you do not see a "Setup Complete" message at the bottom of the page, it means the setup process has failed, which is usually due to a faulty install script in a plugin. The resulting error message should give some indication as to which plugin is responsible.</p>';
 
+/* create an empty array for each table to hold indexes - plugins will add to this array before it is processed */
+global $_db;
+$indexes = array();
+$just_here_for_db_conn = Jojo::selectQuery('SHOW FULL TABLES');
+$tables = $_db->getAssoc('SHOW FULL TABLES');
+foreach ($tables as $tblname => $tbltype)  {
+    if (_TBLPREFIX) {
+        if (strpos($tblname, _TBLPREFIX) !== 0) continue;
+        $tblname = str_replace(_TBLPREFIX, '', $tblname);
+    }
+    $indexes[$tblname] = array();
+}
+
 /* Include all the php files in the install folder of the core plugin */
 $dir = _BASEPLUGINDIR . '/jojo_core/install/';
 $handle  = opendir($dir);
@@ -296,8 +309,6 @@ for ($i=0; $i<count($data); $i++) {
 
 $existingtables = array();
 $existingfields = array();
-global $_db;
-$tables = $_db->getAssoc('SHOW FULL TABLES');
 
 /* ensure the previous command gives us a tables array */
 if (!is_array($tables)) {
@@ -340,8 +351,10 @@ foreach ($tables as $tblname => $tbltype)  {
 
     /* Check all fields in the table */
     $fields = Jojo::selectQuery(sprintf("SHOW COLUMNS FROM {%s}", $tblname));
+    $fieldlist = array(); //a simple array of field names, used for comparing indexes later
     foreach ($fields as $field) {
         $fieldname = $field["Field"];
+        $fieldlist[] = $fieldname;
         $fieldtype = $field["Type"];
         $fieldsize = 0;  //eg INT(11) would be 11. VARCHAR(255) would be 255
         $fielddefault = $field["Default"];
@@ -428,6 +441,54 @@ foreach ($tables as $tblname => $tbltype)  {
             Jojo::updateQuery($query, $values);
         }
     }
+    
+    /* setup indexes for the table */
+    echo '<div><h4>Checking indexes for '.$tblname.'...</h4>';
+    
+    /* Get the existing indexes */
+    $table_indexes = Jojo::selectQuery("SHOW INDEXES FROM {".$tblname."}");
+
+    $existingIndexes = array();
+    foreach ($table_indexes as $row2) {
+        if (!isset($existingIndexes[$row2['Key_name']])) {
+            $existingIndexes[$row2['Key_name']] = $row2['Column_name'];
+        } else {
+            $existingIndexes[$row2['Key_name']] = (array)$existingIndexes[$row2['Key_name']];
+            $existingIndexes[$row2['Key_name']][] = $row2['Column_name'];
+        }
+    }
+    /* list indexes */
+    foreach ($existingIndexes as $k => $v) {
+        $v_str = (is_array($v)) ? implode(', ', $v) : $v;
+        echo $k .' - <em>' . $v_str.'</em><br />'."\n";
+    }
+
+    /* Check for any missing indexes */
+    foreach ($indexes[$tblname] as $i) {
+        if (in_array($i, $existingIndexes)) {
+            continue;
+        }
+        if (!is_array($i) && (!in_array($i, $fieldlist))) {
+            echo "<span style='color:red'>Field $i does not exist</span><br />\n";
+            continue;
+        } else if (is_array($i)) {
+            $continue = false;
+            foreach ($i as $index_field) {
+                if (!in_array($index_field, $fieldlist)) {
+                    echo "<span style='color:red'>Field $index_field does not exist</span><br />\n";
+                    $continue = true;
+                }
+            }
+            if ($continue) $continue;
+        }
+        echo "Index on `" . implode((array)$i, '` and `') . '`';
+        echo "<span style='color:orange'>missing</span><br />\n";
+        $sql = "ALTER TABLE  `$tblname` ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
+        echo ".Executing Query: <span style='color:blue'>$sql</span><br />\n";
+        $res = Jojo::structureQuery($sql);
+        if ($res) echo "<span style='color:green'>Done</span><br />\n";          
+    }
+    
 }
 
 /* Delete TABLEDATA entries for tables that no longer exist... */
