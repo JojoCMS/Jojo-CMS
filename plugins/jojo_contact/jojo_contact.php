@@ -177,6 +177,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $toaddresses = self::getToAddresses();
             $smarty->assign('toaddresses',$toaddresses);
         }
+        
+        if ((_CONTACTADDRESS=='') && ( _FROMADDRESS=='') && ( _WEBMASTERADDRESS=='')) $smarty->assign('message', 'There are no recipients configured for this form, and any form submissions will not be able to be delivered.');
 
         $smarty->assign('posturl', $this->getCorrectUrl());
 
