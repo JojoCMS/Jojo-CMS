@@ -445,7 +445,7 @@ $_options[] = array(
     'label'       => 'Preferred Editor',
     'description' => 'The default content editor for new pages.',
     'type'        => 'radio',
-    'default'     => 'bbcode',
+    'default'     => 'wysiwyg',
     'options'     => 'bbcode,wysiwyg',
 );
 
