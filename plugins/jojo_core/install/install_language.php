@@ -114,8 +114,8 @@ if (isset($result['created'])) {
     echo sprintf("Table <b>%s</b> Does not exist - created empty table.<br />", $table);
     // New table created.  Copy the existing data from the language table into the new table
     echo "Adding default sub-site sections<br />";
-    $query = "INSERT INTO {lang_country} (`lc_id`, `lc_code`, `lc_name`, `lc_englishname`, `lc_root`, `lc_home`,`lc_longcode`, `lc_defaultlang`,`active`) VALUES
-                (1, 'en', 'Global', 'Global', 0, 1, 'english', 'en', 1)
+    $query = "INSERT INTO {lang_country} (`lc_id`, `lc_code`, `lc_name`, `lc_englishname`, `lc_root`, `lc_home`,`lc_longcode`, `lc_defaultlang`,`active`,`default`) VALUES
+                (1, 'en', 'Global', 'Global', 0, 1, 'english', 'en', 1, 1)
             ";
     Jojo::insertQuery($query);
 }
