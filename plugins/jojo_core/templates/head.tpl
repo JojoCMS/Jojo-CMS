@@ -3,7 +3,8 @@
     <!-- [[CACHE INFORMATION]] --><!-- Page generation time: {$GENERATIONTIME|round:3}s{if $pageid}; PageID: *{$pageid}* {/if}-->
     <title>{if $displaytitle}{$displaytitle}{/if}</title>
     <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />
-    {if $htmldoctype}<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {if $htmldoctype}<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
     {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" />{if !$robots_index || !$robots_follow || $isadmin}
@@ -27,7 +28,7 @@
     {/foreach}{elseif $rss}<link rel="alternate" type="application/rss+xml" title="{$sitetitle} RSS Feed" href="{$rss}" />
     {elseif !$templateoptions || $templateoptions.rss}<link rel="alternate" type="application/rss+xml" title="{$sitetitle} RSS Feed" href="{$SITEURL}/articles/rss/" />
     {/if}{if $modernizr}<script src="{$SITEURL}/external/modernizr-1.6.min.js"></script>
-    {/if}{if $jqueryhead || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js{else}"{cycle values=$NEXTASSET}external/jquery/jquery-1.4.4.min.js{/if}"></script>
+    {/if}{if $jqueryhead || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js{else}{cycle values=$NEXTASSET}external/jquery/jquery-1.4.4.min.js{/if}"></script>
     {/if}{if $commonhead || $isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}js/common.js"></script>
     {/if}{if $head}{$head}{/if}{if $css}
     <style type="text/css">
