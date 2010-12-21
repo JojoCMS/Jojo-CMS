@@ -86,6 +86,28 @@ $default_fd['articlecategory']['weighting'] = array(
         'fd_tabname' => "Content",
     );
 
+// Snippet Length Field
+$default_fd['articlecategory']['snippet'] = array(
+        'fd_name' => "Snippet Length",
+        'fd_type' => "text",
+        'fd_readonly' => "0",
+        'fd_default' => "400",
+        'fd_help' => "Truncate index snippets to this many characters. Use 'full' for no snipping.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
+// Read more link text 
+$default_fd['articlecategory']['readmore'] = array(
+        'fd_name' => "Read more link",
+        'fd_type' => "text",
+        'fd_readonly' => "0",
+        'fd_default' => '> Read more',
+        'fd_help' => "The link text to read the full article",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
 // Show Date
 $default_fd['articlecategory']['showdate'] = array(
         'fd_name' => "Show Post Date",
@@ -97,12 +119,34 @@ $default_fd['articlecategory']['showdate'] = array(
         'fd_tabname' => "Content",
     );
 
+// Date format Field
+$default_fd['articlecategory']['dateformat'] = array(
+        'fd_name' => "Date Format",
+        'fd_type' => "text",
+        'fd_readonly' => "0",
+        'fd_default' => "%e %b %Y",
+        'fd_help' => "Format the time and/or date according to locale settings. See php.net/strftime for details",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
 // Thumbnail sizing Field
 $default_fd['articlecategory']['thumbnail'] = array(
         'fd_name' => "Thumbnail Size",
         'fd_type' => "text",
         'fd_readonly' => "0",
         'fd_default' => "s150",
+        'fd_help' => "image thumbnail sizing in index eg: 150x200, h200, v4000",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
+// Main image sizing 
+$default_fd['articlecategory']['mainimage'] = array(
+        'fd_name' => "Main Image",
+        'fd_type' => "text",
+        'fd_readonly' => "0",
+        'fd_default' => "v60000",
         'fd_help' => "image thumbnail sizing in index eg: 150x200, h200, v4000",
         'fd_order' => $o++,
         'fd_tabname' => "Content",

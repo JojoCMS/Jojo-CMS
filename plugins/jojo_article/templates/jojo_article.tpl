@@ -9,7 +9,7 @@
     </div>
     {if $jojo_article.showdate}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
     {jojoHook hook="articleBeforeBody"}
-    {if $jojo_article.image}<img src="images/v60000/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}
+    {if $jojo_article.image}<img src="images/{$jojo_article.mainimage}/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}
     {$jojo_article.ar_body}
     {if $jojo_article.author}<div id="article-author"><p>{$jojo_article.author}</p></div>{/if}
     {jojoHook hook="articleAfterBody"}

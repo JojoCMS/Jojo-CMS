@@ -98,9 +98,13 @@ $query = "
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
       `weighting` tinyint(1) NOT NULL default '1',
       `showdate` tinyint(1) NOT NULL default '1',
+      `dateformat` varchar(255) NOT NULL default '%e %b %Y',
+      `snippet` varchar(255) NOT NULL default '400',
+      `readmore` varchar(255) NOT NULL default '> Read more',
       `externalrsslink` varchar(255) NOT NULL default '',
       `rsslink` tinyint(1) default '1',
-      `thumbnail` varchar(255) NOT NULL default '',";
+      `thumbnail` varchar(255) NOT NULL default 's150',
+      `mainimage` varchar(255) NOT NULL default 'v60000',";
 if (class_exists('Jojo_Plugin_Jojo_comment')) {
     $query .= "
      `comments` tinyint(1) NOT NULL default '1',";

@@ -88,8 +88,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
+            $i['snippet']       = isset($i['snippet']) ? $i['snippet'] : '400';
+            $i['thumbnail']       = isset($i['thumbnail']) ? $i['thumbnail'] : 's150';
+            $i['mainimage']       = isset($i['mainimage']) ? $i['mainimage'] : 'v60000';
+            $i['readmore'] = isset($i['readmore']) ? str_replace(' ', '&nbsp;', htmlspecialchars($i['readmore'], ENT_COMPAT, 'UTF-8', false)) : '&gt;&nbsp;read&nbsp;more';
             $i['date']       = $i['ar_date'];
-            $i['datefriendly'] = Jojo::formatTimestamp($i['ar_date'], "medium");
+            $i['datefriendly'] = isset($i['dateformat']) && !empty($i['dateformat']) ? strftime($i['dateformat'], $i['ar_date']) :  Jojo::formatTimestamp($i['ar_date'], "medium");
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
