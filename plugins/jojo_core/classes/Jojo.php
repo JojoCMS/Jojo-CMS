@@ -2622,8 +2622,8 @@ class Jojo {
             } else {
                 $mail->setSMTPParams($host, $port, _SITEURL);
             }
-            $mail->setFrom('"'.$fromname.'" <'.$fromaddress.'>');
-            $mail->setSubject($subject);
+            $mail->setFrom('"'.'=?UTF-8?B?'.base64_encode($fromname).'?='.'" <'.$fromaddress.'>');
+            $mail->setSubject('=?UTF-8?B?'.base64_encode($subject).'?=');
             $mail->setTextCharset('UTF-8');
 
             $result = $mail->send(array($toaddress), 'smtp');
@@ -2634,10 +2634,10 @@ class Jojo {
             $headers .= "X-Priority: 3\n";
             $headers .= "X-MSMail-Priority: Normal\n";
             $headers .= "X-Mailer: php\n";
-            $headers .= "From: \"" . $fromname . "\" <" . $fromaddress . ">\n";
+            $headers .= "From: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n";
             $additional="-f$fromaddress";
             $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : $toname . ' <' . $toaddress. '>';
-            return mail($to, $subject, $message, $headers, $additional);
+            return mail($to, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers, $additional);
         }
     }
 
