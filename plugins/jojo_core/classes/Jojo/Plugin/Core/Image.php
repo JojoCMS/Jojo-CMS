@@ -394,7 +394,12 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         if ($new_width != imageSX($im) || $new_height != imageSY($im)) {
             /* Resize */
             $new_im = ImageCreateTrueColor($new_width, $new_height);
+            if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
+                imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
+                imagealphablending($new_im, false);
+            }
             ImageCopyResampled($new_im, $im, 0, 0, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
+            //ImageCopy($new_im, $im, 0, 0, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
             $nochange = false;
         } else {
             /* No change */
