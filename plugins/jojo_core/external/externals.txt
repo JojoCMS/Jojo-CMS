@@ -5,5 +5,6 @@
 #
 #jsmin http://svn.github.com/rgrove/jsmin-php.git
 xinha http://svn.xinha.webfactional.com/trunk/
-smarty http://smarty-php.googlecode.com/svn/trunk/distribution/libs/
+#Latest version of Smarty majorly breaks Jojo functionality (as at 10 Feb 2011)
+#smarty http://smarty-php.googlecode.com/svn/trunk/distribution/libs/
 jsTree -r222 http://jstree.googlecode.com/svn/trunk/
