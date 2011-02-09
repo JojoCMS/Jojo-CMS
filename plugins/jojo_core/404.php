@@ -27,6 +27,9 @@ $smarty->assign('obfuscatedemail_mailto', Jojo::obfuscateEmail(_WEBMASTERADDRESS
 $smarty->assign('obfuscatedemail', Jojo::obfuscateEmail(_WEBMASTERADDRESS, false));
 echo $smarty->fetch('404.tpl');
 
+/* If the page was loaded using Google Chrome's preview (while the user is typing) then don't log the error, they're still typing */
+if ($_SERVER['HTTP_X_PURPOSE'] == ': preview') exit;
+
 $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 
 /* log the error */
