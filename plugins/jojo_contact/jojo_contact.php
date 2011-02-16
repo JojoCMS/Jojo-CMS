@@ -157,7 +157,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 unset($log);
             }
         } else {
-            $smarty->assign('message', implode("<br />\n", $errors));
+            //$smarty->assign('message', implode("<br />\n", $errors));
+            $smarty->assign('errors', $errors);
             $smarty->assign('fields', $fields);
         }
         return false;

@@ -1,3 +1,6 @@
+{if ($errors}
+{include file="errors.tpl"}
+{/if}
 {if $message}
 <div class="message">{$message}</div>
 {/if}
