@@ -331,7 +331,7 @@ class Jojo {
      *
      * Ensure we have a connection to the database
      */
-    private static function _connectToDB()
+    static function _connectToDB()
     {
         global $_db;
 
@@ -657,6 +657,9 @@ class Jojo {
     {
         Jojo::_connectToDB();
         global $_db;
+        
+        /* "TYPE=InnoDB" syntax is deprecated and breaks some versions of MySQL. Use "ENGINE=InnoDB" instead. */
+        $createQuery = preg_replace('/TYPE\\s*=\\s*(innodb|myisam)/i', 'ENGINE=$1', $createQuery);
 
         $result = array();
         if (!Jojo::tableexists($tablename)) {

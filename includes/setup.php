@@ -123,7 +123,9 @@ echo '<h1 id="h1">Running setup<div id="setup_loading"></div></h1><p>The Jojo se
 /* create an empty array for each table to hold indexes - plugins will add to this array before it is processed */
 global $_db;
 $indexes = array();
-$just_here_for_db_conn = Jojo::selectQuery('SHOW FULL TABLES');
+Jojo::_connectToDB();
+include(_BASEPLUGINDIR . '/jojo_core/install/install_theme.php');
+include(_BASEPLUGINDIR . '/jojo_core/install/install_plugin.php');
 $tables = $_db->getAssoc('SHOW FULL TABLES');
 foreach ($tables as $tblname => $tbltype)  {
     if (_TBLPREFIX) {
