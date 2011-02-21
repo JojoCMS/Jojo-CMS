@@ -348,3 +348,14 @@ if (!count($community_plugins) && !count($legacy_plugins) && count($legacy_pages
     Jojo::insertQuery("REPLACE INTO {plugin} SET name='jojo_community_legacy', active='yes'");
     echo 'jojo_community_legacy plugin installed. Please run setup again.<br />';
 }
+
+/* check that index.php in the webroot is the same as the Jojo default versions */
+if (Jojo::fileExists(_BASEDIR.'/_www/index.php') && Jojo::fileExists(_BASEDIR.'/_www/index_lite.php') && Jojo::fileExists(_WEBDIR.'/index.php')) {
+    $jojo_index_hash      = md5(file_get_contents(_BASEDIR.'/_www/index.php'));
+    $jojo_index_lite_hash = md5(file_get_contents(_BASEDIR.'/_www/index_lite.php'));
+    $live_index_hash      = md5(file_get_contents(_WEBDIR.'/index.php'));
+    
+    if (($jojo_index_hash != $live_index_hash) && ($jojo_index_lite_hash != $live_index_hash)) {
+        echo 'Your version of index.php may be out of date. Please copy '._BASEDIR.'/www/index.php'.' to '._WEBDIR.'/index.php'.'.<br />';
+    }
+}
