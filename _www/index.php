@@ -38,13 +38,14 @@ if (file_exists('config.php') && isset($_GET['uri'])) {
 }
 
 /* ensure we aren't on index.php (301 back to root if we are) */
-if ((basename($_SERVER['REQUEST_URI']) == 'index.php') && file_exists('config.php') && file_exists('.htaccess')) {
+$uri_parts = explode('?', basename($_SERVER['REQUEST_URI'])); //handle querystrings
+if (($uri_parts[0] == 'index.php') && file_exists('config.php') && file_exists('.htaccess')) {
     $protocol = ((isset($_SERVER['HTTPS']) &&($_SERVER['HTTPS'] == 'on')) || getenv('SSL_PROTOCOL_VERSION')) ? 'https://' : 'http://';
     $actualurl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     if (isset($_SERVER["HTTP_X_FORWARDED_HOST"])) {
         $actualurl = $protocol . $_SERVER["HTTP_X_FORWARDED_HOST"] . $_SERVER['REQUEST_URI'];
     }
-    $correcturl = preg_replace('%(.*)/index\\.php$%im', '$1', $actualurl);
+    $correcturl = preg_replace('%(.*)/index\\.php%im', '$1', $actualurl);
     header("HTTP/1.1 301 Moved Permanently");
     header("Location: $correcturl");
     exit;
