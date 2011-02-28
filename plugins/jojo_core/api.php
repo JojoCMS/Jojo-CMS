@@ -460,6 +460,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'wysiwyg_style',
+    'category'    => 'HTML Editor',
+    'label'       => 'WYSIWYG Editor Style',
+    'description' => 'Show the WYSIWYG editor inline, or as a popup window (does not apply to BB Editor).',
+    'type'        => 'radio',
+    'default'     => 'popup',//inline is intended to be default once stable
+    'options'     => 'inline,popup',
+);
+
+$_options[] = array(
     'id'          => 'xinha_strip_href',
     'category'    => 'HTML Editor',
     'label'       => 'Strip Base Href in Xinha',

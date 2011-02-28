@@ -136,6 +136,8 @@ function setTextEditorContent(id) {
     } else {
       //$('#'+id+'_html').val($('#'+id).val());
       $('textarea[name='+id+'_html]').val($('#'+id).val());
+      //var xinha_editor_name = id+'_xinha';
+      xinha_editors[id+'_xinha'].setEditorContent($('#'+id).val());
     }
 }
 

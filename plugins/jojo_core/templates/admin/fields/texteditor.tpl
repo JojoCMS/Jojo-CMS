@@ -15,6 +15,7 @@
 </div>
 
 {* HTML Editor *}
+{if $OPTIONS.wysiwyg_style=='popup'}
 <div id="editor_{$fd_field}_html" class="HTMLEditor"  style="display: none;color:#666677;">{$fd_name}:
     <button class="jojo-admin-button-launcheditor" onclick="{strip}
         $('#xinha-iframe').attr('src','{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html');
@@ -27,6 +28,10 @@
         <textarea class="markItUp" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
+{else}
+<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" rows="10" cols="80" style="width:100%"></textarea>
+
+{/if}
 
 {* BB Editor *}
 <div id="editor_{$fd_field}_bb" class="BBEditor" style="display: none;color:#666677;">{$fd_name}:
@@ -53,7 +58,7 @@ $('textarea[name=fm_{$fd_field}_bb]').change(function(){ldelim}if($('#type_fm_{$
 $('textarea[name=fm_{$fd_field}_html]').change(function(){ldelim}if($('#type_fm_{$fd_field}_html').attr('checked')){ldelim}$('#fm_{$fd_field}').val($(this).val());{rdelim}{rdelim});
 
 $(document).ready(function() {ldelim}
-       $("#fm_{$fd_field}_html").markItUp(myHtmlSettings);
+       {if $OPTIONS.wysiwyg_style=='popup'}$("#fm_{$fd_field}_html").markItUp(myHtmlSettings);{/if}
        $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
         setTextEditorContent("fm_{$fd_field}");
         $('#editor_{$fd_field}_{$editortype}').show();

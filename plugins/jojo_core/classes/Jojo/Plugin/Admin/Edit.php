@@ -128,16 +128,20 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
 
         $smarty->assign('fields', $fieldsHTML);
 
-        foreach ($fieldsHTML as $f) {
+        $wysiwyg_editors = array();
+        foreach ($fieldsHTML as $k => $f) {
             if ($f['type'] == 'bbeditor') {
                 $smarty->assign('includebbeditor', true);
             } elseif ($f['type'] == 'wysiwygeditor') {
                 $smarty->assign('includewysiwygeditor', true);
+                $wysiwyg_editors[] = $k;
             } elseif ($f['type'] == 'texteditor') {
                 $smarty->assign('includewysiwygeditor', true);
+                $wysiwyg_editors[] = $k;
             }
             if (!empty($f['js'])) $content['javascript'] .= "\n".$f['js'];
         }
+        $smarty->assign('wysiwyg_editors', $wysiwyg_editors);
 
         // Create button text
         if ($table->getRecordID() > 0) {
@@ -187,12 +191,27 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
 
         /* Get list of folders for Image upload dropdown */
         $this->rec_scandir(_DOWNLOADDIR);
+        
+        $xinha_plugins = array (
+                        'ContextMenu',
+                        'Stylist',
+                        'FindReplace',
+                        'PasteText',
+                        'ExtendedFileManager',
+                        'TableOperations',
+                        'InsertAnchor',
+                        'HtmlEntities'
+                    );
+
+        $xinha_plugins = $sitemap = Jojo::applyFilter('xinha_plugins', $xinha_plugins);
+        $smarty->assign('xinha_plugins', $xinha_plugins);
 
         $smarty->assign('foldertreeoptions',$this->tree->printout_select());
 
         $content['content'] = $smarty->fetch('admin/edit.tpl');
         $head               = array();
         $head[]             = $smarty->fetch('external/date_input_head.tpl');
+        $head[]             = $smarty->fetch('admin/xinha_head.tpl');
         $head               = Jojo::applyFilter('admin_edit_head', $head); //allow plugins to add their piece
         $content['head']    = implode("\n", $head);
 
