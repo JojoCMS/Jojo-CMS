@@ -1,4 +1,4 @@
-{if ($errors}
+{if $errors}
 {include file="errors.tpl"}
 {/if}
 {if $message}
