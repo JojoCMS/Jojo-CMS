@@ -66,8 +66,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
         $items = Jojo::selectQuery($query);
         $items = self::cleanItems($items);
-        $items = is_array($ids) ? self::sortItems($items, $sortby) : $items[0];
-        return $items;
+        if ($items) {
+            $items = is_array($ids) ? self::sortItems($items, $sortby) : $items[0];
+            return $items;
+        } else {
+            return false;
+        }
     }
 
     /* clean items for output */
@@ -87,7 +91,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             // Snip for the index description
             $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
-            $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
+            $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
+            $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
             $i['snippet']       = isset($i['snippet']) ? $i['snippet'] : '400';
             $i['thumbnail']       = isset($i['thumbnail']) ? $i['thumbnail'] : 's150';
             $i['mainimage']       = isset($i['mainimage']) ? $i['mainimage'] : 'v60000';
@@ -677,7 +682,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                         'code' => $matches[3]
                         );
         /* Check for standard plugin url format matches */
-        } elseif ($uribits = Jojo_Plugin::isPluginUrl($uri)) {
+        } elseif ($uribits = parent::isPluginUrl($uri)) {
             $prefix = $uribits['prefix'];
             $getvars = $uribits['getvars'];
         } else {
