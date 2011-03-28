@@ -126,6 +126,19 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 }
                 break;
         }
+        
+        /* additional CSS files as added by plugins / themes */
+        $additional = Jojo::mergeCSS($file);
+        foreach ($additional as $f) {
+            foreach (Jojo::listPlugins('css/'.$f) as $pluginfile) {
+                $css->addFile($pluginfile);
+            }
+        }
+        foreach ($additional as $f) {
+            foreach (Jojo::listThemes('css/'.$f) as $themefile) {
+                $css->addFile($themefile);
+            }
+        }
 
         $timetoadd = Jojo::timer($start) * 1000;
         if ($css->numfiles == 0) {

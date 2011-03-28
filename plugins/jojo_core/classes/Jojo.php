@@ -1336,6 +1336,26 @@ class Jojo {
         $nextasset = Jojo::semiRand(0, $n, $matches[1]);
         return 'url(' . $ASSETS[$nextasset] . '/' . $matches[1] . ')';
     }
+    
+    /**
+     * Adds one or more CSS files to be merged with styles.css
+     *
+     * $files  string,array  The name of the CSS file to add, or an array of filenames
+     */
+    static function mergeCSS($target, $files=false)
+    {
+        static $list;
+        if (!isset($list)) $list = array();
+        if (!isset($list[$target])) $list[$target] = array();
+        if ($files === false) return $list[$target]; //leave the arguments blank to return a list of CSS files already added
+        /* add single file */
+        if (!is_array($files)) {
+            $list[$target][] = $files;
+        } else {
+            $list[$target] = array_merge($list[$target], $files);
+        }
+        return true;
+    }
 
     /**
      * Get the value of an option. Returning the cached value if available.
