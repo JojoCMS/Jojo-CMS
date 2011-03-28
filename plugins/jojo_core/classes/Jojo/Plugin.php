@@ -64,6 +64,7 @@ class Jojo_Plugin {
             $subpage ['url']= $sub['url'];
             $subpage['rollover'] =  Jojo::either($sub['desc'],$sub['title']);
             $subpage['hyperlink'] = "<a href = '" . $subpage['url']."' title = '" . $subpage['rollover']."'>" . $subpage['name']."</a>";
+            $subpage = Jojo::applyFilter('plugin:subpage', $subpage, $sub);
             $this->page['subpages'][] = $subpage;
         }
 

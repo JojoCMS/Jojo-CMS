@@ -164,7 +164,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     static function getChildrenById($id=false, $for=false) {
         $query  = "SELECT *";
         $query .= " FROM {page}";
-        $query .=  " WHERE pg_parent = '$id'";
+        $query .=  " WHERE pg_parent = '$id' ORDER BY pg_order";
         $items = Jojo::selectQuery($query);
         $items = self::cleanItems($items, $for);
         return $items;
