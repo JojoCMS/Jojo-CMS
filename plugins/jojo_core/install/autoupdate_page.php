@@ -28,6 +28,7 @@ $default_td['page'] = array(
         'td_expiryfield' => "pg_expirydate",
         'td_activefield' => "pg_status",
         'td_languagefield' => "pg_language",
+        'td_plugin' => "Core",
         'td_defaultpermissions' => "everyone.show=1\neveryone.view=1\nadmin.add=1\nadmin.edit=1\nadmin.delete=1",
     );
 

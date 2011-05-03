@@ -175,11 +175,11 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         global $_USERGROUPS;
         $now    = time();
         $pagePermissions = new JOJO_Permissions();
+        $mldata = Jojo::getMultiLanguageData();
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
-            $mldata = Jojo::getMultiLanguageData();
             $i['root'] = Jojo::getSectionRoot($i['pageid']);
-            if ((isset($mldata['sectiondata'][$i['root']]) && !$mldata['sectiondata'][$i['root']]['active']) || !$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if (!isset($mldata['sectiondata'][$i['root']]) || !$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
@@ -218,6 +218,14 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $item['absoluteurl'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . $item['url'];
         }
         return $item;
+    }
+
+    static function getPrefixById($id=false) {
+        if ($id) {
+                $prefix = rtrim(Jojo::getPageUrlPrefix($id), '/');
+                return $prefix;
+        }
+        return false;
     }
 
     /**
