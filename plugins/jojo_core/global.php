@@ -47,6 +47,9 @@ $smarty->assign('mainnav', _getNav($root, Jojo::getOption('nav_mainnav', 0)));
 /* Get one level of navigation for the footer */
 $smarty->assign('footernav', _getNav($root, Jojo::getOption('nav_footernav', 0), 'footernav'));
 
+/* Get one level of navigation for the secondarynav */
+$smarty->assign('secondarynav', (Jojo::getOption('use_secondary_nav', 'no')=='yes' ? _getNav($root, 1, 'secondarynav') : ''));
+
 if (!Jojo::getOption('nav_mainnav', 0)) {
 /* Get 2 levels of sub navigation as a separate variable if mainnav is only one level*/
     if ($page->getValue('pg_parent') != $root) {
