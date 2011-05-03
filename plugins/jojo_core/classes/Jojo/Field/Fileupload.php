@@ -172,7 +172,7 @@ class Jojo_Field_fileupload extends Jojo_Field
         if (!isset($_FILES["fm_FILE_".$this->fd_field])) return false;
 
         /* set some variables for convenience */
-        $filename = $_FILES["fm_FILE_".$this->fd_field]['name'];
+        $filename = str_replace(' ', '_', str_replace(array('?','&',"'",',','[',']'), '', stripslashes($_FILES["fm_FILE_".$this->fd_field]['name'])));
         $tmpfilename = $_FILES["fm_FILE_".$this->fd_field]['tmp_name'];
 
         $this->value = $newvalue;
