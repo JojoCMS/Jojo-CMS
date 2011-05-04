@@ -19,4 +19,5 @@
     </script>
     {/if}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition != 'top'}
      {include file="analytics.tpl"}
-    {/if}{jojoHook hook="foot"}
+    {/if}{if $customfoot}
+{$customfoot}{/if}{jojoHook hook="customfoot"}{jojoHook hook="foot"}
