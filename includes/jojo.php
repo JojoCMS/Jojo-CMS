@@ -383,6 +383,13 @@ foreach (Jojo::listPlugins('templates/customhead.tpl') as $pluginfile) {
 }
 $smarty->assign('customhead', $customhead);
 
+/* Fetch custom foot from all the plugins and themes */
+$customfoot = '';
+foreach (Jojo::listPlugins('templates/customfoot.tpl') as $pluginfile) {
+    $customfoot .= $smarty->fetch($pluginfile);
+}
+$smarty->assign('customfoot', $customfoot);
+
 /* Custom code from all plugins and theme */
 $templateoptions = array();
 foreach (Jojo::listPlugins('global.php') as $pluginfile) {
