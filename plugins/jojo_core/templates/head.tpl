@@ -41,7 +41,7 @@
     <script type="text/javascript" src="external/markitup/sets/html/set.js"></script>
     <script type="text/javascript" src="external/markitup/sets/bbcode/set.js"></script>
     <script type="text/javascript" src="{cycle values=$NEXTASSET}js/admin.js?v=3"></script>
-    {else}{if $customhead}
-{$customhead}{/if}{jojoHook hook="customhead"}{if $OPTIONS.analyticscode && $OPTIONS.analyticsposition == 'top'}
+    {else}{if $OPTIONS.analyticscode && $OPTIONS.analyticsposition == 'top'}
     {include file="analytics.tpl"}
-{/if}{/if}</head>
+    {/if}{/if}{if $customhead}
+{$customhead}{/if}{jojoHook hook="customhead"}</head>
