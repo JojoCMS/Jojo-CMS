@@ -211,7 +211,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if ($categorydata['type']=='index') {
             $categoryid = 'all';
         } elseif ($categorydata['type']=='parent') {
-            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page}p  LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE pg_parent = ? AND pg_link = 'jojo_plugin_jojo_article'", $pageid);
+            $childcategories = Jojo::selectQuery("SELECT articlecategoryid FROM {page} p  LEFT JOIN {articlecategory} c ON (c.pageid=p.pageid) WHERE pg_parent = ? AND pg_link = 'jojo_plugin_jojo_article'", $pageid);
             foreach ($childcategories as $c) {
                 $categoryid[] = $c['articlecategoryid'];
             }
@@ -234,9 +234,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             return $content;
         }
 
-        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden');
-
         if ($action == 'rss') {
+            $articles = self::getArticles(100, 0, $categoryid, $sortby, $exclude=false, $include='showhidden');
             $rssfields = array(
                 'pagetitle' => $this->page['pg_title'],
                 'pageurl' => _SITEURL . '/' . $pageprefix . $this->page['pg_url'] . '/',
@@ -245,10 +244,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 'url' => 'url',
                 'date' => 'date',
                 'datetype' => 'unix',
+                'options' => array('snip' => $categorydata['snippet'], 'imagesize' => '')
             );
             $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
             Jojo::getFeed($articles, $rssfields);
         }
+
+        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden');
 
         if ($articleid || !empty($url)) {
             /* find the current, next and previous items */
@@ -383,13 +385,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($numpages == 1) {
                 $pagination = '';
             } elseif ($numpages == 2 && $pagenum == 2) {
-                $pagination = sprintf('<a href="%s/p1/">previous...</a>', $pageprefix . self::_getPrefix('article', $categoryid) );
+                $pagination = sprintf('<a href="%s/p1/">previous...</a>', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']) );
             } elseif ($numpages == 2 && $pagenum == 1) {
-                $pagination = sprintf('<a href="%s/p2/">more...</a>', $pageprefix . self::_getPrefix('article', $categoryid) );
+                $pagination = sprintf('<a href="%s/p2/">more...</a>', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']) );
             } else {
                 $pagination = '<ul>';
                 for ($p=1;$p<=$numpages;$p++) {
-                    $url = $pageprefix . self::_getPrefix('article', $categoryid) . '/';
+                    $url = $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']) . '/';
                     if ($p > 1) {
                         $url .= 'p' . $p . '/';
                     }

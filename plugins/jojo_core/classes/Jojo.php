@@ -3168,21 +3168,24 @@ function getSelectedPages($pageid, $root=0) {
         $pagetitle = $fields['pagetitle'];
         $pageurl = $fields['pageurl'];
         $titlefield = $fields['title'];
+        $authorfield = isset($fields['author']) ?  $fields['author'] : '';
         $bodyfield = $fields['body'];
         $urlfield = $fields['url'];
         $datefield = $fields['date'];
         $datetype = $fields['datetype']; // mysql or unix timestamp
-        $snip =  (Jojo::getOption('rss_full_description') == 'yes' ? 'full' : Jojo::getOption('rss_truncate', 800)); // full or truncate length
+        $categoryfield = isset($fields['category']) ?  $fields['category'] : '';
+        $options = isset($fields['options']) ? $fields['options'] : array();
+        $snip =  $options ? $options['snip'] : (Jojo::getOption('rss_full_description') == 'yes' ? 'full' : Jojo::getOption('rss_truncate', 800)); // full or truncate length
+        $image =  isset($fields['image']) && $options['imagesize'] ? $fields['image'] : '';
         $sourcelink = (boolean)(Jojo::getOption('rss_source_link') == 'yes'); // add source link to each item
-
         $site = mb_convert_encoding(_SITETITLE, 'HTML-ENTITIES', 'UTF-8');
         $pagetitle = mb_convert_encoding($pagetitle, 'HTML-ENTITIES', 'UTF-8');
         $description = mb_convert_encoding(Jojo::getOption('rss_sitedesc', Jojo::getOption('sitetitle')), 'HTML-ENTITIES', 'UTF-8');
-        $rss  = "<?xml version=\"1.0\" ?".">\n";
-        $rss .= "<rss version=\"2.0\">\n";
+        $rss  = '<?xml version="1.0" ?>' . "\n";
+        $rss .= '<rss version="2.0">' . "\n";
         $rss .= "<channel>\n";
-        $rss .= "<title>" . $site . ': ' . $pagetitle . "</title>\n";
-        $rss .= "<description>" . $description . "</description>\n";
+        $rss .= '<title>' . $site . ': ' . $pagetitle . "</title>\n";
+        $rss .= '<description>' . $description . "</description>\n";
         $rss .= "<link>" . $pageurl . "</link>\n";
         $rss .= "<copyright>" . htmlentities(_SITETITLE) . " " . date('Y', strtotime('now')) . "</copyright>\n";
 
@@ -3203,19 +3206,32 @@ function getSelectedPages($pageid, $root=0) {
             $source = _SITEURL . "/" . $i['url'];
             $i['body'] = mb_convert_encoding($i['body'], 'HTML-ENTITIES', 'UTF-8');
             $i['title'] = mb_convert_encoding($i[$titlefield], 'HTML-ENTITIES', 'UTF-8');
+            $i['author'] = $authorfield ? mb_convert_encoding($i[$authorfield], 'HTML-ENTITIES', 'UTF-8') : '';
             $i['date'] = $datetype=='mysql' ? Jojo::mysql2date($i[$datefield], 'rss') :  Jojo::formatTimestamp($i[$datefield], 'rss');
+            $i['category'] = $categoryfield ? mb_convert_encoding($i[$categoryfield], 'HTML-ENTITIES', 'UTF-8') : '';
+            if ($image) {
+                $i['imageurl'] = isset($i['image']) && $i['image'] ?  _SITEURL . "/images/" . ( isset($options['imagesize']) ? $options['imagesize'] : 'default') . "/" . $i['image'] : '';
+                $i['imagedata'] = $i['imageurl'] ?  getimagesize(_DOWNLOADDIR . '/' . $i['image']) : '';
+                $i['imagedata']['size'] = $i['imagedata'] ?  filesize(_DOWNLOADDIR . '/' . $i['image']) : '';
+            }
             if ($sourcelink) $i['body'] .= '<p>Source: <a href="' . $source . '">' . $i['title'] . '</a></p>';
             $rss .= "<item>\n";
             $rss .= "<title>" . Jojo::xmlEscape($i['title']) . "</title>\n";
             $rss .= "<description>" . Jojo::xmlEscape($i['body']) . "</description>\n";
+            $rss .= $i['author'] ? "<author>" . Jojo::xmlEscape($i['author']) . "</author>\n" : '';            
+            $rss .= $i['category'] ? "<category>" . Jojo::xmlEscape($i['category']) . "</category>\n" : '';            
+            if ($image) {
+                $rss .= $i['imageurl'] && $i['imagedata'] ? '<enclosure url="' . $i['imageurl'] . '" length="' . $i['imagedata']['size'] . '" type="' . ( isset($i['imagedata']['mime']) ? $i['imagedata']['mime'] : 'image/jpeg' ) . '" />' : '';
+            }
             $rss .= "<link>". $source . "</link>\n";
+            $rss .= '<source url="'. $pageurl . '">' . $pagetitle . "</source>\n";
             $rss .= "<pubDate>" . $i['date'] . "</pubDate>\n";
             $rss .= "</item>\n";
         }
         $rss .= "</channel>\n";
         $rss .= "</rss>\n";
 
-        header('Content-type: application/xml');
+        header('Content-type: application/rss+xml');
         echo $rss;
         exit;
     }
