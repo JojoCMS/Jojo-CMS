@@ -138,6 +138,9 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             case 'png':
                 header('Content-Type: image/png');
                 break;
+            case 'htc':
+                header('Content-Type: text/x-component');
+                break;
             default:
                 break;
         }
