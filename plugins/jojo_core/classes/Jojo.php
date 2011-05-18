@@ -2606,7 +2606,7 @@ class Jojo {
         return false;
     }
 
-    static function simpleMail($toname, $toaddress, $subject, $message, $fromname=_FROMNAME, $fromaddress=_FROMADDRESS)
+    static function simpleMail($toname, $toaddress, $subject, $message, $fromname=_FROMNAME, $fromaddress=_FROMADDRESS, $htmlmessage=false)
     {
         //Protect against email injection
         $badStrings = array("Content-Type:",
@@ -2652,14 +2652,38 @@ class Jojo {
             $result = $mail->send(array($toaddress), 'smtp');
             return $result;
         } else {
+            # Setup mime boundary
+            $mime_boundary = 'Multipart_Boundary_x'.md5(time()).'x';
+
             $headers  = "MIME-Version: 1.0\n";
-            $headers .= "Content-Type: text/plain;charset=\"UTF-8\"\n";
+            $headers .= $htmlmessage ? "Content-Type: multipart/alternative; boundary=\"$mime_boundary\"\r\n" : "Content-Type: text/plain;charset=\"UTF-8\"\n";
+            $headers .= "Content-Transfer-Encoding: 7bit\r\n";
             $headers .= "X-Priority: 3\n";
             $headers .= "X-MSMail-Priority: Normal\n";
             $headers .= "X-Mailer: php\n";
             $headers .= "From: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n";
             $additional="-f$fromaddress";
             $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : $toname . ' <' . $toaddress. '>';
+            if ($htmlmessage) {
+                $body = '';
+                # Add in plain text version
+                $body.= "--$mime_boundary\n";
+                $body.= "Content-Type: text/plain; charset=\"charset=us-ascii\"\n";
+                $body.= "Content-Transfer-Encoding: 7bit\n\n";
+                $body.= $message;
+                $body.= "\n\n";
+                
+                # Add in HTML version
+                $body.= "--$mime_boundary\n";
+                $body.= "Content-Type: text/html; charset=\"UTF-8\"\n";
+                $body.= "Content-Transfer-Encoding: 7bit\n\n";
+                $body.= $htmlmessage;
+                $body.= "\n\n";
+                
+                # End email
+                $body.= "--$mime_boundary--\n"; # <-- Notice trailing --, required to close email body for mime's
+                $message = $body;
+            }
             return mail($to, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers, $additional);
         }
     }
