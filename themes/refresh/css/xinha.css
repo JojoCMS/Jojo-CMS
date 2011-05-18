@@ -1,6 +1,16 @@
 /* these styles will only apply to the Xinha HTML editor. Edit this file to fix any formatting irregularities */
+body, html {
+    text-align: left;
+    color: #000;
+    background: #fff;
+}
+
+form {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
 body {
-  text-align: left;
-  color: #000;
-  background: #fff;
+    padding: 10px;
 }

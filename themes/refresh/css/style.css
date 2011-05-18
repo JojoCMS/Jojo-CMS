@@ -447,3 +447,23 @@ em{
   color:#FFFFFF;
   font-size:0.8em;
 }
+
+/* these styles will only apply to the Xinha HTML editor. Edit this file to fix any formatting irregularities */
+body, html {
+    text-align: left;
+    color: #000;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+form {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+iframe, #xinha-iframe {
+    border: none;
+}
