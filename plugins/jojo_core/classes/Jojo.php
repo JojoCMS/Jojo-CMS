@@ -3039,7 +3039,7 @@ class Jojo {
                             'languagelist' => array()
                             );
             // get language codes from new table
-            $res = Jojo::selectAssoc("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc WHERE active=1");
+            $res = Jojo::selectAssoc("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc WHERE active=1 ORDER BY displayorder");
             $default = !isset($res[0]['default']) ? Jojo::getOption('multilanguage-default') : '';
             foreach ($res as $k=>$r) {
                 $mldata['roots'][$r['languageid']] = $r['root'];
