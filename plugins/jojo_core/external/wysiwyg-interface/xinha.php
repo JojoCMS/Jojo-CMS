@@ -131,8 +131,8 @@
 
   xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
 
-  xinha_editors.myTextArea.config.width = '780px';
-  xinha_editors.myTextArea.config.height = '460px';
+  xinha_editors.myTextArea.config.width = '805px';
+  xinha_editors.myTextArea.config.height = '480px';
 
   Xinha.startEditors(xinha_editors);
   window.onload = null;

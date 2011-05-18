@@ -900,3 +900,15 @@ div.theme-box button {
     background-image: url(../images/default/cms/icons/folder.png);
     background-position: top left;
 }
+
+.htmlarea .toolbar .buttonActive, .htmlarea .toolbar .buttonPressed {
+    padding: 0;
+}
+
+.htmlarea .toolbar table {
+    background: none repeat scroll 0 0 transparent;
+}
+
+.htmlarea .toolbar .buttonPressed {
+    background: none repeat scroll 0 0 black;
+}
