@@ -24,7 +24,7 @@ $_provides['pluginClasses'] = array(
 
 $_options[] = array(
     'id'          => 'contactcaptcha',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Contact CAPTCHA',
     'description' => 'A CAPTCHA image helps prevent contact form spam, which is becoming more and more common.',
     'type'        => 'radio',
@@ -34,7 +34,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'contact_tracking_code_analytics',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Google Analytics Goal Settings: Virtual page name for contact thankyou page',
     'description' => 'Since both the contact and thankyou page have the same url, give the thankyou page a virtual page name. Use as "Goal URL". Set-up "Define Funnel" as /contact/ to track  % of people that view your contact page to the number that send a contact.',
     'type'        => 'text',
@@ -44,7 +44,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'contact_tracking_code',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Contact conversion tracking code',
     'description' => 'HTML code for conversion tracking enquiries via the contact form. Eg Google Adwords.',
     'type'        => 'textarea',
@@ -54,7 +54,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'contact_success_message',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Success message',
     'description' => 'Customize the message that is displayed to the user after a successful contact form submission. Default message is *Your message was sent successfully.*',
     'type'        => 'textarea',
@@ -64,7 +64,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'contact_webmaster_copy',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Send contact emails to webmaster',
     'description' => 'If this option is set, the webmaster will receive a copy of all enquiries from the contact form.',
     'type'        => 'radio',
@@ -74,7 +74,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'contact_choice',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Provide a choice for who the enquiry goes to',
     'description' => 'If yes this will give the contact form a drop down box so the user can choose who the enquiry goes to. This will not work if the Choice List if left blank.',
     'type'        => 'radio',
@@ -84,7 +84,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'contact_choice_list',
-    'category'    => 'Contacts',
+    'category'    => 'Contact',
     'label'       => 'Choice List of who enquiry can go to',
     'description' => 'List the people and email addresses of who can be contacted. Enter the name of person then , email address , then next person etc. For Example: Marketing Manager,marketing@domain.com,Sales Manager,sales@domain.com,Customer Support,support@domain.com',
     'type'        => 'textarea',

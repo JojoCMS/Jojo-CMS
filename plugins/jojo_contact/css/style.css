@@ -30,6 +30,17 @@ form.contact-form div.form-fieldset{
   margin-bottom: 5px;
 }
 
+form.contact-form div.form-heading{
+  clear: left;
+  margin-bottom: 5px;
+  margin-top: 40px;
+}
+
+form.contact-form div.form-note{
+  clear: left;
+  margin-bottom: 5px;
+}
+
 form.contact-form div.form-field {
   float: left;
   margin-bottom: 3px;
@@ -63,7 +74,7 @@ form.contact-form div.form-field label {
 }
 
 form.contact-form div.captcha {
-    margin:0 0 0 155px;
+    margin:10px 0 10px 155px;
     width:300px;
 }
 
