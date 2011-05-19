@@ -66,7 +66,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
         Jojo::noFormInjection();
         if (isset($_POST['form_id'])) {
             
-            $selectedlogs = Jojo::selectQuery("SELECT fs.submitted, fs.content, f.form_name FROM {formsubmission} fs LEFT JOIN {form} f ON (fs.form_id=f.form_id) WHERE f.form_id=? AND `success`=1 ORDER BY submitted DESC", array(addslashes($_POST['form_id'])));
+            $selectedlogs = Jojo::selectQuery("SELECT fs.formsubmissionid AS ID, fs.submitted, fs.content, f.form_name FROM {formsubmission} fs LEFT JOIN {form} f ON (fs.form_id=f.form_id) WHERE f.form_id=? AND `success`=1 ORDER BY submitted DESC", array(addslashes($_POST['form_id'])));
             if (!count($selectedlogs)) { return true; }
             $formname = $selectedlogs[0]['form_name'];
             foreach ($selectedlogs as $k => $s) {

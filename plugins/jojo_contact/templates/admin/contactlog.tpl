@@ -13,6 +13,7 @@ Export selected form's submissions as a CSV file<br />
     <thead>
         <tr>
             <th></th>
+            <th>ID</th>
             <th>Submitted</th>
             <th>Subject</th>
             <th>By</th>
@@ -23,6 +24,7 @@ Export selected form's submissions as a CSV file<br />
 {foreach from=$log item=e}
         <tr>
             <td>{if !$e.success}<img src="images/cms/icons/error.png" alt="Sending failed!" />{/if}</td>
+            <td>{$e.formsubmissionid}</td>
             <td>{$e.friendlydate}</td>
             <td>{$e.subject}</td>
             <td>{$e.from_email}</td>

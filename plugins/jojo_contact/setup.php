@@ -53,7 +53,8 @@ if(!Jojo::tableExists('form') || !Jojo::selectRow("SELECT * FROM {form}")){
     /* Read options and add a form table */
     echo "Jojo_Plugin_Jojo_Contact: Reading jojo_contact options and transfering into form table <br />";
     $insertQuery = "INSERT INTO {form} (
-                        `form_name` ,
+                        `form_name`,
+                        `form_to`,
                         `form_page_id` ,
                         `form_captcha` ,
                         `form_tracking_code_analytics` ,
@@ -65,6 +66,7 @@ if(!Jojo::tableExists('form') || !Jojo::selectRow("SELECT * FROM {form}")){
                         )
                         VALUES (
                         	'Contact Form',
+                        	'". Jojo::getOption('contactaddress') ."',
                         	'" . $pageID . "',
                         	'". (Jojo::getOption('contactcaptcha') == 'yes' ? 1 : 0) ."',
                         	'". Jojo::getOption('contact_tracking_code_analytics') ."',

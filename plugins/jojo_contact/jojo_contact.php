@@ -226,7 +226,18 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage= str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $htmlcss . '">', $htmlmessage);
         $htmlmessage = str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $htmlcss . '">', $htmlmessage);
         $htmlmessage = str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $htmlmessage);
-        $htmlmessage = str_replace('[[name]]', $from_name, $htmlmessage);
+
+        // filter message for personalisation by field display name eg [[From Name]]
+        if (strpos($htmlmessage, '[[')!==false) {
+            preg_match_all('/\[\[([^\]]*)\]\]/', $htmlmessage, $matches);
+            foreach($matches[1] as $k => $search) {
+                foreach($fields as $f) {
+                    if ($f['display'] == $search) {
+                        $htmlmessage  = str_replace($matches[0][$k], $f['value'], $htmlmessage);
+                    }
+                }
+            }
+        }
         
         // wrap content in template (only supports one template for all forms)
         $smarty->assign('htmlmessage', $htmlmessage);
