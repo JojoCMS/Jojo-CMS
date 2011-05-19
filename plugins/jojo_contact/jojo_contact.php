@@ -221,14 +221,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         // basic inline styling for supplied content
-        str_replace('<p>', '<p style="font-size:13px;' . $htmlcss . '">', $htmlmessage);
-        str_replace('<td>', '<td style="font-size:13px;' . $htmlcss . '">', $htmlmessage);
-        str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $htmlcss . '">', $htmlmessage);
-        str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $htmlcss . '">', $htmlmessage);
-        str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $htmlmessage);
-
+        $htmlmessage = str_replace('<p>', '<p style="font-size:13px;' . $htmlcss . '">', $htmlmessage);
+        $htmlmessage = str_replace('<td>', '<td style="font-size:13px;' . $htmlcss . '">', $htmlmessage);
+        $htmlmessage= str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $htmlcss . '">', $htmlmessage);
+        $htmlmessage = str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $htmlcss . '">', $htmlmessage);
+        $htmlmessage = str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $htmlmessage);
+        $htmlmessage = str_replace('[[name]]', $from_name, $htmlmessage);
+        
         // wrap content in template (only supports one template for all forms)
         $smarty->assign('htmlmessage', $htmlmessage);
+        $smarty->assign('from_name', $from_name);
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
         // convert all internal links to external (no support for embedded images)
         $htmlmessage = Jojo::relative2absolute($htmlmessage, _SITEURL);
@@ -389,18 +391,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     function getToAddresses()
     {
         static $_toAddresses;
-
         /* Fetch options from database if we don't have them */
         if (!is_array($_toAddresses)) {
             $_toAddresses = array();
-            $rawList = explode("\n", Jojo::getOption('contact_choice_list'));
+            $rawList = explode("\r\n", Jojo::getOption('contact_choice_list'));
             foreach ($rawList as $k=>$l) {
                 $parts = explode(",", $l);
                 $_toAddresses[$k]['name'] = trim(htmlspecialchars($parts[0], ENT_COMPAT, 'UTF-8', false));
                 $_toAddresses[$k]['email'] = trim($_toAddresses[$k]['name'] . ', ' . $parts[1], ',');
             }
         }
-
         return $_toAddresses;
     }
 
