@@ -24,8 +24,8 @@ Jojo::updateQuery("UPDATE {page} SET pg_link='jojo_plugin_jojo_contact' WHERE pg
 $editFormsPage = 0;
 $data = JOJO::selectQuery("SELECT * FROM {page} WHERE pg_url='admin/edit/form'");
 if (count($data) == 0) {
-    echo "Jojo_Plugin_Jojo_Contact: Adding <b>Contact Forms</b> Page to menu<br />";
-    $editFormsPage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Edit Form Options', pg_link='Jojo_Plugin_Admin_Edit', pg_url='admin/edit/form', pg_parent=". Jojo::clean($_ADMIN_CONTENT_ID)  .", pg_order=3");
+    echo "Jojo_Plugin_Jojo_Contact: Adding <b>Forms</b> Page to Content menu<br />";
+    $editFormsPage = Jojo::insertQuery("INSERT INTO {page} SET pg_title='Forms', pg_link='Jojo_Plugin_Admin_Edit', pg_url='admin/edit/form', pg_parent=". Jojo::clean($_ADMIN_CONTENT_ID)  .", pg_order=3");
 }
 
 /* Add "Edit Formfields" to Content menu */
@@ -115,7 +115,7 @@ if(!Jojo::tableExists('form') || !Jojo::selectRow("SELECT * FROM {form}")){
                                     '". $field['type'] ."' ,
                                     '". $field['size'] ."' ,
                                     '". $field['value'] ."' ,
-                                    '". implode(",", $field['options']) ."' ,
+                                    '". implode("\r\n", $field['options']) ."' ,
                                     '". $field['rows'] ."' ,
                                     '". $field['cols'] ."' ,
                                     '". $field['description'] ."' ,
@@ -241,7 +241,7 @@ if (!count($data)) {
                                     '". $field['type'] ."' ,
                                     '". $field['size'] ."' ,
                                     '". $field['value'] ."' ,
-                                    '". implode("\n", $field['options']) ."' ,
+                                    '". implode("\r\n", $field['options']) ."' ,
                                     '". $field['rows'] ."' ,
                                     '". $field['cols'] ."' ,
                                     '". $field['description'] ."' ,
