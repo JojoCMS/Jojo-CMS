@@ -92,9 +92,9 @@ $default_fd['form']['form_success_message'] = array(
 
 // Form Name Field
 $default_fd['form']['form_subject'] = array(
-        'fd_name' => "Form Name",
+        'fd_name' => "Form Subject",
         'fd_type' => "text",
-        'fd_required' => "yes",
+        'fd_required' => "no",
         'fd_size' => "60",
         'fd_help' => "The subject line to use in emails.",
         'fd_order' => $o++,
