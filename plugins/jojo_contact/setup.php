@@ -145,6 +145,7 @@ if (!count($data)) {
     $insertQuery = "INSERT INTO {form} (
                     `form_id` ,
                     `form_name` ,
+                    `form_to`,
                     `form_page_id` ,
                     `form_captcha` ,
                     `form_tracking_code_analytics` ,
@@ -157,6 +158,7 @@ if (!count($data)) {
                     VALUES (
                     	NULL ,
                     	'Contact Form',
+                    '". Jojo::getOption('contactaddress') ."',
                     	'" . $pageID . "',
                     	'1',
                     	'/contact-via-contact-form',
