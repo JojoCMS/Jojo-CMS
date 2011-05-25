@@ -18,7 +18,7 @@
     {/if}{if $f.type == 'textarea'}<textarea class="input textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     </div>
     {elseif $f.type == 'checkboxes'}<div class="form-field">
-            {foreach from=$f.options item=fo }<input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}" {if $f.value == $fo} checked="checked"{/if} /><label for="form_{$f.field}_{$fo}"> {$fo}</label>
+            {foreach from=$f.options item=fo }<div class="checkbox"><input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}"{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach} /><label for="form_{$f.field}_{$fo}"> {$fo}</label></div>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
         </div>
     </div>

@@ -116,8 +116,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         
-        $smarty->assign('fields', $fields);
-
         foreach ($fields as &$field) {
             /* set field value from POST */
             if (isset($_POST['form_' . $field['field']]) && is_array($_POST['form_' . $field['field']])) {
@@ -173,6 +171,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         unset($field);
+        $smarty->assign('fields', $fields);
 
         if(!$optionNewDatabaseMethod){
             $from_name = '';
