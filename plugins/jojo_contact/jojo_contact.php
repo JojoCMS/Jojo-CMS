@@ -354,7 +354,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 foreach ($rawList as $k=>$l) {
                     $parts = explode(",", $l);
                     $toAddresses[$k]['name'] = trim(htmlspecialchars($parts[0], ENT_COMPAT, 'UTF-8', false));
-                    $toAddresses[$k]['email'] = trim($_toAddresses[$k]['name'] . ', ' . $parts[1], ',');
+                    $toAddresses[$k]['email'] = trim($parts[1], ' ,');
                 }
                 $smarty->assign('toaddresses', $toAddresses);
             }
