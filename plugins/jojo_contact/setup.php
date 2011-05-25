@@ -50,6 +50,20 @@ if(Jojo::tableExists('formfield') && !Jojo::selectRow("SELECT * FROM {formfield}
     $pageIDQuery = Jojo::selectRow("SELECT pageid FROM `page` WHERE pg_link='jojo_plugin_jojo_contact'");
     $pageID = $pageIDQuery['pageid'];
      
+    /* process existing contact_choice_list if it exists */
+    $contact_list = '';
+    if (Jojo::getOption('contact_choice_list')!='') {
+    	$raw_contact_list = Jojo::getOption('contact_choice_list');
+    	$raw_contacts = explode(",", $raw_contact_list);
+    	foreach ($raw_contacts as $i => $c) {
+    		if ($i%2 == 0) {
+    			$contact_list .= trim($c).",";
+    		} else {
+    			$contact_list .= trim($c)."\r\n";
+    		}
+    	}
+    }
+    
     /* Read options and add a form table */
     echo "Jojo_Plugin_Jojo_Contact: Reading jojo_contact options and transfering into form table <br />";
     $insertQuery = "INSERT INTO {form} (
@@ -74,7 +88,7 @@ if(Jojo::tableExists('formfield') && !Jojo::selectRow("SELECT * FROM {formfield}
                         	'". Jojo::getOption('contact_success_message') ."',
                         	'". (Jojo::getOption('contact_webmaster_copy') != 'no' ? 1 : 0) ."',
                         	'". (Jojo::getOption('contact_choice') == 'yes' ? 1 : 0) ."',
-                        	'". Jojo::getOption('contact_choice_list') ."'
+                        	'". Jojo::clean($contact_list) ."'
                         );";
 
     $formID = Jojo::insertQuery($insertQuery);
