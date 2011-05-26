@@ -86,7 +86,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             
 
             if ($formChoice && $formChoiceOptions) {
-                print_r($to);
                 $to       =  explode(",", $_POST['form_sendto']);
                 $to_name  =  trim($to[0]);
                 $to_email =  trim($to[1]);
@@ -354,7 +353,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 foreach ($rawList as $k=>$l) {
                     $parts = explode(",", $l);
                     $toAddresses[$k]['name'] = trim(htmlspecialchars($parts[0], ENT_COMPAT, 'UTF-8', false));
-                    $toAddresses[$k]['email'] = trim($parts[1], ' ,');
+                    $toAddresses[$k]['email'] = trim($toAddresses[$k]['name'] . ', ' . $parts[1]);
                 }
                 $smarty->assign('toaddresses', $toAddresses);
             }
