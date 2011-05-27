@@ -86,9 +86,17 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             
 
             if ($formChoice && $formChoiceOptions) {
-                $to       =  explode(",", $_POST['form_sendto']);
-                $to_name  =  trim($to[0]);
-                $to_email =  trim($to[1]);
+                $sendto       =  $_POST['form_sendto'];
+                $formChoices = explode("\r\n", $formChoiceOptions);
+                foreach ($formChoices as $to) {
+                    $to = explode(',', $to);
+                    $to_email =  trim(array_pop($to));
+                    $to_name  =  str_replace('#', '', trim(implode(',', $to)));
+                    if (Jojo::cleanURL($to_name)==$sendto) {
+                        break;
+                    }
+                }
+
             } else {
                 $to_email       =  empty($formTo) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $formTo;
                 $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
@@ -107,8 +115,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
             if ((Jojo::getOption('contact_choice') == 'yes') && (Jojo::getOption('contact_choice_list') != '')) {
                 $to       =  explode(",", $_POST['form_sendto']);
-                $to_name  =  trim($to[0]);
-                $to_email =  trim($to[1]);
+                $to_email =  trim(array_pop($to));
+                $to_name  =  trim(implode(',', $to));
             } else {
                 $to_email       =  empty($to_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $to_email;
                 $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
@@ -190,6 +198,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $subject  = $formSubject ? $formSubject : 'Message from ' . Jojo::getOption('sitetitle') . ' website';
         $subject = mb_convert_encoding($subject, 'HTML-ENTITIES', 'UTF-8');
 
+        $smarty->assign('subject', $subject);
+        
         $message  = '';
         foreach ($fields as $f) {
             if (isset($f['displayonly'])) { continue; };
@@ -352,8 +362,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $rawList = explode("\r\n", $formChoiceOptions);
                 foreach ($rawList as $k=>$l) {
                     $parts = explode(",", $l);
-                    $toAddresses[$k]['name'] = trim(htmlspecialchars($parts[0], ENT_COMPAT, 'UTF-8', false));
-                    $toAddresses[$k]['email'] = trim($toAddresses[$k]['name'] . ', ' . $parts[1]);
+                    $toemail =  trim(array_pop($parts));
+                    $toname  =  trim(implode(',', $parts));
+                    $toAddresses[$k]['name'] = (htmlspecialchars($toname, ENT_COMPAT, 'UTF-8', false));
+                    $toAddresses[$k]['email'] = Jojo::cleanURL($toname);
                 }
                 $smarty->assign('toaddresses', $toAddresses);
             }
