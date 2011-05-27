@@ -6,7 +6,7 @@
         <label for="form_sendto">Send Enquiry To:</label>
         <select name="form_sendto" id="form_sendto">
             <option value="">Select</option>
-            {foreach item=to from=$toaddresses}<option value="{$to.name},{$to.email}">{$to.name}</option>
+            {foreach item=to from=$toaddresses}<option value="{$to.email}">{$to.name}</option>
             {/foreach}
         </select>&nbsp;<span class="required">*</span>
     </div>
