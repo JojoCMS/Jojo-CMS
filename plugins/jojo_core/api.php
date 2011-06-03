@@ -980,16 +980,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'facebook_app_id',
-    'category'    => 'Social Networking',
-    'label'       => 'Facebook App Id',
-    'description' => 'This and/or Admin Ids are required for advanced FB integration and data tracking',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
     'id'          => 'twitter_id',
     'category'    => 'Social Networking',
     'label'       => 'Twitter ID',

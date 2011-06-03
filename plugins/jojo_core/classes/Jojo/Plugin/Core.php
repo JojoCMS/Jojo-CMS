@@ -263,9 +263,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     /**
      * OpenGraph tags
      */
-    static function ogdata($pluginogdata)
+    static function ogdata($content)
     {
-        global $page, $content;
+        global $page;
         $ogdata['site_name'] =_SITENAME;
         $ogdata['type'] = 'article';
         $ogdata['url'] = $page->getCorrectUrl();
@@ -297,7 +297,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $ogdata['fb_admins'] = Jojo::getOption('facebook_admins', ''); 
         $ogdata['fb_app_id'] = Jojo::getOption('facebook_app_id', ''); 
 
-       $ogdata = array_merge($ogdata, $pluginogdata);
+       $ogdata = array_merge($ogdata, $content['ogtags']);
         /* Return data */
         return $ogdata;
     }

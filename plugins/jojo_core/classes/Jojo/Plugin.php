@@ -116,7 +116,7 @@ class Jojo_Plugin {
         foreach ($extra as $k => $v) {
               $result[$k] = $v;
         }
-        $result['ogtags'] = (boolean)(Jojo::getOption('ogdata', 'no')=='yes') ? Jojo_Plugin_Core::ogdata($result['ogtags']) : array();
+        $result['ogtags'] = (boolean)(Jojo::getOption('ogdata', 'no')=='yes') ? Jojo_Plugin_Core::ogdata($result) : array();
 
         if ($this->expired) {
             $result['content'] = $smarty->fetch('expired.tpl');
