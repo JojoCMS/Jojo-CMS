@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
-    {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" />{if !$robots_index || !$robots_follow || $isadmin}
-    <meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}{if $isadmin}
+    {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" />
+    {if !$robots_index || !$robots_follow || $isadmin}<meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}{if $ogmetatags && !$isadmin}
+    {$ogmetatags}{/if}{if $isadmin}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/jpop.css" />
     <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin.css?v=3" />
     <link rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin-print.css" type="text/css" media="print" />

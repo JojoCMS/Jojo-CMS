@@ -137,7 +137,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'enablegzip',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Enable GZip',
     'description' => 'Gzipping website content is a way of compressing HTML pages so they are faster to download. This should usually be enabled, but is not supported on some web hosts.',
     'type'        => 'radio',
@@ -148,7 +148,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'googleajaxlibs',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Google Hosted Javascript',
     'description' => 'Load jQuery from the Google Ajax Librarys site.',
     'type'        => 'radio',
@@ -158,7 +158,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'doctype',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Doctype',
     'description' => 'Declare Doctype as XHTML or HTML5.',
     'type'        => 'radio',
@@ -168,7 +168,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'boilerplate_htmltag',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Bolierplate Html tag',
     'description' => 'Add browser conditionals to html tag',
     'type'        => 'radio',
@@ -178,7 +178,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'boilerplate_cssreset',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Bolierplate CSS Reset',
     'description' => 'Add Boilerplate CSS (reset, media etc) to style.css',
     'type'        => 'radio',
@@ -188,7 +188,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'modernizr',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Use Modernizr',
     'description' => 'Add modernizr script classes to html tag',
     'type'        => 'radio',
@@ -198,7 +198,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'jquery_head',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'jQuery in head',
     'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
@@ -208,7 +208,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'commonjs_head',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Common.js in head',
     'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
@@ -238,7 +238,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'siteurl',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Site URL',
     'description' => 'This option is set automatically. This is the URL that is used for the site. Where several domains are available for a site, they will all be redirected to the URL specified here. NO TRAILING SLASH.',
     'type'        => 'text',
@@ -248,7 +248,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'secureurl',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Secure URL',
     'description' => 'If there is a SSL version of the site, enter the URL here, including the https:// but not the trailing slash.',
     'type'        => 'text',
@@ -258,20 +258,10 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'assetdomains',
-    'category'    => 'Site',
+    'category'    => 'Config',
     'label'       => 'Asset domains',
     'description' => 'A new-line seperated list of domains that can be used for hosting images and CSS. See the documentation for details on Assets.',
     'type'        => 'textarea',
-    'default'     => '',
-    'options'     => '',
-);
-
-$_options[] = array(
-    'id'          => 'secureurl',
-    'category'    => 'Site',
-    'label'       => 'Secure URL',
-    'description' => 'If the site has a SSL version, enter the URL here. DO include the https:// but not the trailing slash. eg https://www.domain.com',
-    'type'        => 'text',
     'default'     => '',
     'options'     => '',
 );
@@ -776,6 +766,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'ogdata',
+    'category'    => 'SEO',
+    'label'       => 'OpenGraph meta tags',
+    'description' => 'When this option is enabled meta og:: tags, used by Facebook et al, will be included in the head',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'robots_opd',
     'category'    => 'SEO',
     'label'       => 'Open Directory Project',
@@ -857,3 +857,103 @@ $_options[] = array(
     'options'     => '',
 );
 
+
+$_options[] = array(
+    'id'          => 'site_logo',
+    'category'    => 'Site',
+    'label'       => 'Site Logo',
+    'description' => 'the url for the site logo',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_geolocation',
+    'category'    => 'Site',
+    'label'       => 'Geo Coordinates',
+    'description' => 'the latitude,longitude of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_street_address',
+    'category'    => 'Site',
+    'label'       => 'Street Address',
+    'description' => 'Street address of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_locality',
+    'category'    => 'Site',
+    'label'       => 'Locality',
+    'description' => 'Locality/Suburb/City of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_region',
+    'category'    => 'Site',
+    'label'       => 'Region',
+    'description' => 'Region/State of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_postal_code',
+    'category'    => 'Site',
+    'label'       => 'Post Code',
+    'description' => 'Post Code of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_country_name',
+    'category'    => 'Site',
+    'label'       => 'Country',
+    'description' => 'Country of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_email',
+    'category'    => 'Site',
+    'label'       => 'Email',
+    'description' => 'Publishable contact email for the site (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_phone_number',
+    'category'    => 'Site',
+    'label'       => 'Phone Number',
+    'description' => 'Publishable contact phone number for the site (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_fax_number',
+    'category'    => 'Site',
+    'label'       => 'Fax Number',
+    'description' => 'Publishable contact fax number for the site (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);

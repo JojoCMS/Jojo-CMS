@@ -189,7 +189,8 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             // Snip for the index description
             $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
             /* Strip all tags and template include code ie [[ ]] */
-            $i['bodyplain'] = preg_replace('/\[\[.*?\]\]/', '',  trim(strip_tags($i['bodyplain'])));
+            $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
+            $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
             $i['date'] = isset($i['pg_updated']) ? $i['pg_updated'] : '';
             $i['image'] = (isset($i['pg_image']) && !empty($i['pg_image'])) ? 'pages/' . $i['pg_image'] : '';
             $i = self::getUrl($i);
@@ -257,6 +258,45 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         }
         /* Return results */
         return $results;
+    }
+
+    /**
+     * OpenGraph tags
+     */
+    static function ogdata($pluginogdata)
+    {
+        global $page, $content;
+        $ogdata['site_name'] =_SITENAME;
+        $ogdata['type'] = 'article';
+        $ogdata['url'] = $page->getCorrectUrl();
+        $ogdata['title'] = $content['title'];
+        $ogdata['image'] = Jojo::getOption('site_logo', '');
+        if (!$content['metadescription']) {
+            /* Strip all tags and template include code ie [[ ]] */
+            $description = trim(strip_tags($content['content']));
+            $description = strpos($description, '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $description) : $description;
+            $description = strlen($description) >400 ? substr($mbody=wordwrap($description, 400, '$$'), 0, strpos($mbody,'$$')) . '...' : $description;
+            $ogdata['description'] = $description;
+        } else {
+            $ogdata['description'] = $content['metadescription'];
+        }
+        if ($location = Jojo::getOption('site_geolocation', '')) {
+            $location = explode(',', $location);
+            $ogdata['latitude'] = isset($location[0]) ? $location[0] : ''; 
+            $ogdata['longitude'] = isset($location[1]) ? $location[1] : ''; 
+        }
+        $ogdata['street_address'] = Jojo::getOption('site_street_address', ''); 
+        $ogdata['locality'] = Jojo::getOption('site_locality', ''); 
+        $ogdata['region'] = Jojo::getOption('site_region', ''); 
+        $ogdata['postal_code'] = Jojo::getOption('site_postal_code', ''); 
+        $ogdata['country_name'] = Jojo::getOption('site_country_name', ''); 
+        $ogdata['email'] = Jojo::getOption('site_email', ''); 
+        $ogdata['phone_number'] = Jojo::getOption('site_phone_number', ''); 
+        $ogdata['fax_number'] = Jojo::getOption('site_fax_number', ''); 
+        
+       $ogdata = array_merge($ogdata, $pluginogdata);
+        /* Return data */
+        return $ogdata;
     }
 
     /*

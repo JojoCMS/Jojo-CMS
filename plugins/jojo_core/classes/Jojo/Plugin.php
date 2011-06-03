@@ -92,6 +92,7 @@ class Jojo_Plugin {
         $result['javascript']        = '';
         $result['css']                 = '';
         $result['head']               = isset($this->page["pg_head"]) ? $this->page["pg_head"] : '';
+        $result['ogtags']            = array();
         $result = Jojo::applyFilter('jojo_plugin:result', $result);
 
         $result['breadcrumbs'] = $this->_getBreadcrumbs();
@@ -115,10 +116,11 @@ class Jojo_Plugin {
         foreach ($extra as $k => $v) {
               $result[$k] = $v;
         }
+        $result['ogtags'] = (boolean)(Jojo::getOption('ogdata', 'no')=='yes') ? Jojo_Plugin_Core::ogdata($result['ogtags']) : array();
+
         if ($this->expired) {
             $result['content'] = $smarty->fetch('expired.tpl');
         }
-
         return $result;
     }
 

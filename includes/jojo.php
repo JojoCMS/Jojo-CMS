@@ -375,20 +375,7 @@ if (($page->id == 1) && (rtrim($correcturl,'/') != rtrim($actualurl,'/')))  {
     Jojo::redirect($correcturl);
     exit();
 }
-
-/* Fetch custom head from all the plugins and themes */
-$customhead = '';
-foreach (Jojo::listPlugins('templates/customhead.tpl') as $pluginfile) {
-    $customhead .= $smarty->fetch($pluginfile);
-}
-$smarty->assign('customhead', $customhead);
-
-/* Fetch custom foot from all the plugins and themes */
-$customfoot = '';
-foreach (Jojo::listPlugins('templates/customfoot.tpl') as $pluginfile) {
-    $customfoot .= $smarty->fetch($pluginfile);
-}
-$smarty->assign('customfoot', $customfoot);
+$smarty->assign('correcturl', $correcturl);
 
 /* Custom code from all plugins and theme */
 $templateoptions = array();
@@ -403,7 +390,6 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
     if (isset($password)) $smarty->assign('password', $password);
     if (isset($remember)) $smarty->assign('remember', $remember);
     if (isset($referer)) $smarty->assign('referer', $referer);
-    $smarty->assign('templateoptions', $templateoptions);
     $smarty->assign('content', $smarty->fetch('login.tpl'));
     $html = $smarty->fetch('template.tpl');
     Jojo::runHook('after_fetch_template');
@@ -540,6 +526,29 @@ if ($templateoptions['menu']) {
     $smarty->assign('footernav', $page->getMenu('footer', Jojo::getOption('footernavdepth', 1)));
 }
 Jojo::runHook('before_fetch_template');
+
+if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes') && $content['ogtags']) {
+    /* Get OpenGraph header data from plugins */
+    $ogdata = $content['ogtags'];
+    $smarty->assign('ogdata', $ogdata);
+    $ogmetatags = $smarty->fetch('ogmetatags.tpl');
+    $smarty->assign('ogmetatags', $ogmetatags);
+    $smarty->assign('ogxmlns', 'xmlns:og="http://ogp.me/ns#"' . ( isset($ogdata['fb_admins']) || isset($ogdata['fb_app_id']) ? ' xmlns:fb="https://www.facebook.com/2008/fbml"' : ''));
+}
+
+/* Fetch custom head from all the plugins and themes */
+$customhead = '';
+foreach (Jojo::listPlugins('templates/customhead.tpl') as $pluginfile) {
+    $customhead .= $smarty->fetch($pluginfile);
+}
+$smarty->assign('customhead', $customhead);
+
+/* Fetch custom foot from all the plugins and themes */
+$customfoot = '';
+foreach (Jojo::listPlugins('templates/customfoot.tpl') as $pluginfile) {
+    $customfoot .= $smarty->fetch($pluginfile);
+}
+$smarty->assign('customfoot', $customfoot);
 
 /* Include page template */
 if (isset($isadmin) && $isadmin) {

@@ -1673,11 +1673,12 @@ class Jojo {
                         continue 1;
                 }
 
-                call_user_func_array(array($classname, $functionname), $optionalArgs);
+                $result = call_user_func_array(array($classname, $functionname), $optionalArgs);
+                $optionalArgs = $result ? $result : $optionalArgs;
             }
         }
 
-        return;
+        return $optionalArgs;
     }
 
     /**
@@ -3245,7 +3246,7 @@ function getSelectedPages($pageid, $root=0) {
             $rss .= $i['author'] ? "<author>" . Jojo::xmlEscape($i['author']) . "</author>\n" : '';            
             $rss .= $i['category'] ? "<category>" . Jojo::xmlEscape($i['category']) . "</category>\n" : '';            
             if ($image) {
-                $rss .= $i['imageurl'] && $i['imagedata'] ? '<enclosure url="' . $i['imageurl'] . '" length="' . $i['imagedata']['size'] . '" type="' . ( isset($i['imagedata']['mime']) ? $i['imagedata']['mime'] : 'image/jpeg' ) . '" />' : '';
+                $rss .= $i['imageurl'] && $i['imagedata'] ? '<enclosure url="' . $i['imageurl'] . '" length="' . $i['imagedata']['size'] . '" type="' . ( isset($i['imagedata']['mime']) ? $i['imagedata']['mime'] : 'image/jpeg' ) . '" />' . "\n" : '';
             }
             $rss .= "<link>". $source . "</link>\n";
             $rss .= '<source url="'. $pageurl . '">' . $pagetitle . "</source>\n";
