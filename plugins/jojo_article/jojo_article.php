@@ -93,6 +93,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
             $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
+            $i['description'] = $i['ar_desc'] ? htmlspecialchars($i['ar_desc'], ENT_COMPAT, 'UTF-8', false) : (strlen($i['bodyplain']) >400 ?  substr($mbody=wordwrap($i['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $i['bodyplain']);
             $i['snippet']       = isset($i['snippet']) ? $i['snippet'] : '400';
             $i['thumbnail']       = isset($i['thumbnail']) ? $i['thumbnail'] : 's150';
             $i['mainimage']       = isset($i['mainimage']) ? $i['mainimage'] : 'v60000';
@@ -279,6 +280,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 exit;
             }
 
+            if ($modarticle = Jojo::runHook('modify_article', array($article))) {
+                $article = $modarticle;
+            }
             /* Get the specific article */
             $articleid = $article['articleid'];
             $article['ar_datefriendly'] = Jojo::mysql2date($article['ar_date'], "long");
@@ -349,7 +353,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $content['meta_description'] = $article['ar_metadesc'];
             } else {
                 $meta_description_template = Jojo::getOption('article_meta_description', '[article] - [body]... ');
-                $articlebody = (strlen($article['bodyplain']) >400) ?  substr($mbody=wordwrap($article['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $article['bodyplain'];
                 $metafilters = array(
                         '[title]',
                         '[site]',
@@ -359,13 +362,17 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $metafilterreplace = array(
                         $article['title'],
                         _SITETITLE,
-                        !empty($article['description']) ? $article['description'] : $articlebody,
+                        $article['description'],
                         $article['ar_author']
                         );
                         $content['meta_description'] = str_replace($metafilters, $metafilterreplace, $meta_description_template);
             }
             $content['metadescription']  = $content['meta_description'];
-
+            if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes')) {
+                $content['ogtags']['description'] = $article['description'];
+                $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . $article['image'] : '';
+                $content['ogtags']['title'] = $article['title'];
+            }
             $content['content'] = $smarty->fetch('jojo_article.tpl');
 
         } else {
@@ -414,7 +421,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $smarty->assign('jojo_articles', $articles);
 
             $content['content'] = $smarty->fetch('jojo_article_index.tpl');
-        }
+       }
         return $content;
     }
 
