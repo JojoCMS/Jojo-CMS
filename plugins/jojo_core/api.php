@@ -957,3 +957,56 @@ $_options[] = array(
     'default'     => '',
     'options'     => ''
 );
+
+
+$_options[] = array(
+    'id'          => 'facebook_link',
+    'category'    => 'Social Networking',
+    'label'       => 'Facebook link',
+    'description' => 'the full url of your Facebook page',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'facebook_admins',
+    'category'    => 'Social Networking',
+    'label'       => 'Facebook Admin Ids',
+    'description' => 'Comma separated list of Facebook Admin Ids (used for registering your site on your FB page)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'facebook_app_id',
+    'category'    => 'Social Networking',
+    'label'       => 'Facebook App Id',
+    'description' => 'This and/or Admin Ids are required for advanced FB integration and data tracking',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'twitter_id',
+    'category'    => 'Social Networking',
+    'label'       => 'Twitter ID',
+    'description' => 'Your Twitter ID',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'youtube_link',
+    'category'    => 'Social Networking',
+    'label'       => 'YouTube link',
+    'description' => 'the full url of your Youtube channel',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+

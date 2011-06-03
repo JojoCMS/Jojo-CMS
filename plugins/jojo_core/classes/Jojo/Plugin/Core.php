@@ -294,6 +294,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $ogdata['phone_number'] = Jojo::getOption('site_phone_number', ''); 
         $ogdata['fax_number'] = Jojo::getOption('site_fax_number', ''); 
         
+        $ogdata['fb_admins'] = Jojo::getOption('facebook_admins', ''); 
+        $ogdata['fb_app_id'] = Jojo::getOption('facebook_app_id', ''); 
+
        $ogdata = array_merge($ogdata, $pluginogdata);
         /* Return data */
         return $ogdata;
