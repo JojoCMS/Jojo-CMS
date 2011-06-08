@@ -14,7 +14,7 @@
 {/if}   
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}{if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}<fieldset><legend>{$f.fieldset}</legend>
     {/if}{if !in_array($f.type,array('heading','note'))}<div class="form-fieldset {$f.type}">
-        <label for="form_{$f.field}">{if $f.display}{$f.display}:{/if}</label>
+        {if $f.showlabel}<label for="form_{$f.field}">{if $f.display}{$f.display}:{/if}</label>{/if}
     {/if}{if $f.type == 'textarea'}<textarea class="input textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     </div>
     {elseif $f.type == 'checkboxes'}<div class="form-field">
