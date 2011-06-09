@@ -91,4 +91,39 @@ class Jojo_Plugin_Jojo_sitemap extends Jojo_Plugin
     public static function robots($rules) {
         return $rules . 'Sitemap: ' . _SITEURL . "/sitemap.xml\n";
     }
+
+
+    static function _sitemapAddInplace($sitemap, $toadd, $url)
+    {
+        foreach ($sitemap as $k => $t) {
+            if ($t['url'] == $url) {
+                $sitemap[$k]['children'] = isset($sitemap[$k]['children']) ? array_merge($toadd, $sitemap[$k]['children']): $toadd;
+            } elseif (isset($sitemap[$k]['children'])) {
+                $sitemap[$k]['children'] = self::_sitemapAddInplace($t['children'], $toadd, $url);
+            }
+        }
+        return $sitemap;
+    }
+
+    static function _sitemapRemoveSelf($tree, $indexpages=array())
+    {
+        static $urls;
+        if (!is_array($urls)) {
+            $urls = array();
+            if (count($indexes)==0) {
+               return $tree;
+            }
+            foreach($indexes as $key => $i){
+                $urls[] = $i['url'];
+            }
+        }
+        foreach ($tree as $k =>$t) {
+            if (in_array($t['url'], $urls)) {
+                unset($tree[$k]);
+            } else {
+                $tree[$k]['children'] = self::_sitemapRemoveSelf($t['children']);
+            }
+        }
+        return $tree;
+    }
 }
