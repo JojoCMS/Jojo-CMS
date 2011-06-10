@@ -211,7 +211,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
                 $message .= "\r\n";
             } else {
-                $message .= ($f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n\r\n" : $f['value'] . "\r\n" );
+                $message .= (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n\r\n" : $f['value'] . "\r\n" );
             }
         }
         $message .= Jojo::emailFooter();
@@ -225,7 +225,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if ($f['type'] == 'heading') { 
                 $htmlmessage .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
             } else {
-                $htmlmessage .= ($f['showlabel'] ? '<p>' . $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) . '</p>' : $f['value'] . '</p>' );
+                $htmlmessage .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
             }
         }
         // basic inline styling for supplied content

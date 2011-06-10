@@ -85,7 +85,7 @@ if(Jojo::tableExists('formfield') && !Jojo::selectRow("SELECT * FROM {formfield}
                         	'". (Jojo::getOption('contactcaptcha') == 'yes' ? 1 : 0) ."',
                         	'". Jojo::getOption('contact_tracking_code_analytics') ."',
                         	'". Jojo::getOption('contact_tracking_code') ."',
-                        	'". Jojo::getOption('contact_success_message') ."',
+                        	'". addslashes(Jojo::getOption('contact_success_message')) ."',
                         	'". (Jojo::getOption('contact_webmaster_copy') != 'no' ? 1 : 0) ."',
                         	'". (Jojo::getOption('contact_choice') == 'yes' ? 1 : 0) ."',
                         	'". Jojo::clean($contact_list) ."'
