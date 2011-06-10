@@ -89,10 +89,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
             $i['author']        = htmlspecialchars($i['ar_author'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
-            $i['bodyplain'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
+            $i['bodysnip'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
             /* Strip all tags and template include code ie [[ ]] */
-            $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
-            $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
+            $i['bodysnip'] = strpos($i['bodysnip'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodysnip']) : $i['bodysnip'];
+            $i['bodyplain'] = trim(strip_tags($i['bodysnip']));
             $i['description'] = $i['ar_desc'] ? htmlspecialchars($i['ar_desc'], ENT_COMPAT, 'UTF-8', false) : (strlen($i['bodyplain']) >400 ?  substr($mbody=wordwrap($i['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $i['bodyplain']);
             $i['snippet']       = isset($i['snippet']) ? $i['snippet'] : '400';
             $i['thumbnail']       = isset($i['thumbnail']) ? $i['thumbnail'] : 's150';
@@ -100,7 +100,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['readmore'] = isset($i['readmore']) ? str_replace(' ', '&nbsp;', htmlspecialchars($i['readmore'], ENT_COMPAT, 'UTF-8', false)) : '&gt;&nbsp;read&nbsp;more';
             $i['date']       = $i['ar_date'];
             $i['datefriendly'] = isset($i['dateformat']) && !empty($i['dateformat']) ? strftime($i['dateformat'], $i['ar_date']) :  Jojo::formatTimestamp($i['ar_date'], "medium");
-            $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
+            $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
             unset($items[$k]['ar_bbbody']);
@@ -245,7 +245,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 'url' => 'url',
                 'date' => 'date',
                 'datetype' => 'unix',
-                'options' => array('snip' => $categorydata['snippet'], 'imagesize' => '')
+                'options' => array('snip' => (isset($categorydata['snippet']) ? $categorydata['snippet'] : '400' ), 'imagesize' => '')
             );
             $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
             Jojo::getFeed($articles, $rssfields);
