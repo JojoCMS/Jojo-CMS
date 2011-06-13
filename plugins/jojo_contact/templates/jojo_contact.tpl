@@ -1,6 +1,7 @@
-{if $message}<div class="message">{$message}</div>
-{/if}<div{if $hideonsuccess && $message && $sent} style="display:none;"{/if}>{if $content}{$content}
-{/if}<form name="contactform" method="post" action="{$posturl}" onsubmit="return checkme();" class="contact-form">
+{if $content}{$content} 
+{/if}{if $message}<div class="message">{$message}</div> 
+{/if}<div{if $hideonsuccess && $message && $sent} style="display:none;"{/if}>
+<form name="contactform" method="post" action="{$posturl}" onsubmit="return checkme();" class="contact-form">
 <div>
 {if $toaddresses}<div class="form-fieldset">
         <label for="form_sendto">Send Enquiry To:</label>

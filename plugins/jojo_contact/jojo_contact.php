@@ -216,44 +216,32 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         }
         $message .= Jojo::emailFooter();
         
-        $htmlmessage = isset($form['form_autoreply_bodycode']) && $form['form_autoreply_bodycode'] ? $form['form_autoreply_bodycode'] :  '';
-        $htmlcss = isset($form['form_autoreply_css']) ? $form['form_autoreply_css'] : '';
-        $autoreply = isset($form['form_autoreply']) ? $form['form_autoreply'] : 0;
-        
+        $messagefields = '';
         foreach ($fields as $f) {
             if (isset($f['displayonly']) || $f['type'] == 'note') { continue; };
             if ($f['type'] == 'heading') { 
-                $htmlmessage .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
+                $messagefields .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
             } else {
-                $htmlmessage .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
+                $messagefields .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
             }
         }
-        // basic inline styling for supplied content
-        $htmlmessage = str_replace('<p>', '<p style="font-size:13px;' . $htmlcss . '">', $htmlmessage);
-        $htmlmessage = str_replace('<td>', '<td style="font-size:13px;' . $htmlcss . '">', $htmlmessage);
-        $htmlmessage= str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $htmlcss . '">', $htmlmessage);
-        $htmlmessage = str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $htmlcss . '">', $htmlmessage);
-        $htmlmessage = str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $htmlmessage);
+        $replymessage = isset($form['form_autoreply_bodycode']) && $form['form_autoreply_bodycode'] ? Jojo::relative2absolute($form['form_autoreply_bodycode'], _SITEURL) :  '';
+        $htmlcss = isset($form['form_autoreply_css']) ? $form['form_autoreply_css'] : '';
+        $autoreply =  0;
+        if (isset($form['form_autoreply']) && $form['form_autoreply'] ) {
+            $autoreply = 1;
+            $replymessage .=  $messagefields;
+            $replymessage =  self::personaliseMessage($replymessage, $fields);
+            $replymessage = self::cleanHTML($replymessage, $htmlcss);
+            $smarty->assign('htmlmessage', $replymessage);
+            $replymessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
+        }
 
-        // filter message for personalisation by field display name eg [[From Name]]
-        if (strpos($htmlmessage, '[[')!==false) {
-            preg_match_all('/\[\[([^\]]*)\]\]/', $htmlmessage, $matches);
-            foreach($matches[1] as $k => $search) {
-                foreach($fields as $f) {
-                    if ($f['display'] == $search) {
-                        $htmlmessage  = str_replace($matches[0][$k], $f['value'], $htmlmessage);
-                    }
-                }
-            }
-        }
-        
-        // wrap content in template (only supports one template for all forms)
+        $htmlmessage =  $messagefields . '<p>' . nl2br(Jojo::emailFooter()) . '</p>';
+        $htmlmessage = self::cleanHTML($htmlmessage, $htmlcss);
         $smarty->assign('htmlmessage', $htmlmessage);
-        $smarty->assign('from_name', $from_name);
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
-        // convert all internal links to external (no support for embedded images)
-        $htmlmessage = Jojo::relative2absolute($htmlmessage, _SITEURL);
-        
+
         if (!count($errors)) {
             if (Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage)) {
 
@@ -264,7 +252,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 
                 /* send a confirmation to the enquirer */
                 if ($autoreply) {
-                    Jojo::simpleMail($from_name, $from_email, $subject, $message, $to_name, $to_email, $htmlmessage);
+                    Jojo::simpleMail($from_name, $from_email, $subject, $message, $to_name, $to_email, $replymessage);
                 }
 
                 /* send a copy to the webmaster */
@@ -425,4 +413,30 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $_toAddresses;
     }
 
+    function cleanHTML($html, $css='')
+    {
+        // basic inline styling for supplied content
+        $html = str_replace('<p>', '<p style="font-size:13px;' . $css . '">', $html);
+        $html = str_replace('<td>', '<td style="font-size:13px;' . $css . '">', $html);
+        $html= str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $css . '">', $html);
+        $html = str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $css . '">', $html);
+        $html = str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $html);
+        return $html;
+    }
+
+    function personaliseMessage($html, $fields)
+    {
+        // filter message for personalisation by field display name eg [[From Name]]
+        if (strpos($html, '[[')!==false) {
+            preg_match_all('/\[\[([^\]]*)\]\]/', $html, $matches);
+            foreach($matches[1] as $k => $search) {
+                foreach($fields as $f) {
+                    if ($f['display'] == $search) {
+                        $html  = str_replace($matches[0][$k], $f['value'], $html);
+                    }
+                }
+            }
+        }
+        return $html;
+    }
 }
