@@ -114,14 +114,10 @@
                     $IMConfig['max_filesize_kb_image'] = Jojo::getOption('max_imageupload_size','2000');
                     $IMConfig['max_filesize_kb_link'] = Jojo::getOption('max_fileupload_size','5000');
 
-                    // Maximum upload folder size in Megabytes.
-                    // Use 0 to disable limit
+                    // Maximum upload folder size in Megabytes. Use 0 to disable limit
                     $IMConfig['max_foldersize_mb'] = 0;
-
-                    $IMConfig['allowed_image_extensions'] = array("jpg","gif","png");
-                    $IMConfig['allowed_link_extensions'] = array("jpg","gif","pdf","ip","txt","doc",
-                                                                 "psd","png","html","swf",
-                                                                 "xml","xls");
+                    $IMConfig['allowed_image_extensions'] = explode(',', Jojo::getOption('allowed_imageupload_extensions','jpg,gif,png'));
+                    $IMConfig['allowed_link_extensions'] = explode(',', Jojo::getOption('allowed_fileupload_extensions','jpg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls'));
 
                     require_once _BASEPLUGINDIR . '/jojo_core/external/xinha/contrib/php-xinha.php';
                     xinha_pass_to_php_backend($IMConfig);

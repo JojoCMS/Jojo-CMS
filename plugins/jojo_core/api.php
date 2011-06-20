@@ -500,12 +500,32 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'allowed_fileupload_extensions',
+    'category'    => 'HTML Editor',
+    'label'       => 'File Upload Types',
+    'description' => 'sets the allowed file link file types - comma separated list of file extensions',
+    'type'        => 'text',
+    'default'     => 'jpg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls',
+    'options'     => '',
+);
+
+$_options[] = array(
     'id'          => 'max_imageupload_size',
     'category'    => 'HTML Editor',
     'label'       => 'Maximum Image Upload Size',
     'description' => 'sets the maximum image upload size',
     'type'        => 'text',
     'default'     => '2000',
+    'options'     => '',
+);
+
+$_options[] = array(
+    'id'          => 'allowed_imageupload_extensions',
+    'category'    => 'HTML Editor',
+    'label'       => 'File Upload Types',
+    'description' => 'sets the allowed image upload file types - comma separated file extensions',
+    'type'        => 'text',
+    'default'     => 'jpg,gif,png',
     'options'     => '',
 );
 
