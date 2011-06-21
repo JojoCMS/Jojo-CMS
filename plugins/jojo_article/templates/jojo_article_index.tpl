@@ -1,9 +1,6 @@
-{if $pg_body && $pagenum==1}
-    {$pg_body}
-{/if}
+{if $pg_body && $pagenum==1}{$pg_body}{/if}
 <div id="articles">
-{foreach from=$jojo_articles item=a key=k}
-{if $k<1 || $a.weighting==0}
+{foreach from=$jojo_articles item=a key=k}{if $k<1 || $a.weighting==0}
     <div class="article_intro">
     <h3 class="clear"><a href="{$a.url}" title="{$a.title}">{$a.title}</a></h3>
     <div>

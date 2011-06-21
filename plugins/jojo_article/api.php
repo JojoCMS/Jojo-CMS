@@ -38,6 +38,10 @@ Jojo::addFilter('jojo_xml_sitemap', 'xmlsitemap', 'jojo_article');
 if (class_exists('Jojo_Plugin_Jojo_search')) {
     Jojo::addFilter('jojo_search', 'search', 'jojo_article');
 }
+/* Newsletter content Filter */
+if (class_exists('Jojo_Plugin_Jojo_Newsletter') && Jojo::tableExists('newsletter_article')) {
+    Jojo::addFilter('jojo_newslettercontent', 'newslettercontent', 'jojo_article');
+}
 /* Content Filter */
 Jojo::addFilter('content', 'removesnip', 'jojo_article');
 

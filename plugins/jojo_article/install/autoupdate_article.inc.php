@@ -254,3 +254,20 @@ $default_fd['article']['ar_expirydate'] = array(
         'fd_tabname' => "Scheduling",
         'fd_mode' => "standard",
     );
+
+/* add many to many table for use by newsletter plugin if present */
+if (class_exists('Jojo_Plugin_Jojo_Newsletter')) {
+$default_fd['newsletter']['articles'] = array(
+        'fd_name' => "Articles To Include",
+        'fd_type' => "many2manyordered",
+        'fd_size' => "0",
+        'fd_rows' => "0",
+        'fd_cols' => "0",
+        'fd_showlabel' => "no",
+        'fd_tabname' => "2. Articles",
+        'fd_m2m_linktable' => "newsletter_article",
+        'fd_m2m_linkitemid' => "newsletterid",
+        'fd_m2m_linkcatid' => "articleid",
+        'fd_m2m_cattable' => "article",
+    );
+}

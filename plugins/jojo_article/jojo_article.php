@@ -87,6 +87,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['pageurl']   = $pagedata[0]['url'];
             $i['id']           = $i['articleid'];
             $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
+            $i['seotitle']        = htmlspecialchars($i['ar_seotitle'], ENT_COMPAT, 'UTF-8', false);
             $i['author']        = htmlspecialchars($i['ar_author'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
             $i['bodysnip'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
@@ -100,7 +101,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['readmore'] = isset($i['readmore']) ? str_replace(' ', '&nbsp;', htmlspecialchars($i['readmore'], ENT_COMPAT, 'UTF-8', false)) : '&gt;&nbsp;read&nbsp;more';
             $i['date']       = $i['ar_date'];
             $i['datefriendly'] = isset($i['dateformat']) && !empty($i['dateformat']) ? strftime($i['dateformat'], $i['ar_date']) :  Jojo::formatTimestamp($i['ar_date'], "medium");
-            $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
+            $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
             unset($items[$k]['ar_bbbody']);
@@ -332,7 +333,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $breadcrumbs                      = $this->_getBreadCrumbs();
             $breadcrumb                       = array();
             $breadcrumb['name']               = $article['title'];
-            $breadcrumb['rollover']           = $article['ar_desc'];
+            $breadcrumb['rollover']           = $article['description'];
             $breadcrumb['url']                = $article['url'];
             $breadcrumbs[count($breadcrumbs)] = $breadcrumb;
 
@@ -346,7 +347,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $smarty->assign('pg_htmllang', $article['ar_htmllang']);
             }
             $content['title']            = $article['title'];
-            $content['seotitle']         = Jojo::either($article['ar_seotitle'], $article['title']);
+            $content['seotitle']         = Jojo::either($article['seotitle'], $article['title']);
             $content['breadcrumbs']      = $breadcrumbs;
 
             if (!empty($article['ar_metadesc'])) {
@@ -370,7 +371,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $content['metadescription']  = $content['meta_description'];
             if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes')) {
                 $content['ogtags']['description'] = $article['description'];
-                $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . $article['image'] : '';
+                $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . urlencode($article['image']) : '';
                 $content['ogtags']['title'] = $article['title'];
             }
             $content['content'] = $smarty->fetch('jojo_article.tpl');
@@ -853,6 +854,33 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
         /* Return results */
         return $results;
+    }
+
+    /**
+     * Newsletter content
+     */
+    static function newslettercontent($contentarray, $newletterid=false)
+    {
+        /* Get all the articles for this newsletter */
+        if ($newletterid) {
+            $contentarray['articles'] = Jojo::selectAssoc('SELECT n.order, a.articleid FROM {article} a, {newsletter_article} n WHERE a.articleid = n.articleid AND n.newsletterid = ? ORDER BY n.order', $newletterid);
+            if ($contentarray['articles']) {
+                $articles = self::getItemsById($contentarray['articles']);
+                foreach($articles as &$a) {
+                    $a['title'] = mb_convert_encoding($a['ar_title'], 'HTML-ENTITIES', 'UTF-8');
+                    $a['bodyplain'] = mb_convert_encoding($a['bodyplain'], 'HTML-ENTITIES', 'UTF-8');
+                    $a['body'] = mb_convert_encoding($a['ar_body'], 'HTML-ENTITIES', 'UTF-8');
+                    $a['imageurl'] = rawurlencode($a['image']);
+                    foreach ($contentarray['articles'] as $k => $c) {
+                        if ($c==$a['articleid']) {
+                            $contentarray['articles'][$k] = $a;
+                        }
+                    }
+                }
+            }
+        }
+        /* Return results */
+        return $contentarray;
     }
 
 /*
