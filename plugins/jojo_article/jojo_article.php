@@ -59,13 +59,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
      /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
-    static function getItemsById($ids = false, $sortby='ar_date desc') {
+    static function getItemsById($ids = false, $sortby='ar_date desc', $include=false) {
         $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
         $items = Jojo::selectQuery($query);
-        $items = self::cleanItems($items);
+        $items = self::cleanItems($items, '', $include);
         if ($items) {
             $items = is_array($ids) ? self::sortItems($items, $sortby) : $items[0];
             return $items;
@@ -863,16 +863,16 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         /* Get all the articles for this newsletter */
         if ($newletterid) {
-            $contentarray['articles'] = Jojo::selectAssoc('SELECT n.order, a.articleid FROM {article} a, {newsletter_article} n WHERE a.articleid = n.articleid AND n.newsletterid = ? ORDER BY n.order', $newletterid);
-            if ($contentarray['articles']) {
-                $articles = self::getItemsById($contentarray['articles']);
+            $articleids = Jojo::selectAssoc('SELECT n.order, a.articleid FROM {article} a, {newsletter_article} n WHERE a.articleid = n.articleid AND n.newsletterid = ? ORDER BY n.order', $newletterid);
+            if ($articleids) {
+                $articles = self::getItemsById($articleids, '', 'showhidden');
                 foreach($articles as &$a) {
                     $a['title'] = mb_convert_encoding($a['ar_title'], 'HTML-ENTITIES', 'UTF-8');
                     $a['bodyplain'] = mb_convert_encoding($a['bodyplain'], 'HTML-ENTITIES', 'UTF-8');
                     $a['body'] = mb_convert_encoding($a['ar_body'], 'HTML-ENTITIES', 'UTF-8');
                     $a['imageurl'] = rawurlencode($a['image']);
-                    foreach ($contentarray['articles'] as $k => $c) {
-                        if ($c==$a['articleid']) {
+                    foreach ($articleids as $k => $i) {
+                        if ($i==$a['articleid']) {
                             $contentarray['articles'][$k] = $a;
                         }
                     }
