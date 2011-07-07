@@ -3263,7 +3263,7 @@ function getSelectedPages($pageid, $root=0) {
 
     static function xmlEscape($data) {
         $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'Jojo::convertEntity4XML', $data);
-        return str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', $xmldata)));
+        return str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', str_replace('&', '&amp;', $xmldata))));
     }
 
     /* Swap HTML named entity with its numeric equivalent. If the entity
