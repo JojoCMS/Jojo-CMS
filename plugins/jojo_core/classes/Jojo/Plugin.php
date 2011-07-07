@@ -100,6 +100,7 @@ class Jojo_Plugin {
         // Get HTML language for the page
         $language = Jojo::getPageHtmlLanguage();
         $result['longlanguage']  = $language['longlanguage'];
+        $result['languagecode']  = $language['ISOcode'];
         $result['charset'] = $language['charset'];
 
         /* Get page tags if  the tags class is available */

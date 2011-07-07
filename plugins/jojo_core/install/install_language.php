@@ -27,6 +27,7 @@ $query = "
   `english_name` varchar(255) NOT NULL default '',
   `displayorder` int(11) NOT NULL default '1',
   `charset` varchar(15) NOT NULL default '',
+  `ISOcode` varchar(15) NOT NULL default '',
   `direction` varchar(3) NOT NULL default 'ltr',
   `longcode` varchar(50) default NULL,
   `active` tinyint(1) NOT NULL default '0',

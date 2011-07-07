@@ -17,8 +17,8 @@
     <link rel="stylesheet" type="text/css" href="external/markitup/skins/markitup/style.css" />
     <link rel="stylesheet" type="text/css" href="external/markitup/sets/html/style.css" />
     <link rel="stylesheet" type="text/css" href="external/markitup/sets/bbcode/style.css" />
-    <!--[if IE]> <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin_ie.css" /> <![endif]-->{else}
-    {* Manage the Open Directory Project and Yahoo Directory options *}{if $pageid == 1 }{if $OPTIONS.robots_opd == "yes" && $OPTIONS.robots_ydir == "yes"}<meta name="robots" content="noopd, noydir" />
+    <!--[if IE]> <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin_ie.css" /> <![endif]-->
+    {else}{* Manage the Open Directory Project and Yahoo Directory options *}{if $pageid == 1 }{if $OPTIONS.robots_opd == "yes" && $OPTIONS.robots_ydir == "yes"}<meta name="robots" content="noopd, noydir" />
     {elseif $OPTIONS.robots_opd == "yes"}<meta name="robots" content="noopd" />
     {elseif $OPTIONS.robots_ydir == "yes"}<meta name="slurp" content="noydir" />{/if}{/if}{* end of the OPD and Ydir section*}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/styles.css{if $DEBUG}?r={math equation='rand(1000,10000)'}{/if}" />{if $include_print_css}
@@ -45,4 +45,5 @@
     {else}{if $OPTIONS.analyticscode && $OPTIONS.analyticsposition == 'top'}
     {include file="analytics.tpl"}
     {/if}{/if}{if $customhead}
-{$customhead}{/if}{jojoHook hook="customhead"}</head>
+    {$customhead}
+    {/if}{jojoHook hook="customhead"}</head>

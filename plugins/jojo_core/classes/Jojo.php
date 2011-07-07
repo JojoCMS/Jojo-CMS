@@ -3134,6 +3134,7 @@ class Jojo {
         $languagedata = Jojo::selectRow("SELECT * FROM {language} WHERE languageid = ?", array($pagehtmllang));
         $languagedata['longlanguage']  = ($languagedata && $languagedata['name']) ? $languagedata['name'] : $pagehtmllang;
         $languagedata['charset'] = ($languagedata['charset']) ? $languagedata['charset'] : 'utf-8';
+        $languagedata['ISOcode'] = isset($languagedata['ISOcode']) ? $languagedata['ISOcode'] : 'en_GB';
         $languagedata['direction'] = ($languagedata['direction']) ? $languagedata['direction'] : 'ltr';
         return $languagedata;
     }

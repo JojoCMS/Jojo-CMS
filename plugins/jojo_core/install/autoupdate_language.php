@@ -88,6 +88,15 @@ $default_fd['language']['charset'] = array(
         'fd_tabname' => "Content",
     );
 
+// ISO Code Field
+$default_fd['language']['ISOcode'] = array(
+        'fd_name' => "ISO language code",
+        'fd_type' => "text",
+        'fd_default' => "en_US",
+        'fd_order' => "9",
+        'fd_tabname' => "Content",
+    );
+
 // Text Direction Field
 $default_fd['language']['direction'] = array(
         'fd_name' => "Text Direction",
@@ -95,7 +104,7 @@ $default_fd['language']['direction'] = array(
         'fd_options' => "ltr:Left To Right\nrtl:Right to Left",
         'fd_default' => "ltr",
         'fd_help' => "Text Direction",
-        'fd_order' => "9",
+        'fd_order' => "10",
         'fd_tabname' => "Content",
     );
 
