@@ -744,6 +744,29 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return false;
     }
 
+    static function getNavItems($pageid, $selected=false)
+    {
+        $nav = array();
+        $section = Jojo::getSectionRoot($pageid);
+        $articlepages = self::getPluginPages('', $section);
+        if (!$articlepages) return $nav;
+        $categoryid = $articlepages[$pageid]['articlecategoryid'];
+        $sortby = $articlepages[$pageid]['sortby'];
+        $items = isset($articlepages[$pageid]['addtonav']) && $articlepages[$pageid]['addtonav'] ? self::getArticles('', '', $categoryid, $sortby) : '';
+        if (!$items) return $nav;
+        //if the page is currently selected, check to see if an item has been called
+        if ($selected) {
+            $id = Jojo::getFormData('id', 0);
+            $url = Jojo::getFormData('url', '');
+        }
+        foreach ($items as $i) {
+            $nav[$i['id']]['url'] = $i['url'];
+            $nav[$i['id']]['title'] = $i['title'];
+            $nav[$i['id']]['label'] = $i['fullname'];
+            $nav[$i['id']]['selected'] = (boolean)($selected && (($id && $id== $i['id']) ||(!empty($url) && $i['url'] == $url)));
+        }
+        return $nav;
+    }
     static function admin_action_after_save_article($id)
     {
         $article = self::getItemsById($id);

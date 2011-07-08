@@ -96,6 +96,7 @@ $query = "
       `pageid` int(11) NOT NULL default '0',
       `type` enum('normal','parent','index') NOT NULL default 'normal',
       `sortby` enum('ar_title asc','ar_date desc','ar_livedate desc','ar_author') NOT NULL default 'ar_date desc',
+      `addtonav` tinyint(1) NOT NULL default '0',
       `weighting` tinyint(1) NOT NULL default '1',
       `showdate` tinyint(1) NOT NULL default '1',
       `dateformat` varchar(255) NOT NULL default '%e %b %Y',

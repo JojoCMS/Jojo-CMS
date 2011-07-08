@@ -75,6 +75,16 @@ $default_fd['articlecategory']['sortby'] = array(
         'fd_tabname' => "Content",
     );
 
+// Add to Nav 
+$default_fd[$table]['addtonav'] = array(
+        'fd_name' => "Show Articles in Nav",
+        'fd_type' => "yesno",
+        'fd_help' => "Add articles to navigation as child pages of this one.",
+        'fd_default' => "0",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+    
 // Weighted Index Field
 $default_fd['articlecategory']['weighting'] = array(
         'fd_name' => "Weighted Index",
