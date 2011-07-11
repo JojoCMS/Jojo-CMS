@@ -429,7 +429,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function getPluginPages($for='', $section=0)
     {
         global $sectiondata;
-        $items =  Jojo::selectQuery("SELECT c.*, p.*  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_parent, pg_order");
+        $cacheKey = 'articles';
+        /* Have we got a cached result? */
+        static $_pluginpages;
+        if (isset($_pluginpages[$cacheKey])) {
+            return $_pluginpages[$cacheKey];
+        }
+        /* Cache some stuff */
+        $items =  Jojo::selectAssoc("SELECT p.pageid AS id, c.*, p.*  FROM {articlecategory} c LEFT JOIN {page} p ON (c.pageid=p.pageid) ORDER BY pg_parent, pg_order");
         // use core function to clean out any pages based on permission, status, expiry etc
         $items =  Jojo_Plugin_Core::cleanItems($items, $for);
         foreach ($items as $k=>$i){
@@ -438,7 +445,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 continue;
             }
         }
-        return $items;
+        if ($items) {
+            $_pluginpages[$cacheKey] = $items;
+        } else {
+            $_pluginpages[$cacheKey] = array();
+        }
+        return $_pluginpages[$cacheKey];
     }
 
     public static function sitemap($sitemap)

@@ -76,7 +76,7 @@ $default_fd['articlecategory']['sortby'] = array(
     );
 
 // Add to Nav 
-$default_fd[$table]['addtonav'] = array(
+$default_fd['articlecategory']['addtonav'] = array(
         'fd_name' => "Show Articles in Nav",
         'fd_type' => "yesno",
         'fd_help' => "Add articles to navigation as child pages of this one.",
