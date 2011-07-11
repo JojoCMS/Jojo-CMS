@@ -101,7 +101,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['readmore'] = isset($i['readmore']) ? str_replace(' ', '&nbsp;', htmlspecialchars($i['readmore'], ENT_COMPAT, 'UTF-8', false)) : '&gt;&nbsp;read&nbsp;more';
             $i['date']       = $i['ar_date'];
             $i['datefriendly'] = isset($i['dateformat']) && !empty($i['dateformat']) ? strftime($i['dateformat'], $i['ar_date']) :  Jojo::formatTimestamp($i['ar_date'], "medium");
-            $i['image'] = !empty($i['ar_image']) ? 'articles/' . $i['ar_image'] : '';
+            $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
             unset($items[$k]['ar_bbbody']);
@@ -371,7 +371,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $content['metadescription']  = $content['meta_description'];
             if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes')) {
                 $content['ogtags']['description'] = $article['description'];
-                $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . urlencode($article['image']) : '';
+                $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . $article['image'] : '';
                 $content['ogtags']['title'] = $article['title'];
             }
             $content['content'] = $smarty->fetch('jojo_article.tpl');
