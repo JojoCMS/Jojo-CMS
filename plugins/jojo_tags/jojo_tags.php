@@ -477,7 +477,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
             }
         }
 
-        $smarty->assign('cloudwords', $cloudwords);
+        $smarty->assign('cloudwords', array_values($cloudwords));
 
         /* Get the tagcloud html */
         $prefixdata = Jojo::selectRow("SELECT `pg_url` FROM {page} WHERE `pg_link` = 'Jojo_Plugin_Jojo_Tags';");
