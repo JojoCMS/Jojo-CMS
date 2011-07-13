@@ -88,7 +88,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         // those pages that are configured to appear in all main nav menus.
         if ((_MULTILANGUAGE) && (Jojo::fieldExists ( 'page', 'pg_mainnavalways' )) && ($field == 'mainnav')) {
             $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_followto, pg_mainnavalways, pg_secondarynav, pg_ssl
+                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_seotitle, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_followto, pg_mainnavalways, pg_secondarynav, pg_ssl
                          FROM
                            {page}
                          WHERE
@@ -97,7 +97,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
                            pg_order", $field);
         } else {
             $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_menutitle, pg_language, pg_followto, pg_status, pg_livedate, pg_expirydate, pg_ssl
+                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_seotitle, pg_menutitle, pg_language, pg_followto, pg_status, pg_livedate, pg_expirydate, pg_ssl
                          FROM
                            {page}
                          WHERE
@@ -141,7 +141,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
             $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
         }
         /* Create title and label for display */
-        $n['title'] = htmlspecialchars(($n['pg_desc'] ? $n['pg_desc'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
+        $n['title'] = htmlspecialchars(($n['pg_desc'] ? $n['pg_desc'] : ($n['pg_seotitle'] ? $n['pg_seotitle'] : $n['pg_title'])), ENT_COMPAT, 'UTF-8', false);
         $n['label'] = htmlspecialchars(($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
         /* Add field for selectedPages tree */
         $n['selected'] = (boolean)($selectedPages && in_array($n['pageid'], $selectedPages));
