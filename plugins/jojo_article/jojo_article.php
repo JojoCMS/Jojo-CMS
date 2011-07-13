@@ -773,8 +773,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
         foreach ($items as $i) {
             $nav[$i['id']]['url'] = $i['url'];
-            $nav[$i['id']]['title'] = $i['title'];
-            $nav[$i['id']]['label'] = $i['fullname'];
+            $nav[$i['id']]['title'] = ($i['seotitle'] ? $i['seotitle'] : ($i['ar_desc'] ? htmlspecialchars($i['ar_desc'], ENT_COMPAT,'UTF-8',false) : $i['title']));
+            $nav[$i['id']]['label'] = $i['title'];
             $nav[$i['id']]['selected'] = (boolean)($selected && (($id && $id== $i['id']) ||(!empty($url) && $i['url'] == $url)));
         }
         return $nav;
