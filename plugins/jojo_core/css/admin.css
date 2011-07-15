@@ -912,3 +912,15 @@ div.theme-box button {
 .htmlarea .toolbar .buttonPressed {
     background: none repeat scroll 0 0 black;
 }
+
+.crop_canvas {
+  position: absolute;
+  z-index: 99;
+}
+
+.crop_point {
+  background: transparent url(../images/default/cms/admin/crop.gif) center center no-repeat;
+  /* please update fileupload.php if the width / height is changed */
+  width: 50px;
+  height: 50px;
+}

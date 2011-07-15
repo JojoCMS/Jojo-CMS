@@ -1,4 +1,4 @@
-﻿<span title="{$filesize}"><a href="{_SITEURL}/downloads/{$fd_table}s/{value}" target="_BLANK">
+<span title="{$filesize}"><a href="{_SITEURL}/downloads/{$fd_table}s/{value}" target="_BLANK">
 <img src="{$filelogo}" border="0" align="absmiddle"> {$value} </a></span><br>
 
 <span title="Actual size {$imagesize[0]}x{$imagesize[1]}px {$filesize}">

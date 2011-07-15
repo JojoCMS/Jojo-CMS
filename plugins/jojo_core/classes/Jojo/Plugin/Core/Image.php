@@ -312,9 +312,21 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             /* Cut the img square */
             $new_height = $new_width = $size;
             $shortest = min($im_height, $im_width);
+            
             //find the offset for cropping
-            $startx = ($im_width / 2) - ($shortest / 2);
-            $starty = ($im_height / 2) - ($shortest / 2);
+            $cropdata = self::getCropData($filename);
+            if (is_array($cropdata)) {
+                /* no crop data available, do a center crop */
+                $crop_center_x = round($cropdata[0] * $im_width / 100);
+                $crop_center_y = round($cropdata[1] * $im_height / 100);
+                $startx = max($crop_center_x - ($shortest / 2), 0);
+                $starty = max($crop_center_y - ($shortest / 2), 0);
+            } else {
+                /* no crop data available, do a center crop */
+                $startx = ($im_width / 2) - ($shortest / 2);
+                $starty = ($im_height / 2) - ($shortest / 2);
+            }
+            
             //resize
             $im_height = $im_width = min($im_height, $im_width);
         } elseif (!empty($fitmaxw) && !empty($fitmaxh)) {
@@ -357,15 +369,37 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $starty = 0;
             $factor1 = $im_width/$maxw;
             $factor2 = $im_height/$maxh;
-            if ($factor1 > $factor2) {
-               $startx = ($im_width / 2);
-               $im_width = $maxw * $factor2;
-               $startx -= ($im_width / 2);
+            
+            
+            $cropdata = self::getCropData($filename);
+            if (is_array($cropdata)) {
+                /* we have crop data, so crop around the crop point */
+                $crop_center_x = round($cropdata[0] * $im_width / 100);
+                $crop_center_y = round($cropdata[1] * $im_height / 100);
+                if ($factor1 > $factor2) {
+                    $startx = $crop_center_x;
+                   $im_width = $maxw * $factor2;
+                   $startx -= ($im_width / 2);
+                   $startx = max($startx, 0);
+                } else {
+                    $starty = ($crop_center_y);
+                    $im_height = $maxh * $factor1;
+                    $starty -= ($im_height / 2);
+                    $starty = max($starty, 0);
+                }
             } else {
-                $starty = ($im_height / 2);
-                $im_height = $maxh * $factor1;
-                $starty -= ($im_height / 2);
+                /* we have  no crop data, so crop around the centre of the image */
+                if ($factor1 > $factor2) {
+                   $startx = ($im_width / 2);
+                   $im_width = $maxw * $factor2;
+                   $startx -= ($im_width / 2);
+                } else {
+                    $starty = ($im_height / 2);
+                    $im_height = $maxh * $factor1;
+                    $starty -= ($im_height / 2);
+                }
             }
+            
         } elseif (!empty($maxh)) {
             /* Resize tp maximum height */
             $factor = $maxh / $im_height;
@@ -455,5 +489,16 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
     // TODO needs some more love
     static function isRemoteFile($filename) {
         return (preg_match('|^https?\://|i', $filename));
+    }
+    
+    /* retrieves crop data, returning false or array(x,y) with the center point of an image. Todo, cache to a file to avoid DB query */
+    static function getCropData($filepath)
+    {
+        if (!Jojo::fileExists($filepath)) return false;
+        $imagedata = file_get_contents($filepath);
+        $cropdata = Jojo::selectRow("SELECT * FROM {cropdata} WHERE hash=?", sha1($imagedata));
+        $crop_x = (isset($cropdata['x'])) ? $cropdata['x'] : false;
+        $crop_y = (isset($cropdata['y'])) ? $cropdata['y'] : false;
+        return array($crop_x, $crop_y);
     }
 }
