@@ -378,14 +378,14 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 $crop_center_y = round($cropdata[1] * $im_height / 100);
                 if ($factor1 > $factor2) {
                     $startx = $crop_center_x;
-                   $im_width = $maxw * $factor2;
-                   $startx -= ($im_width / 2);
-                   $startx = max($startx, 0);
+                    $im_width = $maxw * $factor2;
+                    $startx -= ($im_width / 2);
+                    $startx = max(min($startx, $im_width), 0);
                 } else {
                     $starty = ($crop_center_y);
                     $im_height = $maxh * $factor1;
                     $starty -= ($im_height / 2);
-                    $starty = max($starty, 0);
+                    $starty = max(min($starty, $im_height), 0);
                 }
             } else {
                 /* we have  no crop data, so crop around the centre of the image */
