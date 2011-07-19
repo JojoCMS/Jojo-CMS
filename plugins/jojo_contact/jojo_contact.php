@@ -49,6 +49,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
             $form = $formfields[0];
             $formID = $form['form_id'];
+            $formName = $form['form_name'];
             $formSubject = $form['form_subject'];
             $formTo = $form['form_to'];
             $formCaptcha = $form['form_captcha'];
@@ -195,7 +196,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         
         $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
         $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
-        $subject  = $formSubject ? $formSubject : 'Message from ' . Jojo::getOption('sitetitle') . ' website';
+        $subject  = $formSubject ? $formSubject : 'Message from the ' . $formName . ' form';
         $subject = mb_convert_encoding($subject, 'HTML-ENTITIES', 'UTF-8');
 
         $smarty->assign('subject', $subject);
