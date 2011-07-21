@@ -61,6 +61,11 @@ if (!Jojo::getOption('nav_mainnav', 0)) {
     }
 }
 
+if (Jojo::getOption('use_secondary_nav', 'no')=='yes') {
+/* Get one level of secondary navigation for the top navigation */
+$smarty->assign('secondarynav', _getNav($root, 0, 'secondarynav'));
+}
+
 /* Current year (e.g. for copyright statement) */
 $smarty->assign('currentyear', date('Y'));
 
