@@ -3237,8 +3237,8 @@ function getSelectedPages($pageid, $root=0) {
             $i['category'] = $categoryfield ? mb_convert_encoding($i[$categoryfield], 'HTML-ENTITIES', 'UTF-8') : '';
             if ($image) {
                 $i['imageurl'] = isset($i['image']) && $i['image'] ?  _SITEURL . "/images/" . ( isset($options['imagesize']) ? $options['imagesize'] : 'default') . "/" . $i['image'] : '';
-                $i['imagedata'] = $i['imageurl'] ?  getimagesize(_DOWNLOADDIR . '/' . $i['image']) : '';
-                $i['imagedata']['size'] = $i['imagedata'] ?  filesize(_DOWNLOADDIR . '/' . $i['image']) : '';
+                $i['imagedata'] = $i['imageurl'] ?  getimagesize(_DOWNLOADDIR . '/' . urldecode($i['image'])) : '';
+                $i['imagedata']['size'] = $i['imagedata'] ?  filesize(_DOWNLOADDIR . '/' . urldecode($i['image'])) : '';
             }
             if ($sourcelink) $i['body'] .= '<p>Source: <a href="' . $source . '">' . $i['title'] . '</a></p>';
             $rss .= "<item>\n";
