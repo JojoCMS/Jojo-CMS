@@ -497,6 +497,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         if (!Jojo::fileExists($filepath)) return false;
         $imagedata = file_get_contents($filepath);
         $cropdata = Jojo::selectRow("SELECT * FROM {cropdata} WHERE hash=?", sha1($imagedata));
+        if (!$cropdata) return false;
         $crop_x = (isset($cropdata['x'])) ? $cropdata['x'] : false;
         $crop_y = (isset($cropdata['y'])) ? $cropdata['y'] : false;
         return array($crop_x, $crop_y);

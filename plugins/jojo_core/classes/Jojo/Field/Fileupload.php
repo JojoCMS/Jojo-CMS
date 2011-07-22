@@ -46,6 +46,10 @@ class Jojo_Field_fileupload extends Jojo_Field
     function displayedit()
     {
         $retval = '';
+        $crop_x = '';
+        $crop_y = '';
+        $thumb_w = 0;
+        $thumb_h = 0;
         $readonly = ($this->fd_readonly) ? ' readonly="readonly"' : '';
         if (!$this->isblank()) {
             /* Make sure the file exists */
