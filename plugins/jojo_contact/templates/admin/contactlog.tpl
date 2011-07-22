@@ -23,7 +23,8 @@ Export selected form's submissions as a CSV file<br />
     <tbody>
 {foreach from=$log item=e}
         <tr>
-            <td>{if !$e.success}<img src="images/cms/icons/error.png" alt="Sending failed!" />{/if}</td>
+            <td>{if !$e.success}<img src="images/cms/icons/error.png" alt="Sending failed!" /> {/if}<a href="#" onclick="$.post('{$correcturl}', {ldelim} removeid: '{$e.formsubmissionid}' {rdelim}); window.location.reload();" title="Remove"><img src="images/cms/icons/delete.png" alt="Remove"  /></a><br />
+</td>
             <td>{$e.formsubmissionid}</td>
             <td>{$e.friendlydate}</td>
             <td>{$e.subject}</td>

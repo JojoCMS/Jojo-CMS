@@ -27,6 +27,10 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
 
         $smarty->assign('title',  "Contact Log");
 
+        if (isset($_POST['removeid']) &&  $_POST['removeid']) {
+            $removeid = $_POST['removeid'];
+            Jojo::deleteQuery("DELETE FROM {formsubmission} WHERE formsubmissionid=$removeid");
+        }
         $forms = Jojo::selectQuery("SELECT * FROM {form}");
         $logs = Jojo::selectQuery("SELECT * FROM {formsubmission} ORDER BY submitted DESC LIMIT 1000");
         foreach ($logs as &$e) {
