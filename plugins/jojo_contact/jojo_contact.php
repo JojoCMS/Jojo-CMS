@@ -264,7 +264,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
                  if ($optionNewDatabaseMethod) {
                     /* store a copy of the message in the database*/
-                    Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
+                    $res = Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
+                    
+                    /* run success hook */
+                    Jojo::runHook('contact_form_success', array($formID, $res));
+                    
                 } else {
                     /* log a copy of the message */
                     $log             = new Jojo_Eventlog();
