@@ -319,8 +319,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* no crop data available, do a center crop */
                 $crop_center_x = round($cropdata[0] * $im_width / 100);
                 $crop_center_y = round($cropdata[1] * $im_height / 100);
-                $startx = max($crop_center_x - ($shortest / 2), 0);
-                $starty = max($crop_center_y - ($shortest / 2), 0);
+                $startx = min(max($crop_center_x - $radius, 0), $im_width - $shortest);
+                $starty = min(max($crop_center_y - $radius, 0), $im_height - $shortest);
             } else {
                 /* no crop data available, do a center crop */
                 $startx = ($im_width / 2) - ($shortest / 2);
@@ -378,14 +378,18 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 $crop_center_y = round($cropdata[1] * $im_height / 100);
                 if ($factor1 > $factor2) {
                     $startx = $crop_center_x;
-                    $im_width = $maxw * $factor2;
-                    $startx -= ($im_width / 2);
-                    $startx = max(min($startx, $im_width), 0);
+                    $startx -= ($scale_width / 2);
+                    $scale_width = $maxw * $factor2;
+                    $minx = $im_width - $scale_width;
+                    $startx = min(max($startx, $minx), 0);
+                    $im_width = $scale_width;
                 } else {
-                    $starty = ($crop_center_y);
-                    $im_height = $maxh * $factor1;
-                    $starty -= ($im_height / 2);
-                    $starty = max(min($starty, $im_height), 0);
+                    $starty = $crop_center_y;
+                    $starty -= ($scale_height / 2);
+                    $scale_height = $maxh * $factor1;
+                    $miny = $im_height - $scale_height;
+                    $starty = max(min($starty, $miny), 0);
+                    $im_height = $scale_height;
                 }
             } else {
                 /* we have  no crop data, so crop around the centre of the image */
