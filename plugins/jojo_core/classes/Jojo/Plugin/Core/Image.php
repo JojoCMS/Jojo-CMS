@@ -385,8 +385,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     $im_width = $scale_width;
                 } else {
                     $starty = $crop_center_y;
-                    $starty -= ($scale_height / 2);
                     $scale_height = $maxh * $factor1;
+                    $starty -= ($scale_height / 2);
                     $miny = $im_height - $scale_height;
                     $starty = max(min($starty, $miny), 0);
                     $im_height = $scale_height;
