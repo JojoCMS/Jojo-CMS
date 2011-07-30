@@ -312,6 +312,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             /* Cut the img square */
             $new_height = $new_width = $size;
             $shortest = min($im_height, $im_width);
+            $radius = ($shortest / 2); // Not radius, but you get the point (half the width/height)
             
             //find the offset for cropping
             $cropdata = self::getCropData($filename);
@@ -323,8 +324,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 $starty = min(max($crop_center_y - $radius, 0), $im_height - $shortest);
             } else {
                 /* no crop data available, do a center crop */
-                $startx = ($im_width / 2) - ($shortest / 2);
-                $starty = ($im_height / 2) - ($shortest / 2);
+                $startx = ($im_width / 2) - $radius;
+                $starty = ($im_height / 2) - $radius;
             }
             
             //resize
@@ -378,8 +379,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 $crop_center_y = round($cropdata[1] * $im_height / 100);
                 if ($factor1 > $factor2) {
                     $startx = $crop_center_x;
-                    $startx -= ($scale_width / 2);
                     $scale_width = $maxw * $factor2;
+                    $startx -= ($scale_width / 2);
                     $minx = $im_width - $scale_width;
                     $startx = min(max($startx, $minx), 0);
                     $im_width = $scale_width;
