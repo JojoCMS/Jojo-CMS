@@ -8,6 +8,7 @@
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
     {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" />
+    <link rel="canonical" href="{$correcturl}" />
     {if !$robots_index || !$robots_follow || $isadmin}<meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}{if $ogmetatags && !$isadmin}
     {$ogmetatags}{/if}{if $isadmin}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/jpop.css" />
