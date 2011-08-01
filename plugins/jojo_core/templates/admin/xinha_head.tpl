@@ -27,26 +27,6 @@
         '{$xinha_plugin}', 
         {/foreach}
         {literal}
-                  /*
-                  <?php
-                    $xinha_plugins = array (
-                        'ContextMenu',
-                        'Stylist',
-                        'FindReplace',
-                        'PasteText',
-                        'ExtendedFileManager',
-                        'TableOperations',
-                        'InsertAnchor',
-                        'HtmlEntities'
-                    );
-
-                    $xinha_plugins = $sitemap = Jojo::applyFilter('xinha_plugins', $xinha_plugins);
-
-                    foreach ($xinha_plugins as $plugin) {
-                        echo "'$plugin',\n";
-                    }
-                    ?>
-                    */
        ];
      xinha_editors = xinha_editors ? xinha_editors :
       [
@@ -86,7 +66,7 @@
         {/if}
         {literal}
          
-        /*xinha_config.stylistLoadStylesheet("{/literal}{$SITEURL}{literal}/css/styles.css"); // causes javascript error*/
+        xinha_config.stylistLoadStylesheet("{/literal}{$SITEURL}{literal}/css/styles.css");
         xinha_config.pageStyleSheets = ["{/literal}{$SITEURL}{literal}/css/styles.css", "{/literal}{$SITEURL}{literal}/css/xinha.css"];
         xinha_config.baseHref = "{/literal}{$SITEURL}{literal}/";
         xinha_config.sevenBitClean = false;
@@ -109,7 +89,7 @@
                 xinha_config.stripBaseHref = false;
         {/if}
         {literal}
-        /*
+
         if (xinha_config.ExtendedFileManager) {
                 with (xinha_config.ExtendedFileManager)
                 {
@@ -135,22 +115,18 @@
                     // Use 0 to disable limit
                     $IMConfig['max_foldersize_mb'] = 0;
 
-                    $IMConfig['allowed_image_extensions'] = array("jpg","gif","png");
-                    $IMConfig['allowed_link_extensions'] = array("jpg","gif","pdf","ip","txt","doc",
-                                                                 "psd","png","html","swf",
-                                                                 "xml","xls");
+                    $IMConfig['allowed_image_extensions'] = explode(',', Jojo::getOption('allowed_imageupload_extensions','jpg,gif,png'));
+                    $IMConfig['allowed_link_extensions'] = explode(',', Jojo::getOption('allowed_fileupload_extensions','jpg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls'));
 
                     require_once _BASEPLUGINDIR . '/jojo_core/external/xinha/contrib/php-xinha.php';
                     xinha_pass_to_php_backend($IMConfig);
                     ?>
                 }
         }
-        */
 
   xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
 
   {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}
-  //xinha_editors['fm_{$editor}_xinha'].config.width = '780px';
   xinha_editors['fm_{$editor}_xinha'].config.height = '460px';
   {/foreach}{literal}
 
@@ -162,9 +138,5 @@ Xinha._addEvent(window,'load', xinha_init)
 
 /*]]>*/
 </script>
-
-
-
-
 
 {/literal}

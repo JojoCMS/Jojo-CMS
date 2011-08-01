@@ -134,10 +134,10 @@ function setTextEditorContent(id) {
       //$('#'+id+'_bb').val($('#'+id).val());
       $('textarea[name='+id+'_bb]').val($('#'+id).val());
     } else {
-      //$('#'+id+'_html').val($('#'+id).val());
       $('textarea[name='+id+'_html]').val($('#'+id).val());
-      //var xinha_editor_name = id+'_xinha';
-      xinha_editors[id+'_xinha'].setEditorContent($('#'+id).val());
+      if (xinha_editors[id+'_xinha']) {
+        xinha_editors[id+'_xinha'].setEditorContent($('#'+id).val());
+      }
     }
 }
 
