@@ -55,21 +55,23 @@
     {/if}{if $f.description}<div class="form-field-description">{$f.description}</div>
     {/if}{assign var=x value=`$k+1`}{if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}</fieldset>{/if}
 {/foreach}
-{if $option_new_database_method}{if $option_form_captcha}<div class="form-fieldset">
-        <label for="CAPTCHA">Spam prevention:</label>
-        <input type="text" class="input text" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" /> <span class="required">*</span>
-    </div>
+{if $option_new_database_method}{if $option_form_captcha}
     <div class="form-fieldset captcha">
         <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
         <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
     </div>
-    {/if}{else}{if $OPTIONS.contactcaptcha == 'yes'}<div class="form-fieldset">
+    <div class="form-fieldset">
         <label for="CAPTCHA">Spam prevention:</label>
         <input type="text" class="input text" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" /> <span class="required">*</span>
     </div>
+    {/if}{else}{if $OPTIONS.contactcaptcha == 'yes'}
     <div class="form-fieldset captcha">
         <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
         <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
+    </div>
+    <div class="form-fieldset">
+        <label for="CAPTCHA">Spam prevention:</label>
+        <input type="text" class="input text" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" /> <span class="required">*</span>
     </div>
     {/if}
 {/if}<div  class="form-fieldset submit">
