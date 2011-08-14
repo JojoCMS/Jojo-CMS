@@ -195,6 +195,16 @@ class Jojo_Field_fileupload extends Jojo_Field
             $crop = explode(',', $_POST['fm_crop_'.$this->fd_field]);
             $data = file_get_contents(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$newvalue);
             Jojo::updateQuery("REPLACE INTO {cropdata} SET hash=?, filename=?, x=?, y=?", array(sha1($data), $newvalue, $crop[0], $crop[1]));
+            
+            /* wipe any cached copies of this image */
+            $cache_folders = scandir(_CACHEDIR.'/images/');
+            foreach ($cache_folders as $root) {
+                $root = _CACHEDIR.'/images/'.$root;
+                if (($root == '.') || ($root == '..') || !is_dir($root)) continue;
+                if (Jojo::fileExists($root.'/'.$this->fd_table.'s/'.$newvalue)) {
+                    unlink($root.'/'.$this->fd_table.'s/'.$newvalue);
+                }
+            }
         }
 
         /* ensure we have data to work with */
