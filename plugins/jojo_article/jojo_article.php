@@ -912,6 +912,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                         }
                     }
                 }
+                ksort($contentarray['articles']);
             }
         }
         /* Return results */
