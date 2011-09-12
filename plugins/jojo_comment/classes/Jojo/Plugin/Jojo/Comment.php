@@ -230,7 +230,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $website         = Jojo::getFormData('website',         '');
         $anchortext      = htmlspecialchars(Jojo::getFormData('anchortext',      ''), ENT_COMPAT, 'UTF-8', false);
         $bbcomment       = Jojo::getFormData('comment',         '');
-        $captchacode     = Jojo::getFormData('captchacode',     '');
+        $captchacode     = Jojo::getFormData('CAPTCHA',     '');
         if (!empty($website)) $website = Jojo::addhttp($website);
         $ip = Jojo::getIP();
 
