@@ -52,7 +52,8 @@ Jojo::registerURI("images/[file:(.*)$]",                                        
 Jojo::registerURI("js/[file:(.*)$]",                                                 'Jojo_Plugin_Core_Js');              // "js/something.js" for javascript files
 Jojo::registerURI("external/[file:(.*)$]",                                           'Jojo_Plugin_Core_External');        // "external/somewhere/something.ext" for external files
 Jojo::registerURI("downloads/[file:(.*)$]",                                          'Jojo_Plugin_Core_Download');        // "download/somewhere/something.ext" for user uploaded files
-Jojo::registerURI("files/[file:(.*)$]",                                              'Jojo_Plugin_Core_File');           // "files/somewhere/something.ext" for custom files for a plugin, eg flash
+Jojo::registerURI("files/[file:(.*)$]",                                              'Jojo_Plugin_Core_File');            // "files/somewhere/something.ext" for custom files for a plugin, eg flash
+Jojo::registerURI("inline/[file:(.*)$]",                                             'Jojo_Plugin_Core_Inline');          // "inline/somewhere/something.ext" any file in the downloads folder to be served inline
 Jojo::registerURI("forgot-password/reset/[reset:([a-f0-9]{40})]",                    'Jojo_Plugin_Forgot_password'); // "forgot-password/reset/21b618b7252f6dbc6744200ced0c44ce3e2664da/" - 40 chars of hex
 Jojo::registerURI("forgot-password/reset/[reset:([a-z0-9]{16})]",                    'Jojo_Plugin_Forgot_password'); // "forgot-password/reset/sga4v6wqg6ij65jd/" - a shorter version 16 chars of alpha numeric
 Jojo::registerURI("login/[redirect:(.*)]",                                           'Jojo_Plugin_Login');           // "login/page-to-redirect-to-on-success/" for login page
