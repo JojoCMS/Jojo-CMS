@@ -57,7 +57,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formCaptcha = $form['form_captcha'];
             $formChoice = $form['form_choice'];
             $formChoiceOptions = $form['form_choice_list'];
-            $formSuccessMessage = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
+            $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
             $formWebmasterCopy = $form['form_webmaster_copy'];
 
             $f = 0;
@@ -248,9 +248,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if (Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage)) {
 
                 /* success */
-                $successMessage = "";
-                $successMessage = $optionNewDatabaseMethod ? $formSuccessMessage : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
-                $smarty->assign('message', $successMessage);
+                $response = $optionNewDatabaseMethod ? $formSuccessMessage : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
                 
                 /* send a confirmation to the enquirer */
                 if ($autoreply) {
@@ -280,11 +278,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                     $log->savetodb();
                     unset($log);
                 }
-
-                return true;
+                $success = true;
 
             } else {
-                $smarty->assign('message', 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.');
+                $response = 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.';
+                $success = false;
 
                 if ($optionNewDatabaseMethod) {
                     /* store a copy of the message in the database*/
@@ -300,9 +298,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 unset($log);
             }
         } else {
-            $smarty->assign('message', implode("<br />\n", $errors));
+            $response =  implode("<br />\n", $errors);
+            $success = false;
         }
-        return false;
+        return array('sent'=>$success, 'responsemessage'=>$response);
     }
 
     function _getContent()
@@ -337,13 +336,15 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
             $smarty->assign('posturl', $this->getCorrectUrl());
             $smarty->assign('fields',$fields);
-    
-            $sent = false;
-            if (isset($_POST['submit'])) {
-                $sent = $this->sendEnquiry();
-            }
-            $smarty->assign('sent', $sent);
         }
+
+        $sent = false;
+        if (isset($_POST['submit'])) {
+            $response = $this->sendEnquiry();
+            $smarty->assign('message', $response['responsemessage']);
+            $sent = $response['sent'];
+        }
+        $smarty->assign('sent', $sent);
 
         if (strpos($this->page['pg_body'], '[[contactform')===false) {
             $smarty->assign('content', $this->page['pg_body']);
@@ -373,7 +374,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $id = $form['form_id'];
             }
             if (isset($id)) {
-                $formhtml = self::getFormHtml($id);
+                $formhtml = self::getFormHtml($id, $action='submit-form/');
                 $content   = str_replace($matches[0][$k], $formhtml, $content);
             }
         }
@@ -382,7 +383,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
     
     /* get the html of the form from an ID */
-    function getFormHtml($formID)
+    function getFormHtml($formID, $action=false)
     {
         global $smarty;
         $smarty->assign('content', '');
@@ -437,7 +438,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         
         /* Hide form on success Option */
         $smarty->assign('hideonsuccess',$hideonsuccess);
-        $smarty->assign('posturl', _SITEURL .'/submit-form/');
+        
+        $smarty->assign('posturl', ($action ? _SITEURL . '/' . $action : ''));
         $smarty->assign('fields',$fields);
 
         if ($sent) {
