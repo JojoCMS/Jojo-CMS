@@ -22,6 +22,9 @@ $_provides['pluginClasses'] = array(
         'Jojo_Plugin_Jojo_contact' => 'Contact - Contact Page'
         );
 
+/* Content Filter */
+Jojo::addFilter('output', 'contentFilter', 'jojo_contact');
+
 $_options[] = array(
     'id'          => 'contactcaptcha',
     'category'    => 'Contact',

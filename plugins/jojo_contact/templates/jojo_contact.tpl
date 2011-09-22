@@ -2,6 +2,7 @@
 {/if}{if $message}<div class="message">{$message}</div> 
 {/if}<div{if $hideonsuccess && $message && $sent} style="display:none;"{/if}>
 <form name="contactform" method="post" action="{$posturl}" onsubmit="return checkme();" class="contact-form">
+<input type="hidden" name="form_id" id="form_id" value="{$form_id}" />
 <div>
 {if $toaddresses}<div class="form-fieldset">
         <label for="form_sendto">Send Enquiry To:</label>
@@ -14,9 +15,10 @@
 {/if}{if !$option_new_database_method}<p class="note">Required fields are marked <span class="required">*</span></p>
 {/if}   
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}{if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}<fieldset><legend>{$f.fieldset}</legend>
-    {/if}{if !in_array($f.type,array('heading','note'))}<div class="form-fieldset {$f.type}">
+    {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset {$f.type}">
         {if $f.showlabel}<label for="form_{$f.field}">{if $f.display}{$f.display}:{/if}</label>{/if}
-    {/if}{if $f.type == 'textarea'}<textarea class="input textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
+    {/if}{if $f.type == 'hidden'}<input type="hidden" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />
+    {elseif $f.type == 'textarea'}<textarea class="input textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     </div>
     {elseif $f.type == 'checkboxes'}<div class="form-field">
             {foreach from=$f.options item=fo }<div class="checkbox"><input type="checkbox" class="checkbox" name="form_{$f.field}[{$fo}]" id="form_{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}"{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach} /><label for="form_{$f.field}_{$fo}"> {$fo}</label></div>

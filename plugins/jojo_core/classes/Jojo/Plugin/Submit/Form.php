@@ -25,6 +25,14 @@ class Jojo_Plugin_Submit_Form extends Jojo_Plugin
 {
     function _getContent()
     {
+        $formID = isset($_POST['form_id']) ? $_POST['form_id'] : '';
+        if ($formID) {
+            $_SESSION['sendstatus'] = Jojo_Plugin_Jojo_contact::sendEnquiry($formID);
+            $referring_page = $_SERVER['HTTP_REFERER'];
+            header('location: ' .  $referring_page);
+            exit();
+        } 
+
         global $smarty;
 
         $content = array();
