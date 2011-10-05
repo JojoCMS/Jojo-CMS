@@ -3,7 +3,8 @@
     /*<![CDATA[*/
     var _gaq = [];
     _gaq.push(['_setAccount', '{$OPTIONS.analyticscode}']{if $OPTIONS.crossdomainanalytics=="yes"}, ['_setDomainName', 'none'], ['_setAllowLinker', true]
-    {/if}{if $sent and $OPTIONS.contact_tracking_code_analytics}, ['_trackPageview',"{$OPTIONS.contact_tracking_code_analytics}"]
+    {/if}{if $sent and $contactFrom_tracking_analytics}, ['_trackPageview',"{$contactFrom_tracking_analytics}"]
+    {elseif $sent and $OPTIONS.contact_tracking_code_analytics}, ['_trackPageview',"{$OPTIONS.contact_tracking_code_analytics}"]
     {else}, ['_trackPageview']{/if});{if $success and $google_ecommerce}
     {$google_ecommerce}{/if}
     (function() {literal}{{/literal}
