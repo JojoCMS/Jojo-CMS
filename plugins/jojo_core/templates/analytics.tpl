@@ -30,7 +30,9 @@
         pageTracker._setAllowLinker(true);
     {/if}
     {jojoHook hook="analytics_trackPageview"}
-    {if $sent && $OPTIONS.contact_tracking_code_analytics}
+    {if $sent && $contactFrom_tracking_analytics}
+        pageTracker._trackPageview({$contactFrom_tracking_analytics});
+    {elseif $sent && $OPTIONS.contact_tracking_code_analytics}
         pageTracker._trackPageview("{$OPTIONS.contact_tracking_code_analytics}");
     {else}
         pageTracker._trackPageview();
