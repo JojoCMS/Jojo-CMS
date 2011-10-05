@@ -57,6 +57,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formCaptcha = $form['form_captcha'];
             $formChoice = $form['form_choice'];
             $formChoiceOptions = $form['form_choice_list'];
+            $formAnalytics = $form['form_tracking_code_analytics'];
             $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
             $formWebmasterCopy = $form['form_webmaster_copy'];
 
@@ -249,6 +250,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
                 /* success */
                 $response = $optionNewDatabaseMethod ? $formSuccessMessage : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
+                $smarty->assign('contactFrom_tracking_analytics', $formAnalytics);
                 
                 /* send a confirmation to the enquirer */
                 if ($autoreply) {
