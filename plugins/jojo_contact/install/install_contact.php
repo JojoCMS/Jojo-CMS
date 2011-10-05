@@ -65,7 +65,7 @@ $query = "
         `ff_display` varchar(255) NOT NULL,
         `ff_required` tinyint(1) NOT NULL default '0',   
         `ff_validation` enum('email','url','text','integer') NOT NULL,
-        `ff_type` ENUM('text','textarea','checkboxes','radio','select','list','heading','note') NOT NULL,
+        `ff_type` ENUM('text','textarea','checkboxes','radio','select','list','hidden','heading','note') NOT NULL,
         `ff_size` int(11) NOT NULL,
         `ff_value` text NOT NULL,   
         `ff_options` text NOT NULL,                    
