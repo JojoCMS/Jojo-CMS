@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
+    {/if}{if $pg_metakeywords}<meta name="keywords" content="{$pg_metakeywords}" />
     {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" />
     <link rel="canonical" href="{if $canonical}{$canonical}{else}{$correcturl}{/if}" />
     {if !$robots_index || !$robots_follow || $isadmin}<meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}{if $ogmetatags && !$isadmin}
