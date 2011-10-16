@@ -36,6 +36,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
+        
+        $pad = false;
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {
             /* Max size */
@@ -46,6 +48,12 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $_GET['fitmaxw'] = $matches[1];
             $_GET['fitmaxh'] = $matches[2];
             $filename = $matches[3];
+        } elseif (preg_match('/^pad([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
+            /* same as "fit" but will pad out the image with whitespace */
+            $_GET['fitmaxw'] = $matches[1];
+            $_GET['fitmaxh'] = $matches[2];
+            $filename = $matches[3];
+            $pad = true;
         } elseif (preg_match('/^([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
             /* Max width + max height*/
             $_GET['maxw'] = $matches[1];
@@ -430,14 +438,23 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             }
         }
 
-        if ($new_width != imageSX($im) || $new_height != imageSY($im)) {
+        if ($new_width != imageSX($im) || $new_height != imageSY($im) || ($pad && (($fitmaxw != imageSX($im)) || ($fitmaxh != imageSY($im))))) {
             /* Resize */
-            $new_im = ImageCreateTrueColor($new_width, $new_height);
+            if ($pad) {
+                $new_im = ImageCreateTrueColor($fitmaxw, $fitmaxh);
+            } else {
+                $new_im = ImageCreateTrueColor($new_width, $new_height);
+            }
             if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
                 imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
                 imagealphablending($new_im, false);
+            } elseif ($pad) {
+                $background = imagecolorallocate($new_im, 0xFF, 0xFF, 0xFF);//todo: allow this to be something other than white
+                imagefill($new_im, 0, 0, $background);
             }
-            ImageCopyResampled($new_im, $im, 0, 0, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
+            $dst_x = ($pad) ? round(($fitmaxw / 2) - ($new_width / 2)) : 0;
+            $dst_y = ($pad) ? round(($fitmaxh / 2) - ($new_height / 2)) : 0;
+            ImageCopyResampled($new_im, $im, $dst_x, $dst_y, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
             //ImageCopy($new_im, $im, 0, 0, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
             $nochange = false;
         } else {
