@@ -339,6 +339,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
             /* Assign article content to Smarty */
             $smarty->assign('jojo_article', $article);
+            $smarty->assign('jojo_articles', $articles);
 
             /* Prepare fields for display */
             if (isset($article['ar_htmllang'])) {
