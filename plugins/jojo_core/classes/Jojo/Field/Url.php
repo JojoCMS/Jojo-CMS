@@ -75,7 +75,7 @@ class Jojo_Field_url extends Jojo_Field
     {
         /* Ensures that http:// is added to the url if not already */
         if (!empty($newvalue)) {
-            $this->value = Jojo::addHttp($newvalue);
+            $this->value = Jojo::addHttp(trim($newvalue));
         } else {
             $this->value = '';
         }
