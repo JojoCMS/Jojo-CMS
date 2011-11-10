@@ -391,7 +391,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $smarty->assign('content', '');
         $sent = (boolean)(isset($_SESSION['sendstatus']) || isset($_POST['submit']));
         $smarty->assign('form_id', $formID);
-        $smarty->assign('message', $_SESSION['sendstatus']);
+        $smarty->assign('message', (isset($_SESSION['sendstatus']) ? $_SESSION['sendstatus'] : ''));
         $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         $form = $formfields[0];
         $formTo = $form['form_to'];
