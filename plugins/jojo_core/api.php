@@ -1001,6 +1001,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'googleplus_link',
+    'category'    => 'Social Networking',
+    'label'       => 'Google+ link',
+    'description' => 'the full url of your Google+ page',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
     'id'          => 'twitter_id',
     'category'    => 'Social Networking',
     'label'       => 'Twitter ID',
