@@ -18,7 +18,7 @@ $default_td['lang_country'] = array(
         'td_displayname' => "Site Sub-Section",
         'td_primarykey' => "lc_code",
         'td_displayfield' => "IF(lc_englishname!='',lc_englishname,lc_name)",
-        'td_orderbyfields' => "lc_englishname, lc_name",
+        'td_orderbyfields' => "displayorder, lc_englishname, lc_name",
         'td_topsubmit' => "yes",
         'td_deleteoption' => "yes",
         'td_menutype' => "list",

@@ -18,7 +18,7 @@ $default_td['language'] = array(
         'td_displayname' => "Language",
         'td_primarykey' => "languageid",
         'td_displayfield' => "IF(english_name!='',english_name,name)",
-        'td_orderbyfields' => "english_name, name",
+        'td_orderbyfields' => "displayorder, english_name, name",
         'td_topsubmit' => "yes",
         'td_deleteoption' => "yes",
         'td_menutype' => "list",
