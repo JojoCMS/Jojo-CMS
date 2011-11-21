@@ -229,6 +229,23 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         $replymessage = isset($form['form_autoreply_bodycode']) && $form['form_autoreply_bodycode'] ? Jojo::relative2absolute($form['form_autoreply_bodycode'], _SITEURL) :  '';
+        if (strpos($replymessage, '[[conditional:')!==false) {
+            preg_match('~\[\[conditional:([^\]]*)\]\]~', $replymessage, $matches);
+            if (isset($matches[1])) {
+                $condition = explode(':', $matches[1]);
+                $conditionfield = $condition[0];
+                $conditional = $condition[1];
+                $conditionstate = false;
+                foreach ($fields as $f) {
+                    if ($f['display'] == $conditionfield && $f['value'] == $conditional) {
+                        $conditionstate = true;
+                        break;
+                    }
+                }
+                $replymessage = explode('[[else]]', $replymessage);
+                $replymessage = $conditionstate ? str_replace($matches[0], '', $replymessage[0]) : $replymessage[1];
+            }
+        }
         $htmlcss = isset($form['form_autoreply_css']) ? $form['form_autoreply_css'] : '';
         $autoreply =  0;
         if (isset($form['form_autoreply']) && $form['form_autoreply'] ) {
