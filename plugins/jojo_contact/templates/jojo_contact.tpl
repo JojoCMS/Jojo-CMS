@@ -26,7 +26,7 @@
         </div>
     </div>
     {elseif $f.type == 'radio'}<div class="form-field">
-            {foreach from=$f.options item=button }<input type="radio" class="radio" name="form_{$f.field}" id="form_{$f.field}_{$button|replace:' ':'_'|replace:'$':''}" value="{$button}" {if $f.value == $button} checked="checked"{/if} /><label for="form_{$f.field}_{$fo}"> {$button}</label>
+            {foreach from=$f.options item=button }<input type="radio" class="radio" name="form_{$f.field}" id="form_{$f.field}_{$button|replace:' ':'_'|replace:'$':''|replace:',':''|lower}" value="{$button}" {if $f.value == $button} checked="checked"{/if} /><label for="form_{$f.field}_{$button|replace:' ':'_'|replace:'$':''|replace:',':''|lower}"> {$button}</label>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
         </div>
     </div>

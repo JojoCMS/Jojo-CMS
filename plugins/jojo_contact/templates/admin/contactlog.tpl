@@ -9,7 +9,7 @@ Export selected form's submissions as a CSV file<br />
         </select>
         <input type="submit" name="submit" value="Submit" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
 </form>
-<table>
+<table class="sortabletable">
     <thead>
         <tr>
             <th></th>
