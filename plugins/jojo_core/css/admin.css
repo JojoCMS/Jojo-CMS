@@ -924,3 +924,26 @@ div.theme-box button {
   width: 50px;
   height: 50px;
 }
+
+/* tables */
+table.sortabletable thead tr .header {
+	background: url('../images/cms/bg.gif') center right no-repeat;
+	cursor: pointer;
+	border: 1px solid #AAAAAA;
+	padding: 4px;
+}
+
+table.sortabletable tbody tr.odd td {
+	background-color:#F0F0F6;
+}
+table.sortabletable thead tr .headerSortUp {
+	background-image: url('../images/cms/incrementup.gif');
+}
+
+table.sortabletable thead tr .headerSortDown {
+	background-image: url('../images/cms/incrementdown.gif');
+}
+
+table.sortabletable thead tr .headerSortDown, table.sortabletable thead tr .headerSortUp {
+background-color: #8dbdd8;
+}

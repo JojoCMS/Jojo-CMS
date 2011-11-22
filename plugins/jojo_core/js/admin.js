@@ -208,4 +208,5 @@ function countDown(fieldid, countid, max) {
 $(document).ready(function(){
   addFocusEvents();
   $('#menu li').click(function(){$('#menu li').removeClass('selected');$(this).addClass('selected');});
+  $(".sortabletable").tablesorter(); 
 });

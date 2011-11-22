@@ -41,6 +41,7 @@
     {/if}{if $isadmin}
     <script type="text/javascript" src="{cycle values=$NEXTASSET}js/jpop.js"></script>
     <script type="text/javascript" src="external/anytime/anytimec.js"></script>
+    <script type="text/javascript" src="external/tablesorter/jquery.tablesorter.min.js"></script>
     <script type="text/javascript" src="external/markitup/jquery.markitup.pack.js"></script>
     <script type="text/javascript" src="external/markitup/sets/html/set.js"></script>
     <script type="text/javascript" src="external/markitup/sets/bbcode/set.js"></script>
