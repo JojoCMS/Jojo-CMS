@@ -261,7 +261,7 @@ class Jojo_Plugin {
         $expecteduri = '/' . $link;
         if ($this->id == $home) {
             /* We are on a non-default section homepage */
-            $expecteduri = $pageprefix ? '/' . $pageprefix : '';
+            $expecteduri = $pageprefix ? '/' . $pageprefix : '/';
         }
 
         /* recalculate admin links */
