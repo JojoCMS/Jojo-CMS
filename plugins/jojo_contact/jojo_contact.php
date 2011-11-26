@@ -48,6 +48,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $pageID = $this->page['pageid'];
                 $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
             }
+
             /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
             $form = $formfields[0];
             $formID = $form['form_id'];
@@ -61,9 +62,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
             $formWebmasterCopy = $form['form_webmaster_copy'];
 
-            $f = 0;
+            $fields = Jojo::applyFilter("formfields_first", array(), $formID);
+            $f = count($fields);
             foreach ($formfields as $ff) {                
-                $f = $ff['ff_order'];  
+                //$f = $ff['ff_order'];
                 $fieldName = Jojo::cleanURL($ff['ff_display']);
                 $fields[$f]['field']       = $fieldName;
                 $fields[$f]['display']     = $ff['ff_display'];
@@ -72,14 +74,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $fields[$f]['type']        = $ff['ff_type']; 
                 $fields[$f]['size']        = $ff['ff_size'];              
                 $fields[$f]['value']       = $ff['ff_value'];
-                $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);  
+                $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
                 $fields[$f]['rows']        = $ff['ff_rows'];
                 $fields[$f]['cols']        = $ff['ff_cols'];                              
                 $fields[$f]['description'] = $ff['ff_description'];
                 $fields[$f]['is_email']    = $ff['ff_is_email'];
                 $fields[$f]['is_name']     = $ff['ff_is_name'];                                  
-                $fields[$f]['showlabel']     = $ff['ff_showlabel'];                                  
+                $fields[$f]['showlabel']     = $ff['ff_showlabel'];            
+                $f++;                      
             }
+            $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
 
             if ($formCaptcha){
                 $captchacode = Jojo::getFormData('CAPTCHA','');
@@ -389,7 +393,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if (is_numeric($search)) {
                 $id = $search;
             } else {
-                $form = Jojo::selectRow("SELECT form_id FROM {form} f WHERE f.form_name = ?", array($search));
+                $form = Jojo::selectRow("SELECT form_id, form_name FROM {form} f WHERE f.form_name = ?", array($search));
                 $id = $form['form_id'];
             }
             if (isset($id)) {
@@ -419,7 +423,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formWebmasterCopy = $form['form_webmaster_copy'];
         $hideonsuccess = $form['form_hideonsuccess'];
 
-        $f = 0;
+        $fields = Jojo::applyFilter("formfields_first", array(), $formID);
+        $f = count($fields);
         foreach ($formfields as $ff) {                
             $fieldName = Jojo::cleanURL($ff['ff_display']);
             $fields[$f]['field']       = $fieldName;
@@ -436,6 +441,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $fields[$f]['showlabel'] = $ff['ff_showlabel'];
            $f++;
         }
+        $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
 
         /* Choice option */
         /* setup send to choices if it is set in options of the form */
