@@ -926,15 +926,19 @@ div.theme-box button {
 }
 
 /* tables */
+table.sortabletable {
+    width: 100%;
+}
+
 table.sortabletable thead tr .header {
 	background: url('../images/cms/bg.gif') center right no-repeat;
 	cursor: pointer;
 	border: 1px solid #AAAAAA;
-	padding: 4px;
+	padding: 4px 20px 4px 4px;
 }
 
-table.sortabletable tbody tr.odd td {
-	background-color:#F0F0F6;
+table.sortabletable tbody tr.odd td, table.sortabletable tbody tr.row1 td {
+	background-color:#F9F9FC;
 }
 table.sortabletable thead tr .headerSortUp {
 	background-image: url('../images/cms/incrementup.gif');
@@ -945,5 +949,5 @@ table.sortabletable thead tr .headerSortDown {
 }
 
 table.sortabletable thead tr .headerSortDown, table.sortabletable thead tr .headerSortUp {
-background-color: #8dbdd8;
+background-color: #ddddef;
 }
