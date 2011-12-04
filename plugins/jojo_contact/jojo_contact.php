@@ -342,7 +342,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             
             /* Get current page id */ 
             $pageID = $this->page['pageid'];
-            $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri] FROM {form} f WHERE f.form_page_id = ?", array($pageID));
+            $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri FROM {form} f WHERE f.form_page_id = ?", array($pageID));
             $formID = $form ? $form['form_id'] : '';
             $formhtml = self::getFormHtml($formID);
             
