@@ -205,6 +205,17 @@ $default_fd['form']['form_tracking_code_analytics'] = array(
         'fd_tabname' => "Xtras"
     );
 
+$default_fd['form']['form_thank_you_uri'] = array(
+        'fd_name' => "Thank you page URI",
+        'fd_type' => "internalurl",
+        'fd_options' => "",
+        'fd_default' => "",
+        'fd_size' => "",
+        'fd_help' => "If entered, the visitor will be redirected to this URI after a successful form submission.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+
 // Contact conversion tracking code Field
 $default_fd['form']['form_tracking_code'] = array(
         'fd_name' => "Contact conversion tracking code",

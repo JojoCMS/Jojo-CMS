@@ -37,6 +37,7 @@ $query = "
         `form_autoreply_bodycode` text NULL,
         `form_autoreply_css` varchar(255) NOT NULL,
         `form_hideonsuccess` tinyint(1) NOT NULL default '0',
+        `form_thank_you_uri` varchar(255) NOT NULL,
         PRIMARY KEY  (`form_id`)
         ) ENGINE=MyISAM  ;
     ";

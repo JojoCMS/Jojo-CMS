@@ -342,7 +342,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             
             /* Get current page id */ 
             $pageID = $this->page['pageid'];
-            $form = Jojo::selectRow("SELECT form_id FROM {form} f WHERE f.form_page_id = ?", array($pageID));
+            $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri] FROM {form} f WHERE f.form_page_id = ?", array($pageID));
             $formID = $form ? $form['form_id'] : '';
             $formhtml = self::getFormHtml($formID);
             
@@ -366,6 +366,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $response = $this->sendEnquiry();
             $smarty->assign('message', $response['responsemessage']);
             $sent = $response['sent'];
+            /* redirect visitor to thank you page if one has been configured */
+            if ($sent && $optionNewDatabaseMethod && !empty($form['form_thank_you_uri'])) {
+                Jojo::redirect(_SITEURL.'/'.$form['form_thank_you_uri'], 302);
+            }
         }
         $smarty->assign('sent', $sent);
 
