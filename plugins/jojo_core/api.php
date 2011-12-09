@@ -797,12 +797,12 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'robots_opd',
+    'id'          => 'robots_odp',
     'category'    => 'SEO',
     'label'       => 'Open Directory Project',
     'description' => 'If enabled, Search Engines use your description, etc instead of the Open Directory Project description if it exists.',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
