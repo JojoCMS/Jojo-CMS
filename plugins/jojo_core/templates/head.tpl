@@ -21,9 +21,9 @@
     <link rel="stylesheet" type="text/css" href="external/markitup/sets/bbcode/style.css" />
     <!--[if IE]> <link type="text/css" rel="stylesheet" href="{cycle values=$NEXTASSET}css/admin_ie.css" /> <![endif]-->
     {else}{* Manage the Open Directory Project and Yahoo Directory options *}{if $OPTIONS.googleplus_link}
-    <link href="{$OPTIONS.googleplus_link}" rel="publisher" />{/if}{if $pageid == 1 }{if $OPTIONS.robots_opd == "yes" && $OPTIONS.robots_ydir == "yes"}<meta name="robots" content="noopd, noydir" />
-    {elseif $OPTIONS.robots_opd == "yes"}<meta name="robots" content="noopd" />
-    {elseif $OPTIONS.robots_ydir == "yes"}<meta name="slurp" content="noydir" />{/if}{/if}{* end of the OPD and Ydir section*}
+    <link href="{$OPTIONS.googleplus_link}" rel="publisher" />{/if}{if $pageid == 1 }{if $OPTIONS.robots_opd == "yes" && $OPTIONS.robots_ydir == "yes"}<meta name="robots" content="noodp, noydir" />
+    {elseif $OPTIONS.robots_opd == "yes"}<meta name="robots" content="noodp" />
+    {elseif $OPTIONS.robots_ydir == "yes"}<meta name="slurp" content="noydir" />{/if}{/if}{* end of the ODP and Ydir section*}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/styles.css{if $DEBUG}?r={math equation='rand(1000,10000)'}{/if}" />{if $include_print_css}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/print.css" media="print" />{/if}{if $include_handheld_css}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}css/handheld.css" media="handheld" />{/if}{if $rtl}
