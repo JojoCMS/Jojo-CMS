@@ -50,7 +50,7 @@ $query = "
       `fd_autoupdate` enum('yes','no') NOT NULL default 'yes',
       `fd_flags` text NOT NULL,
       PRIMARY KEY  (`fielddataid`)
-    ) TYPE=MyISAM ;";
+    ) ENGINE=InnoDB ;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

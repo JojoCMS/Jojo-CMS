@@ -31,7 +31,7 @@ $query = "
       `op_description` varchar(255) NOT NULL default '',
       `op_displayname` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`op_name`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

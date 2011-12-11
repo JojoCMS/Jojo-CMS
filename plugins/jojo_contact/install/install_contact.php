@@ -39,7 +39,7 @@ $query = "
         `form_hideonsuccess` tinyint(1) NOT NULL default '0',
         `form_thank_you_uri` varchar(255) NOT NULL,
         PRIMARY KEY  (`form_id`)
-        ) ENGINE=MyISAM  ;
+        ) ENGINE=InnoDB  ;
     ";
 
 /* Check table structure */
@@ -78,7 +78,7 @@ $query = "
         `ff_showlabel` tinyint(1) NOT NULL default '1',        
         `ff_order` int(11) NOT NULL,                                       
         PRIMARY KEY  (`formfield_id`)
-        ) ENGINE=MyISAM  AUTO_INCREMENT=1000;
+        ) ENGINE=InnoDB  AUTO_INCREMENT=1000;
     ";
 
 /* Check table structure */
@@ -111,7 +111,7 @@ $query = "
         `from_email` varchar(255) NOT NULL,
         `content` text NOT NULL,
         PRIMARY KEY  (`formsubmissionid`)
-        ) ENGINE=MyISAM  AUTO_INCREMENT=1000;
+        ) ENGINE=InnoDB  AUTO_INCREMENT=1000;
     ";
 
 /* Check table structure */

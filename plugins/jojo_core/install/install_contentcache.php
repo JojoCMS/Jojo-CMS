@@ -27,7 +27,7 @@ $query = "
       `cc_cached` int(11) NOT NULL default '0',
       `cc_expires` int(11) NOT NULL default '0',
       PRIMARY KEY  (`cc_url`,`cc_userid`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

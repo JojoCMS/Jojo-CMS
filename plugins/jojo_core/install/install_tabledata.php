@@ -51,7 +51,7 @@ $query = "
       `td_autoupdate` enum('yes','no') NOT NULL default 'yes',
       `td_defaultpermissions` text NULL,
       PRIMARY KEY  (`tabledataid`)
-    ) TYPE=MyISAM ;";
+    ) ENGINE=InnoDB ;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

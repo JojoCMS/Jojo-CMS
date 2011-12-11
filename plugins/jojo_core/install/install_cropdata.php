@@ -22,7 +22,7 @@ $query = "
       `x` int(11) NOT NULL default '0',
       `y` int(11) NOT NULL default '0',
       PRIMARY KEY  (`hash`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

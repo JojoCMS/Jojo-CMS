@@ -48,7 +48,7 @@ $query .= "
       KEY `language` (`ar_language`),
       FULLTEXT KEY `title` (`ar_title`),
       FULLTEXT KEY `body` (`ar_title`,`ar_desc`,`ar_body`)
-    ) TYPE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci  AUTO_INCREMENT=1000;";
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci  AUTO_INCREMENT=1000;";
 
 /* Convert mysql date format to unix timestamps */
 if (Jojo::tableExists($table) && Jojo::getMySQLType($table, 'ar_date') == 'date') {
@@ -113,7 +113,7 @@ if (class_exists('Jojo_Plugin_Jojo_comment')) {
 $query .= "
       PRIMARY KEY  (`articlecategoryid`),
       KEY `id` (`pageid`)
-    ) TYPE=MyISAM ;";
+    ) ENGINE=InnoDB ;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);
@@ -149,7 +149,7 @@ if (class_exists('Jojo_Plugin_Jojo_Newsletter')) {
       `newsletterid` int(11) NOT NULL,
       `articleid` int(11) NOT NULL,
       `order` int(11) NOT NULL
-    );";
+    ) ENGINE=InnoDB ;";
     
     /* Check table structure */
     $result = Jojo::checkTable($table, $query);

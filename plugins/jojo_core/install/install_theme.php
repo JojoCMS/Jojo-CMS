@@ -27,7 +27,7 @@ $query = "
       `revision` int(11) NOT NULL default '0',
       `active` enum('yes','no') NOT NULL default 'no',
       PRIMARY KEY  (`name`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

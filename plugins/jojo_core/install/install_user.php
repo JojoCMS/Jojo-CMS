@@ -36,7 +36,7 @@ $query = "
       `us_timezone` int(11) NOT NULL default '12',
       `us_groups` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`userid`)
-    ) TYPE=MyISAM CHARSET=utf8 ;";
+    ) ENGINE=MyISAM CHARSET=utf8 ;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

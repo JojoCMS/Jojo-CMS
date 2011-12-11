@@ -47,7 +47,7 @@ $query = "
           `tg_replace` int(11),
           PRIMARY KEY  (`tagid`),
           UNIQUE KEY `tg_tag` (`tg_tag`)
-        ) ENGINE = innodb;";
+        ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);
@@ -77,7 +77,7 @@ $query = "
     CREATE TABLE {page} (
       `pageid` int(11) NOT NULL auto_increment,
       `pg_tags` text
-    ) TYPE=MyISAM ;";
+    );";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);
@@ -103,7 +103,7 @@ if (Jojo::tableExists('article')) {
         CREATE TABLE {article} (
           `articleid` int(11) NOT NULL auto_increment,
           `ar_tags` text NULL
-        ) TYPE=MyISAM;";
+        );";
 
 
     /* Check table structure */

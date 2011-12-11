@@ -69,7 +69,7 @@ $query = "
       KEY `pg_language` (`pg_language`),
       FULLTEXT KEY `title` (`pg_title`),
       FULLTEXT KEY `body` (`pg_title`,`pg_desc`,`pg_body`)
-    ) TYPE=MyISAM ;";
+    ) ENGINE=MyISAM ;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

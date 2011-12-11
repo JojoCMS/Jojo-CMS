@@ -28,7 +28,7 @@ $query = "
       `active` enum('yes','no') NOT NULL default 'no',
       `priority` int(11) NOT NULL default '99',
       PRIMARY KEY  (`name`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

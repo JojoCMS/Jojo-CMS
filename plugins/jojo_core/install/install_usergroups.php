@@ -24,7 +24,7 @@ $query = "
       `groupid` varchar(20) NOT NULL default '',
       `gr_name` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`groupid`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

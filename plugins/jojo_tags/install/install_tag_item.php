@@ -26,7 +26,7 @@ $query = "
         `plugin` VARCHAR( 50 ) NOT NULL ,
         PRIMARY KEY ( `tagid` , `itemid` , `plugin` ),
         FOREIGN KEY fk_tag (tagid) REFERENCES {tag} (tagid)
-        ) ENGINE = innodb;";
+        ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

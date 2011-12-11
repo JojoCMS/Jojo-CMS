@@ -33,7 +33,7 @@ $query = "
   `active` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`languagetableid`),
   KEY `active` (`active`)
-    ) ENGINE= INNODB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci ;
+    ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci ;
 ";
 
 /* Convert yes no enum to binary int */

@@ -25,7 +25,7 @@ $query = "
         `userid` INT NOT NULL ,
         `lastused` INT NOT NULL ,
         PRIMARY KEY ( `token` )
-      ) ENGINE = MYISAM ;";
+      ) ENGINE = InnoDB ;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

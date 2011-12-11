@@ -34,7 +34,7 @@ $query = "
       `el_referer` varchar(255) NOT NULL default '',
       `el_browser` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`eventlogid`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

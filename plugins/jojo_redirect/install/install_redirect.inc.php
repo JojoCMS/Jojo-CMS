@@ -29,7 +29,7 @@ $query = "
       `rd_notes` text NOT NULL,
       `rd_regex` smallint(4) NOT NULL default '0',
       PRIMARY KEY  (`redirectid`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);

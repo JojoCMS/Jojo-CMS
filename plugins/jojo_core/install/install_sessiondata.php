@@ -25,7 +25,7 @@ $query = "
       `session_lastmodified` int(11) NOT NULL,
       `session_data` longblob,
       PRIMARY KEY  (`session_id`)
-    ) TYPE=MyISAM;";
+    ) ENGINE=InnoDB;";
 
 /* Check table structure */
 $result = Jojo::checkTable($table, $query);
