@@ -28,9 +28,14 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $keywords = urldecode(str_replace('-', ' ', Jojo::getFormData('q', '')));
 
         /* Get Search Type */
-        $searchtype = Jojo::getFormData('type', isset($_SESSION['jojo_search_type']) ? $_SESSION['jojo_search_type'] : '');
+        if (strpos($keywords, '"')===0) {
+            $searchtype = 'phrase';
+            $keywords = urldecode(str_replace('"', '', $keywords ));
+        } else {
+            $searchtype = Jojo::getFormData('type', isset($_SESSION['jojo_search_type']) ? $_SESSION['jojo_search_type'] : '');
+        }
         $smarty->assign('searchtype', $searchtype);
-
+        
         /* Get Search Language */
         $language = Jojo::getFormData('l', isset($_SESSION['jojo_search_language']) ? $_SESSION['jojo_search_language'] : '');
         $smarty->assign('language', $language);
