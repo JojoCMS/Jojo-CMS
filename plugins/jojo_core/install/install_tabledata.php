@@ -26,7 +26,7 @@ $query = "
       `td_name` varchar(255) NOT NULL default '',
       `td_displayname` varchar(255) NOT NULL default '',
       `td_primarykey` varchar(255) NOT NULL default '',
-      `td_displayfield` varchar(100) NOT NULL default '',
+      `td_displayfield` varchar(255) NOT NULL default '',
       `td_parentfield` varchar(100) NOT NULL default '',
       `td_plugin` varchar(100) NOT NULL default '',
       `td_categorytable` varchar(100) NOT NULL default '',
