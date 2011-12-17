@@ -2640,7 +2640,11 @@ class Jojo {
                 break;
             }
             $mail = new htmlMimeMail();
-            $mail->setHtml($htmlmessage, $message);
+            if (!$htmlmessage) {
+            	$mail->setText($message);
+            } else {
+            	$mail->setHtml($htmlmessage, $message);
+            }
             if (!empty($user)) {
                 $mail->setSMTPParams($host, $port, _SITEURL, true, $user, $pass);
             } else {
