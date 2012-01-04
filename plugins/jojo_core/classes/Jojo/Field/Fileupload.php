@@ -219,10 +219,10 @@ class Jojo_Field_fileupload extends Jojo_Field
         /* Check error codes */
         switch ($_FILES['fm_FILE_'.$this->fd_field]['error']) {
             case UPLOAD_ERR_INI_SIZE: //1
-                $this->error = 'The uploaded file exceeds the maximum size allowed ('.$this->fd_maxvalue.')';
+                $this->error = 'The uploaded file exceeds the maximum size allowed in PHP.INI';
                 break;
             case UPLOAD_ERR_FORM_SIZE: //2
-                $this->error = 'The uploaded file exceeds the maximum size allowed in PHP.INI';
+                $this->error = 'The uploaded file exceeds the maximum size allowed ('.$this->fd_maxvalue.')';
                 break;
             case UPLOAD_ERR_PARTIAL: //3
                 $this->error = 'The file has only been partially uploaded. There may have been an error in transfer, or the server may be having technical problems.';
