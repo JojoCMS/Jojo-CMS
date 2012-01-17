@@ -3536,4 +3536,10 @@ function getSelectedPages($pageid, $root=0) {
       return isset($table[$matches[1]]) ? $table[$matches[1]] : '';
     }
 
+    static function inlineStyle($html, $css=array()) {
+        foreach ($css as $style) {
+            $html = str_replace('<' . $style['tag'], '<' . $style['tag'] . ' style="' . $style['style'] . '"', $html);
+        }
+        return $html;        
+    }
 }

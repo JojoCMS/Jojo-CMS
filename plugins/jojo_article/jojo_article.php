@@ -899,15 +899,29 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     {
         /* Get all the articles for this newsletter */
         if ($newletterid) {
-            $articleids = Jojo::selectAssoc('SELECT n.order, a.articleid FROM {article} a, {newsletter_article} n WHERE a.articleid = n.articleid AND n.newsletterid = ? ORDER BY n.order', $newletterid);
+            $articleids = Jojo::selectQuery('SELECT a.articleid FROM {article} a, {newsletter_article} n WHERE a.articleid = n.articleid AND n.newsletterid = ? ORDER BY n.order, a.ar_date DESC', $newletterid);
             if ($articleids) {
-                $articles = self::getItemsById($articleids, '', 'showhidden');
+                foreach ($articleids as $i) {
+                    $ids[] = $i['articleid'];
+                }
+                $articles = self::getItemsById($ids, '', 'showhidden');
+                $css = Jojo::getOption('newslettercss', '');
+                $newscss = array();
+                if ($css) {
+                    $styles = explode("\n", $css);
+                    foreach ($styles as $k => $s) {
+                        $style = explode('=', $s);
+                        $newscss[$k]['tag'] = $style[0];
+                        $newscss[$k]['style'] = $style[1];
+                    }
+                }
+                $contentarray['articles'] = array();
                 foreach($articles as &$a) {
                     $a['title'] = mb_convert_encoding($a['ar_title'], 'HTML-ENTITIES', 'UTF-8');
                     $a['bodyplain'] = mb_convert_encoding($a['bodyplain'], 'HTML-ENTITIES', 'UTF-8');
-                    $a['body'] = mb_convert_encoding($a['ar_body'], 'HTML-ENTITIES', 'UTF-8');
+                    $a['body'] = mb_convert_encoding(Jojo::inlineStyle($a['ar_body'], $newscss), 'HTML-ENTITIES', 'UTF-8');
                     $a['imageurl'] = rawurlencode($a['image']);
-                    foreach ($articleids as $k => $i) {
+                    foreach ($ids as $k => $i) {
                         if ($i==$a['articleid']) {
                             $contentarray['articles'][$k] = $a;
                         }
