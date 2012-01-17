@@ -8,32 +8,25 @@
             <div id="menu">
                 <div id="adminnav">
                     <ul>
-{foreach from=$jojo_admin_nav key=k item=n}
-                        <li {if in_array($n.pageid, $selectedpages) } class="current"{/if}><a {if !$n.subnav}href="{$n.url}"{/if} id="_{$k}" title="{if $n.pg_desc}{$n.pg_desc|escape:"html"}{else}{$n.pg_title|escape:"html"}{/if}">{if $n.pg_menutitle}{$n.pg_menutitle}{else}{$n.pg_title}{/if}</a></li>
-{if $n.subnav}
+                        {foreach from=$jojo_admin_nav key=k item=n}<li{if $n.selected} class="current"{/if}><a {if !$n.subnav}href="{$n.url}"{/if} id="_{$k}" title="{$n.title}">{$n.label}</a></li>{if $n.subnav} 
                         <li class="subnavlist">
                         <div class="adminsubnav">
-                            <ul id="adminsubnav_{$k}" {if in_array($n.pageid, $selectedpages) } class="current"{/if}>
-{foreach from=$n.subnav item=s}
-                            <li class="{if in_array($s.pageid, $selectedpages) } current{/if}"><a href="{$s.url}" title="{if $s.pg_desc}{$s.pg_desc|escape:"html"}{else}{$s.pg_title|escape:"html"}{/if}">{if $s.pg_menutitle}{$s.pg_menutitle}{else}{$s.pg_title}{/if}</a></li>
-{if $s.subnav}
-                            <li class="subnavlist">
-                            <div class="adminsubsubnav">
-                                <ul  {if in_array($s.pageid, $selectedpages) } class="current"{/if}>
-{foreach from=$s.subnav item=t}
-                                    <li class="{if in_array($t.pageid, $selectedpages) } current{/if}"><a href="{$t.url}" title="{if $t.pg_desc}{$t.pg_desc|escape:"html"}{else}{$t.pg_title|escape:"html"}{/if}">{if $t.pg_menutitle}{$t.pg_menutitle}{else}{$t.pg_title}{/if}</a></li>
-{/foreach}
-                                </ul>
-                            </div>
-                            </li>
-{/if}
-{/foreach}
-                        </ul>
-                    </div>
-                    </li>
-{/if}
-{/foreach}
-                     <li><a href="{$SITEURL}/" title="Homepage" target="_blank">Site Home</a></li>
+                            <ul id="adminsubnav_{$k}"{if $n.selected} class="current"{/if}>
+                                {foreach from=$n.subnav item=s}<li{if $s.selected} class="current"{/if}><a href="{$s.url}" title="{$s.title}">{$s.label}</a></li>{if $s.subnav} 
+                                <li class="subnavlist">
+                                <div class="adminsubsubnav">
+                                    <ul{if $s.selected} class="current"{/if}>
+                                        {foreach from=$s.subnav item=t}<li{if $t.selectedpages} class="current"{/if}><a href="{$t.url}" title="{$t.title}">{$t.label}</a></li>
+                                        {/foreach}
+                                    </ul>
+                                </div>
+                                </li>
+                                {/if}{/foreach}
+                            </ul>
+                        </div>
+                        </li>
+                        {/if}{/foreach}
+                        <li><a href="{$SITEURL}/" title="Homepage" target="_blank">Site Home</a></li>
                     </ul>
                 </div>
             </div>
