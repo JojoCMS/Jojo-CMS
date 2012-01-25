@@ -762,7 +762,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $nav = array();
         $section = Jojo::getSectionRoot($pageid);
         $articlepages = self::getPluginPages('', $section);
-        if (!$articlepages) return $nav;
+        if (!$articlepages || !isset($articlepages[$pageid])) return $nav;
         $categoryid = $articlepages[$pageid]['articlecategoryid'];
         $sortby = $articlepages[$pageid]['sortby'];
         $items = isset($articlepages[$pageid]['addtonav']) && $articlepages[$pageid]['addtonav'] ? self::getArticles('', '', $categoryid, $sortby) : '';

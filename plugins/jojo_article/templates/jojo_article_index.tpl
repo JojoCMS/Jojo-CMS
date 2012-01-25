@@ -4,7 +4,7 @@
     <div class="article_intro">
     <h3 class="clear"><a href="{$a.url}" title="{$a.title}">{$a.title}</a></h3>
     <div>
-        {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="images/{if $a.snippet=='full'}{$a.mainimage}{else}{$a.thumbnail}{/if}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
+        {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="{$SITEURL}/images/{if $a.snippet=='full'}{$a.mainimage}{elseif $a.thumbnail}{$a.thumbnail}{else}s150{/if}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
         {if $a.snippet=='full'}{$a.ar_body}{else}<p>{$a.bodyplain|truncate:$a.snippet} <a href="{$a.url}" title="{$a.title}" class="more">{$a.readmore}</a></p>{/if}
        {if $a.showdate}<div class="article-date">Added: {$a.datefriendly}</div>{/if}
        {if $a.comments && $a.numcomments}<div class="article-numcomments"><img src="images/blog_comment_icon.gif" class="icon-image" />{$a.numcomments} Comment{if $a.numcomments>1}s{/if}</div>{/if}
