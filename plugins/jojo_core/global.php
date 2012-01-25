@@ -50,15 +50,13 @@ $smarty->assign('footernav', _getNav($root, Jojo::getOption('nav_footernav', 0),
 /* Get one level of navigation for the secondarynav */
 $smarty->assign('secondarynav', (Jojo::getOption('use_secondary_nav', 'no')=='yes' ? _getNav($root, 1, 'secondarynav') : ''));
 
-if (!Jojo::getOption('nav_mainnav', 0)) {
 /* Get 2 levels of sub navigation as a separate variable if mainnav is only one level*/
-    if ($page->getValue('pg_parent') != $root) {
-        /* Get sister pages to this page */
-        $smarty->assign('subnav', _getNav($selectedPages[1], Jojo::getOption('nav_subnav', 2)));
-    } else {
-        /* Get children pages of this page */
-        $smarty->assign('subnav', _getNav($page->id, Jojo::getOption('nav_subnav', 2)));
-    }
+if ($page->getValue('pg_parent') != $root) {
+    /* Get sister pages to this page */
+    $smarty->assign('subnav', _getNav($selectedPages[1], Jojo::getOption('nav_subnav', 2)));
+} else {
+    /* Get children pages of this page */
+    $smarty->assign('subnav', _getNav($page->id, Jojo::getOption('nav_subnav', 2)));
 }
 
 if (Jojo::getOption('use_secondary_nav', 'no')=='yes') {
