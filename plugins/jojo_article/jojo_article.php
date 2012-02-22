@@ -356,12 +356,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             } else {
                 $meta_description_template = Jojo::getOption('article_meta_description', '[article] - [body]... ');
                 $metafilters = array(
+                        '[article]',
                         '[title]',
                         '[site]',
                         '[body]',
                         '[author]'
                         );
                 $metafilterreplace = array(
+                        $article['title'],
                         $article['title'],
                         _SITETITLE,
                         $article['description'],
