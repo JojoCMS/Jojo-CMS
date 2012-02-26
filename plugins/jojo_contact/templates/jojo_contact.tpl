@@ -1,5 +1,5 @@
-{if $content}{$content} 
-{/if}{if $message}<div class="message">{$message}</div> 
+{if $content}{$content}
+{/if}{if $message}<div class="message">{$message}</div>
 {/if}<div{if $hideonsuccess && $message && $sent} style="display:none;"{/if}>
 <form name="contactform" method="post" action="{$posturl}" onsubmit="return checkme();" class="contact-form">
 <input type="hidden" name="form_id" id="form_id" value="{$form_id}" />
@@ -13,7 +13,7 @@
         </select>&nbsp;<span class="required">*</span>
     </div>
 {/if}{if !$option_new_database_method}<p class="note">Required fields are marked <span class="required">*</span></p>
-{/if}   
+{/if}
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}{if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}<fieldset><legend>{$f.fieldset}</legend>
     {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset {$f.type}">
         {if $f.showlabel}<label for="form_{$f.field}">{if $f.display}{$f.display}:{/if}</label>{/if}
@@ -41,7 +41,7 @@
             <option value="{$so|escape:'htmlall'}"{if $f.value == $so} selected="selected"{/if}>{$so}</option>
             {/foreach}
         </select>{if $f.required}<span class="required">*</span>{/if}
-    </div>    
+    </div>
     {elseif $f.type =='heading'}{if in_array($f.size, array(1,2,3,4,5,6))}<div class="form-heading">
             <h{$f.size}>{$f.value}</h{$f.size}>
         </div>
@@ -82,3 +82,6 @@
 </div>
 </form>
 </div>
+{if $sent && $formTrackingcode}
+{$formTrackingcode}
+{/if}
