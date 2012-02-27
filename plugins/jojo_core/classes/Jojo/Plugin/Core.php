@@ -47,6 +47,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     static function fixAnchorLinks($data)
     {
         $data = preg_replace('/<a([^>]*?)href=["\'](#[a-z0-9-_]*)?["\']([^>]*?)>/i', '<a$1href="' . $_SERVER['REQUEST_URI'] . '$2"$3>', $data);
+        $data = preg_replace('/<a([^>]*?)href=["\']#(#[a-z0-9-_]*)?["\']([^>]*?)>/i', '<a$1href="$2"$3>', $data);
         return $data;
     }
 
