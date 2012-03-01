@@ -59,6 +59,7 @@ if ($page->getValue('pg_parent') != $root) {
     $smarty->assign('subnav', _getNav($page->id, Jojo::getOption('nav_subnav', 2)));
 }
 
+
 if (Jojo::getOption('use_secondary_nav', 'no')=='yes') {
 /* Get one level of secondary navigation for the top navigation */
 $smarty->assign('secondarynav', _getNav($root, 0, 'secondarynav'));
@@ -72,16 +73,11 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
 {
     global $_USERGROUPS, $selectedPages;
 
-    /* Create permissions object */
-    static $perms;
-    if (!$perms) {
-        $perms = new Jojo_Permissions();
-    }
-
     /* Get multilanguage data */
         global $page;
         $mldata = Jojo::getMultiLanguageData();
         $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;
+        $multisection = (boolean)(count($mldata['sectiondata'])>1);
 
     /* Get pages from database */
     static $_cached;
@@ -89,54 +85,33 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         $now    = time();
         // If pg_mainnavalways exists - and requested menu is mainnav - adjust query to include
         // those pages that are configured to appear in all main nav menus.
-        if ((_MULTILANGUAGE) && (Jojo::fieldExists ( 'page', 'pg_mainnavalways' )) && ($field == 'mainnav')) {
-            $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_seotitle, pg_menutitle, pg_language, pg_status, pg_livedate, pg_expirydate, pg_followto, pg_mainnavalways, pg_secondarynav, pg_ssl
-                         FROM
-                           {page}
-                         WHERE
-                           (pg_%s = 'yes' or pg_mainnavalways = 'yes')
-                         ORDER BY
-                           pg_order", $field);
+        if ($field == 'mainnav' && $multisection && Jojo::fieldExists ( 'page', 'pg_mainnavalways' )) {
+            $query = sprintf("SELECT * FROM {page}
+                         WHERE (pg_%s = 'yes' or pg_mainnavalways = 'yes')
+                         ORDER BY pg_order", $field);
         } else {
-            $query = sprintf("SELECT
-                           pageid, pg_parent, pg_url, pg_link, pg_title, pg_desc, pg_seotitle, pg_menutitle, pg_language, pg_followto, pg_status, pg_livedate, pg_expirydate, pg_ssl
-                         FROM
-                           {page}
-                         WHERE
-                           pg_%s = 'yes'
-                         ORDER BY
-                           pg_order", $field);
+            $query = sprintf("SELECT * FROM {page}
+                         WHERE pg_%s = 'yes'
+                         ORDER BY pg_order", $field);
         }
         $_cached[$field] = array();
         $result = Jojo::selectQuery($query);
+        // strip out expired / forbidden pages
+        $result = Jojo_Plugin_Core::cleanItems($result, 'nav');
         foreach ($result as $k => $row) {
-            // strip out expired pages
-            if ($row['pg_livedate']>$now || (!empty($row['pg_expirydate']) && $row['pg_expirydate']<$now) || ($row['pg_status']=='inactive' || ($row['pg_status']=='hidden' && !isset($_SESSION['showhidden'])))) {
-                unset($result[$k]);
-                continue;
-            }
             $r = $row['pg_parent'];
             if (!isset($_cached[$field][$r])) {
                 $_cached[$field][$r] = array();
             }
             $_cached[$field][$r][] = $row;
-            if ((_MULTILANGUAGE) && (isset($row['pg_mainnavalways'])) && ($row['pg_mainnavalways'] == 'yes') && ($r != $root)) {
-                if ((($field == 'mainnav') && ((in_array ($r, $mldata['roots'])) || ($r == 1)))) {
-                    $_cached[$field][$root][] = $row;
-                }
+            if ($field=='mainnav' && $multisection && isset($row['pg_mainnavalways']) && $row['pg_mainnavalways']=='yes' && $r!=$root && (in_array($r, $mldata['roots']) || $r==1)) {
+                $_cached[$field][$root][] = $row;
             }
         }
     }
     $nav = isset($_cached[$field][$root]) ? $_cached[$field][$root] : array();
 
     foreach ($nav as $id => &$n) {
-        /* Remove pages the user isn't allowed to be shown */
-        $perms->getPermissions('page', $n['pageid']);
-        if (!$perms->hasPerm($_USERGROUPS, 'show')) {
-           unset($nav[$id]);
-           continue;
-        }
         /* Create the url for this page */
         $n['url'] = ($n['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL ) . '/' . Jojo::getPageUrlPrefix($n['pageid']);
         if ($n['pageid'] != $home) {
@@ -170,11 +145,7 @@ function _getSelected($pageid) {
     /* Cache the page parents */
     static $_pageParent;
     if (!is_array($_pageParent)) {
-       $query = "SELECT
-                       pageid, pg_parent
-                     FROM
-                      {page}";
-       $_pageParent = Jojo::selectAssoc($query);
+       $_pageParent = Jojo::selectAssoc("SELECT pageid, pg_parent FROM {page}");
     }
 
     global $root;

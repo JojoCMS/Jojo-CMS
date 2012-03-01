@@ -175,23 +175,30 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     static function cleanItems($items, $for=false) {
         global $_USERGROUPS;
         $now    = time();
-        $pagePermissions = new JOJO_Permissions();
+        static $pagePermissions;
+        if (!$pagePermissions) {
+            $pagePermissions = new Jojo_Permissions();
+        }
         $mldata = Jojo::getMultiLanguageData();
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
             $i['root'] = Jojo::getSectionRoot($i['pageid']);
-            if (!isset($mldata['sectiondata'][$i['root']]) || !$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if ((strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')===false && !isset($mldata['sectiondata'][$i['root']])) || !$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && $i['pg_sitemapnav']=='no') || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || strpos(strtolower($i['pg_link']), 'jojo_plugin_admin')!==false ) ) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
             $i['id'] = $i['pageid'];
             $i['title'] = htmlspecialchars( (isset($i['pg_menutitle']) && !empty($i['pg_menutitle']) ? $i['pg_menutitle'] : $i['pg_title']), ENT_COMPAT, 'UTF-8', false);
             $i['desc'] = isset($i['pg_desc']) ? htmlspecialchars($i['pg_desc'], ENT_COMPAT, 'UTF-8', false) : '';
-            // Snip for the index description
-            $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
-            /* Strip all tags and template include code ie [[ ]] */
-            $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
-            $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
+            if ($for=='sitemap' || $for=='xmlsitemap' || $for=='breadcrumbs' || $for=='nav') {
+                unset($items[$k]['pg_body']);            
+            } else {
+                // Snip for the index description
+                $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
+                /* Strip all tags and template include code ie [[ ]] */
+                $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
+                $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
+            }
             $i['date'] = isset($i['pg_updated']) ? $i['pg_updated'] : '';
             $i['image'] = (isset($i['pg_image']) && !empty($i['pg_image'])) ? 'pages/' . $i['pg_image'] : '';
             $i = self::getUrl($i);
