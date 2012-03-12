@@ -396,6 +396,7 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
     /* Allow output to be filtered */
     $html = Jojo::applyFilter('output', $html);
     $html = str_replace('##', '', $html);
+    $html = preg_replace('/<a([^>]*?)href=["\']\\[#\\]([a-z0-9-_]*)?["\']([^>]*?)>/i', '<a$1href="#$2"$3>', $html);
     /* Output the html to the browser */
     header('Content-Length: ' . strlen($html));
     echo $html;
@@ -562,6 +563,7 @@ Jojo::runHook('after_fetch_template');
 /* Allow output to be filtered */
 $html = Jojo::applyFilter('output', $html);
 $html = str_replace('##', '', $html);
+$html = preg_replace('/<a([^>]*?)href=["\']\\[#\\]([a-z0-9-_]*)?["\']([^>]*?)>/i', '<a$1href="#$2"$3>', $html);
 
 /* Cache the page */
 if (_CONTENTCACHE && !Jojo::noCache() && ($page->page['pg_contentcache'] != 'no')) {
