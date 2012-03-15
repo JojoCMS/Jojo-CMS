@@ -52,6 +52,14 @@
     {elseif $f.type=='note'}<div class="form-note">
             {if $f.value}<p>{$f.value}</p>{/if}
         </div>
+    {elseif $f.type=='emailwithconfirmation'}
+        <input type="text" class="input text" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="" />{if $f.required}<span class="required">*</span>{/if}
+        
+      </div>
+      <div class="form-fieldset text">
+        <label for="form_{$f.field}_confirmation">##Confirm Email:##</label>
+        <input type="text" class="input text" size="{$f.size}" name="form_{$f.field}_confirmation" id="form_{$f.field}_confirmation" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if
+        
     {else}<input type="{$f.type}" class="input {$f.type}" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
     </div>
     {/if}{if $f.description}<div class="form-field-description">{$f.description}</div>

@@ -21,6 +21,10 @@ if (document.getElementById('form_{$field.field}').selectedIndex == 0)
 if ({foreach from=$field.options item=option name=options}
 (!document.getElementById('form_{$field.field}_{$option|replace:' ':'_'|replace:'$':''}').checked){if !$smarty.foreach.options.last} && {/if}{/foreach})
 {literal}{{/literal}errors[i++]='{$field.display} is a required field';{literal}}{/literal}
+
+{elseif $field.type=='emailwithconfirmation'}
+if (document.getElementByiId('form_{$field.field}').value != document.getElementById('form_{$field.field}_confirmation').value) {literal}{{/literal}errors[i++]='{$field.display} must match confirmation field';{literal}}{/literal}
+
 {else}
 if (document.getElementById('form_{$field.field}').value == '') {literal}{{/literal}errors[i++]='{$field.display} is a required field';{literal}}{/literal}
   {if $field.validation=='email'} else if (!validateEmail(document.getElementById('form_{$field.field}').value)) {literal}{{/literal}errors[i++]='{$field.display} is not a valid email format';{literal}}{/literal}{/if}

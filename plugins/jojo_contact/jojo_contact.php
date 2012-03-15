@@ -187,6 +187,14 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                         break;
                 }
             }
+            
+            /* if field is confirmation field then need to check both fields match */
+            if($field['type'] == 'emailwithconfirmation') {
+                $confirmation = $_POST['form_' . $field['field'] . '_confirmation']; 
+                if($field['value'] != $confirmation) {
+                    $errors[] = $field['display'] . ' and confirmation email fields must match';
+                }
+            }
         }
         unset($field);
         $smarty->assign('fields', $fields);

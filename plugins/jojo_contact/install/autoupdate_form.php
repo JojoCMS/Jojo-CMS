@@ -227,3 +227,26 @@ $default_fd['form']['form_tracking_code'] = array(
         'fd_tabname' => "Xtras"
     );
 
+// Form Submit URL Redirect
+$default_fd['form']['form_action_url'] = array(
+        'fd_name' => "Submit form to",
+        'fd_type' => "text",
+        'fd_options' => "formfield",
+        'fd_size' => "60",
+        'fd_help' => "Url that the form will be submitted to. Defaults to self or 'submit-form/' for filtered forms.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+
+
+// Form Submit URL Redirect
+$default_fd['form']['form_redirect_url'] = array(
+        'fd_name' => "Redirect here after processing",
+        'fd_type' => "text",
+        'fd_options' => "formfield",
+        'fd_size' => "60",
+        'fd_help' => "Url that will be redirected to after processing. Defaults to self or referring url for filtered forms.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+    
