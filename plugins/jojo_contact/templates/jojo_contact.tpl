@@ -15,7 +15,7 @@
 {/if}{if !$option_new_database_method}<p class="note">Required fields are marked <span class="required">*</span></p>
 {/if}
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}{if $f.fieldset!='' && $f.fieldset!=$fields[$x].fieldset}<fieldset><legend>{$f.fieldset}</legend>
-    {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset {$f.type}">
+    {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset {if $f.type == 'emailwithconfirmation'}text{else}{$f.type}{/if}">
         {if $f.showlabel}<label for="form_{$f.field}">{if $f.display}{$f.display}:{/if}</label>{/if}
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />
     {elseif $f.type == 'textarea'}<textarea class="input textarea" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="form_{$f.field}" id="form_{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
@@ -58,7 +58,7 @@
       </div>
       <div class="form-fieldset text">
         <label for="form_{$f.field}_confirmation">##Confirm Email:##</label>
-        <input type="text" class="input text" size="{$f.size}" name="form_{$f.field}_confirmation" id="form_{$f.field}_confirmation" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if
+        <input type="text" class="input text" size="{$f.size}" name="form_{$f.field}_confirmation" id="form_{$f.field}_confirmation" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
         
     {else}<input type="{$f.type}" class="input {$f.type}" size="{$f.size}" name="form_{$f.field}" id="form_{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
     </div>
