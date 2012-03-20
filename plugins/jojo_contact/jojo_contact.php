@@ -81,6 +81,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $fields[$f]['rows']        = $ff['ff_rows'];
                 $fields[$f]['cols']        = $ff['ff_cols'];
                 $fields[$f]['description'] = $ff['ff_description'];
+                $fields[$f]['class']       = isset($ff['ff_class']) ? $ff['ff_class'] : '';
                 $fields[$f]['is_email']    = $ff['ff_is_email'];
                 $fields[$f]['is_name']     = $ff['ff_is_name'];
                 $fields[$f]['showlabel']     = $ff['ff_showlabel'];
@@ -432,6 +433,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $form = $formfields[0];
         $formTo = $form['form_to'];
         $formCaptcha = $form['form_captcha'];
+        $formSubmit = isset($form['form_submit']) && $form['form_submit'] ? $form['form_submit'] : 'Submit';
         $formChoice = $form['form_choice'];
         $formChoiceOptions = $form['form_choice_list'];
         $formSuccessMessage = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
@@ -450,6 +452,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $fields[$f]['size']        = $ff['ff_size'];
             $fields[$f]['value']       = $ff['ff_value'];
             $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
+            $fields[$f]['class']       = isset($ff['ff_class']) ? $ff['ff_class'] : '';
             $fields[$f]['rows']        = $ff['ff_rows'];
             $fields[$f]['cols']        = $ff['ff_cols'];
             $fields[$f]['description'] = $ff['ff_description'];
@@ -475,7 +478,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         /* Captcha Option */
         $smarty->assign('option_form_captcha', $formCaptcha);
-
+        /* Submit text */
+        $smarty->assign('option_form_submit', $formSubmit);
         /* Hide form on success Option */
         $smarty->assign('hideonsuccess',$hideonsuccess);
 

@@ -79,6 +79,17 @@ $default_fd['form']['form_captcha'] = array(
         'fd_tabname' => 'Details'
     );
 
+// Form Name Field
+$default_fd['form']['form_submit'] = array(
+        'fd_name' => "Submit Button",
+        'fd_type' => "text",
+        'fd_required' => "no",
+        'fd_default' => "Submit",
+        'fd_size' => "30",
+        'fd_help' => "The text to use on the submit button.",
+        'fd_order' => $o++,
+        'fd_tabname' => 'Details'
+    );
 $o=0;
 // Success message Field
 $default_fd['form']['form_success_message'] = array(

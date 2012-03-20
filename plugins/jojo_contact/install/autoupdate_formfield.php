@@ -25,12 +25,14 @@ $default_td['formfield'] = array(
         'td_menutype' => "tree",
         'td_defaultpermissions' => "everyone.show=1\neveryone.view=1\neveryone.edit=1\neveryone.add=1\neveryone.delete=1\nadmin.show=1\nadmin.view=1\nadmin.edit=1\nadmin.add=1\nadmin.delete=1\nnotloggedin.show=1\nnotloggedin.view=1\nnotloggedin.edit=1\nnotloggedin.add=1\nnotloggedin.delete=1\nregistered.show=1\nregistered.view=1\nregistered.edit=1\nregistered.add=1\nregistered.delete=1\nsysinstall.show=1\nsysinstall.view=1\nsysinstall.edit=1\nsysinstall.add=1\nsysinstall.delete=1\n"
     );
+    
+$o=0;
 
 // Formfield_id Field
 $default_fd['formfield']['formfield_id'] = array(
         'fd_name' => "Formfield_id",
         'fd_type' => "readonly",
-        'fd_order' => "1",
+        'fd_order' => $o++
     );
 
 // Form Field
@@ -41,7 +43,7 @@ $default_fd['formfield']['ff_form_id'] = array(
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "The form this formfield belongs to.",
-        'fd_order' => "2",
+        'fd_order' => $o++
     );
 
 // Display Name Field
@@ -51,7 +53,7 @@ $default_fd['formfield']['ff_display'] = array(
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "The display name of the formfield.",
-        'fd_order' => "3",
+        'fd_order' => $o++
     );
 
 // Description Field
@@ -61,7 +63,7 @@ $default_fd['formfield']['ff_description'] = array(
         'fd_rows' => "4",
         'fd_cols' => "58",
         'fd_help' => "A short description to be shown below the field, to explain the field to the user.",
-        'fd_order' => "4",
+        'fd_order' => $o++
     );
 
 // Required Field
@@ -71,7 +73,7 @@ $default_fd['formfield']['ff_required'] = array(
         'fd_required' => "yes",
         'fd_default' => "1",
         'fd_help' => "Is this a required field?",
-        'fd_order' => "5",
+        'fd_order' => $o++
     );
 
 // Validation Field
@@ -81,7 +83,7 @@ $default_fd['formfield']['ff_validation'] = array(
         'fd_options' => "email:Email\nurl:Url\ntext:Text\ninteger:Integer",
         'fd_size' => "60",
         'fd_help' => "The type of validation to be used - options are 'email', 'url', 'text', 'integer' or leave blank for no validation.",
-        'fd_order' => "6",
+        'fd_order' => $o++
     );
 
 // Type Field
@@ -92,7 +94,7 @@ $default_fd['formfield']['ff_type'] = array(
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "The type of input - use text (single line), textarea (multiple lines), checkboxes (multiple selections), radio buttons (single selection), select (drop down menu), list (multiple selects), emailwithconfirmation is an email field with a confirmation field below it, heading or note.",
-        'fd_order' => "7",
+        'fd_order' => $o++
     );
 
 // Options Field
@@ -102,7 +104,7 @@ $default_fd['formfield']['ff_options'] = array(
         'fd_rows' => "4",
         'fd_cols' => "58",
         'fd_help' => "An array of options separated by new lines. Required for 'checkboxes' and 'select' types.",
-        'fd_order' => "8",
+        'fd_order' => $o++
     );
 
 // Default Value Field
@@ -111,7 +113,7 @@ $default_fd['formfield']['ff_value'] = array(
         'fd_type' => "text",
         'fd_size' => "60",
         'fd_help' => "A default value if any.",
-        'fd_order' => "9",
+        'fd_order' => $o++
     );
 
 // Size Field
@@ -121,7 +123,7 @@ $default_fd['formfield']['ff_size'] = array(
         'fd_required' => "no",
         'fd_default' => "30",
         'fd_help' => "Used for 'text' type fields - the size of the input.",
-        'fd_order' => "10",
+        'fd_order' => $o++
     );
 
 // Rows (Textarea) Field
@@ -129,24 +131,33 @@ $default_fd['formfield']['ff_rows'] = array(
         'fd_name' => "Rows (Textarea)",
         'fd_type' => "integer",
         'fd_help' => "Number of rows - only needed for textareas.",
-        'fd_order' => "11",
+        'fd_order' => $o++
     );
 
-// Columns  (Textarea) Field
+// Columns(Textarea)
 $default_fd['formfield']['ff_cols'] = array(
         'fd_name' => "Columns  (Textarea)",
         'fd_type' => "integer",
         'fd_help' => "Number of columns - only needed for textareas.",
-        'fd_order' => "12",
+        'fd_order' => $o++
     );
 
-// Order Field
+// Order 
 $default_fd['formfield']['ff_order'] = array(
         'fd_name' => "Order",
         'fd_type' => "order",
         'fd_required' => "yes",
         'fd_help' => "The order in which the formfields should be displayed in the form. Lower numbers are displayed before higher numbers",
-        'fd_order' => "13",
+        'fd_order' => $o++
+    );
+
+// CSS Class
+$default_fd['formfield']['ff_class'] = array(
+        'fd_name' => "CSS Class",
+        'fd_type' => "text",
+        'fd_size' => "60",
+        'fd_help' => "A style class for the form element (if needed).",
+        'fd_order' => $o++
     );
 
 // Is part of the name? Field
@@ -156,7 +167,7 @@ $default_fd['formfield']['ff_is_name'] = array(
         'fd_required' => "yes",
         'fd_default' => "0",
         'fd_help' => "Is this field part of the name that should be used as the senders name?",
-        'fd_order' => "14",
+        'fd_order' => $o++
     );
 
 // Is E-Mail field? Field
@@ -166,7 +177,7 @@ $default_fd['formfield']['ff_is_email'] = array(
         'fd_required' => "yes",
         'fd_default' => "0",
         'fd_help' => "Is this field the e-mail address that should be used as the senders e-mail address?",
-        'fd_order' => "15",
+        'fd_order' => $o++
     );
 
 // Show Label?
@@ -176,5 +187,5 @@ $default_fd['formfield']['ff_showlabel'] = array(
         'fd_required' => "yes",
         'fd_default' => "0",
         'fd_help' => "Show the label name for this field (or just the input)",
-        'fd_order' => "16",
+        'fd_order' => $o++
     );
