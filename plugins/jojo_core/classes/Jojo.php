@@ -2627,6 +2627,16 @@ class Jojo {
                 exit;
             }
         }
+        
+        /* Log the message */
+        if (!class_exists('Jojo_Eventlog')) require_once(_BASEDIR.'/plugins/jojo_core/classes/Jojo/Eventlog.php');
+        $log             = new Jojo_Eventlog();
+        $log->code       = 'Sendmail';
+        $log->importance = 'normal';
+        $log->shortdesc  = 'To:'.$toaddress.' - '.$subject;
+        $log->desc       = "To: $toname <$toaddress>\nFrom: $fromname <$fromaddress>\nSubject: $subject\nMessage:\n$message";
+        $log->savetodb();
+        unset($log);
 
         $smtp = Jojo::getOption('smtp_mail_enabled', 'no');
         if ($smtp == 'yes') {
