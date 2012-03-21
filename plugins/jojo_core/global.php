@@ -51,7 +51,7 @@ $smarty->assign('footernav', _getNav($root, Jojo::getOption('nav_footernav', 0),
 $smarty->assign('secondarynav', (Jojo::getOption('use_secondary_nav', 'no')=='yes' ? _getNav($root, 1, 'secondarynav') : ''));
 
 /* Get 2 levels of sub navigation as a separate variable if mainnav is only one level*/
-if ($page->getValue('pg_parent') != $root) {
+if ($page->getValue('pg_parent') != $root && isset($selectedPages[1])) {
     /* Get sister pages to this page */
     $smarty->assign('subnav', _getNav($selectedPages[1], Jojo::getOption('nav_subnav', 2)));
 } else {
@@ -77,7 +77,8 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
         global $page;
         $mldata = Jojo::getMultiLanguageData();
         $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;
-        $multisection = (boolean)(count($mldata['sectiondata'])>1);
+        $roots = array_keys($mldata['sectiondata']);
+        $multisection = (boolean)(count($roots)>1);
 
     /* Get pages from database */
     static $_cached;
@@ -114,7 +115,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
     foreach ($nav as $id => &$n) {
         /* Create the url for this page */
         $n['url'] = ($n['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL ) . '/' . Jojo::getPageUrlPrefix($n['pageid']);
-        if ($n['pageid'] != $home) {
+        if ($n['pageid'] != $home && !in_array($n['pageid'], $roots)) {
             /* Use page url is we have it, else generate something */
             $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
         }
