@@ -46,7 +46,7 @@ class Jojo_Field_internalurl extends Jojo_Field
         }
 
         /* Make URL lower case */
-        $this->value = strtolower($this->value);
+        $this->value = Jojo::getOption('lowercase_internalurl', 'yes')=='yes' ? strtolower($this->value) : $this->value;
 
         /* Remove UTF Characters */
         $this->value = utf8_encode($this->value);

@@ -397,6 +397,16 @@ $_options[] = array(
     'options'     => 'dwoo,smarty',
 );
 
+$_options[] = array(
+    'id'          => 'lowercase_internalurl',
+    'category'    => 'Config',
+    'label'       => 'Internal URLs lowercase',
+    'description' => 'Force lowercase of internal URLs',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
 /* Navigation */
 
 $_options[] = array(
