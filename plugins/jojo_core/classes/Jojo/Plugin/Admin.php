@@ -76,18 +76,5 @@ class Jojo_Plugin_Admin extends Jojo_Plugin
         $adminroot = $data['pageid'];
         $adminnav = _getNav($adminroot, 3);
         $smarty->assign('jojo_admin_nav', $adminnav);
-
-        if ($page->getValue('pg_parent') != $adminroot) {
-            /* Get sister pages to this page */
-            $smarty->assign('jojo_admin_subnavparent', $page->getValue('pg_parent'));
-            $smarty->assign('jojo_admin_subnav', _getNav($page->getValue('pg_parent'), 0));
-            $smarty->assign('jojo_admin_subsubnav', _getNav($page->id, 0));
-        } else {
-            /* Get children pages of this page */
-            $smarty->assign('jojo_admin_subnavparent', $page->id);
-            $smarty->assign('jojo_admin_subnav', _getNav($page->id, 0));
-        }
-
-
     }
 }
