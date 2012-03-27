@@ -208,6 +208,26 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'jquery_version',
+    'category'    => 'Config',
+    'label'       => 'jQuery version',
+    'description' => 'Which version of jQ to use.',
+    'type'        => 'radio',
+    'default'     => '1.4.4',
+    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4',
+);
+
+$_options[] = array(
+    'id'          => 'jquery_ui',
+    'category'    => 'Config',
+    'label'       => 'jQuery UI',
+    'description' => 'Load jQuery UI code.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'commonjs_head',
     'category'    => 'Config',
     'label'       => 'Common.js in head',

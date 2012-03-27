@@ -2064,7 +2064,7 @@ class Jojo {
         }
 
         /* Lookup  by uri */
-        $query = 'SELECT pageid FROM {page} WHERE pg_url = ?';
+        $query = 'SELECT pageid FROM {page} WHERE pg_url = ? ORDER BY pageid DESC';
         /* convert admin URIs (if the Admin section is not set to the default of /admin/) */
         $uri = Jojo::getAdminUriReverse($uri);
         $values = array($uri);
