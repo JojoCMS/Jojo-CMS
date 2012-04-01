@@ -2607,7 +2607,7 @@ class Jojo {
         return false;
     }
 
-    static function simpleMail($toname, $toaddress, $subject, $message, $fromname=_FROMNAME, $fromaddress=_FROMADDRESS, $htmlmessage=false)
+    static function simpleMail($toname, $toaddress, $subject, $message, $fromname=_FROMNAME, $fromaddress=_FROMADDRESS, $htmlmessage=false, $senderaddress=false)
     {
         //Protect against email injection
         $badStrings = array("Content-Type:",
@@ -2676,7 +2676,8 @@ class Jojo {
             $headers .= "X-Priority: 3\n";
             $headers .= "X-MSMail-Priority: Normal\n";
             $headers .= "X-Mailer: php\n";
-            $headers .= "From: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n";
+            $headers .= $senderaddress ? "From: " . $senderaddress . "\n" : "From: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n";
+            $headers .= $senderaddress ? "Reply-To: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n" : '';
             $additional="-f$fromaddress";
             $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : $toname . ' <' . $toaddress. '>';
             if ($htmlmessage) {
