@@ -23,6 +23,8 @@ $_provides['pluginClasses'] = array(
         'Jojo_Plugin_Jojo_search' => 'Search - Site search page',
         );
         
+Jojo::addHook('SearchForm', 'searchHTML', 'jojo_search');
+
 $_options[] = array(
     'id'          => 'search_relevance',
     'category'    => 'Search',

@@ -1,1 +1,2 @@
 Adds basic site search.
+include {jojoHook hook="SearchForm"} in your page template where you want the search form to appear

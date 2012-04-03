@@ -20,6 +20,14 @@
 
 class Jojo_Plugin_Jojo_search extends Jojo_Plugin
 {
+    public static function searchHTML()
+    {
+        /* only show blog icons if the option is enabled */
+        global $smarty;
+        $code = $smarty->fetch('jojo_searchform.tpl');
+        return $code;
+    }
+
     function _getContent()
     {
         global $smarty, $_USERGROUPS;
