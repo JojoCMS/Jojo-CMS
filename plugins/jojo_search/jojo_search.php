@@ -211,7 +211,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         }
 
         $boolean = ($booleankeyword_str) ? true : false;
-        $keywords_str = ($boolean) ? $booleankeyword_str :  implode(' ', $keywords);
+        $keywords_str = ($boolean) ? str_replace(array('?','"','+'), '', $booleankeyword_str) :  implode(' ', $keywords);
         if ($boolean && stripos($booleankeyword_str, '+') === 0  ) {
             $like = '1';
             foreach ($keywords as $keyword) {
@@ -244,7 +244,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         }
         $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
 
-        $query = "SELECT `$idfield` AS id, `$idfield`, ((MATCH($primaryfields) AGAINST (\"$keywords_str\"" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH($secondaryfields) AGAINST (\"$keywords_str\"" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
+        $query = "SELECT `$idfield` AS id, `$idfield`, ((MATCH($primaryfields) AGAINST ('$keywords_str'" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH($secondaryfields) AGAINST (\"$keywords_str\"" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
         $query .= " FROM {$table} ";
         $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid)" : '';
         $query .= " WHERE (" . $like;
