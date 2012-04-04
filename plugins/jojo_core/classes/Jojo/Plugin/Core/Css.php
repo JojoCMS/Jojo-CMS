@@ -41,6 +41,35 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             $file = str_replace( '.css', '', $file);
         }
 
+        /* If the filename is clean, cache the css */
+        $cachefile = false;
+        if (preg_match('%^([a-zA-Z]+)$%', $file)) {
+            $cachefile = _CACHEDIR . '/css/' . $file . '.css';
+        }
+
+        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
+        if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
+            Jojo::runHook('jojo_core:cssCachedFile', array('filename' => $cachefile));
+            parent::sendCacheHeaders(filemtime($cachefile));
+            $content = file_get_contents($cachefile);
+            if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
+            header('Content-type: text/css');
+            //header('Cache-Control: ');
+            //header('Pragma:');
+            header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
+            //header('Expires: ');
+            header('Cache-Control: private, max-age=28800');
+            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+            header('Pragma: ');
+            echo $content;
+            exit;
+        }
+
+        if (!defined('_CONTENTCACHE')) {
+            define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
+            define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
+        }
+
         $start = Jojo::timer();
         $css = new Jojo_Stitcher();
         $css->getServerCache();
@@ -149,7 +178,15 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
 
         $css->setServerCache();
         $css->output();
-        Jojo::publicCache($f, $css->data);
+
+        /* Cache a copy for later */
+        if ($cachefile) {
+            $content = $css->data;
+            Jojo::RecursiveMkdir(dirname($cachefile));
+            file_put_contents($cachefile, $content);
+            touch($cachefile, $css->modified);
+            Jojo::publicCache($f, $content, $css->modified);
+        }
 
         if (_DEBUG) {
             echo "/* Adding files took " . $timetoadd . " ms*/\n";

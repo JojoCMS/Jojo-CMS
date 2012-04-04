@@ -879,7 +879,7 @@ class Jojo {
     /**
      * caches a file in the public cache area (ie for files the public are allowed to see)
      */
-    static function publicCache($filename, $data=false)
+    static function publicCache($filename, $data=false, $modified=false)
     {
         $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css');
         $extension = Jojo::getFileExtension($filename);
@@ -892,6 +892,9 @@ class Jojo {
             return $publiccachefile; //if no data is supplied, return the name of the cache location
         }
         file_put_contents($publiccachefile, $data);
+        if (is_int($modified)) {
+            touch($publiccachefile, $modified);
+        }
         /* todo: periodic cache cleanup */
     }
 
@@ -1731,6 +1734,56 @@ class Jojo {
 
                 $result .= call_user_func(array($classname, $functionname));
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Runs the Asset hook in smarty
+     */
+    static function runSmartyAssetHook($params, &$smarty)
+    {
+
+		$filepath = false;
+
+        if (empty($params['file'])) {
+        	if (is_array($params) && count($params)) {
+        		$filepath = current($params);
+        	}
+        } else {
+        	$filepath = $params['file'];
+        }
+
+        $result = $filepath;
+        
+        if (_DEBUG) {
+        	return $result.'?r='.rand(1000,10000);
+        }
+
+
+        $cachepath = false;
+        if (file_exists(_CACHEDIR.'/'.$filepath)) {
+        	$cachepath = _CACHEDIR.'/'.$filepath;
+        } else {
+        	/* This bit is crude but if this feature takes off we'll clean up the caching of JS and CSS */
+        	$ext = pathinfo($filepath, PATHINFO_EXTENSION);
+        	if ($ext == 'css') {
+        		$filepath = preg_replace('%^css/%', '', $filepath);
+        	}
+        	$publiccachepath = _CACHEDIR.'/public/'.md5($filepath).'.'.$ext;
+
+		    if (file_exists($publiccachepath)) {
+		    	$cachepath = $publiccachepath;
+		    }
+        }
+
+        if ($cachepath) {
+		    $mtime = filemtime($cachepath);
+		    $maxcachelength = max(_CONTENTCACHETIME, 28800); // 28800 is a hardcoded "max-age" time in core.php, image.php, js.php and more.
+		    if (time() < $mtime + $maxcachelength) {
+		    	$result .= "?v=$mtime";
+		    }
         }
 
         return $result;

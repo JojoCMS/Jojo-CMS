@@ -226,6 +226,7 @@ switch ($templateEngine) {
         break;
 }
 $smarty->register_function('jojoHook', array('Jojo', 'runSmartyHook'));
+$smarty->register_function('jojoAsset', array('Jojo', 'runSmartyAssetHook'));
 
 $smarty->assign('OPTIONS',          Jojo::getOptions());
 $smarty->assign('sitetitle',        _SITETITLE);
