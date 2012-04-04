@@ -244,14 +244,14 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         }
         $tagid = ($_TAGS) ? Jojo_Plugin_Jojo_Tags::_getTagId(implode(' ', $keywords)): '';
 
-        $query = "SELECT `$idfield` AS id, `$idfield`, ((MATCH($primaryfields) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH($secondaryfields) AGAINST (?" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
+        $query = "SELECT `$idfield` AS id, `$idfield`, ((MATCH($primaryfields) AGAINST (\"$keywords_str\"" . ($boolean ? ' IN BOOLEAN MODE' : '') . ") * 0.2) + MATCH($secondaryfields) AGAINST (\"$keywords_str\"" . ($boolean ? ' IN BOOLEAN MODE' : '') . ")) AS relevance";
         $query .= " FROM {$table} ";
         $query .= $tagid ? " LEFT JOIN {tag_item} AS tag ON (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid)" : '';
         $query .= " WHERE (" . $like;
         $query .= $tagid ? " OR (tag.itemid = $idfield AND tag.plugin='$plugin' AND tag.tagid = $tagid))" : ')';
         $query .= ($language && $languagefield) ? " AND `$languagefield` = '$language' " : '';
         $query .= " ORDER BY relevance DESC LIMIT 100";
-        $rawresults = Jojo::selectAssoc($query, array($keywords_str, $keywords_str));
+        $rawresults = Jojo::selectAssoc($query);
         if ($_TAGS && is_array($rawresults)) {
             foreach ($rawresults as $k => $r) {
                 $rawresults[$k]['tags'] = Jojo_Plugin_Jojo_Tags::getTags($plugin, $k);
