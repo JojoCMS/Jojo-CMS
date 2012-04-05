@@ -1742,7 +1742,7 @@ class Jojo {
     /**
      * Runs the Asset hook in smarty
      */
-    static function runSmartyAssetHook($params, &$smarty)
+    static function runSmartyAssetHook($params, $smarty)
     {
 
 		$filepath = false;
