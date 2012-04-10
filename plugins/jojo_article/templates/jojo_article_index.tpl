@@ -1,8 +1,8 @@
 {if $pg_body && $pagenum==1}{$pg_body}{/if}
 <div id="articles">
-{foreach from=$jojo_articles item=a key=k}{if $k<1 || $a.weighting==0}
+{foreach from=$jojo_articles item=a key=k}{if $k<1 || $a.weighting==0 || $a.snippet=='full'}
     <div class="article_intro">
-    <h3 class="clear"><a href="{$a.url}" title="{$a.title}">{$a.title}</a></h3>
+    <h3 class="clear">{if $a.snippet=='full'}{$a.title}{else}<a href="{$a.url}" title="{$a.title}">{$a.title}</a>{/if}</h3>
     <div>
         {if $a.image}<a href="{$a.url}" title="{$a.title}"><img src="{$SITEURL}/images/{if $a.snippet=='full'}{$a.mainimage}{elseif $a.thumbnail}{$a.thumbnail}{else}s150{/if}/{$a.image}" class="index-thumb" alt="{$a.title}" /></a>{/if}
         {if $a.snippet=='full'}{$a.ar_body}{else}<p>{$a.bodyplain|truncate:$a.snippet} <a href="{$a.url}" title="{$a.title}" class="more">{$a.readmore}</a></p>{/if}
