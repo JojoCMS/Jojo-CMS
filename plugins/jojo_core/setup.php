@@ -43,7 +43,7 @@ foreach ($classes as $row) {
 // Homepage
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pageid = '1'")) {
     echo "Adding <b>Home</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pageid=1, pg_title = 'Home', pg_body_code = 'Coming soon...', pg_body = 'Coming soon...', pg_link = 'Jojo_Plugin_Index'");
+    Jojo::insertQuery("INSERT INTO {page} SET pageid=1, pg_title = 'Home', pg_body_code = '[editor:html]\nComing soon...', pg_body = 'Coming soon...', pg_link = 'Jojo_Plugin_Index'");
 }
 
 // Admin Root, All admin pages are below this one
