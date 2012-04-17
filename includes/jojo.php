@@ -243,6 +243,35 @@ $smarty->assign('ADMIN',            _ADMIN);
 if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
 
+/* Include plugin api.php's so filters and hooks get added */
+if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
+    $all = '<?php ';
+    foreach (Jojo::listPlugins('api.php') as $pluginfile) {
+        $code = trim(file_get_contents($pluginfile));
+        if ($code) {
+            $all .= '?>' . $code;
+            include($pluginfile);
+        }
+    }
+
+    /* Strip out all the stuff we don't need in api.txt */
+    $all = str_replace(array('?><?php', "\r"), '', $all);
+    $all = preg_replace('#\$_provides\[\'fieldTypes\'\](.*);#Ums', '', $all);
+    $all = preg_replace('#\$_provides\[\'pluginClasses\'\](.*);#Ums', '', $all);
+    $all = preg_replace('#/\*(.*)\*/#Ums', '', $all);
+    $all = preg_replace('#\$_options\[\](.*);#Ums', '', $all);
+    $all = preg_replace('#\n(\n)+#', "\n", $all);
+
+    /* Cache all table exists calls */
+    $all = preg_replace_callback('#Jojo::tableExists\(\'([a-z0-9_]*)\'\)#Ums',
+                                create_function('$matches', 'return Jojo::tableExists($matches[1]) ? "true" : "false";'),
+                                $all);
+
+    file_put_contents(_CACHEDIR . '/api.txt', $all);
+} else {
+    include(_CACHEDIR . '/api.txt');
+}
+
 /* Authentication */
 $_USERGROUPS = array('everyone');
 
@@ -313,35 +342,6 @@ if ($templateEngine == 'dwoo') {
     $smarty->setCharset($charset);
 }
 $smarty->assign('charset', $charset);
-
-/* Include plugin api.php's so filters and hooks get added */
-if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
-    $all = '<?php ';
-    foreach (Jojo::listPlugins('api.php') as $pluginfile) {
-        $code = trim(file_get_contents($pluginfile));
-        if ($code) {
-            $all .= '?>' . $code;
-            include($pluginfile);
-        }
-    }
-
-    /* Strip out all the stuff we don't need in api.txt */
-    $all = str_replace(array('?><?php', "\r"), '', $all);
-    $all = preg_replace('#\$_provides\[\'fieldTypes\'\](.*);#Ums', '', $all);
-    $all = preg_replace('#\$_provides\[\'pluginClasses\'\](.*);#Ums', '', $all);
-    $all = preg_replace('#/\*(.*)\*/#Ums', '', $all);
-    $all = preg_replace('#\$_options\[\](.*);#Ums', '', $all);
-    $all = preg_replace('#\n(\n)+#', "\n", $all);
-
-    /* Cache all table exists calls */
-    $all = preg_replace_callback('#Jojo::tableExists\(\'([a-z0-9_]*)\'\)#Ums',
-                                create_function('$matches', 'return Jojo::tableExists($matches[1]) ? "true" : "false";'),
-                                $all);
-
-    file_put_contents(_CACHEDIR . '/api.txt', $all);
-} else {
-    include(_CACHEDIR . '/api.txt');
-}
 
 /* After login hook */
 if ( isset($_SESSION['loggingin']) && $_SESSION['loggingin']) Jojo::runHook('action_after_login');
