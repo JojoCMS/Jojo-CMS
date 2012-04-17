@@ -11,6 +11,6 @@ If this reminder is still not helpful, you can request a password reset by visit
 You can login at {$SITEURL}/login/
 
 Regards,
-{$OPTIONS.webmastername}
+
 {$OPTIONS.sitetitle}
 {$OPTIONS.fromaddress}
