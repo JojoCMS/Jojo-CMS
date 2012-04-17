@@ -10,6 +10,7 @@ class Jojo_Auth_Local {
             /* Look up user by username and password from login form submission */
             $values = array($username, $password, $password);
             $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
+            $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
 
             /* Make sure all users have salted passwords - if it's not salted, add salt */
             if ($logindata && empty($logindata['us_salt'])) {
