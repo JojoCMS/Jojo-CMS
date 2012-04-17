@@ -11,6 +11,6 @@ If this reset link does not work for any reason, you should contact the webmaste
 You can login at {$SITEURL}/login/
 
 Regards,
-{$OPTIONS.webmastername}
+
 {$OPTIONS.sitetitle}
 {$OPTIONS.fromaddress}

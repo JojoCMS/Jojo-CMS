@@ -72,7 +72,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                 
     
                 if (empty($email) && !count($errors)) {
-                    $errors[] = 'There is no email address stored against this user account, so the password is unable to be reset. Please contact the webmaster ('._WEBMASTERADDRESS.') to manually reset your password.';
+                    $errors[] = 'There is no email address stored against this user account, so the password is unable to be reset. Please contact the webmaster ('._FROMADDRESS.') to manually reset your password.';
                 } elseif ($action == 'reminder') {
                     /* Send reminder email */
                     $reminder = $user['us_reminder'];
@@ -90,7 +90,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                     $mail->setFrom(_SITETITLE.' <'._FROMADDRESS.'>');
                     $mail->setSubject('Password Reminder');
                     $result = $mail->send(array($email));
-                    $messages[] = $result ? 'Password reminder has been sent to the email address associated with username '.$login : 'There was an error sending the reminder email. Please contact the webmaster for further help '._WEBMASTERADDRESS;
+                    $messages[] = $result ? 'Password reminder has been sent to the email address associated with username '.$login : 'There was an error sending the reminder email. Please contact the webmaster for further help '._FROMADDRESS;
                 } else if ($action == 'reset') {
                     $userid = $user['userid'];
                     $login  = $user['us_login'];
@@ -111,10 +111,10 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                     $smarty->assign('auth',  $auth);
                     $text = $smarty->fetch('forgot-password-reset.tpl');
                     $mail->setText($text);
-                    $mail->setFrom(_SITETITLE.' <'._WEBMASTERADDRESS.'>');
+                    $mail->setFrom(_SITETITLE.' <'._FROMADDRESS.'>');
                     $mail->setSubject('Password Reset Link');
                     $result  = $mail->send(array($email));
-                    $messages[] = $result ? 'Password reset link has been sent to '.$email : 'There was an error sending the Reset email. Please contact the webmaster for further help '._WEBMASTERADDRESS;
+                    $messages[] = $result ? 'Password reset link has been sent to '.$email : 'There was an error sending the Reset email. Please contact the webmaster for further help '._FROMADDRESS;
                 }
             }
         }
