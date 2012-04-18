@@ -25,7 +25,7 @@ $default_td['formfield'] = array(
         'td_menutype' => "tree",
         'td_defaultpermissions' => "everyone.show=1\neveryone.view=1\neveryone.edit=1\neveryone.add=1\neveryone.delete=1\nadmin.show=1\nadmin.view=1\nadmin.edit=1\nadmin.add=1\nadmin.delete=1\nnotloggedin.show=1\nnotloggedin.view=1\nnotloggedin.edit=1\nnotloggedin.add=1\nnotloggedin.delete=1\nregistered.show=1\nregistered.view=1\nregistered.edit=1\nregistered.add=1\nregistered.delete=1\nsysinstall.show=1\nsysinstall.view=1\nsysinstall.edit=1\nsysinstall.add=1\nsysinstall.delete=1\n"
     );
-    
+
 $o=0;
 
 // Formfield_id Field
@@ -47,12 +47,32 @@ $default_fd['formfield']['ff_form_id'] = array(
     );
 
 // Display Name Field
+$default_fd['formfield']['ff_fieldset'] = array(
+        'fd_name' => "Fieldset",
+        'fd_type' => "text",
+        'fd_required' => "no",
+        'fd_size' => "60",
+        'fd_help' => "The field group this field belongs to. Leave blank unless beginning a new group.",
+        'fd_order' => $o++
+    );
+
+// Display Name Field
 $default_fd['formfield']['ff_display'] = array(
         'fd_name' => "Display Name",
         'fd_type' => "text",
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "The display name of the formfield.",
+        'fd_order' => $o++
+    );
+
+// Display Name Field
+$default_fd['formfield']['ff_fieldname'] = array(
+        'fd_name' => "FormField Name",
+        'fd_type' => "text",
+        'fd_required' => "no",
+        'fd_size' => "60",
+        'fd_help' => "The formname of the formfield - use generic names where possible like 'firstname','email' for users autocomplete to work.",
         'fd_order' => $o++
     );
 
@@ -142,7 +162,7 @@ $default_fd['formfield']['ff_cols'] = array(
         'fd_order' => $o++
     );
 
-// Order 
+// Order
 $default_fd['formfield']['ff_order'] = array(
         'fd_name' => "Order",
         'fd_type' => "order",

@@ -79,6 +79,17 @@ $default_fd['form']['form_captcha'] = array(
         'fd_tabname' => 'Details'
     );
 
+// Fieldsets
+$default_fd['form']['form_fieldsets'] = array(
+        'fd_name' => "Show Fieldset Names",
+        'fd_type' => "yesno",
+        'fd_required' => "no",
+        'fd_default' => "1",
+        'fd_help' => "Display Fieldset names (if used)",
+        'fd_order' => $o++,
+        'fd_tabname' => 'Details'
+    );
+
 // Form Name Field
 $default_fd['form']['form_submit'] = array(
         'fd_name' => "Submit Button",
@@ -112,8 +123,8 @@ $default_fd['form']['form_subject'] = array(
         'fd_order' => $o++,
         'fd_tabname' => 'Response'
     );
-    
-// Send autoreply 
+
+// Send autoreply
 $default_fd['form']['form_autoreply'] = array(
         'fd_name' => "Send confirmation email",
         'fd_type' => "yesno",
@@ -155,7 +166,7 @@ $default_fd['form']['form_autoreply_css'] = array(
         'fd_order' => $o++,
         'fd_tabname' => 'Response'
     );
-    
+
 
 /* Advanced Tab */
 $o=0;
@@ -260,4 +271,3 @@ $default_fd['form']['form_redirect_url'] = array(
         'fd_order' => $o++,
         'fd_tabname' => "Xtras"
     );
-    

@@ -31,108 +31,67 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $errors = array();
         $from_email = '';
         $from_name = '';
+        $sender_email =  Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS);
         $to_email = '';
         $formSubject = '';
         $formID;
 
-        $files = Jojo::listPlugins('jojo_contact_fields.php');
-        $optionNewDatabaseMethod = (boolean)(Jojo::tableExists('form'));
+        /* Get form from current page id or formid*/
+        if ($formID) {
+            $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
+        } else {
+            $pageID = $this->page['pageid'];
+            $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
+        }
 
-        /* If the "jojo_contact_fields.php" file is found, do it the old way */
-        /* If there is no such file, get the form out of the database */
-        if($optionNewDatabaseMethod){
-            /* Get form from current page id or formid*/
-            if ($formID) {
-                $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
-            } else {
-                $pageID = $this->page['pageid'];
-                $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
+        /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
+        $form = $formfields[0];
+        $formID = $form['form_id'];
+        $formName = $form['form_name'];
+        $formSubject = $form['form_subject'];
+        $formAnalytics = $form['form_tracking_code_analytics'];
+        $formTrackingcode = $form['form_tracking_code'];
+        $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
+
+        $smarty->assign('formTrackingcode', $formTrackingcode);
+
+        $fields = Jojo::applyFilter("formfields_first", array(), $formID);
+        $f = count($fields);
+        foreach ($formfields as $ff) {
+            foreach ($ff as $k=>$v) {
+                $key = str_replace('ff_', '', $k);
+                $fields[$f][$key] = $v;
             }
+            $fields[$f]['fieldsetid']       = isset($ff['ff_fieldset']) && $ff['ff_fieldset'] ? Jojo::cleanURL($ff['ff_fieldset']) : '';
+            $fields[$f]['field']       = isset($ff['ff_fieldname']) && $ff['ff_fieldname'] ? Jojo::cleanURL($ff['ff_fieldname']) : Jojo::cleanURL($ff['ff_display']);
+            $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
+            $f++;
+        }
+        $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
 
-            /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
-            $form = $formfields[0];
-            $formID = $form['form_id'];
-            $formName = $form['form_name'];
-            $formSubject = $form['form_subject'];
-            $formTo = $form['form_to'];
-            $formCaptcha = $form['form_captcha'];
-            $formChoice = $form['form_choice'];
-            $formChoiceOptions = $form['form_choice_list'];
-            $formAnalytics = $form['form_tracking_code_analytics'];
-            $formTrackingcode = $form['form_tracking_code'];
-            $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
-            $formWebmasterCopy = $form['form_webmaster_copy'];
-
-            $smarty->assign('formTrackingcode', $formTrackingcode);
-
-            $fields = Jojo::applyFilter("formfields_first", array(), $formID);
-            $f = count($fields);
-            foreach ($formfields as $ff) {
-                //$f = $ff['ff_order'];
-                $fieldName = Jojo::cleanURL($ff['ff_display']);
-                $fields[$f]['field']       = $fieldName;
-                $fields[$f]['display']     = $ff['ff_display'];
-                $fields[$f]['required']    = $ff['ff_required'];
-                $fields[$f]['validation']  = $ff['ff_validation'];
-                $fields[$f]['type']        = $ff['ff_type'];
-                $fields[$f]['size']        = $ff['ff_size'];
-                $fields[$f]['value']       = $ff['ff_value'];
-                $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
-                $fields[$f]['rows']        = $ff['ff_rows'];
-                $fields[$f]['cols']        = $ff['ff_cols'];
-                $fields[$f]['description'] = $ff['ff_description'];
-                $fields[$f]['class']       = isset($ff['ff_class']) ? $ff['ff_class'] : '';
-                $fields[$f]['is_email']    = $ff['ff_is_email'];
-                $fields[$f]['is_name']     = $ff['ff_is_name'];
-                $fields[$f]['showlabel']     = $ff['ff_showlabel'];
-                $f++;
+        if ($form['form_captcha']){
+            $captchacode = Jojo::getFormData('CAPTCHA','');
+            if (!PhpCaptcha::Validate($captchacode)) {
+                $errors[] = 'Incorrect Spam Prevention Code entered';
             }
-            $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
+        }
 
-            if ($formCaptcha){
-                $captchacode = Jojo::getFormData('CAPTCHA','');
-                if (!PhpCaptcha::Validate($captchacode)) {
-                    $errors[] = 'Incorrect Spam Prevention Code entered';
+
+        if ($form['form_choice'] && $form['form_choice_list']) {
+            $sendto       =  $_POST['form_sendto'];
+            $formchoices = explode("\r\n", $form['form_choice_list']);
+            foreach ($formchoices as $to) {
+                $to = explode(',', $to);
+                $to_email =  trim(array_pop($to));
+                $to_name  =  str_replace('#', '', trim(implode(',', $to)));
+                if (Jojo::cleanURL($to_name)==$sendto) {
+                    break;
                 }
-            }
-
-
-            if ($formChoice && $formChoiceOptions) {
-                $sendto       =  $_POST['form_sendto'];
-                $formChoices = explode("\r\n", $formChoiceOptions);
-                foreach ($formChoices as $to) {
-                    $to = explode(',', $to);
-                    $to_email =  trim(array_pop($to));
-                    $to_name  =  str_replace('#', '', trim(implode(',', $to)));
-                    if (Jojo::cleanURL($to_name)==$sendto) {
-                        break;
-                    }
-                }
-
-            } else {
-                $to_email       =  empty($formTo) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $formTo;
-                $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
             }
 
         } else {
-            /* Fields from jojo_contact_fields.php in any plugin or theme */
-            include array_pop(Jojo::listPlugins('jojo_contact_fields.php'));
-
-            if (Jojo::getOption('contactcaptcha') == 'yes') {
-                $captchacode = Jojo::getFormData('CAPTCHA','');
-                if (!PhpCaptcha::Validate($captchacode)) {
-                    $errors[] = 'Incorrect Spam Prevention Code entered';
-                }
-            }
-
-            if ((Jojo::getOption('contact_choice') == 'yes') && (Jojo::getOption('contact_choice_list') != '')) {
-                $to       =  explode(",", $_POST['form_sendto']);
-                $to_email =  trim(array_pop($to));
-                $to_name  =  trim(implode(',', $to));
-            } else {
-                $to_email       =  empty($to_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $to_email;
-                $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
-            }
+            $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
+            $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
         }
 
         foreach ($fields as &$field) {
@@ -145,24 +104,28 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 foreach($_POST['form_' . $field['field']] as $f) {
                     $field['valuearr'][$f] = $f;
                 }
-            } else {
+            } elseif (isset($_POST[$field['field']]) && is_array($_POST[$field['field']])) {
+                /* convert array to string */
+                $field['value'] = implode("\r\n", $_POST[$field['field']]);
+                /* create an assoc array for resetting the value of checkboxes when server-side checking fails */
+                $field['valuearr'] = array();
+                foreach($_POST[$field['field']] as $f) {
+                    $field['valuearr'][$f] = $f;
+                }
+            } elseif (Util::getFormData('form_' . $field['field'], '')) {
                 $field['value'] = ($field['type']!='heading') ? Util::getFormData('form_' . $field['field'], '') : $field['value'];
+            } else {
+                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['value'];
             }
             /* set the fromemail value if appropriate */
 
-            if($optionNewDatabaseMethod){
-                 if($field['is_email']){
-                    $from_email = $field['value'];
-                 }
-                 if($field['is_name']){
-                    $from_name .= $field['value'];
-                    $from_name .= ' ';
-                 }
-            } else {
-                if (isset($from_email_field) && $field['field'] == $from_email_field) {
-                    $from_email = $field['value'];
-                }
-            }
+             if($field['is_email']){
+                $from_email = $field['value'];
+             }
+             if($field['is_name']){
+                $from_name .= $field['value'];
+                $from_name .= ' ';
+             }
 
             /* check value is set on required fields */
             if ($field['required'] && empty($field['value'])) {
@@ -188,29 +151,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                         break;
                 }
             }
-            
+
             /* if field is confirmation field then need to check both fields match */
             if($field['type'] == 'emailwithconfirmation') {
-                $confirmation = $_POST['form_' . $field['field'] . '_confirmation']; 
+                $confirmation = $_POST['form_' . $field['field'] . '_confirmation'];
                 if($field['value'] != $confirmation) {
                     $errors[] = $field['display'] . ' and confirmation email fields must match';
                 }
             }
         }
         unset($field);
-        $smarty->assign('fields', $fields);
-        if(!$optionNewDatabaseMethod){
-            $from_name = '';
-            foreach ($from_name_fields as $fromfieldname) {
-                foreach ($fields as $field) {
-                    if ($fromfieldname == $field['field']) {
-                        $from_name .= $field['value'];
-                    } else {
-                        $from_name .= ' ';
-                    }
-                }
-            }
-        }
 
         $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
         $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
@@ -279,10 +229,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
 
         if (!count($errors)) {
-            if (Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage)) {
+            if (Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $sender_email)) {
 
                 /* success */
-                $response = $optionNewDatabaseMethod ? $formSuccessMessage : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
+                $response = $formSuccessMessage;
                 $smarty->assign('contactFrom_tracking_analytics', $formAnalytics);
 
                 /* send a confirmation to the enquirer */
@@ -291,38 +241,24 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
 
                 /* send a copy to the webmaster */
-               if ($optionNewDatabaseMethod && $formWebmasterCopy && $to_email != _WEBMASTERADDRESS) {
-                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email);
-                } elseif (!$optionNewDatabaseMethod && Jojo::getOption('contact_webmaster_copy') != 'no' AND $to_email != _WEBMASTERADDRESS) { //note the !='no' which will ensure the default is to send the email (for installations where setup has not been run recently)
+               if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
                     Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email);
                 }
-                 if ($optionNewDatabaseMethod) {
-                    /* store a copy of the message in the database*/
-                    $res = Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
+                /* store a copy of the message in the database*/
+                $res = Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
 
-                    /* run success hook */
-                    Jojo::runHook('contact_form_success', array($formID, $res));
+                /* run success hook */
+                Jojo::runHook('contact_form_success', array($formID, $res));
 
-                } else {
-                    /* log a copy of the message */
-                    $log             = new Jojo_Eventlog();
-                    $log->code       = 'enquiry';
-                    $log->importance = 'normal';
-                    $log->shortdesc  = 'Enquiry from ' . $from_name . ' (' . $from_email . ') to ' . $to_name . ' (' . $to_email . ')';
-                    $log->desc       = $message;
-                    $log->savetodb();
-                    unset($log);
-                }
                 $success = true;
 
             } else {
                 $response = 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.';
                 $success = false;
 
-                if ($optionNewDatabaseMethod) {
-                    /* store a copy of the message in the database*/
-                    Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 0, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
-                }
+                /* store a copy of the message in the database*/
+                Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 0, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
+
                 /* log a copy of the message */
                 $log             = new Jojo_Eventlog();
                 $log->code       = 'enquiry';
@@ -344,34 +280,12 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         global $smarty;
         $content = array();
         $fields = array();
-        $optionNewDatabaseMethod = (boolean)(Jojo::tableExists('form'));
 
-        $smarty->assign('option_new_database_method', $optionNewDatabaseMethod);
-
-        /* If the "jojo_contact_fields.php" file is found, do it the old way */
-        /* If there is no such file, get the form out of the database */
-        if($optionNewDatabaseMethod){
-
-            /* Get current page id */
-            $pageID = $this->page['pageid'];
-            $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri FROM {form} f WHERE f.form_page_id = ?", array($pageID));
-            $formID = $form ? $form['form_id'] : '';
-            $formhtml = self::getFormHtml($formID);
-
-        } else {
-
-            /* Fields from jojo_contact_fields.php in any plugin or theme */
-            include array_pop(Jojo::listPlugins('jojo_contact_fields.php'));
-
-            /* setup send to choices if it is set in options */
-            if ((Jojo::getOption('contact_choice') == 'yes') && (Jojo::getOption('contact_choice_list') != '')) {
-                $toaddresses = self::getToAddresses();
-                $smarty->assign('toaddresses',$toaddresses);
-            }
-
-            $smarty->assign('posturl', $this->getCorrectUrl());
-            $smarty->assign('fields',$fields);
-        }
+        /* Get current page id */
+        $pageID = $this->page['pageid'];
+        $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri FROM {form} f WHERE f.form_page_id = ?", array($pageID));
+        $formID = $form ? $form['form_id'] : '';
+        $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
 
         $sent = false;
         if (isset($_POST['submit'])) {
@@ -427,45 +341,31 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         global $smarty;
         $smarty->assign('content', '');
         $sent = (boolean)(isset($_SESSION['sendstatus']) || isset($_POST['submit']));
-        $smarty->assign('form_id', $formID);
         $smarty->assign('message', (isset($_SESSION['sendstatus']) ? $_SESSION['sendstatus'] : ''));
         $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         $form = $formfields[0];
-        $formTo = $form['form_to'];
-        $formCaptcha = $form['form_captcha'];
-        $formSubmit = isset($form['form_submit']) && $form['form_submit'] ? $form['form_submit'] : 'Submit';
-        $formChoice = $form['form_choice'];
-        $formChoiceOptions = $form['form_choice_list'];
-        $formSuccessMessage = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
-        $formWebmasterCopy = $form['form_webmaster_copy'];
-        $hideonsuccess = $form['form_hideonsuccess'];
+        $form['form_submit'] = isset($form['form_submit']) && $form['form_submit'] ? $form['form_submit'] : 'Submit';
+        $form['form_success_message'] = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
 
         $fields = Jojo::applyFilter("formfields_first", array(), $formID);
         $f = count($fields);
         foreach ($formfields as $ff) {
-            $fieldName = Jojo::cleanURL($ff['ff_display']);
-            $fields[$f]['field']       = $fieldName;
-            $fields[$f]['display']     = $ff['ff_display'];
-            $fields[$f]['required']    = $ff['ff_required'];
-            $fields[$f]['validation']  = $ff['ff_validation'];
-            $fields[$f]['type']        = $ff['ff_type'];
-            $fields[$f]['size']        = $ff['ff_size'];
-            $fields[$f]['value']       = $ff['ff_value'];
+            foreach ($ff as $k=>$v) {
+                $key = str_replace('ff_', '', $k);
+                $fields[$f][$key] = $v;
+            }
+            $fields[$f]['fieldsetid']       = isset($ff['ff_fieldset']) && $ff['ff_fieldset'] ? Jojo::cleanURL($ff['ff_fieldset']) : '';
+            $fields[$f]['field']       = isset($ff['ff_fieldname']) && $ff['ff_fieldname'] ? Jojo::cleanURL($ff['ff_fieldname']) : Jojo::cleanURL($ff['ff_display']);
             $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
-            $fields[$f]['class']       = isset($ff['ff_class']) ? $ff['ff_class'] : '';
-            $fields[$f]['rows']        = $ff['ff_rows'];
-            $fields[$f]['cols']        = $ff['ff_cols'];
-            $fields[$f]['description'] = $ff['ff_description'];
-            $fields[$f]['showlabel'] = $ff['ff_showlabel'];
            $f++;
         }
         $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
 
         /* Choice option */
         /* setup send to choices if it is set in options of the form */
-        if ($formChoice && $formChoiceOptions) {
+        if ($form['form_choice'] && $form['form_choice_list']) {
             $toAddresses = array();
-            $rawList = explode("\r\n", $formChoiceOptions);
+            $rawList = explode("\r\n", $form['form_choice_list']);
             foreach ($rawList as $k=>$l) {
                 $parts = explode(",", $l);
                 $toemail =  trim(array_pop($parts));
@@ -476,14 +376,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $smarty->assign('toaddresses', $toAddresses);
         }
 
-        /* Captcha Option */
-        $smarty->assign('option_form_captcha', $formCaptcha);
-        /* Submit text */
-        $smarty->assign('option_form_submit', $formSubmit);
-        /* Hide form on success Option */
-        $smarty->assign('hideonsuccess',$hideonsuccess);
-
-        $smarty->assign('posturl', ($action ? _SITEURL . '/' . $action : ''));
+        $smarty->assign('posturl', ($action ? (strpos('http', $action)!==false ? _SITEURL . '/' : '') . $action : ''));
+        $smarty->assign('form', $form);
         $smarty->assign('fields',$fields);
 
         if ($sent) {
