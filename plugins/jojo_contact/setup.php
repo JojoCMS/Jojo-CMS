@@ -36,5 +36,5 @@ if (count($data) == 0) {
 // View Contact log
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link='Jojo_Plugin_Admin_Contactlog'")) {
     echo "Adding <b>Contact Log</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Contact Log', pg_link='Jojo_Plugin_Admin_Contactlog', pg_url = 'admin/contactlog', pg_parent = ?, pg_order=12", array($_ADMIN_REPORTS_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Contact Log', pg_link='jojo_plugin_admin_contactlog', pg_url = 'admin/contactlog', pg_parent = ?, pg_order=12", array($_ADMIN_REPORTS_ID));
 }

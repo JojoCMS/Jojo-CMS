@@ -47,6 +47,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
         $form = $formfields[0];
         $formID = $form['form_id'];
+        $formSend = isset($form['form_send']) ? $form['form_send'] : 1;
         $formName = $form['form_name'];
         $formSubject = $form['form_subject'];
         $formAnalytics = $form['form_tracking_code_analytics'];
@@ -229,7 +230,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
 
         if (!count($errors)) {
-            if (Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $sender_email)) {
+            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $sender_email)) || !$formSend) {
 
                 /* success */
                 $response = $formSuccessMessage;
@@ -271,6 +272,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         } else {
             $response =  implode("<br />\n", $errors);
             $success = false;
+            $smarty->assign('fields', $fields);
         }
         return array('sent'=>$success, 'responsemessage'=>$response);
     }

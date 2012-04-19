@@ -32,6 +32,7 @@ $query = "
         `form_success_message` text NOT NULL,
         `form_webmaster_copy` tinyint(1) NOT NULL default '1',
         `form_to` varchar(255) NOT NULL default '',
+        `form_send` tinyint(1) NOT NULL default '1',
         `form_choice` tinyint(1) NOT NULL default '0',
         `form_choice_list` text NOT NULL,
         `form_autoreply` tinyint(1) NOT NULL default '0',
@@ -136,4 +137,15 @@ if (isset($result['added'])) {
 }
 
 if (isset($result['different'])) Jojo::printTableDifference($table, $result['different']);
+
+if (!Jojo::selectRow("SELECT form_id FROM {form}")) {
+    $formpage = Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link='jojo_plugin_jojo_contact'");
+    $formpageid = $formpage ? $formpage['pageid'] : 0;
+    $formid = Jojo::insertQuery("INSERT INTO {form} (`form_name`, `form_page_id`) VALUES ('Contact Form', $formpageid)");
+    Jojo::insertQuery("INSERT INTO {formfield} (`ff_form_id`, `ff_fieldset`, `ff_fieldname`, `ff_display`, `ff_required`, `ff_validation`, `ff_type`, `ff_size`, `ff_value`, `ff_options`, `ff_rows`, `ff_cols`, `ff_description`, `ff_class`, `ff_is_email`, `ff_is_name`, `ff_showlabel`, `ff_order`) VALUES
+($formid, '', 'firstname', 'First Name', 1, '', 'text', 30, '', '', 0, 0, '', '', 0, 1, 1, 0),
+($formid, '', 'lastname', 'Last Name', 1, '', 'text', 30, '', '', 0, 0, '', '', 0, 1, 1, 1),
+($formid, '', 'email', 'Email', 1, 'email', 'text', 30, '', '', 0, 0, '', '', 1, 0, 1, 2),
+($formid, '', '', 'Message', 1, 'text', 'textarea', 0, '', '', 15, 29, '', '', 0, 0, 1, 3);");
+}
 

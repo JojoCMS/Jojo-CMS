@@ -68,6 +68,16 @@ $default_fd['form']['form_to'] = array(
         'fd_tabname' => "Details",
     );
 
+// Destination
+$default_fd['form']['form_send'] = array(
+        'fd_name' => "Send",
+        'fd_type' => "yesno",
+        'fd_default' => 1,
+        'fd_help' => "Send the form on submit (or just store it in the database)?",
+        'fd_order' => $o++,
+        'fd_tabname' => "Details",
+    );
+
 // Contact CAPTCHA Field
 $default_fd['form']['form_captcha'] = array(
         'fd_name' => "Contact CAPTCHA",
