@@ -39,6 +39,9 @@ Jojo::addFilter('jojo_xml_sitemap', 'xmlsitemap', 'Core');
 /* Search Filter */
 Jojo::addFilter('jojo_search', 'search', 'Core');
 
+/* Edit Head Filter, for WYSIWYG editors */
+Jojo::addFilter('admin_edit_head', 'admin_edit_head', 'Jojo_Plugin_Admin_Edit');
+
 /* Debug Mode Hook */
 Jojo::addHook('foot', 'debugmodestatus', 'Core');
 
@@ -470,6 +473,8 @@ $_options[] = array(
     'options'     => 'bbcode,wysiwyg',
 );
 
+/* Todo: This was unsuccessful, change it to be similar to payment plugins registering with the cart */
+$editors = array('xinha');
 $_options[] = array(
     'id'          => 'wysiwyg',
     'category'    => 'HTML Editor',
@@ -477,7 +482,7 @@ $_options[] = array(
     'description' => 'If there are several WYSIWYG editors available, this option sets the preference for the site. Currently, only XINHA is available.',
     'type'        => 'radio',
     'default'     => 'xinha',
-    'options'     => 'xinha',
+    'options'     => implode(",", Jojo::applyFilter('wysiwyg_editors', $editors)),
 );
 
 $_options[] = array(

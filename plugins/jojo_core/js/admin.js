@@ -141,6 +141,11 @@ function setTextEditorContent(id) {
     }
 }
 
+function xinha_setEditorContent(id) {
+	if (xinha_editors[id+'_wysiwyg']) {
+		xinha_editors[id+'_wysiwyg'].setEditorContent($('#'+id).val());
+	}
+}
 
     function center(element){
         try{

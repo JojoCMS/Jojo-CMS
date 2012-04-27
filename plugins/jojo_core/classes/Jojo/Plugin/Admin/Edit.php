@@ -179,11 +179,6 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
             $smarty->assign('addbutton', true);
         }
 
-        /* check if Xinha JS is cached on server or not */
-        if (!Jojo::fileexists(_CACHEDIR . '/external/xinha/XinhaCore.js')) {
-            $smarty->assign('xinhatimeout', 10000);
-        }
-
         /* prepare data for image widget */
         $this->tree = new hktree();
         $this->tree->addnode('', 0, 'downloads');
@@ -191,29 +186,14 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
 
         /* Get list of folders for Image upload dropdown */
         $this->rec_scandir(_DOWNLOADDIR);
-        
-        $xinha_plugins = array (
-                        'ContextMenu',
-                        'Stylist',
-                        'FindReplace',
-                        'PasteText',
-                        'ExtendedFileManager',
-                        'TableOperations',
-                        'InsertAnchor',
-                        'HtmlEntities'
-                    );
-
-        $xinha_plugins = $sitemap = Jojo::applyFilter('xinha_plugins', $xinha_plugins);
-        $smarty->assign('xinha_plugins', $xinha_plugins);
 
         $smarty->assign('foldertreeoptions',$this->tree->printout_select());
 
-        $content['content'] = $smarty->fetch('admin/edit.tpl');
         $head               = array();
         $head[]             = $smarty->fetch('external/date_input_head.tpl');
-        $head[]             = $smarty->fetch('admin/xinha_head.tpl');
         $head               = Jojo::applyFilter('admin_edit_head', $head); //allow plugins to add their piece
         $content['head']    = implode("\n", $head);
+        $content['content'] = $smarty->fetch('admin/edit.tpl');
 
         // Now we restore our previously escaped tags to normal.
 //        $content['content'] = ereg_replace('\*\*esc\*\*', '[[', $content['content']);
@@ -248,5 +228,35 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
            }
            closedir($handle);
        }
+    }
+
+	function admin_edit_head($head) {
+		$editor = Jojo::getOption("wysiwyg", "xinha");
+		if ($editor != "xinha") return $head;
+
+		global $smarty;
+
+        /* check if Xinha JS is cached on server or not */
+        if (!Jojo::fileexists(_CACHEDIR . '/external/xinha/XinhaCore.js')) {
+            $smarty->assign('xinhatimeout', 10000);
+        }
+        
+        $xinha_plugins = array (
+                        'ContextMenu',
+                        'Stylist',
+                        'FindReplace',
+                        'PasteText',
+                        'ExtendedFileManager',
+                        'TableOperations',
+                        'InsertAnchor',
+                        'HtmlEntities'
+                    );
+
+        $xinha_plugins = Jojo::applyFilter('xinha_plugins', $xinha_plugins);
+        $smarty->assign('xinha_plugins', $xinha_plugins);
+
+        $head[] = $smarty->fetch('admin/xinha_head.tpl');
+        
+        return $head;
     }
 }
