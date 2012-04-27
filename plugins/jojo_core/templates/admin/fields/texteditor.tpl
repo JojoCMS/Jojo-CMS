@@ -17,19 +17,19 @@
 {* HTML Editor *}
 {if $OPTIONS.wysiwyg_style=='popup'}
 <div id="editor_{$fd_field}_html" class="HTMLEditor"  style="display: none;color:#666677;">{$fd_name}:
-    <button class="jojo-admin-button-launcheditor" onclick="{strip}
-        $('#xinha-iframe').attr('src','{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html');
+    {if $OPTIONS.wysiwyg == "xinha"}<button class="jojo-admin-button-launcheditor" onclick="{strip}
+        $('#wysiwyg-iframe').attr('src','{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html');
         jpop($('#wysiwyg-popup'),820,525);
-        jpopOnClose(function(){literal}{{/literal}document.getElementById('xinha-iframe').contentWindow.commit();{literal}}{/literal});
+        jpopOnClose(function(){literal}{{/literal}document.getElementById('wysiwyg-iframe').contentWindow.commit();{literal}}{/literal});
         return false;{/strip}" title="Open WYSIWYG Editor">
         Open Editor
-    </button>
+    </button>{/if}
     <div class="clear" id="fm_{$fd_field}_html_outer">
         <textarea class="markItUp" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
 {else}
-<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" rows="10" cols="80" style="width:100%"></textarea>
+<textarea class="wysiwyg" id="fm_{$fd_field}_wysiwyg" name="fm_{$fd_field}_html" rows="10" cols="80" style="width:100%"></textarea>
 
 {/if}
 

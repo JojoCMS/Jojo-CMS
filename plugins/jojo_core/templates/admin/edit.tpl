@@ -1,9 +1,22 @@
 {include file="admin/header.tpl"}
-<div id="wysiwyg-popup" class="jpop"><iframe name="xinha-iframe" id="xinha-iframe" src="" style="width: 820px; height: 525px;"></iframe></div>
 
 <script type="text/javascript">{literal}
 /* <![CDATA[ */
     var varname;
+    var wysiwyg = "{/literal}{$OPTIONS.wysiwyg}{literal}";
+	function setTextEditorContent(id) {
+		$('.jTagEditor').val('');
+		var f = id.replace(/fm_(.*)/ig, "$1");
+		if ($("input[name='editor_"+f+"']:checked").val() == 'bb') {
+			//$('#'+id+'_bb').val($('#'+id).val());
+			$('textarea[name='+id+'_bb]').val($('#'+id).val());
+		} else {
+			$('textarea[name='+id+'_html]').val($('#'+id).val());
+			if (function_exists("{/literal}{$OPTIONS.wysiwyg}{literal}_setEditorContent")) {
+				{/literal}{$OPTIONS.wysiwyg}{literal}_setEditorContent(id);
+			}
+		}
+	}
 {/literal}
 /* ]]> */
 </script>

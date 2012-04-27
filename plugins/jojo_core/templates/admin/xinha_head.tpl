@@ -1,4 +1,5 @@
 {literal}
+<div id="wysiwyg-popup" class="jpop"><iframe name="wysiwyg-iframe" id="wysiwyg-iframe" src="" style="width: 820px; height: 525px;"></iframe></div>
 <script type="text/javascript">
 /*<![CDATA[*/
     //_editor_url  = document.location.href.replace(/wysiwyg-interface\/xinha\.php.*/, 'xinha/')
@@ -30,7 +31,7 @@
        ];
      xinha_editors = xinha_editors ? xinha_editors :
       [
-        {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}'fm_{$editor}_xinha'{if !$smarty.foreach.wysiwyg.last}, {/if}{/foreach}{literal}
+        {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}'fm_{$editor}_wysiwyg'{if !$smarty.foreach.wysiwyg.last}, {/if}{/foreach}{literal}
       ];
     xinha_init = xinha_init ? xinha_init : function()
     {
@@ -41,7 +42,7 @@
        
        xinha_config.Events.onBeforeSubmit = function(event) {
            {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}
-           var html = xinha_editors['fm_{$editor}_xinha'].getEditorContent();
+           var html = xinha_editors['fm_{$editor}_wysiwyg'].getEditorContent();
            $('#fm_{$editor}').val(html);
            {/foreach}{literal}
            return true;
@@ -127,7 +128,7 @@
   xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
 
   {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}
-  xinha_editors['fm_{$editor}_xinha'].config.height = '460px';
+  xinha_editors['fm_{$editor}_wysiwyg'].config.height = '460px';
   {/foreach}{literal}
 
   Xinha.startEditors(xinha_editors);
