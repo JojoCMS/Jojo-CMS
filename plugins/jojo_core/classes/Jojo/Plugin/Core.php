@@ -60,7 +60,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     {
         $blacklist = Jojo::getOption('nofollow_list');
         if (empty($blacklist)) return $data;
-        
+
         $blacklist = explode("\n", $blacklist);
         foreach ($blacklist as $dirtydomain) {
             $domain = str_replace('.', '\\.', trim($dirtydomain));
@@ -79,7 +79,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             Jojo::updateQuery("UPDATE {page} SET `pg_htmllang`=?, `pg_language`=? WHERE `pageid`=?", array($htmllanguage, $section, $id));
         }
     }
-    
+
     /**
      * Sitemap filter
      *
@@ -117,7 +117,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             /* Calculate last modified date */
             $p['pg_xmlsitemap_lastmod']=="yes" ? $lastmod = strtotime($p['pg_updated']):$lastmod='';
             if($p['pg_url']=="lx" or $p['pg_url']=="search" or $p['pg_url']=="sitemap" or $p['pg_url']=="robots.txt" or $p['pg_url']=="tags" ) $lastmod='';
-            
+
             /* Set priority */
             if($p['pg_xmlsitemap_priority']) {
                 $priority = $p['pg_xmlsitemap_priority'];
@@ -184,7 +184,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
             $i['root'] = Jojo::getSectionRoot($i['pageid']);
-            if (!$pagePermissions->hasPerm($_USERGROUPS, 'view') || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if ( (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
@@ -192,7 +192,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $i['title'] = htmlspecialchars( (isset($i['pg_menutitle']) && !empty($i['pg_menutitle']) ? $i['pg_menutitle'] : $i['pg_title']), ENT_COMPAT, 'UTF-8', false);
             $i['desc'] = isset($i['pg_desc']) ? htmlspecialchars($i['pg_desc'], ENT_COMPAT, 'UTF-8', false) : '';
             if ($for=='sitemap' || $for=='xmlsitemap' || $for=='breadcrumbs' || $for=='nav') {
-                unset($items[$k]['pg_body']);            
+                unset($items[$k]['pg_body']);
             } else {
                 // Snip for the index description
                 $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
@@ -214,13 +214,13 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $homes = $mldata['homes'];
         $roots = $mldata['roots'];
         $pageprefix = Jojo::getPageUrlPrefix($item['pageid']);
-        if (isset($item['pg_link']) && substr(strtolower($item['pg_link']), 0, 7) == 'http://') { 
+        if (isset($item['pg_link']) && substr(strtolower($item['pg_link']), 0, 7) == 'http://') {
         //external pages
             $item['absoluteurl'] = $item['url'] = $item['pg_link'];
-        } elseif  (in_array($item['pageid'], $roots)){  
+        } elseif  (in_array($item['pageid'], $roots)){
         //root page
             $item['absoluteurl'] = $item['url'] = false;
-        } elseif (in_array($item['pageid'], $homes)){  
+        } elseif (in_array($item['pageid'], $homes)){
         // home pages
             $item['absoluteurl'] = $item['url'] = ((isset($item['pg_ssl']) && $item['pg_ssl'] == 'yes') ? _SECUREURL : _SITEURL) . '/' . $pageprefix;
         } else {
@@ -291,20 +291,20 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         }
         if ($location = Jojo::getOption('site_geolocation', '')) {
             $location = explode(',', $location);
-            $ogdata['latitude'] = isset($location[0]) ? $location[0] : ''; 
-            $ogdata['longitude'] = isset($location[1]) ? $location[1] : ''; 
+            $ogdata['latitude'] = isset($location[0]) ? $location[0] : '';
+            $ogdata['longitude'] = isset($location[1]) ? $location[1] : '';
         }
-        $ogdata['street_address'] = Jojo::getOption('site_street_address', ''); 
-        $ogdata['locality'] = Jojo::getOption('site_locality', ''); 
-        $ogdata['region'] = Jojo::getOption('site_region', ''); 
-        $ogdata['postal_code'] = Jojo::getOption('site_postal_code', ''); 
-        $ogdata['country_name'] = Jojo::getOption('site_country_name', ''); 
-        $ogdata['email'] = Jojo::getOption('site_email', ''); 
-        $ogdata['phone_number'] = Jojo::getOption('site_phone_number', ''); 
-        $ogdata['fax_number'] = Jojo::getOption('site_fax_number', ''); 
-        
-        $ogdata['fb_admins'] = Jojo::getOption('facebook_admins', ''); 
-        $ogdata['fb_app_id'] = Jojo::getOption('facebook_app_id', ''); 
+        $ogdata['street_address'] = Jojo::getOption('site_street_address', '');
+        $ogdata['locality'] = Jojo::getOption('site_locality', '');
+        $ogdata['region'] = Jojo::getOption('site_region', '');
+        $ogdata['postal_code'] = Jojo::getOption('site_postal_code', '');
+        $ogdata['country_name'] = Jojo::getOption('site_country_name', '');
+        $ogdata['email'] = Jojo::getOption('site_email', '');
+        $ogdata['phone_number'] = Jojo::getOption('site_phone_number', '');
+        $ogdata['fax_number'] = Jojo::getOption('site_fax_number', '');
+
+        $ogdata['fb_admins'] = Jojo::getOption('facebook_admins', '');
+        $ogdata['fb_app_id'] = Jojo::getOption('facebook_app_id', '');
 
        $ogdata = array_merge($ogdata, $content['ogtags']);
         /* Return data */
