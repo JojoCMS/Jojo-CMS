@@ -317,6 +317,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $content['content']    = $smarty->fetch('jojo_contact.tpl');
         } else {
             $formhtml = $smarty->fetch('jojo_contact.tpl');
+            $this->page['pg_body'] = str_replace(array('<p>[[contactform]]</p>','<p>[[contactform]]&nbsp;</p>'), '[[contactform]]', $this->page['pg_body']);
             $content['content']    = str_replace('[[contactform]]', $formhtml, $this->page['pg_body']);
         }
         $content['javascript'] = $smarty->fetch('jojo_contact_js.tpl');
@@ -334,10 +335,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         preg_match_all('/\[\[contactform: ?([^\]]*)\]\]/', $content, $matches);
         foreach($matches[1] as $k => $search) {
             /* convert name into ID */
-            if (is_numeric($search)) {
+            if (is_numeric(trim($search))) {
                 $id = $search;
             } else {
-                $form = Jojo::selectRow("SELECT form_id, form_name FROM {form} f WHERE f.form_name = ?", array($search));
+                $form = Jojo::selectRow("SELECT form_id, form_name FROM {form} f WHERE f.form_name = ?", array(trim($search)));
                 $id = $form['form_id'];
             }
             if (isset($id)) {
