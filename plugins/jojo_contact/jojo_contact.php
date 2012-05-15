@@ -161,7 +161,15 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
             }
         }
+        
+        if(!count($errors)){
+            /* run further validation hook */
+            $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
+            $errors = $validationReturn[0];
+        }
+        
         unset($field);
+        
 
         $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
         $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
@@ -245,11 +253,14 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
                     Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email);
                 }
+                
                 /* store a copy of the message in the database*/
                 $res = Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
 
                 /* run success hook */
                 Jojo::runHook('contact_form_success', array($formID, $res));
+                /* add formSubmissionID for use in the template if ever needed (eg paypal form in response) */
+                $smarty->assign('formSubmissionID', $res);
 
                 $success = true;
 
@@ -348,6 +359,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $form = $formfields[0];
         $form['form_submit'] = isset($form['form_submit']) && $form['form_submit'] ? $form['form_submit'] : 'Submit';
         $form['form_success_message'] = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
+        $hideonsuccess = $form['form_hideonsuccess'];
+        $formCaptcha = $form['form_captcha'];
 
         $fields = Jojo::applyFilter("formfields_first", array(), $formID);
         $f = count($fields);
@@ -381,6 +394,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $smarty->assign('posturl', ($action ? (strpos('http', $action)!==false ? _SITEURL . '/' : '') . $action : ''));
         $smarty->assign('form', $form);
         $smarty->assign('fields',$fields);
+         /* Captcha Option */
+        $smarty->assign('option_form_captcha', $formCaptcha);
+        /* Hide form on success Option */
+        $smarty->assign('hideonsuccess',$hideonsuccess);
 
         if ($sent) {
             $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $formSuccessMessage : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));

@@ -18,7 +18,7 @@ $default_td['form'] = array(
         'td_name' => "form",
         'td_displayname' => "Forms",
         'td_primarykey' => "form_id",
-        'td_displayfield' => "form_page_id",
+        'td_displayfield' => "form_name",
         'td_orderbyfields' => "form_id",
         'td_deleteoption' => "yes",
         'td_menutype' => "list",
@@ -278,6 +278,28 @@ $default_fd['form']['form_redirect_url'] = array(
         'fd_options' => "formfield",
         'fd_size' => "60",
         'fd_help' => "Url that will be redirected to after processing. Defaults to self or referring url for filtered forms.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+
+// Multi-page form
+$default_fd['form']['form_multipage'] = array(
+        'fd_name' => "Display fieldsets as multiple pages with nav",
+        'fd_type' => "yesno",
+        'fd_required' => "yes",
+        'fd_default' => "0",
+        'fd_help' => "If yes, the form will use js to hide all but the first fieldset and add navigation to show the rest.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+
+// Multi-page form
+$default_fd['form']['form_submit_end'] = array(
+        'fd_name' => "Show submit button with final page",
+        'fd_type' => "yesno",
+        'fd_required' => "yes",
+        'fd_default' => "1",
+        'fd_help' => "If yes this only show the submit button when the final page is viewable (only applies to on non-multipage forms).",
         'fd_order' => $o++,
         'fd_tabname' => "Xtras"
     );
