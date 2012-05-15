@@ -161,15 +161,15 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
             }
         }
-        
+
         if(!count($errors)){
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
             $errors = $validationReturn[0];
         }
-        
+
         unset($field);
-        
+
 
         $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
         $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
@@ -253,7 +253,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
                     Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email);
                 }
-                
+
                 /* store a copy of the message in the database*/
                 $res = Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
 
@@ -285,7 +285,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $success = false;
             $smarty->assign('fields', $fields);
         }
-        return array('sent'=>$success, 'responsemessage'=>$response);
+        return array('sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 
     function _getContent()
@@ -327,6 +327,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     /* content filter to replace [[contactform:ID/name]] with html */
     function contentFilter($content)
     {
+
         if (strpos($content, '[[contactform:') === false) {
             return $content;
         }
@@ -340,16 +341,15 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $id = $form['form_id'];
             }
             if (isset($id)) {
-                $formhtml = self::getFormHtml($id, $action='submit-form/');
+                $formhtml = self::getFormHtml($id, $action='submit-form/', $js=true);
                 $content   = str_replace($matches[0][$k], $formhtml, $content);
             }
         }
         return $content;
-
     }
 
     /* get the html of the form from an ID */
-    function getFormHtml($formID, $action=false)
+    function getFormHtml($formID, $action=false, $js=false)
     {
         global $smarty;
         $smarty->assign('content', '');
@@ -407,6 +407,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         unset($_SESSION['sendstatus']);
 
         $formhtml = $smarty->fetch('jojo_contact.tpl');
+        if ($js) {
+            $js =  '<script type="text/javascript">' . $smarty->fetch('jojo_contact_js.tpl') . '</script>'."\n";
+            $formhtml = $formhtml . "\n" . $js;
+        }
         return $formhtml;
     }
 

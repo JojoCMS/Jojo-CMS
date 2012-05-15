@@ -1,9 +1,32 @@
 $(document).ready(function() {
-    $('.contact-form.multipage').each(function(index) {
+    $('.contact-form').each(function(index) {
+        if ($(this).attr('id').length >0) {
+            var formid = $(this).attr('id');
+            $('#'+formid).submit(function(){
+                $.ajax({
+                    type: "POST",
+                    url: "json/jojo_contact_send.php",
+                    data: $('#'+formid).serialize(),
+                    dataType: "json",
+                    success: function(response){
+                        $('#' + formid + 'message').show().html(response.responsemessage);
+                        if (response.sent==true && response.hideonsuccess==true) {
+                            $('#' + formid).hide();
+                        }
+                    },
+                    error: function(){
+                        $('#' + formid + 'message').show().html('There has been a failure to communicate. Your request has been stored however and will be attended to shortly');
+                    }
+                });
+                //make sure the form doesn't post
+                return false;
+            });
+        }
         if ($(this).attr('id').length >0 && $("fieldset", this).length>1) {
             setFormTabs($(this).attr('id'));
         }
     });
+
 });
 
 function showFormTab(formid, tabid) {

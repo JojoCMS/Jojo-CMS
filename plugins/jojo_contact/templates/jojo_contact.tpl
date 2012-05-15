@@ -1,6 +1,6 @@
 {if $content}{$content}
-{/if}{if $message}<div class="message">{$message}</div>
-{/if}<div{if $form.form_hideonsuccess && $message && $sent} style="display:none;"{/if}>
+{/if}<div id="form{$form.form_id}message" class="message" {if !$message}style="display:none;"{/if}>{$message}</div>
+<div{if $form.form_hideonsuccess && $message && $sent} style="display:none;"{/if}>
 <form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" onsubmit="return checkme();" class="contact-form{if $form.form_multipage} multipage{/if}">
 <input type="hidden" name="form_id" id="form_id" value="{$form.form_id}" />
 <div>
