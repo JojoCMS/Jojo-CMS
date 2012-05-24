@@ -1060,4 +1060,12 @@ $_options[] = array(
     'options'     => ''
 );
 
-
+$_options[] = array(
+    'id'          => 'allow_email_login',
+    'category'    => 'Security',
+    'label'       => 'Allow login with email',
+    'description' => 'If YES, allows users to login with their email address or username.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);

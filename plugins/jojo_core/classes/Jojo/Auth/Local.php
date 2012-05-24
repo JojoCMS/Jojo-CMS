@@ -8,8 +8,14 @@ class Jojo_Auth_Local {
 
         if ($username) {
             /* Look up user by username and password from login form submission */
-            $values = array($username, $password, $password);
-            $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
+            
+            if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
+                $values = array($username, $username, $password, $password);
+                $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
+            } else {
+                $values = array($username, $password, $password);
+                $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
+            }
             $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
 
             /* Make sure all users have salted passwords - if it's not salted, add salt */
@@ -39,10 +45,18 @@ class Jojo_Auth_Local {
 
             /* Submitted a username but the password didn't match */
             $loginmessage = 'Your username or password is incorrect';
-            Jojo::updateQuery("UPDATE {user} SET us_lastfailure = NOW(), us_failures = us_failures + 1 WHERE us_login = ? LIMIT 1", array($username));
+            if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
+                Jojo::updateQuery("UPDATE {user} SET us_lastfailure = NOW(), us_failures = us_failures + 1 WHERE us_login = ? OR us_email = ? LIMIT 1", array($username, $username));
+            } else {
+                Jojo::updateQuery("UPDATE {user} SET us_lastfailure = NOW(), us_failures = us_failures + 1 WHERE us_login = ? LIMIT 1", array($username));
+            }
 
             /* Find out how many times user has failed - warn and lock if too many times */
-            $failures = Jojo::selectRow("SELECT us_failures FROM {user} WHERE us_login = ?", array($username));
+            if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
+                $failures = Jojo::selectRow("SELECT us_failures FROM {user} WHERE us_login = ? OR us_email = ?", array($username, $username));
+            } else {
+                $failures = Jojo::selectRow("SELECT us_failures FROM {user} WHERE us_login = ?", array($username));
+            }
             if (isset($failures['us_failures'])) {
                 /* Warn after 5 failures */
                 if ($failures['us_failures'] >= 5) {
@@ -52,7 +66,11 @@ class Jojo_Auth_Local {
                 /* Lock account after 10 failures */
                 if ($failures['us_failures'] >= 10) {
                     $loginmessage = 'This account has been locked and must be unlocked by the administrator.<br/>Please contact <a href="mailto:' . Jojo::getOption('webmasteraddress') . '">' . Jojo::getOption('webmasteraddress') . "</a>";
-                    Jojo::updateQuery("UPDATE {user} SET us_locked = 1 WHERE us_login = ? LIMIT 1", array($username));
+                    if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
+                        Jojo::updateQuery("UPDATE {user} SET us_locked = 1 WHERE us_login = ? OR us_email = ? LIMIT 1", array($username, $username));
+                    } else {
+                        Jojo::updateQuery("UPDATE {user} SET us_locked = 1 WHERE us_login = ? LIMIT 1", array($username));
+                    }
                 }
             }
 
