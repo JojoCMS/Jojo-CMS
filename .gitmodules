@@ -1,0 +1,3 @@
+[submodule "plugins/jojo_core/external/csstidy"]
+	path = plugins/jojo_core/external/csstidy
+	url = git://github.com/Cerdic/CSSTidy.git
