@@ -193,10 +193,10 @@ $_options[] = array(
     'id'          => 'modernizr',
     'category'    => 'Config',
     'label'       => 'Use Modernizr',
-    'description' => 'Add modernizr script classes to html tag',
+    'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no,custom',
 );
 
 $_options[] = array(
