@@ -1,3 +1,6 @@
 [submodule "plugins/jojo_core/external/csstidy"]
 	path = plugins/jojo_core/external/csstidy
 	url = git://github.com/Hambrook/CSSTidy.git
+[submodule "plugins/jojo_core/external/lessphp"]
+	path = plugins/jojo_core/external/lessphp
+	url = git://github.com/leafo/lessphp.git
