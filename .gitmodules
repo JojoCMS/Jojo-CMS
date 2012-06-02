@@ -4,3 +4,6 @@
 [submodule "plugins/jojo_core/external/lessphp"]
 	path = plugins/jojo_core/external/lessphp
 	url = git://github.com/leafo/lessphp.git
+[submodule "plugins/jojo_core/external/bootstrap"]
+	path = plugins/jojo_core/external/bootstrap
+	url = git://github.com/twitter/bootstrap.git
