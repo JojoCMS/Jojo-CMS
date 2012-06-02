@@ -25,7 +25,7 @@ $smarty->assign('templateoptions', $templateoptions);
 $smarty->assign('htmldoctype', (boolean)(Jojo::getOption('doctype', 'xhtml')=='html5'));
 $smarty->assign('xmldoctype', '<?xml version="1.0" encoding="utf-8" ?>');
 $smarty->assign('boilerplatehtmltag', (boolean)(Jojo::getOption('boilerplate_htmltag', 'no')=='yes'));
-$smarty->assign('modernizr', (boolean)(Jojo::getOption('modernizr', 'no')=='yes'));
+$smarty->assign('modernizr', Jojo::getOption('modernizr', 'no'));
 $smarty->assign('jqueryhead', (boolean)(Jojo::getOption('jquery_head', 'yes')=='yes'));
 $smarty->assign('commonhead', (boolean)(Jojo::getOption('commonjs_head', 'yes')=='yes'));
 
