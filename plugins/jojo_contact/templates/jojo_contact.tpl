@@ -1,8 +1,8 @@
 {if $content}{$content}
-{/if}<div id="form{$form.form_id}message" class="message" {if !$message}style="display:none;"{/if}>{$message}</div>
-<div{if $form.form_hideonsuccess && $message && $sent} style="display:none;"{/if}>
-<form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" onsubmit="return checkme();" class="contact-form{if $form.form_multipage} multipage{/if}">
+{/if}<div{if $form.form_hideonsuccess && $message && $sent} style="display:none;"{/if}>
+<form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" enctype="multipart/form-data" class="contact-form{if $form.form_multipage} multipage{/if}">
 <input type="hidden" name="form_id" id="form_id" value="{$form.form_id}" />
+<input type="hidden" name="MAX_FILE_SIZE" value="{if $maxuploadvalue}{$maxuploadvalue}{else}5000000{/if}" />
 <div>
 {if $toaddresses}<div class="form-fieldset">
         <label for="form_sendto">Send Enquiry To:</label>
@@ -19,7 +19,7 @@
         {if $f.showlabel}<label for="{$f.field}">{if $f.display}{$f.display}:{/if}</label>
         {/if}
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
-    {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     {elseif $f.type == 'checkboxes'}<div class="form-field">
             {foreach from=$f.options item=fo }<div class="checkbox"><input type="checkbox" class="checkbox{if $f.class} {$f.class}{/if}" name="{$f.field}[{$fo}]" id="{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}"{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach} /><label for="form_{$f.field}_{$fo}"> {$fo}</label></div>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
@@ -28,28 +28,29 @@
             {foreach from=$f.options item=button }<input type="radio" class="radio{if $f.class} {$f.class}{/if}" name="{$f.field}" id="{$f.field}_{$button|replace:' ':'_'|replace:'$':''|replace:',':''|lower}" value="{$button}" {if $f.value == $button} checked="checked"{/if} /><label for="form_{$f.field}_{$button|replace:' ':'_'|replace:'$':''|replace:',':''|lower}"> {$button}</label>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
         </div>
-    {elseif $f.type=='select'}<select name="{$f.field}" id="{$f.field}">
+    {elseif $f.type=='select'}<select name="{$f.field}" id="{$f.field}"{if $f.required} class="required"{/if}>
               <option value="">Select</option>
                 {foreach from=$f.options item=so}<option value="{$so}"{if $f.value == $so} selected="selected"{/if}>{$so}</option>
                 {/foreach}
         </select>{if $f.required}<span class="required">*</span>{/if}
-    {elseif $f.type=='list'}<select name="{$f.field}[]" id="{$f.field}" multiple="multiple" style="width:{$f.size}px">
+    {elseif $f.type=='list'}<select name="{$f.field}[]" id="{$f.field}" multiple="multiple" style="width:{$f.size}px"{if $f.required} class="required"{/if}>
             {foreach from=$f.options item=so}
             <option value="{$so|escape:'htmlall'}"{if $f.value == $so} selected="selected"{/if}>{$so}</option>
             {/foreach}
         </select>{if $f.required}<span class="required">*</span>{/if}
     {elseif $f.type =='heading'}<div class="form-heading{if $f.class} {$f.class}{/if}">
-        {if in_array($f.size, array(1,2,3,4,5,6))}<h{$f.size}>{$f.value}</h{$f.size}>
-        {else}<h1>{$f.value}</h1>
+        {if in_array($f.size, array(1,2,3,4,5,6))}<h{$f.size}>{if $f.value}{$f.value}{else}{$f.display}{/if}</h{$f.size}>
+        {else}<h3>{if $f.value}{$f.value}{else}{$f.display}{/if}</h3>
         {/if}
     </div>
     {elseif $f.type=='note'}<div class="form-note{if $f.class} {$f.class}{/if}">
             {if $f.value}<p>{$f.value}</p>{/if}
         </div>
-    {elseif $f.type=='emailwithconfirmation'}<input type="text" class="input text{if $f.class} {$f.class}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="" />{if $f.required}<span class="required">*</span>{/if}
-    {else}<input type="{$f.type}" class="input {$f.type}{if $f.class} {$f.class}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type=='upload' || $f.type=='privateupload'}<input type="file" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type=='emailwithconfirmation'}<input type="text" class="input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="" />{if $f.required}<span class="required">*</span>{/if}
+    {else}<input type="{$f.type}" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
         {/if}
-        {if $f.description}<div class="form-field-description">{$f.description}</div>
+        {if $f.description}<div class="form-field-description">{$f.description|nl2br}</div>
     {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}</div>
     {/if}{if $f.type=='emailwithconfirmation'}
     <div class="form-fieldset text">
@@ -71,12 +72,16 @@
         </div>
     {/if}
         <div  class="form-fieldset submit">
-            <label>&nbsp;</label><input type="submit" name="submit" value="{$form.form_submit}" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
+            <label>&nbsp;</label><input type="submit" value="{$form.form_submit}" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
        </div>
+        <div class="progress">
+            <div class="bar"></div >
+            <div class="percent">0%</div >
+        </div>
     </div>
 </div>
 </form>
 </div>
-{if $sent && $form.form_tracking_code}
-{$form.form_tracking_code}
+<div id="form{$form.form_id}message" class="message" {if !$message}style="display:none;"{/if}>{$message}</div>
+{if $sent && $form.form_tracking_code}{$form.form_tracking_code}
 {/if}

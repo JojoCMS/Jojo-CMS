@@ -303,3 +303,13 @@ $default_fd['form']['form_submit_end'] = array(
         'fd_order' => $o++,
         'fd_tabname' => "Xtras"
     );
+
+// Form Upload Folder
+$default_fd['form']['form_uploadfolder'] = array(
+        'fd_name' => "Upload folder",
+        'fd_type' => "text",
+        'fd_size' => "60",
+        'fd_help' => "Put files uploaded from the form in a folder called this (will use the form ID if left blank)",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );

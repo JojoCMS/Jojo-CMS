@@ -100,7 +100,11 @@ $default_fd['formfield']['ff_required'] = array(
 $default_fd['formfield']['ff_validation'] = array(
         'fd_name' => "Validation",
         'fd_type' => "list",
-        'fd_options' => "email:Email\nurl:Url\ntext:Text\ninteger:Integer",
+        'fd_options' => "email:Email
+url:Url
+text:Text
+number:Integer
+date:Date",
         'fd_size' => "60",
         'fd_help' => "The type of validation to be used - options are 'email', 'url', 'text', 'integer' or leave blank for no validation.",
         'fd_order' => $o++
@@ -110,7 +114,18 @@ $default_fd['formfield']['ff_validation'] = array(
 $default_fd['formfield']['ff_type'] = array(
         'fd_name' => "Type",
         'fd_type' => "list",
-        'fd_options' => "text:Text\ntextarea:Textarea\ncheckboxes:Checkboxes\nradio:Radio Buttons\nselect:Select Box\nlist:List Box\nemailwithconfirmation:Email With Confirmation\nhidden:Hidden\nheading:Heading\nnote:Note",
+        'fd_options' => "text:Text
+textarea:Textarea
+checkboxes:Checkboxes
+radio:Radio Buttons
+select:Select Box
+list:List Box
+emailwithconfirmation:Email With Confirmation
+hidden:Hidden
+heading:Heading
+note:Note
+upload:File Upload
+privateupload:Private File Upload",
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "The type of input - use text (single line), textarea (multiple lines), checkboxes (multiple selections), radio buttons (single selection), select (drop down menu), list (multiple selects), emailwithconfirmation is an email field with a confirmation field below it, heading or note.",

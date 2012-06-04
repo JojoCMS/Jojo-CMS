@@ -160,7 +160,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                     $errors[] = $field['display'] . ' and confirmation email fields must match';
                 }
             }
-        }
+            /* if field is file upload field then need to check for a file and transfer it to the folder */
+            if ($field['type'] == 'upload' || $field['type'] == 'privateupload') {
+                $field['filelink'] = '';
+                if (!isset($_FILES["FILE_".$field['field']])) continue;
+                $file = $_FILES["FILE_".$field['field']];
+                $uploadresponse = self::upload($file, $field, $form);
+                if ($uploadresponse['errors']) $errors[] = $uploadresponse['errors'];
+                $field['filelink'] = $uploadresponse['filepath'];
+            }
+       }
 
         if(!count($errors)){
             /* run further validation hook */
@@ -180,14 +189,18 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $message  = '';
         foreach ($fields as $f) {
-            if (isset($f['displayonly'])) { continue; };
-            if ($f['type'] == 'note') { continue; };
-            if ($f['type'] == 'heading') {
+            if (isset($f['displayonly'])) {
+                continue;
+            } elseif ($f['type'] == 'note') {
+                continue;
+            } elseif ($f['type'] == 'heading') {
                 $message .=  "\r\n" . $f['value'] . "\r\n";
                 for ($i=0; $i<strlen($f['value']); $i++) {
                     $message .= '-';
                 }
                 $message .= "\r\n";
+            } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
+                $message .= $f['display'] . ($f['filelink'] ? ' ' . _SITEURL . '/downloads' . $f['filelink'] : '') . "\r\n";
             } else {
                 $message .= (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n\r\n" : $f['value'] . "\r\n" );
             }
@@ -199,6 +212,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if (isset($f['displayonly']) || $f['type'] == 'note') { continue; };
             if ($f['type'] == 'heading') {
                 $messagefields .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
+            } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
+                $messagefields .= '<p>' . $f['display'] . ($f['filelink'] ? ' <a href="' . _SITEURL . '/downloads' . $f['filelink'] . '">' . _SITEURL . '/downloads' . $f['filelink'] .'</a>' : '') .'</p>';
             } else {
                 $messagefields .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
             }
@@ -285,7 +300,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $success = false;
             $smarty->assign('fields', $fields);
         }
-        return array('sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
+        return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 
     function _getContent()
@@ -457,5 +472,95 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         return $html;
+    }
+
+     public static function footjs()
+     {
+        return '    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>'."\n";
+
+    }
+
+     private static function upload($file, $field, $form)
+     {
+        $filename = str_replace(' ', '_', str_replace(array('?','&',"'",',','[',']'), '', stripslashes($file['name'])));
+        $tmpfilename = $file['tmp_name'];
+        $error = '';
+       /* Check error codes */
+        switch ($file['error']) {
+            case UPLOAD_ERR_INI_SIZE: //1
+                $error = 'The uploaded file exceeds the maximum size allowed in PHP.INI';
+                break;
+            case UPLOAD_ERR_FORM_SIZE: //2
+                $error = 'The uploaded file exceeds the maximum size allowed (' . 1000 * Jojo::getOption('max_fileupload_size','5000') .')';
+                break;
+            case UPLOAD_ERR_PARTIAL: //3
+                $error = 'The file has only been partially uploaded. There may have been an error in transfer, or the server may be having technical problems.';
+                break;
+
+            case UPLOAD_ERR_NO_FILE: //4 - this is only a problem if it's a required field
+                //remember, a required field only needs to be set the first time, perhaps its better to check this somewhere else
+                break;
+
+            case 6: // UPLOAD_ERR_NO_TMP_DIR - for some odd reason the constant wont work
+                $error = 'There is no temporary folder on the server - please contact the webmaster ('._WEBMASTERADDRESS.')';
+                break;
+
+            case UPLOAD_ERR_OK: //0
+                /* check for empty file */
+                if($file['size'] == 0) {
+                    $error = 'The uploaded file is empty.';
+                    break;
+                }
+
+                /* ensure file is uploaded correctly */
+                if (!is_uploaded_file($tmpfilename)) {
+                    /* improve this code when you have time - will work, but needs fleshing out */
+                    $error = 'Possible hacking attempt. Script will now halt.';
+                    die($error);
+                }
+
+                $folder = $field['type'] == 'privateupload' ? 'private/' : '';
+                $folder .= $form['form_uploadfolder'] ? $form['form_uploadfolder'] : $form['form_id'];
+                /* All appears good, so prepare to move file to final resting place */
+                $destination = _DOWNLOADDIR . '/uploads/' . $folder . '/' . basename($filename);
+
+                /* create the folder if it does not already exist */
+                Jojo::RecursiveMkdir(dirname($destination));
+
+                /* Ensure file does not already exist on server, rename if it does */
+                $newname = '';
+                $i = 1;
+                $newMD5 = md5_file($tmpfilename);
+                while (file_exists($destination) && $newMD5 != md5_file($destination)){
+                    $newname = ++$i . "_" . $filename;
+                    $destination = _DOWNLOADDIR . "/uploads/" . $folder . '/' . $newname;
+                }
+
+                /* move to final location */
+                if (!(file_exists($destination) || move_uploaded_file($tmpfilename, $destination))) {
+                    $error = "Possible hacking attempt. Script will now halt.";
+                    die($error);
+                }
+                break;
+            default:
+                /* this code shouldn't execute - 0 should be the default */
+                $error = 'An unknown error occurred - please contact the webmaster ('._WEBMASTERADDRESS.')';
+        }
+        $reponse['errors'] = $error;
+        $reponse['filepath'] = str_replace(_DOWNLOADDIR, '', $destination);
+        return $reponse;
+    }
+
+    /* block private uploads from being downloaded without login */
+    function downloadFile($filename)
+    {
+        global $_USERGROUPS;
+        if (strpos($filename, "/uploads/private") !== false && !in_array('admin', $_USERGROUPS)) {
+            header("HTTP/1.0 404 Not Found", true, 404);
+            echo "You must be logged in as an administrator to download this file.";
+            exit;
+        }
+        return true;
     }
 }

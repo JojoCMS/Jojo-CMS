@@ -2,32 +2,70 @@ $(document).ready(function() {
     $('.contact-form').each(function(index) {
         if ($(this).attr('id').length >0) {
             var formid = $(this).attr('id');
-            $('#'+formid).submit(function(){
-                $.ajax({
-                    type: "POST",
-                    url: "json/jojo_contact_send.php",
-                    data: $('#'+formid).serialize(),
-                    dataType: "json",
-                    success: function(response){
-                        $('#' + formid + 'message').show().html(response.responsemessage);
-                        if (response.sent==true && response.hideonsuccess==true) {
-                            $('#' + formid).hide();
-                        }
-                    },
-                    error: function(){
-                        $('#' + formid + 'message').show().html('There has been a failure to communicate. Your request has been stored however and will be attended to shortly');
-                    }
-                });
-                //make sure the form doesn't post
-                return false;
+            var options = {
+                target:        '#' + formid + 'message',   // target element(s) to be updated with server response
+                beforeSubmit:  preFlight,  // pre-submit callback
+                uploadProgress: function(event, position, total, percentComplete) {
+                    var percentVal = percentComplete + '%';
+                    $('#' + formid + ' .progress .bar').width(percentVal)
+                    $('#' + formid + ' .progress .percent').html(percentVal);
+                },
+                success:       showResponse,  // post-submit callback
+                url:       'json/jojo_contact_send.php',        // override for form's 'action' attribute
+                //type:      type        // 'get' or 'post', override for form's 'method' attribute
+                dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type)
+                //clearForm: true        // clear all form fields after successful submit
+                //resetForm: true        // reset the form after successful submit
+
+                // $.ajax options can be used here too, for example:
+                error: function(){
+                    $('#' + formid + 'message').show().html('There has been a failure to communicate. Your request has been stored however and will be attended to shortly');
+                }
+            };
+            $('#' + formid).validate({
+             errorElement: 'span',
+             submitHandler: function(form) {
+               $('#'+ formid).ajaxSubmit(options);
+             }
             });
         }
         if ($(this).attr('id').length >0 && $("fieldset", this).length>1) {
             setFormTabs($(this).attr('id'));
         }
+        return false;
     });
-
 });
+
+// pre-submit callback
+function preFlight(formData, jqForm, options) {
+    // jqForm is a jQuery object encapsulating the form element.  To access the
+    // DOM element for the form do this:
+    // var formElement = jqForm[0];
+    var formID = $(jqForm[0]['form_id']).val();
+
+    // here we could return false to prevent the form from being submitted;
+    // returning anything other than false will allow the form submit to continue
+    if ($('#form' + formID).valid()) {
+        $('#form' + formID + ' .progress').show();
+        return true;
+    } else {
+        $('#form' + formID).validate( {
+            errorElement: 'span'
+        });
+        return false;
+    }
+}
+
+// post-submit callback
+function showResponse(response)  {
+    var formid = response.id;
+    $('#' + formid + 'message').show().html(response.responsemessage);
+    if (response.sent==true && response.hideonsuccess==true) {
+        $('#' + formid).hide();
+    }
+}
+
+// Tab navigation functions
 
 function showFormTab(formid, tabid) {
     $('#' + formid + ' fieldset').hide();
@@ -77,6 +115,7 @@ function setFormTabNav(formid, tabid) {
     var nexttabid = '';
     var next = false;
     var numtabs = $(fieldsets).length;
+    var v = $('#' + formid).validate({onsubmit:false});
     $(fieldsets).each(function(index) {
         if ($(this).attr('id')==tabid) {
             next = true;
@@ -98,8 +137,10 @@ function setFormTabNav(formid, tabid) {
     }
     if (nexttabid.length>0) {
         $('#' + formid + ' a.next').show().click(function(){
-            showFormTab(formid,nexttabid);
-            $('#' + formid + nexttabid + 'link').addClass('current');
+            if (v.form()) {
+                showFormTab(formid,nexttabid);
+                $('#' + formid + nexttabid + 'link').addClass('current');
+            }
             return false;
         });
     } else {
