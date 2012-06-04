@@ -126,6 +126,8 @@ $_provides['pluginClasses'] = array(
         'Jojo_Plugin_User_profile'        => 'Core - User Profile',
         );
 
+/* Config */
+
 $_options[] = array(
     'id'          => 'eventlog_email_notification',
     'category'    => 'Config',
@@ -191,10 +193,10 @@ $_options[] = array(
     'id'          => 'modernizr',
     'category'    => 'Config',
     'label'       => 'Use Modernizr',
-    'description' => 'Add modernizr script classes to html tag',
+    'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no,custom',
 );
 
 $_options[] = array(
@@ -214,7 +216,7 @@ $_options[] = array(
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
     'default'     => '1.4.4',
-    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4',
+    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2',
 );
 
 $_options[] = array(
@@ -235,26 +237,6 @@ $_options[] = array(
     'type'        => 'radio',
     'default'     => 'yes',
     'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'shorttitle',
-    'category'    => 'Site',
-    'label'       => 'Short Title',
-    'description' => 'If there is a logical abbreviation for the site, this can be used instead of the full title where space is limited.',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => '',
-);
-
-$_options[] = array(
-    'id'          => 'sitetitle',
-    'category'    => 'Site',
-    'label'       => 'Site Title',
-    'description' => 'The site title is displayed in the title bar of all pages, and is the default for outgoing emails and communications from the site. This should be the name of the website or business.',
-    'type'        => 'text',
-    'default'     => 'SITETITLE',
-    'options'     => '',
 );
 
 $_options[] = array(
@@ -358,16 +340,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'last_maintenance',
-    'category'    => 'System',
-    'label'       => 'Last maintenance time',
-    'description' => 'The date/time when auto-maintenance was last run on the system',
-    'type'        => 'integer',
-    'default'     => '1',
-    'options'     => ''
-);
-
-$_options[] = array(
     'id'          => 'dev_domains',
     'category'    => 'Config',
     'label'       => 'Development domains',
@@ -427,6 +399,143 @@ $_options[] = array(
     'options'     => 'yes,no',
 );
 
+
+/* Site */
+
+$_options[] = array(
+    'id'          => 'shorttitle',
+    'category'    => 'Site',
+    'label'       => 'Short Title',
+    'description' => 'If there is a logical abbreviation for the site, this can be used instead of the full title where space is limited.',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => '',
+);
+
+$_options[] = array(
+    'id'          => 'sitetitle',
+    'category'    => 'Site',
+    'label'       => 'Site Title',
+    'description' => 'The site title is displayed in the title bar of all pages, and is the default for outgoing emails and communications from the site. This should be the name of the website or business.',
+    'type'        => 'text',
+    'default'     => 'SITETITLE',
+    'options'     => '',
+);
+
+
+$_options[] = array(
+    'id'          => 'site_logo',
+    'category'    => 'Site',
+    'label'       => 'Site Logo',
+    'description' => 'the url for the site logo',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_geolocation',
+    'category'    => 'Site',
+    'label'       => 'Geo Coordinates',
+    'description' => 'the latitude,longitude of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_street_address',
+    'category'    => 'Site',
+    'label'       => 'Street Address',
+    'description' => 'Street address of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_locality',
+    'category'    => 'Site',
+    'label'       => 'Locality',
+    'description' => 'Locality/Suburb/City of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_region',
+    'category'    => 'Site',
+    'label'       => 'Region',
+    'description' => 'Region/State of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_postal_code',
+    'category'    => 'Site',
+    'label'       => 'Post Code',
+    'description' => 'Post Code of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_country_name',
+    'category'    => 'Site',
+    'label'       => 'Country',
+    'description' => 'Country of this location (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_email',
+    'category'    => 'Site',
+    'label'       => 'Email',
+    'description' => 'Publishable contact email for the site (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_phone_number',
+    'category'    => 'Site',
+    'label'       => 'Phone Number',
+    'description' => 'Publishable contact phone number for the site (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'site_fax_number',
+    'category'    => 'Site',
+    'label'       => 'Fax Number',
+    'description' => 'Publishable contact fax number for the site (if applicable)',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+/* System */
+
+$_options[] = array(
+    'id'          => 'last_maintenance',
+    'category'    => 'System',
+    'label'       => 'Last maintenance time',
+    'description' => 'The date/time when auto-maintenance was last run on the system',
+    'type'        => 'integer',
+    'default'     => '1',
+    'options'     => ''
+);
+
+
 /* Navigation */
 
 $_options[] = array(
@@ -459,7 +568,8 @@ $_options[] = array(
     'options'     => ''
 );
 
-// HTML Editor
+/* HTML Editor */
+
 $_options[] = array(
     'id'          => 'preferrededitor',
     'category'    => 'HTML Editor',
@@ -560,7 +670,8 @@ $_options[] = array(
     'options'     => '',
 );
 
-// CSS
+/* CSS */
+
 $_options[] = array(
     'id'          => 'css',
     'category'    => 'CSS',
@@ -591,7 +702,8 @@ $_options[] = array(
     'options'     => '',
 );
 
-// Contacts
+/* Contacts */
+
 $_options[] = array(
     'id'          => 'fromaddress',
     'category'    => 'Contacts',
@@ -662,7 +774,7 @@ $_options[] = array(
     'options'     => '',
 );
 
-// Google Analytics
+/* Google Analytics */
 $_options[] = array(
     'id'          => 'analyticscode',
     'category'    => 'Google Analytics',
@@ -703,7 +815,7 @@ $_options[] = array(
   'options'     => 'top,bottom',
 );
 
-// Email
+/* Email */
 $_options[] = array(
     'id'          => 'smtp_mail_enabled',
     'category'    => 'Email',
@@ -754,7 +866,8 @@ $_options[] = array(
     'options'     => '',
 );
 
-// Security
+/* Security */
+
 $_options[] = array(
     'id'          => 'defaultgroup',
     'category'    => 'Security',
@@ -775,7 +888,8 @@ $_options[] = array(
     'options'     => 'yes,no',
 );
 
-// SEO
+/* SEO */
+
 $_options[] = array(
     'id'          => 'title_separator',
     'category'    => 'SEO',
@@ -908,107 +1022,7 @@ $_options[] = array(
     'options'     => '',
 );
 
-
-$_options[] = array(
-    'id'          => 'site_logo',
-    'category'    => 'Site',
-    'label'       => 'Site Logo',
-    'description' => 'the url for the site logo',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_geolocation',
-    'category'    => 'Site',
-    'label'       => 'Geo Coordinates',
-    'description' => 'the latitude,longitude of this location (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_street_address',
-    'category'    => 'Site',
-    'label'       => 'Street Address',
-    'description' => 'Street address of this location (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_locality',
-    'category'    => 'Site',
-    'label'       => 'Locality',
-    'description' => 'Locality/Suburb/City of this location (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_region',
-    'category'    => 'Site',
-    'label'       => 'Region',
-    'description' => 'Region/State of this location (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_postal_code',
-    'category'    => 'Site',
-    'label'       => 'Post Code',
-    'description' => 'Post Code of this location (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_country_name',
-    'category'    => 'Site',
-    'label'       => 'Country',
-    'description' => 'Country of this location (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_email',
-    'category'    => 'Site',
-    'label'       => 'Email',
-    'description' => 'Publishable contact email for the site (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_phone_number',
-    'category'    => 'Site',
-    'label'       => 'Phone Number',
-    'description' => 'Publishable contact phone number for the site (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'site_fax_number',
-    'category'    => 'Site',
-    'label'       => 'Fax Number',
-    'description' => 'Publishable contact fax number for the site (if applicable)',
-    'type'        => 'text',
-    'default'     => '',
-    'options'     => ''
-);
-
+/* Social Networking */
 
 $_options[] = array(
     'id'          => 'facebook_link',

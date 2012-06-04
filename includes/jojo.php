@@ -73,6 +73,7 @@ if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Joj
 @ini_set('session.use_trans_sid', 0);
 ini_set('magic_quotes_gpc', 0);
 ini_set('magic_quotes_runtime', 0);
+ini_set('session.gc_maxlifetime', 86400);
 if (extension_loaded('mbstring')) {
     mb_internal_encoding('UTF-8');
 }
