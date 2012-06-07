@@ -24,3 +24,9 @@ $_provides['pluginClasses'] = array(
 
 /* Content Filter */
 Jojo::addFilter('output', 'contentFilter', 'jojo_contact');
+
+/* add script library for ajax handling */
+Jojo::addHook('foot', 'footjs', 'jojo_contact');
+
+/* check downloads for permissions */
+Jojo::addHook('jojo_core:downloadFile', 'downloadFile', 'jojo_contact');
