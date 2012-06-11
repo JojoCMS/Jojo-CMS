@@ -74,6 +74,7 @@ $query = "
         `ff_fieldset` varchar(255) NOT NULL,
         `ff_fieldname` varchar(255) NOT NULL,
         `ff_display` varchar(255) NOT NULL,
+        `ff_placeholder` varchar(255) NOT NULL,
         `ff_required` tinyint(1) NOT NULL default '0',
         `ff_validation` enum('email','url','text','number','date') NOT NULL,
         `ff_type` ENUM('text','textarea','checkboxes','radio','select','list','emailwithconfirmation','hidden','heading','note','upload','privateupload') NOT NULL,

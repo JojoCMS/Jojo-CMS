@@ -19,7 +19,7 @@
         {if $f.showlabel}<label for="{$f.field}">{if $f.display}{$f.display}:{/if}</label>
         {/if}
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
-    {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}">{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     {elseif $f.type == 'checkboxes'}<div class="form-field">
             {foreach from=$f.options item=fo }<div class="checkbox"><input type="checkbox" class="checkbox{if $f.class} {$f.class}{/if}" name="{$f.field}[{$fo}]" id="{$f.field}_{$fo|replace:' ':'_'|replace:'$':''}" value="{$fo}"{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach} /><label for="form_{$f.field}_{$fo}"> {$fo}</label></div>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
@@ -44,18 +44,18 @@
         {/if}
     </div>
     {elseif $f.type=='note'}<div class="form-note{if $f.class} {$f.class}{/if}">
-            {if $f.value}<p>{$f.value}</p>{/if}
+            <p>{if $f.value}{$f.value}{else}{$f.display}{/if}</p>
         </div>
-    {elseif $f.type=='upload' || $f.type=='privateupload'}<input type="file" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />{if $f.required}<span class="required">*</span>{/if}
-    {elseif $f.type=='emailwithconfirmation'}<input type="text" class="input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="" />{if $f.required}<span class="required">*</span>{/if}
-    {else}<input type="{$f.type}" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type=='upload' || $f.type=='privateupload'}<input type="file" class="input fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type=='emailwithconfirmation'}<input type="text" class="input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value=""{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.required}<span class="required">*</span>{/if}
+    {else}<input type="{$f.type}" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.required}<span class="required">*</span>{/if}
         {/if}
         {if $f.description}<div class="form-field-description">{$f.description|nl2br}</div>
     {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}</div>
     {/if}{if $f.type=='emailwithconfirmation'}
     <div class="form-fieldset text">
         <label for="form_{$f.field}_confirmation">##Confirm Email:##</label>
-        <input type="text" class="input text{if $f.class} {$f.class}{/if}" size="{$f.size}" name="{$f.field}_confirmation" id="{$f.field}_confirmation" value="{$f.value}" />{if $f.required}<span class="required">*</span>{/if}
+        <input type="text" class="input text{if $f.class} {$f.class}{/if}" size="{$f.size}" name="{$f.field}_confirmation" id="{$f.field}_confirmation" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.required}<span class="required">*</span>{/if}
     </div>
     {/if}{assign var=x value=`$k+1`}{if !$fields[$x]}</fieldset>
     {/if}
@@ -74,7 +74,7 @@
         <div  class="form-fieldset submit">
             <label>&nbsp;</label><input type="submit" value="{$form.form_submit}" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
        </div>
-        <div class="progress">
+        <div class="progress" style="display: none;">
             <div class="bar"></div >
             <div class="percent">0%</div >
         </div>

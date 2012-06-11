@@ -2,13 +2,16 @@ $(document).ready(function() {
     $('.contact-form').each(function(index) {
         if ($(this).attr('id').length >0) {
             var formid = $(this).attr('id');
+            var uploads = $(this).find('.fileupload');
             var options = {
                 target:        '#' + formid + 'message',   // target element(s) to be updated with server response
                 beforeSubmit:  preFlight,  // pre-submit callback
                 uploadProgress: function(event, position, total, percentComplete) {
-                    var percentVal = percentComplete + '%';
-                    $('#' + formid + ' .progress .bar').width(percentVal)
-                    $('#' + formid + ' .progress .percent').html(percentVal);
+                    if (uploads.length>0) {
+                        var percentVal = percentComplete + '%';
+                        $('#' + formid + ' .progress .bar').width(percentVal)
+                        $('#' + formid + ' .progress .percent').html(percentVal);
+                    }
                 },
                 success:       showResponse,  // post-submit callback
                 url:       'json/jojo_contact_send.php',        // override for form's 'action' attribute
@@ -29,7 +32,7 @@ $(document).ready(function() {
              }
             });
         }
-        if ($(this).attr('id').length >0 && $("fieldset", this).length>1) {
+        if ($(this).attr('id').length >0 && $("fieldset", this).length>1 && $(this).hasClass('multipage')) {
             setFormTabs($(this).attr('id'));
         }
         return false;
@@ -46,7 +49,9 @@ function preFlight(formData, jqForm, options) {
     // here we could return false to prevent the form from being submitted;
     // returning anything other than false will allow the form submit to continue
     if ($('#form' + formID).valid()) {
-        $('#form' + formID + ' .progress').show();
+        if ($('#form' + formID + ' .fileupload').length>0) {
+            $('#form' + formID + ' .progress').show();
+        }
         return true;
     } else {
         $('#form' + formID).validate( {
