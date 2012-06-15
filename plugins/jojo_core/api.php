@@ -926,7 +926,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'googleajaxlibs',
-    'category'    => 'Config',
+    'category'    => 'JS',
     'label'       => 'Google Hosted Javascript',
     'description' => 'Load jQuery from the Google Ajax Librarys site.',
     'type'        => 'radio',
@@ -936,7 +936,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'modernizr',
-    'category'    => 'Config',
+    'category'    => 'JS',
     'label'       => 'Use Modernizr',
     'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
@@ -946,7 +946,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'jquery_head',
-    'category'    => 'Config',
+    'category'    => 'JS',
     'label'       => 'jQuery in head',
     'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
@@ -956,7 +956,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'jquery_version',
-    'category'    => 'Config',
+    'category'    => 'JS',
     'label'       => 'jQuery version',
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
@@ -966,7 +966,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'jquery_ui',
-    'category'    => 'Config',
+    'category'    => 'JS',
     'label'       => 'jQuery UI',
     'description' => 'Load jQuery UI code.',
     'type'        => 'radio',
@@ -976,7 +976,7 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'commonjs_head',
-    'category'    => 'Config',
+    'category'    => 'JS',
     'label'       => 'Common.js in head',
     'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
