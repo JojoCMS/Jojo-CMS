@@ -148,17 +148,6 @@ $_options[] = array(
     'options'     => '0,1',
 );
 
-
-$_options[] = array(
-    'id'          => 'googleajaxlibs',
-    'category'    => 'Config',
-    'label'       => 'Google Hosted Javascript',
-    'description' => 'Load jQuery from the Google Ajax Librarys site.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
 $_options[] = array(
     'id'          => 'doctype',
     'category'    => 'Config',
@@ -176,56 +165,6 @@ $_options[] = array(
     'description' => 'Add browser conditionals to html tag',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'modernizr',
-    'category'    => 'Config',
-    'label'       => 'Use Modernizr',
-    'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no,custom',
-);
-
-$_options[] = array(
-    'id'          => 'jquery_head',
-    'category'    => 'Config',
-    'label'       => 'jQuery in head',
-    'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'jquery_version',
-    'category'    => 'Config',
-    'label'       => 'jQuery version',
-    'description' => 'Which version of jQ to use.',
-    'type'        => 'radio',
-    'default'     => '1.4.4',
-    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2',
-);
-
-$_options[] = array(
-    'id'          => 'jquery_ui',
-    'category'    => 'Config',
-    'label'       => 'jQuery UI',
-    'description' => 'Load jQuery UI code.',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'commonjs_head',
-    'category'    => 'Config',
-    'label'       => 'Common.js in head',
-    'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
-    'type'        => 'radio',
-    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -716,7 +655,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_variables',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Variables',
-    'description' => 'Include Twitter Bootstaps default variables.less file',
+    'description' => 'Include Twitter Bootstap\'s default variables.less file',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -726,12 +665,444 @@ $_options[] = array(
     'id'          => 'tbootstrap_mixins',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Mixins',
-    'description' => 'Include Twitter Bootstaps default mixins.less file',
+    'description' => 'Include Twitter Bootstap\'s default mixins.less file',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
 );
 
+$_options[] = array(
+    'id'          => 'tbootstrap_scaffolding_typelinks',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Body type and links',
+    'description' => 'Include Twitter Bootstap\'s scaffolding.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_scaffolding_grid',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Grid System',
+    'description' => 'Include Twitter Bootstap\'s grid.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_scaffolding_layout',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Layouts',
+    'description' => 'Include Twitter Bootstap\'s layouts.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_type',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Headings, body, etc',
+    'description' => 'Include Twitter Bootstap\'s type.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_code',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Code and pre',
+    'description' => 'Include Twitter Bootstap\'s code.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_labels',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Labels and badges',
+    'description' => 'Include Twitter Bootstap\'s labels-badges.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_tables',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Tables',
+    'description' => 'Include Twitter Bootstap\'s tables.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_forms',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Forms',
+    'description' => 'Include Twitter Bootstap\'s forms.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_buttons',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Buttons',
+    'description' => 'Include Twitter Bootstap\'s buttons.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_bass_sprites',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Icons',
+    'description' => 'Include Twitter Bootstap\'s sprites.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_buttongroups',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Button groups and dropdowns',
+    'description' => 'Include Twitter Bootstap\'s button-groups.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_navs',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Navs, tabs, and pills',
+    'description' => 'Include Twitter Bootstap\'s navs.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_navbar',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Navbar',
+    'description' => 'Include Twitter Bootstap\'s navbar.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_breadcrumbs',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Breadcrumbs',
+    'description' => 'Include Twitter Bootstap\'s breadcrumbs.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_pagination',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Pagination',
+    'description' => 'Include Twitter Bootstap\'s pagination.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_pager',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Pager',
+    'description' => 'Include Twitter Bootstap\'s pager.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_thumbnails',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Thumbnails',
+    'description' => 'Include Twitter Bootstap\'s thumbnails.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_alerts',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Alerts',
+    'description' => 'Include Twitter Bootstap\'s alerts.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_progressbars',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Progress bars',
+    'description' => 'Include Twitter Bootstap\'s progress-bars.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_components_herounit',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Hero unit',
+    'description' => 'Include Twitter Bootstap\'s hero-unit.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_wells',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Wells',
+    'description' => 'Include Twitter Bootstap\'s wells.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_close',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Close icon',
+    'description' => 'Include Twitter Bootstap\'s close.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_utilities',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Utilities',
+    'description' => 'Include Twitter Bootstap\'s utilities.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_componentanimations',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Component animations',
+    'description' => 'Include Twitter Bootstap\'s component-animations.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_responsive',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Responsive',
+    'description' => 'Include Twitter Bootstap\'s responsive.less file, which pulls all of the responsive files',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+
+/* JS */
+
+$_options[] = array(
+    'id'          => 'googleajaxlibs',
+    'category'    => 'Config',
+    'label'       => 'Google Hosted Javascript',
+    'description' => 'Load jQuery from the Google Ajax Librarys site.',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'modernizr',
+    'category'    => 'Config',
+    'label'       => 'Use Modernizr',
+    'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no,custom',
+);
+
+$_options[] = array(
+    'id'          => 'jquery_head',
+    'category'    => 'Config',
+    'label'       => 'jQuery in head',
+    'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'jquery_version',
+    'category'    => 'Config',
+    'label'       => 'jQuery version',
+    'description' => 'Which version of jQ to use.',
+    'type'        => 'radio',
+    'default'     => '1.4.4',
+    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2',
+);
+
+$_options[] = array(
+    'id'          => 'jquery_ui',
+    'category'    => 'Config',
+    'label'       => 'jQuery UI',
+    'description' => 'Load jQuery UI code.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'commonjs_head',
+    'category'    => 'Config',
+    'label'       => 'Common.js in head',
+    'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_transition',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Transitions (required for any animation)',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-transition.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_modal',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Modals',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-modal.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_dropdown',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Dropdowns',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-dropdown.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_scrollspy',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Scrollspy',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-scrollspy.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_tab',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Togglable tabs',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-tab.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_tooltip',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Tooltips',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-tooltip.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_popover',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Popovers',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-popover.js file into common.js, this will also include  Tooltips',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_alert',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Alert messages',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-alert.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_button',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Buttons',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-button.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_collapse',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Collapse',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-collapse.js file into common.js. This will automatically be included if CSS Navbar and responsive navbar are included',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_carousel',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Carousel',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-carousel.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_js_typeahead',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Typeahead',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-typeahead.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
 
 
 /* Contacts */
