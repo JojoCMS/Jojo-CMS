@@ -76,8 +76,8 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         switch($file) {
             case 'styles':
                 /* Include Boilerplate css reset */
-                if  (Jojo::getOption('boilerplate_cssreset', 'no')=='yes') {
-                    $css->addFile(_BASEDIR . '/plugins/jojo_core/css/boilerplate_reset.css');
+                if  (Jojo::getOption('normalize_cssreset', 'no')=='yes') {
+                    $css->addFile(_BASEDIR . '/plugins/jojo_core/external/normalize/normalize.css');
                     if  (Jojo::getOption('modernizr', 'no')=='yes') {
                         $css->addFile(_BASEDIR . '/plugins/jojo_core/css/boilerplate_modernizr.css');
                     }

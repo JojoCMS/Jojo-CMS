@@ -180,16 +180,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'boilerplate_cssreset',
-    'category'    => 'Config',
-    'label'       => 'Bolierplate CSS Reset',
-    'description' => 'Add Boilerplate CSS (reset, media etc) to style.css',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
     'id'          => 'modernizr',
     'category'    => 'Config',
     'label'       => 'Use Modernizr',
@@ -671,6 +661,18 @@ $_options[] = array(
 );
 
 /* CSS */
+
+
+
+$_options[] = array(
+    'id'          => 'normalize_cssreset',
+    'category'    => 'CSS',
+    'label'       => 'Normalize CSS Reset',
+    'description' => 'Add normalize.css (reset, media etc) to style.css',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
 
 $_options[] = array(
     'id'          => 'css',
