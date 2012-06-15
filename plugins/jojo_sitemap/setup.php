@@ -19,28 +19,28 @@
  */
 
 /* Add a Sitemap page is one does not exist */
-Jojo::updateQuery("UPDATE {page} SET pg_link='Jojo_Plugin_Jojo_sitemap' WHERE pg_link='jojo_sitemap.php'");
-$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link='Jojo_Plugin_Jojo_Sitemap'");
+Jojo::updateQuery("UPDATE {page} SET pg_link='jojo_plugin_jojo_sitemap' WHERE pg_link='jojo_sitemap.php'");
+$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link='jojo_plugin_jojo_sitemap'");
 if (!count($data)) {
     echo "Adding <b>Sitemap</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Sitemap', pg_link='Jojo_Plugin_Jojo_Sitemap', pg_url='sitemap', pg_desc='A simple listing of all pages on this website', pg_mainnav='no', pg_footernav='yes'");
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Sitemap', pg_link='jojo_plugin_jojo_sitemap', pg_url='sitemap', pg_desc='A simple listing of all pages on this website', pg_mainnav='no', pg_footernav='yes'");
 }
 
 /* Update for old filename */
-Jojo::updateQuery("UPDATE {page} SET pg_link = 'Jojo_Plugin_Jojo_SitemapXML' WHERE pg_link = 'xml_sitemap.php' OR pg_link = 'Jojo_Plugin_Xml_sitemap' or pg_link = 'jojo_plugin_jojo_sitemapxml'");
+Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_jojo_sitemapxml' WHERE pg_link = 'xml_sitemap.php' OR pg_link = 'jojo_plugin_xml_sitemap' or pg_link = 'jojo_plugin_jojo_sitemapxml'");
 
 /* Add Google sitemap (sitemap.xml) page if one does not exist */
-$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_SitemapXML'");
+$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'jojo_plugin_jojo_sitemapxml'");
 if (!count($data)) {
     echo "Adding <b>Google Sitemap</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'XML Sitemap', pg_link = 'Jojo_Plugin_Jojo_SitemapXML', pg_url = 'sitemap.xml', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'XML Sitemap', pg_link = 'jojo_plugin_jojo_sitemapxml', pg_url = 'sitemap.xml', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 /* Add gss.xsl page if one does not exist */
-$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'Jojo_Plugin_Jojo_SitemapXSL'");
+$data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link = 'jojo_plugin_jojo_sitemapxsl'");
 if (!count($data)) {
     echo "Adding <b>Google_sitemap_style.xsl</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Google_Sitemap_Style.xsl', pg_link = 'Jojo_Plugin_Jojo_SitemapXSL', pg_url = 'google_sitemap_style.xsl', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Google_Sitemap_Style.xsl', pg_link = 'jojo_plugin_jojo_sitemapxsl', pg_url = 'google_sitemap_style.xsl', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 

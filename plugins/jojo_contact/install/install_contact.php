@@ -43,6 +43,9 @@ $query = "
         `form_autoreply_css` varchar(255) NOT NULL,
         `form_hideonsuccess` tinyint(1) NOT NULL default '0',
         `form_thank_you_uri` varchar(255) NOT NULL,
+        `form_multipage` tinyint(1) NOT NULL default '0',
+        `form_submit_end` tinyint(1) NOT NULL default '1',
+        `form_uploadfolder` varchar(255) NOT NULL,
         PRIMARY KEY  (`form_id`)
         ) ENGINE=InnoDB  ;
     ";
@@ -71,9 +74,10 @@ $query = "
         `ff_fieldset` varchar(255) NOT NULL,
         `ff_fieldname` varchar(255) NOT NULL,
         `ff_display` varchar(255) NOT NULL,
+        `ff_placeholder` varchar(255) NOT NULL,
         `ff_required` tinyint(1) NOT NULL default '0',
-        `ff_validation` enum('email','url','text','integer') NOT NULL,
-        `ff_type` ENUM('text','textarea','checkboxes','radio','select','list','emailwithconfirmation','hidden','heading','note') NOT NULL,
+        `ff_validation` enum('email','url','text','number','date') NOT NULL,
+        `ff_type` ENUM('text','textarea','checkboxes','radio','select','list','emailwithconfirmation','hidden','heading','note','upload','privateupload') NOT NULL,
         `ff_size` int(11) NOT NULL,
         `ff_value` text NOT NULL,
         `ff_options` text NOT NULL,
