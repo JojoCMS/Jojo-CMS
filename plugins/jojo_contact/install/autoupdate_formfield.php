@@ -76,6 +76,16 @@ $default_fd['formfield']['ff_fieldname'] = array(
         'fd_order' => $o++
     );
 
+// Display Name Field
+$default_fd['formfield']['ff_placeholder'] = array(
+        'fd_name' => "Placeholder Text",
+        'fd_type' => "text",
+        'fd_required' => "no",
+        'fd_size' => "60",
+        'fd_help' => "Placeholder/hint text eg 'John Smith' - only displayed by some browsers, and possibly of questionable UI value, but there if you want it",
+        'fd_order' => $o++
+    );
+
 // Description Field
 $default_fd['formfield']['ff_description'] = array(
         'fd_name' => "Description",
