@@ -45,7 +45,7 @@ class Jojo_Stitcher {
         }
 
         $handle = fopen($file, "r");
-        $data = filesize($file) > 0 ? fread($handle, filesize($file)) : '';
+        $data = filesize($file) > 0 ? fread($handle, filesize($file)) : '';var_dump($data);
         fclose($handle);
         $this->data .= $data . "\n";
         $this->numfiles++;
@@ -54,6 +54,7 @@ class Jojo_Stitcher {
 
         /* Set the modified to this file if it's the most recent */
         $this->modified = max($this->modified, filemtime($file));
+        return true;
     }
 
     function addText($text)
