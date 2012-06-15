@@ -73,6 +73,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         $start = Jojo::timer();
         $css = new Jojo_Stitcher();
         $css->getServerCache();
+        $useLess = Jojo::getOption('less', 'no') == 'no' ? false : true;
         switch($file) {
             case 'styles':
                 /* Include Boilerplate css reset */
@@ -82,6 +83,21 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                         $css->addFile(_BASEDIR . '/plugins/jojo_core/css/boilerplate_modernizr.css');
                     }
                 }
+                if ($useLess) {
+                    /* start with the variable files */
+                    if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
+                        $css->addFile(_BASEDIR . '/plugins/jojo_core/external/bootstrap/less/variables.less');
+                    foreach (Jojo::listThemes('css/variables.less') as $themefile) {
+                        $variableFound = $css->addFile($themefile);
+                    }
+                    /* mixins files */
+                    if (Jojo::getOption('tbootstrap_mixins', 'no') == 'yes')
+                        $css->addFile(_BASEDIR . '/plugins/jojo_core/external/bootstrap/less/mixins.less');
+                    foreach (Jojo::listThemes('css/mixins.less') as $themefile) {
+                        $variableFound = $css->addFile($themefile);
+                    }
+                }
+                
                 /* Include css from each plugin */
                 foreach (Jojo::listPlugins('css/style_default.css', 'all', true) as $pluginfile) {
                     $css->addFile($pluginfile);

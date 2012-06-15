@@ -696,7 +696,7 @@ $_options[] = array(
     'id'          => 'less',
     'category'    => 'CSS',
     'label'       => 'Use LessPHP',
-    'description' => 'Whether to use LessPHP and for CSS instead of the standard CSS files.',
+    'description' => 'Whether to use LessPHP and for CSS instead of the standard CSS files. Note must be no to use any of the bootstrap css.',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -707,6 +707,26 @@ $_options[] = array(
     'category'    => 'CSS',
     'label'       => 'Normalize CSS Reset',
     'description' => 'Add normalize.css (reset, media etc) to style.css',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_variables',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Variables',
+    'description' => 'Include Twitter Bootstaps default variables.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_mixins',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Mixins',
+    'description' => 'Include Twitter Bootstaps default mixins.less file',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
