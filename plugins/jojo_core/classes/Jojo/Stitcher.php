@@ -45,7 +45,7 @@ class Jojo_Stitcher {
         }
 
         $handle = fopen($file, "r");
-        $data = filesize($file) > 0 ? fread($handle, filesize($file)) : '';var_dump($data);
+        $data = filesize($file) > 0 ? fread($handle, filesize($file)) : '';
         fclose($handle);
         $this->data .= $data . "\n";
         $this->numfiles++;
