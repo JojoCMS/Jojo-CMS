@@ -662,18 +662,6 @@ $_options[] = array(
 
 /* CSS */
 
-
-
-$_options[] = array(
-    'id'          => 'normalize_cssreset',
-    'category'    => 'CSS',
-    'label'       => 'Normalize CSS Reset',
-    'description' => 'Add normalize.css (reset, media etc) to style.css',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
 $_options[] = array(
     'id'          => 'css',
     'category'    => 'CSS',
@@ -703,6 +691,28 @@ $_options[] = array(
     'default'     => '',
     'options'     => '',
 );
+
+$_options[] = array(
+    'id'          => 'less',
+    'category'    => 'CSS',
+    'label'       => 'Use LessPHP',
+    'description' => 'Whether to use LessPHP and for CSS instead of the standard CSS files.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'normalize_cssreset',
+    'category'    => 'CSS',
+    'label'       => 'Normalize CSS Reset',
+    'description' => 'Add normalize.css (reset, media etc) to style.css',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+
 
 /* Contacts */
 

@@ -180,6 +180,16 @@ class Jojo_Stitcher {
     {
         $timer = Jojo::timer();
         $original = $css;
+        
+        /* if option is set preprocess less css */
+        if (Jojo::getOption('less', 'no') == 'yes') {
+            foreach (Jojo::listPlugins('external/lessphp/lessc.inc.php') as $pluginfile) {
+                require_once($pluginfile);
+                break;
+            }
+            $lc = new lessc();
+            $css = $lc->parse($css);
+        }
 
         require_once(_BASEPLUGINDIR . '/jojo_core/external/csstidy/class.csstidy.php');
         $csstidy = new csstidy();
