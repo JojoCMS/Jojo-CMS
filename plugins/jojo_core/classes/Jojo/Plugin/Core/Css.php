@@ -187,6 +187,11 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes')
                         $css->addFile(_BASEDIR . '/plugins/jojo_core/external/bootstrap/less/component-animations.less');
                     
+                    /* get a pre-responsive file from theme if exists */
+                    foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
+                        $css->addFile($themefile);
+                    }
+                    
                     /* Responsive files */
                     if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
                         $css->addFile(_BASEDIR . '/plugins/jojo_core/external/bootstrap/less/responsive-utilities.less');
