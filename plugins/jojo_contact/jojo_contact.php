@@ -253,7 +253,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
 
         if (!count($errors)) {
-            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $sender_email)) || !$formSend) {
+            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
 
                 /* success */
                 $response = $formSuccessMessage;
