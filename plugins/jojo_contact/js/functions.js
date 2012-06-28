@@ -19,7 +19,7 @@ $(document).ready(function() {
                 url:       'json/jojo_contact_send.php?_='+d.getTime(),        // override for form's 'action' attribute
                 //type:      type        // 'get' or 'post', override for form's 'method' attribute
                 dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type)
-                clearForm: true,       // clear all form fields after successful submit
+                //clearForm: true,       // clear all form fields after successful submit
                 //resetForm: true        // reset the form after successful submit
 
                 // $.ajax options can be used here too, for example:
@@ -63,8 +63,11 @@ function preFlight(formData, jqForm, options) {
 function showResponse(response)  {
     var formid = response.id;
     $('#' + formid + 'message').show().html(response.responsemessage);
-    if (response.sent==true && response.hideonsuccess==true) {
-        $('#' + formid).hide();
+    if (response.sent==true) {
+        $('#' + formid).clearForm();
+        if (response.hideonsuccess==true) {
+            $('#' + formid).hide();
+        }
     }
 }
 
