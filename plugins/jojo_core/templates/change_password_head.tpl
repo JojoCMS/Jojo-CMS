@@ -1,7 +1,7 @@
 <script type="text/javascript" src="js/password-strength.js"></script>
 <script type="text/javascript">
 /* <![CDATA[ */
-function checkme()
+function checkme_changepass()
 {literal}{
   var errors=new Array();
   var i=0;

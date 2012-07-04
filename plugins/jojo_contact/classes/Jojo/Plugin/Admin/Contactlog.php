@@ -34,13 +34,13 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
         $forms = Jojo::selectQuery("SELECT * FROM {form}");
         $logs = Jojo::selectQuery("SELECT * FROM {formsubmission} ORDER BY submitted DESC LIMIT 1000");
         foreach ($logs as &$e) {
-            $e['friendlydate'] = strftime('%c', $e['submitted']);
+            $e['friendlydate'] = strftime('%x %T', $e['submitted']);
             $fields = unserialize($e['content']);
             $message  = '';
             foreach ($fields as $f) {
                 if (isset($f['displayonly'])) { continue; };
                 if ($f['type'] == 'note') { continue; };
-                if ($f['type'] == 'heading') { 
+                if ($f['type'] == 'heading') {
                     $message .=  "\r\n" . $f['value'] . "\r\n";
                     for ($i=0; $i<strlen($f['value']); $i++) {
                         $message .= '-';
@@ -63,13 +63,13 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
 
         return $content;
     }
-    
+
     function exportLogs()
     {
         /* Check for form injection attempts */
         Jojo::noFormInjection();
         if (isset($_POST['form_id'])) {
-            
+
             $selectedlogs = Jojo::selectQuery("SELECT fs.formsubmissionid AS ID, fs.submitted, fs.content, f.form_name FROM {formsubmission} fs LEFT JOIN {form} f ON (fs.form_id=f.form_id) WHERE f.form_id=? AND `success`=1 ORDER BY submitted DESC", array(addslashes($_POST['form_id'])));
             if (!count($selectedlogs)) { return true; }
             $formname = $selectedlogs[0]['form_name'];
@@ -84,7 +84,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
                 unset($selectedlogs[$k]['content']);
                 unset($selectedlogs[$k]['form_name']);
             }
-            
+
             $output = '';
             $c=0;
             foreach($selectedlogs AS $array) {
@@ -101,13 +101,13 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
                 $output .= implode(",", $val_array)."\n";
                 $c++;
             }
-            
+
             header('Content-type: text/csv'."\r\n");
             header('Content-disposition: attachment; filename="' . Jojo::cleanURL($formname) . '.csv"'."\r\n");
             header("Pragma: no-cache"."\r\n");
             header("Expires: 0"."\r\n");
             header("Content-length: ".strlen($output)."\r\n");
-            echo $output;            
+            echo $output;
             exit;
         }
     }

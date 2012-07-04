@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    var d = new Date();
     $('.contact-form').each(function(index) {
         if ($(this).attr('id').length >0) {
             var formid = $(this).attr('id');
@@ -9,15 +10,16 @@ $(document).ready(function() {
                 uploadProgress: function(event, position, total, percentComplete) {
                     if (uploads.length>0) {
                         var percentVal = percentComplete + '%';
+                        $('#' + formid + ' .progress').show();
                         $('#' + formid + ' .progress .bar').width(percentVal)
                         $('#' + formid + ' .progress .percent').html(percentVal);
                     }
                 },
                 success:       showResponse,  // post-submit callback
-                url:       'json/jojo_contact_send.php',        // override for form's 'action' attribute
+                url:       'json/jojo_contact_send.php?_='+d.getTime(),        // override for form's 'action' attribute
                 //type:      type        // 'get' or 'post', override for form's 'method' attribute
                 dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type)
-                //clearForm: true        // clear all form fields after successful submit
+                //clearForm: true,       // clear all form fields after successful submit
                 //resetForm: true        // reset the form after successful submit
 
                 // $.ajax options can be used here too, for example:
@@ -28,14 +30,14 @@ $(document).ready(function() {
             $('#' + formid).validate({
              errorElement: 'span',
              submitHandler: function(form) {
-               $('#'+ formid).ajaxSubmit(options);
+               $(form).ajaxSubmit(options);
+               return false;
              }
             });
         }
         if ($(this).attr('id').length >0 && $("fieldset", this).length>1 && $(this).hasClass('multipage')) {
             setFormTabs($(this).attr('id'));
         }
-        return false;
     });
 });
 
@@ -48,25 +50,24 @@ function preFlight(formData, jqForm, options) {
 
     // here we could return false to prevent the form from being submitted;
     // returning anything other than false will allow the form submit to continue
-    if ($('#form' + formID).valid()) {
-        if ($('#form' + formID + ' .fileupload').length>0) {
-            $('#form' + formID + ' .progress').show();
-        }
-        return true;
-    } else {
+    if (!$('#form' + formID).valid()) {
         $('#form' + formID).validate( {
             errorElement: 'span'
         });
         return false;
     }
+    return true;
 }
 
 // post-submit callback
 function showResponse(response)  {
     var formid = response.id;
     $('#' + formid + 'message').show().html(response.responsemessage);
-    if (response.sent==true && response.hideonsuccess==true) {
-        $('#' + formid).hide();
+    if (response.sent==true) {
+        $('#' + formid).clearForm();
+        if (response.hideonsuccess==true) {
+            $('#' + formid).hide();
+        }
     }
 }
 

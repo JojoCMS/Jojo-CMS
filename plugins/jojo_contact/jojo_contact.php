@@ -253,7 +253,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
 
         if (!count($errors)) {
-            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $sender_email)) || !$formSend) {
+            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
 
                 /* success */
                 $response = $formSuccessMessage;
@@ -476,8 +476,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
      public static function footjs()
      {
-        return '    <script src="http://malsup.github.com/jquery.form.js"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>'."\n";
+        return '    <script src="http://malsup.github.com/jquery.form.js" type="text/javascript"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" type="text/javascript"></script>'."\n";
 
     }
 
