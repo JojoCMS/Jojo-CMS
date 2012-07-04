@@ -2175,7 +2175,7 @@ class Jojo {
             return $uri;
 
         if ($uri == 'admin') {
-            $uri = _ADMIN;
+            $uri = _ADMIN;  
         } else {
             $uri = preg_replace('%(admin/)(.*)%', _ADMIN.'/$2', $uri);
         }
@@ -3112,6 +3112,38 @@ class Jojo {
         }
 
         return $password;
+    }
+    
+    function makeLogin($first, $last)
+    {
+        $first = strtolower($first);
+        $last = strtolower($last);
+        /* try these usernames in order */
+        $logins = array();
+        $logins[] = $first; //john
+        $logins[] = $first.$last; //johnsmith
+        $logins[] = $first.$last[0]; //johns
+        $logins[] = $first[0].$last; //jsmith
+        $logins[] = $first.'.'.$last[0]; //john.s
+        $logins[] = $first[0].'.'.$last; //j.smith
+        $logins[] = $first.'.'.$last; //john.smith
+
+        foreach ($logins as $login) {
+            $user = Jojo::selectRow("SELECT userid FROM {user} WHERE us_login=? AND us_login !=''", $login);
+            if (empty($user['userid'])) {
+                return $login;
+            }
+        }
+        /* all the above combinations are taken - try appending a number instead */
+        for ($i=1; $i<100; $i++) { //if there are 100+ other users with the same name we may need to improve this function
+            foreach ($logins as $login) {
+                $user = Jojo::selectRow("SELECT userid FROM {user} WHERE us_login=?", $login.$i);
+                if (empty($user['userid'])) {
+                    return $login.$i;
+                }
+            }
+        }
+        return false;
     }
 
     /**

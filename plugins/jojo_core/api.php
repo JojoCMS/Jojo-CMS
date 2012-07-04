@@ -193,10 +193,10 @@ $_options[] = array(
     'id'          => 'modernizr',
     'category'    => 'Config',
     'label'       => 'Use Modernizr',
-    'description' => 'Add modernizr script classes to html tag',
+    'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no,custom',
 );
 
 $_options[] = array(
@@ -216,7 +216,7 @@ $_options[] = array(
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
     'default'     => '1.4.4',
-    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4',
+    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2',
 );
 
 $_options[] = array(
@@ -1074,4 +1074,12 @@ $_options[] = array(
     'options'     => ''
 );
 
-
+$_options[] = array(
+    'id'          => 'allow_email_login',
+    'category'    => 'Security',
+    'label'       => 'Allow login with email',
+    'description' => 'If YES, allows users to login with their email address or username.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);

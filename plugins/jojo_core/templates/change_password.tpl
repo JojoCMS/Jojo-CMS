@@ -12,7 +12,7 @@
 
 <div>
   <h3>Change your password</h3>
-  <form method="post" action="{$REQUEST_URI}"  class="standard-form" onsubmit="return checkme()">
+  <form method="post" action="{$REQUEST_URI}"  class="standard-form" onsubmit="return checkme_changepass()">
 
     <label for="oldp">Current Password:</label>
     <input type="password" name="oldp" id="oldp" value="{$oldp}" size="25" /> *<br />

@@ -31,6 +31,7 @@ $query = "
       `td_plugin` varchar(100) NOT NULL default '',
       `td_categorytable` varchar(100) NOT NULL default '',
       `td_categoryfield` varchar(100) NOT NULL default '',
+      `td_m2mcategoryfield` varchar(100) NOT NULL default '',
       `td_rolloverfield` varchar(100) NOT NULL default '',
       `td_filter` enum('yes','no') NOT NULL default 'no',
       `td_orderbyfields` varchar(255) NOT NULL default '',

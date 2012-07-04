@@ -218,6 +218,16 @@ $default_fd['tabledata']['td_categoryfield'] = array(
         'fd_tabname' => "Categories",
     );
 
+// Category field Field
+$default_fd['tabledata']['td_m2mcategoryfield'] = array(
+        'fd_name' => "M2M field",
+        'fd_type' => "text",
+        'fd_size' => "30",
+        'fd_help' => "Enter the name of the column in this table that is the primary Many2Many field.",
+        'fd_order' => "3",
+        'fd_tabname' => "Categories",
+    );
+
 
 /* Grouping Tab */
 
