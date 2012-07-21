@@ -36,6 +36,8 @@ class Jojo_Field_tag extends Jojo_Field
                 $taglist[] = $tagitem['tg_tag'];
             }
             $smarty->assign('taglist', Jojo_Plugin_Jojo_Tags::tagArrayToStr($taglist));
+        } else {
+            $smarty->assign('taglist', '');
         }
         return  $smarty->fetch('admin/tag.tpl');
     }
