@@ -27,6 +27,7 @@ $query = "
         `form_captcha` tinyint(1) NOT NULL default '1',
         `form_fieldsets` tinyint(1) NOT NULL default '1',
         `form_submit` varchar(255) NOT NULL,
+        `form_submit_label` tinyint(1) NOT NULL default '1',
         `form_tracking_code_analytics` text NOT NULL,
         `form_tracking_code` text NOT NULL,
         `form_success_message` text NOT NULL,

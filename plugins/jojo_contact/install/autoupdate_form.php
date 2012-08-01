@@ -111,6 +111,18 @@ $default_fd['form']['form_submit'] = array(
         'fd_order' => $o++,
         'fd_tabname' => 'Details'
     );
+
+// Contact CAPTCHA Field
+$default_fd['form']['form_submit_label'] = array(
+        'fd_name' => "Put submit button label padding in?",
+        'fd_type' => "yesno",
+        'fd_required' => "yes",
+        'fd_default' => "1",
+        'fd_help' => "Do you want a label element put before the submit button? Pick no if you are using placeholder instead of labels for your fields.",
+        'fd_order' => $o++,
+        'fd_tabname' => 'Details'
+    );
+
 $o=0;
 // Success message Field
 $default_fd['form']['form_success_message'] = array(
