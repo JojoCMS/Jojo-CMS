@@ -208,12 +208,16 @@ class Jojo {
                 if (strpos($plugin['name'], '.phar')) {
                     if (file_exists('phar://' . _PLUGINDIR . '/' . $plugin['name'])) {
                         $_plugins[$plugin['name']] = 'phar://' . _PLUGINDIR . '/' . $plugin['name'];
+                    } elseif (defined('_ALTPLUGINDIR') && file_exists(_ALTPLUGINDIR . '/' . $plugin['name'])) {
+                        $_plugins[$plugin['name']] = 'phar://' . _ALTPLUGINDIR . '/' . $plugin['name'];
                     } elseif (file_exists(_BASEPLUGINDIR . '/' . $plugin['name'])) {
                         $_plugins[$plugin['name']] = 'phar://' . _BASEPLUGINDIR . '/' . $plugin['name'];
                     }
                 } else {
                     if (file_exists(_PLUGINDIR . '/' . $plugin['name'])) {
                         $_plugins[$plugin['name']] = _PLUGINDIR . '/' . $plugin['name'];
+                    } elseif (defined('_ALTPLUGINDIR') && file_exists(_ALTPLUGINDIR . '/' . $plugin['name'])) {
+                        $_plugins[$plugin['name']] = _ALTPLUGINDIR . '/' . $plugin['name'];
                     } elseif (file_exists(_BASEPLUGINDIR . '/' . $plugin['name'])) {
                         $_plugins[$plugin['name']] = _BASEPLUGINDIR . '/' . $plugin['name'];
                     }
