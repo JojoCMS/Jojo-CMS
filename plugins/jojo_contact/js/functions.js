@@ -24,7 +24,6 @@ $(document).ready(function() {
 
                 // $.ajax options can be used here too, for example:
                 error: function(){
-                    
                     var submitEl = $('#' + formid + '.submit .button');
                     submitEl.removeAttr('disabled').val(submitEl.data('normalval'));
                     $('#' + formid + 'message').show().html('There has been a failure to communicate. Your request has been stored however and will be attended to shortly');
@@ -38,9 +37,6 @@ $(document).ready(function() {
              }
             });
         }
-        // Store the button's default value for use when submitting
-        var submitEl = $('.submit .button', this);
-        submitEl.data('normalval', submitEl.val());
         if ($(this).attr('id').length >0 && $("fieldset", this).length>1 && $(this).hasClass('multipage')) {
             setFormTabs($(this).attr('id'));
         }
@@ -64,7 +60,7 @@ function preFlight(formData, jqForm, options) {
     }
     // Disable and re-label the button to provide a subtle visual
     // indicator that the form is being processed.
-    $('#form' + formID + ' .submit .button')
+    $('#form' + formID + ' :submit')
         .attr('disabled', 'disabled')
         .val('Loading...');
     return true;
@@ -81,12 +77,11 @@ function showResponse(response)  {
         }
     }
     // Revert the button back to a usable state
-    var submitEl = $('#' + formid + ' .submit .button');
+    var submitEl = $('#' + formid + ' :submit');
     submitEl.removeAttr('disabled').val(submitEl.data('normalval'));
 }
 
 // Tab navigation functions
-
 function showFormTab(formid, tabid) {
     $('#' + formid + ' fieldset').hide();
     $('#' + formid + ' #' + tabid).show();
