@@ -868,12 +868,7 @@ class Jojo {
      */
     static function getFileExtension($file)
     {
-        $ext = explode('.', $file);
-        if (count($ext)) {
-            return strtolower($ext[count($ext)-1]);
-        } else {
-            return '';
-        }
+        return strtolower(pathinfo($file, PATHINFO_EXTENSION));
     }
 
     /**
