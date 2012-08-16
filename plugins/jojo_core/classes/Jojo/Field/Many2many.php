@@ -64,6 +64,7 @@ class Jojo_Field_many2many extends Jojo_Field
 
     function displayedit()
     {
+        global $smarty;
         $itemid = $this->table->getRecordID();
         $tree = new hktree('tree');
 
@@ -95,22 +96,13 @@ class Jojo_Field_many2many extends Jojo_Field
                      Jojo::onlyIf($displayfield,' '.$displayfield.', ').
                     ' display';
         $records = Jojo::selectQuery($query);
-
-        /* Create the html */
-        foreach ($records as $record) {
-            $item = sprintf("<label><input type='checkbox' name='fm_%s_%s' id='fm_%s_%s' value='%s' onchange='fullsave = true;'%s /> %s</label><br />\n",
-                        $this->fd_field,
-                        $record['id'],
-                        $this->fd_field,
-                        $record['id'],
-                        $record['id'],
-                        (in_array($record['id'], $selections) ? ' checked="checked"' : ''),
-                        $record['display']);
-            $tree->addNode($record['id'], $record['parent'], $item);
-        }
-        $output = '<input type="hidden" name="fm_'.$this->fd_field.'" value="1" /> '.$tree->printout_plain();
-
-        return $output;
+        
+        $smarty->assign('fieldname', $this->fd_field);
+        $smarty->assign('readonly', $this->fd_readonly);
+        $smarty->assign('selections', $selections);
+        $smarty->assign('records', $records);
+        
+        return $smarty->fetch('admin/fields/many2many.tpl');
     }
 
 
