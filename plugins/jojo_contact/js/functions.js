@@ -24,6 +24,8 @@ $(document).ready(function() {
 
                 // $.ajax options can be used here too, for example:
                 error: function(){
+                    var submitEl = $('#' + formid + '.submit .button');
+                    submitEl.removeAttr('disabled').val(submitEl.data('normalval'));
                     $('#' + formid + 'message').show().html('There has been a failure to communicate. Your request has been stored however and will be attended to shortly');
                 }
             };
@@ -56,6 +58,11 @@ function preFlight(formData, jqForm, options) {
         });
         return false;
     }
+    // Disable and re-label the button to provide a subtle visual
+    // indicator that the form is being processed.
+    $('#form' + formID + ' :submit')
+        .attr('disabled', 'disabled')
+        .val('Loading...');
     return true;
 }
 
@@ -69,10 +76,12 @@ function showResponse(response)  {
             $('#' + formid).hide();
         }
     }
+    // Revert the button back to a usable state
+    var submitEl = $('#' + formid + ' :submit');
+    submitEl.removeAttr('disabled').val(submitEl.data('normalval'));
 }
 
 // Tab navigation functions
-
 function showFormTab(formid, tabid) {
     $('#' + formid + ' fieldset').hide();
     $('#' + formid + ' #' + tabid).show();
