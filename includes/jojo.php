@@ -244,6 +244,7 @@ $smarty->assign('issecure',         $issecure);
 $smarty->assign('ADMIN',            _ADMIN);
 if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
+$smarty->assign('IS_MOBILE',            Jojo::isMobile());
 
 /* Include plugin api.php's so filters and hooks get added */
 if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
