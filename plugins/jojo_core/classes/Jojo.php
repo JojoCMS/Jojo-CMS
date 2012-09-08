@@ -2415,7 +2415,7 @@ class Jojo {
 
         $version = '';
         $nav = '';
-        $browsers = 'mozilla msie gecko firefox konqueror safari netscape navigator opera mosaic lynx amaya omniweb snoopy';
+        $browsers = 'mozilla msie gecko firefox konqueror safari netscape navigator opera mosaic lynx amaya omniweb snoopy chrome';
         $browsers = explode(' ', $browsers);
 
         $nua = isset($_SERVER['HTTP_USER_AGENT']) ? strToLower( $_SERVER['HTTP_USER_AGENT']) : '';
