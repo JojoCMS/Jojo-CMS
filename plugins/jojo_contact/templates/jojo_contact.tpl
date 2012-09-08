@@ -21,7 +21,7 @@
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
     {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
     {elseif $f.type == 'checkboxes'}<div class="form-field">
-            {foreach from=$f.options key=ck item=fo}<div class="checkbox"><input type="checkbox" class="checkbox{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="{$f.field}" id="{$f.field}_{$ck}" value="{$fo}"{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach} /><label for="{$f.field}_{$ck}">{$fo}</label></div>
+            {foreach from=$f.options key=ck item=fo}<div class="checkbox"><input type="checkbox" class="checkbox{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="{$f.field}[]" id="{$f.field}_{$ck}" value="{$fo}"{if $f.valuearr}{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach}{elseif $f.value == 'checked'} checked="checked"{/if} /><label for="{$f.field}_{$ck}">{$fo}</label></div>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
             </div>
     {elseif $f.type == 'radio'}<div class="form-field">
