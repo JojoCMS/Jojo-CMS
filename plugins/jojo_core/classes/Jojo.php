@@ -657,7 +657,7 @@ class Jojo {
     {
         Jojo::_connectToDB();
         global $_db;
-        
+
         /* "TYPE=InnoDB" syntax is deprecated and breaks some versions of MySQL. Use "ENGINE=InnoDB" instead. */
         $createQuery = preg_replace('/TYPE\\s*=\\s*(innodb|myisam)/i', 'ENGINE=$1', $createQuery);
 
@@ -915,198 +915,211 @@ class Jojo {
         $extension = Jojo::getFileExtension($filename);
 
         $mime = array(
-                    '' => 'application/octet-stream',
-                    '323' => 'text/h323',
-                    'acx' => 'application/internet-property-stream',
-                    'ai' => 'application/postscript',
-                    'aif' => 'audio/x-aiff',
-                    'aifc' => 'audio/x-aiff',
-                    'aiff' => 'audio/x-aiff',
-                    'asf' => 'video/x-ms-asf',
-                    'asr' => 'video/x-ms-asf',
-                    'asx' => 'video/x-ms-asf',
-                    'au' => 'audio/basic',
-                    'avi' => 'video/x-msvideo',
-                    'axs' => 'application/olescript',
-                    'bas' => 'text/plain',
-                    'bcpio' => 'application/x-bcpio',
-                    'bin' => 'application/octet-stream',
-                    'bmp' => 'image/bmp',
-                    'c' => 'text/plain',
-                    'cat' => 'application/vnd.ms-pkiseccat',
-                    'cdf' => 'application/x-cdf',
-                    'cer' => 'application/x-x509-ca-cert',
-                    'class' => 'application/octet-stream',
-                    'clp' => 'application/x-msclip',
-                    'cmx' => 'image/x-cmx',
-                    'cod' => 'image/cis-cod',
-                    'cpio' => 'application/x-cpio',
-                    'crd' => 'application/x-mscardfile',
-                    'crl' => 'application/pkix-crl',
-                    'crt' => 'application/x-x509-ca-cert',
-                    'csh' => 'application/x-csh',
-                    'css' => 'text/css',
-                    'dcr' => 'application/x-director',
-                    'der' => 'application/x-x509-ca-cert',
-                    'dir' => 'application/x-director',
-                    'dll' => 'application/x-msdownload',
-                    'dms' => 'application/octet-stream',
-                    'doc' => 'application/msword',
-                    'dot' => 'application/msword',
-                    'dvi' => 'application/x-dvi',
-                    'dxr' => 'application/x-director',
-                    'eps' => 'application/postscript',
-                    'etx' => 'text/x-setext',
-                    'evy' => 'application/envoy',
-                    'exe' => 'application/octet-stream',
-                    'fif' => 'application/fractals',
-                    'flr' => 'x-world/x-vrml',
-                    'gif' => 'image/gif',
-                    'gtar' => 'application/x-gtar',
-                    'gz' => 'application/x-gzip',
-                    'h' => 'text/plain',
-                    'hdf' => 'application/x-hdf',
-                    'hlp' => 'application/winhlp',
-                    'hqx' => 'application/mac-binhex40',
-                    'hta' => 'application/hta',
-                    'htc' => 'text/x-component',
-                    'htm' => 'text/html',
-                    'html' => 'text/html',
-                    'htt' => 'text/webviewhtml',
-                    'ico' => 'image/x-icon',
-                    'ief' => 'image/ief',
-                    'iii' => 'application/x-iphone',
-                    'ins' => 'application/x-internet-signup',
-                    'isp' => 'application/x-internet-signup',
-                    'jfif' => 'image/pipeg',
-                    'jpe' => 'image/jpeg',
-                    'jpeg' => 'image/jpeg',
-                    'jpg' => 'image/jpeg',
-                    'js' => 'application/x-javascript',
-                    'latex' => 'application/x-latex',
-                    'lha' => 'application/octet-stream',
-                    'lsf' => 'video/x-la-asf',
-                    'lsx' => 'video/x-la-asf',
-                    'lzh' => 'application/octet-stream',
-                    'm13' => 'application/x-msmediaview',
-                    'm14' => 'application/x-msmediaview',
-                    'm3u' => 'audio/x-mpegurl',
-                    'man' => 'application/x-troff-man',
-                    'mdb' => 'application/x-msaccess',
-                    'me' => 'application/x-troff-me',
-                    'mht' => 'message/rfc822',
-                    'mhtml' => 'message/rfc822',
-                    'mid' => 'audio/mid',
-                    'mny' => 'application/x-msmoney',
-                    'mov' => 'video/quicktime',
-                    'movie' => 'video/x-sgi-movie',
-                    'mp2' => 'video/mpeg',
-                    'mp3' => 'audio/mpeg',
-                    'mpa' => 'video/mpeg',
-                    'mpe' => 'video/mpeg',
-                    'mpeg' => 'video/mpeg',
-                    'mpg' => 'video/mpeg',
-                    'mpp' => 'application/vnd.ms-project',
-                    'mpv2' => 'video/mpeg',
-                    'ms' => 'application/x-troff-ms',
-                    'mvb' => 'application/x-msmediaview',
-                    'nws' => 'message/rfc822',
-                    'oda' => 'application/oda',
-                    'p10' => 'application/pkcs10',
-                    'p12' => 'application/x-pkcs12',
-                    'p7b' => 'application/x-pkcs7-certificates',
-                    'p7c' => 'application/x-pkcs7-mime',
-                    'p7m' => 'application/x-pkcs7-mime',
-                    'p7r' => 'application/x-pkcs7-certreqresp',
-                    'p7s' => 'application/x-pkcs7-signature',
-                    'pbm' => 'image/x-portable-bitmap',
-                    'pdf' => 'application/pdf',
-                    'pfx' => 'application/x-pkcs12',
-                    'pgm' => 'image/x-portable-graymap',
-                    'pko' => 'application/ynd.ms-pkipko',
-                    'pma' => 'application/x-perfmon',
-                    'pmc' => 'application/x-perfmon',
-                    'pml' => 'application/x-perfmon',
-                    'pmr' => 'application/x-perfmon',
-                    'pmw' => 'application/x-perfmon',
-                    'pnm' => 'image/x-portable-anymap',
-                    'pot' => 'application/vnd.ms-powerpoint',
-                    'ppm' => 'image/x-portable-pixmap',
-                    'pps' => 'application/vnd.ms-powerpoint',
-                    'ppt' => 'application/vnd.ms-powerpoint',
-                    'prf' => 'application/pics-rules',
-                    'ps' => 'application/postscript',
-                    'pub' => 'application/x-mspublisher',
-                    'qt' => 'video/quicktime',
-                    'ra' => 'audio/x-pn-realaudio',
-                    'ram' => 'audio/x-pn-realaudio',
-                    'ras' => 'image/x-cmu-raster',
-                    'rgb' => 'image/x-rgb',
-                    'rmi' => 'audio/mid',
-                    'roff' => 'application/x-troff',
-                    'rtf' => 'application/rtf',
-                    'rtx' => 'text/richtext',
-                    'scd' => 'application/x-msschedule',
-                    'sct' => 'text/scriptlet',
-                    'setpay' => 'application/set-payment-initiation',
-                    'setreg' => 'application/set-registration-initiation',
-                    'sh' => 'application/x-sh',
-                    'shar' => 'application/x-shar',
-                    'sit' => 'application/x-stuffit',
-                    'snd' => 'audio/basic',
-                    'spc' => 'application/x-pkcs7-certificates',
-                    'spl' => 'application/futuresplash',
-                    'src' => 'application/x-wais-source',
-                    'sst' => 'application/vnd.ms-pkicertstore',
-                    'stl' => 'application/vnd.ms-pkistl',
-                    'stm' => 'text/html',
-                    'svg' => 'image/svg+xml',
-                    'sv4cpio' => 'application/x-sv4cpio',
-                    'sv4crc' => 'application/x-sv4crc',
-                    'swf' => 'application/x-shockwave-flash',
-                    't' => 'application/x-troff',
-                    'tar' => 'application/x-tar',
-                    'tcl' => 'application/x-tcl',
-                    'tex' => 'application/x-tex',
-                    'texi' => 'application/x-texinfo',
-                    'texinfo' => 'application/x-texinfo',
-                    'tgz' => 'application/x-compressed',
-                    'tif' => 'image/tiff',
-                    'tiff' => 'image/tiff',
-                    'tr' => 'application/x-troff',
-                    'trm' => 'application/x-msterminal',
-                    'tsv' => 'text/tab-separated-values',
-                    'txt' => 'text/plain',
-                    'uls' => 'text/iuls',
-                    'ustar' => 'application/x-ustar',
-                    'vcf' => 'text/x-vcard',
-                    'vrml' => 'x-world/x-vrml',
-                    'wav' => 'audio/x-wav',
-                    'wcm' => 'application/vnd.ms-works',
-                    'wdb' => 'application/vnd.ms-works',
-                    'wks' => 'application/vnd.ms-works',
-                    'wmf' => 'application/x-msmetafile',
-                    'wps' => 'application/vnd.ms-works',
-                    'wri' => 'application/x-mswrite',
-                    'wrl' => 'x-world/x-vrml',
-                    'wrz' => 'x-world/x-vrml',
-                    'wsdl'=> 'text/xml',
-                    'xaf' => 'x-world/x-vrml',
-                    'xbm' => 'image/x-xbitmap',
-                    'xla' => 'application/vnd.ms-excel',
-                    'xlc' => 'application/vnd.ms-excel',
-                    'xlm' => 'application/vnd.ms-excel',
-                    'xls' => 'application/vnd.ms-excel',
-                    'xlt' => 'application/vnd.ms-excel',
-                    'xlw' => 'application/vnd.ms-excel',
-                    'xml' => 'text/xml',
-                    'xof' => 'x-world/x-vrml',
-                    'xpm' => 'image/x-xpixmap',
-                    'xwd' => 'image/x-xwindowdump',
-                    'z' => 'application/x-compress',
-                    'zip' => 'application/zip'
-                );
-        return isset($mime[$extension]) ? $mime[$extension] : $mime[''];
+            '' => 'application/octet-stream',
+            '323' => 'text/h323',
+            'acx' => 'application/internet-property-stream',
+            'ai' => 'application/postscript',
+            'aif' => 'audio/x-aiff',
+            'aifc' => 'audio/x-aiff',
+            'aiff' => 'audio/x-aiff',
+            'asf' => 'video/x-ms-asf',
+            'asr' => 'video/x-ms-asf',
+            'asx' => 'video/x-ms-asf',
+            'au' => 'audio/basic',
+            'avi' => 'video/x-msvideo',
+            'axs' => 'application/olescript',
+            'bas' => 'text/plain',
+            'bcpio' => 'application/x-bcpio',
+            'bin' => 'application/octet-stream',
+            'bmp' => 'image/bmp',
+            'c' => 'text/plain',
+            'cat' => 'application/vnd.ms-pkiseccat',
+            'cdf' => 'application/x-cdf',
+            'cer' => 'application/x-x509-ca-cert',
+            'class' => 'application/octet-stream',
+            'clp' => 'application/x-msclip',
+            'cmx' => 'image/x-cmx',
+            'cod' => 'image/cis-cod',
+            'cpio' => 'application/x-cpio',
+            'crd' => 'application/x-mscardfile',
+            'crl' => 'application/pkix-crl',
+            'crt' => 'application/x-x509-ca-cert',
+            'csh' => 'application/x-csh',
+            'css' => 'text/css',
+            'dcr' => 'application/x-director',
+            'der' => 'application/x-x509-ca-cert',
+            'dir' => 'application/x-director',
+            'dll' => 'application/x-msdownload',
+            'dms' => 'application/octet-stream',
+            'doc' => 'application/msword',
+            'dot' => 'application/msword',
+            'dvi' => 'application/x-dvi',
+            'dxr' => 'application/x-director',
+            'eps' => 'application/postscript',
+            'etx' => 'text/x-setext',
+            'evy' => 'application/envoy',
+            'exe' => 'application/octet-stream',
+            'fif' => 'application/fractals',
+            'flr' => 'x-world/x-vrml',
+            'gif' => 'image/gif',
+            'gtar' => 'application/x-gtar',
+            'gz' => 'application/x-gzip',
+            'h' => 'text/plain',
+            'hdf' => 'application/x-hdf',
+            'hlp' => 'application/winhlp',
+            'hqx' => 'application/mac-binhex40',
+            'hta' => 'application/hta',
+            'htc' => 'text/x-component',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+            'htt' => 'text/webviewhtml',
+            'ico' => 'image/x-icon',
+            'ief' => 'image/ief',
+            'iii' => 'application/x-iphone',
+            'ins' => 'application/x-internet-signup',
+            'isp' => 'application/x-internet-signup',
+            'jfif' => 'image/pipeg',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'js' => 'application/x-javascript',
+            'latex' => 'application/x-latex',
+            'lha' => 'application/octet-stream',
+            'lsf' => 'video/x-la-asf',
+            'lsx' => 'video/x-la-asf',
+            'lzh' => 'application/octet-stream',
+            'm13' => 'application/x-msmediaview',
+            'm14' => 'application/x-msmediaview',
+            'm3u' => 'audio/x-mpegurl',
+            'man' => 'application/x-troff-man',
+            'mdb' => 'application/x-msaccess',
+            'me' => 'application/x-troff-me',
+            'mht' => 'message/rfc822',
+            'mhtml' => 'message/rfc822',
+            'mid' => 'audio/mid',
+            'mny' => 'application/x-msmoney',
+            'mov' => 'video/quicktime',
+            'movie' => 'video/x-sgi-movie',
+            'mp2' => 'video/mpeg',
+            'mp3' => 'audio/mpeg',
+            'mpa' => 'video/mpeg',
+            'mpe' => 'video/mpeg',
+            'mpeg' => 'video/mpeg',
+            'mpg' => 'video/mpeg',
+            'mpp' => 'application/vnd.ms-project',
+            'mpv2' => 'video/mpeg',
+            'ms' => 'application/x-troff-ms',
+            'mvb' => 'application/x-msmediaview',
+            'nws' => 'message/rfc822',
+            'oda' => 'application/oda',
+            'p10' => 'application/pkcs10',
+            'p12' => 'application/x-pkcs12',
+            'p7b' => 'application/x-pkcs7-certificates',
+            'p7c' => 'application/x-pkcs7-mime',
+            'p7m' => 'application/x-pkcs7-mime',
+            'p7r' => 'application/x-pkcs7-certreqresp',
+            'p7s' => 'application/x-pkcs7-signature',
+            'pbm' => 'image/x-portable-bitmap',
+            'pdf' => 'application/pdf',
+            'pfx' => 'application/x-pkcs12',
+            'pgm' => 'image/x-portable-graymap',
+            'pko' => 'application/ynd.ms-pkipko',
+            'pma' => 'application/x-perfmon',
+            'pmc' => 'application/x-perfmon',
+            'pml' => 'application/x-perfmon',
+            'pmr' => 'application/x-perfmon',
+            'pmw' => 'application/x-perfmon',
+            'pnm' => 'image/x-portable-anymap',
+            'pot' => 'application/vnd.ms-powerpoint',
+            'ppm' => 'image/x-portable-pixmap',
+            'pps' => 'application/vnd.ms-powerpoint',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            'prf' => 'application/pics-rules',
+            'ps' => 'application/postscript',
+            'pub' => 'application/x-mspublisher',
+            'qt' => 'video/quicktime',
+            'ra' => 'audio/x-pn-realaudio',
+            'ram' => 'audio/x-pn-realaudio',
+            'ras' => 'image/x-cmu-raster',
+            'rgb' => 'image/x-rgb',
+            'rmi' => 'audio/mid',
+            'roff' => 'application/x-troff',
+            'rtf' => 'application/rtf',
+            'rtx' => 'text/richtext',
+            'scd' => 'application/x-msschedule',
+            'sct' => 'text/scriptlet',
+            'setpay' => 'application/set-payment-initiation',
+            'setreg' => 'application/set-registration-initiation',
+            'sh' => 'application/x-sh',
+            'shar' => 'application/x-shar',
+            'sit' => 'application/x-stuffit',
+            'snd' => 'audio/basic',
+            'spc' => 'application/x-pkcs7-certificates',
+            'spl' => 'application/futuresplash',
+            'src' => 'application/x-wais-source',
+            'sst' => 'application/vnd.ms-pkicertstore',
+            'stl' => 'application/vnd.ms-pkistl',
+            'stm' => 'text/html',
+            'svg' => 'image/svg+xml',
+            'sv4cpio' => 'application/x-sv4cpio',
+            'sv4crc' => 'application/x-sv4crc',
+            'swf' => 'application/x-shockwave-flash',
+            't' => 'application/x-troff',
+            'tar' => 'application/x-tar',
+            'tcl' => 'application/x-tcl',
+            'tex' => 'application/x-tex',
+            'texi' => 'application/x-texinfo',
+            'texinfo' => 'application/x-texinfo',
+            'tgz' => 'application/x-compressed',
+            'tif' => 'image/tiff',
+            'tiff' => 'image/tiff',
+            'tr' => 'application/x-troff',
+            'trm' => 'application/x-msterminal',
+            'tsv' => 'text/tab-separated-values',
+            'ttf' => 'application/x-font-ttf',
+            'txt' => 'text/plain',
+            'uls' => 'text/iuls',
+            'ustar' => 'application/x-ustar',
+            'vcf' => 'text/x-vcard',
+            'vrml' => 'x-world/x-vrml',
+            'wav' => 'audio/x-wav',
+            'wcm' => 'application/vnd.ms-works',
+            'wdb' => 'application/vnd.ms-works',
+            'wks' => 'application/vnd.ms-works',
+            'wmf' => 'application/x-msmetafile',
+            'woff' => 'application/x-font-woff',
+            'wps' => 'application/vnd.ms-works',
+            'wri' => 'application/x-mswrite',
+            'wrl' => 'x-world/x-vrml',
+            'wrz' => 'x-world/x-vrml',
+            'wsdl'=> 'text/xml',
+            'xaf' => 'x-world/x-vrml',
+            'xbm' => 'image/x-xbitmap',
+            'xla' => 'application/vnd.ms-excel',
+            'xlc' => 'application/vnd.ms-excel',
+            'xlm' => 'application/vnd.ms-excel',
+            'xls' => 'application/vnd.ms-excel',
+            'xlt' => 'application/vnd.ms-excel',
+            'xlw' => 'application/vnd.ms-excel',
+            'xml' => 'text/xml',
+            'xof' => 'x-world/x-vrml',
+            'xpm' => 'image/x-xpixmap',
+            'xwd' => 'image/x-xwindowdump',
+            'z' => 'application/x-compress',
+            'zip' => 'application/zip'
+        );
+        if (isset($mime[$extension])) {
+            return $mime[$extension];
+        }
+        // If we can't find it using the array above, see if the magic file can tell us
+        if (file_exists($filename)) {
+            $finfo = new finfo(FILEINFO_MIME);
+            $type = $finfo->file($filename);
+            if ($type) {
+                return $type;
+            }
+        }
+        return '';
     }
 
     static function getMySQLType($table, $field) {
@@ -1334,7 +1347,7 @@ class Jojo {
         $nextasset = Jojo::semiRand(0, $n, $matches[1]);
         return 'url(' . $ASSETS[$nextasset] . '/' . $matches[1] . ')';
     }
-    
+
     /**
      * Adds one or more CSS files to be merged with styles.css
      *
@@ -1377,7 +1390,7 @@ class Jojo {
         }
         /* allow plugins to override the value of an option */
         $value = Jojo::applyFilter('get_option', $value, array($name, $default));
-        
+
         return $value;
     }
 
@@ -1751,7 +1764,7 @@ class Jojo {
         }
 
         $result = $filepath;
-        
+
         if (_DEBUG) {
         	return $result.'?r='.rand(1000,10000);
         }
@@ -1956,7 +1969,7 @@ class Jojo {
                     $placeholders = implode(', ', $placeholders);
 
                     $res = Jojo::selectQuery('SELECT pageid, pg_url FROM {page} WHERE pg_link = ? AND pg_url IN ('.$placeholders.') ORDER BY LENGTH(pg_url) DESC', $values);
- 
+
                     if (isset($res[0]['pageid']) && count($res) == 1 ) {
                         if ($getall) {
                             $allmatches[] =  $res[0]['pageid'];
@@ -2170,7 +2183,7 @@ class Jojo {
             return $uri;
 
         if ($uri == 'admin') {
-            $uri = _ADMIN;  
+            $uri = _ADMIN;
         } else {
             $uri = preg_replace('%(admin/)(.*)%', _ADMIN.'/$2', $uri);
         }
@@ -2675,7 +2688,7 @@ class Jojo {
                 exit;
             }
         }
-        
+
         /* Log the message */
         if (!class_exists('Jojo_Eventlog')) require_once(_BASEDIR.'/plugins/jojo_core/classes/Jojo/Eventlog.php');
         $log             = new Jojo_Eventlog();
@@ -2736,14 +2749,14 @@ class Jojo {
                 $body.= "Content-Transfer-Encoding: 7bit\n\n";
                 $body.= $message;
                 $body.= "\n\n";
-                
+
                 # Add in HTML version
                 $body.= "--$mime_boundary\n";
                 $body.= "Content-Type: text/html; charset=\"UTF-8\"\n";
                 $body.= "Content-Transfer-Encoding: 7bit\n\n";
                 $body.= $htmlmessage;
                 $body.= "\n\n";
-                
+
                 # End email
                 $body.= "--$mime_boundary--\n"; # <-- Notice trailing --, required to close email body for mime's
                 $message = $body;
@@ -3108,7 +3121,7 @@ class Jojo {
 
         return $password;
     }
-    
+
     function makeLogin($first, $last)
     {
         $first = strtolower($first);
@@ -3234,40 +3247,39 @@ class Jojo {
         return $languagedata;
     }
 
-/* Get currently selected page and step back up through parents to build a current section/sub pages array */
-function getSelectedPages($pageid, $root=0) {
-    if (!$pageid) {
-        return array();
+    /* Get currently selected page and step back up through parents to build a current section/sub pages array */
+    function getSelectedPages($pageid, $root=0) {
+        if (!$pageid) {
+            return array();
+        }
+        $mldata = Jojo::getMultiLanguageData();
+
+        /* Cache the page parents */
+        static $_pageParent;
+        if (!is_array($_pageParent)) {
+           $query = "SELECT pageid, pg_parent
+                       FROM {page}";
+           $_pageParent = Jojo::selectAssoc($query);
+        }
+
+        /* Start with the current page */
+        $selectedPages = array($pageid);
+        $depth = 0;
+
+        while ( !in_array($selectedPages[0], $mldata['roots']) && ($selectedPages[0] != 0) && ($depth < 10)) {
+           /* Find the parent of this iteration's top page */
+           if (!isset($_pageParent[$selectedPages[0]])) {
+               return $selectedPages;
+           }
+           $pg_parent = $_pageParent[$selectedPages[0]];
+
+           /* Add new parent to top of array and move others down */
+           array_unshift($selectedPages, $pg_parent);
+           $depth ++;
+        }
+        return $selectedPages;
     }
-    $mldata = Jojo::getMultiLanguageData();
 
-    /* Cache the page parents */
-    static $_pageParent;
-    if (!is_array($_pageParent)) {
-       $query = "SELECT
-                       pageid, pg_parent
-                     FROM
-                      {page}";
-       $_pageParent = Jojo::selectAssoc($query);
-    }
-
-    /* Start with the current page */
-    $selectedPages = array($pageid);
-    $depth = 0;
-
-    while ( !in_array($selectedPages[0], $mldata['roots']) && ($selectedPages[0] != 0) && ($depth < 10)) {
-       /* Find the parent of this iteration's top page */
-       if (!isset($_pageParent[$selectedPages[0]])) {
-           return $selectedPages;
-       }
-       $pg_parent = $_pageParent[$selectedPages[0]];
-
-       /* Add new parent to top of array and move others down */
-       array_unshift($selectedPages, $pg_parent);
-       $depth ++;
-    }
-    return $selectedPages;
-}
     /*
      * This function prevents content from being cached, regardless of other settings within Jojo.
      * Whenever code is executed that outputs content that should not be cached, run Jojo::noCache(true);
@@ -3339,8 +3351,8 @@ function getSelectedPages($pageid, $root=0) {
             $rss .= "<item>\n";
             $rss .= "<title>" . Jojo::xmlEscape($i['title']) . "</title>\n";
             $rss .= "<description>" . Jojo::xmlEscape($i['body']) . "</description>\n";
-            $rss .= $i['author'] ? "<author>" . Jojo::xmlEscape($i['author']) . "</author>\n" : '';            
-            $rss .= $i['category'] ? "<category>" . Jojo::xmlEscape($i['category']) . "</category>\n" : '';            
+            $rss .= $i['author'] ? "<author>" . Jojo::xmlEscape($i['author']) . "</author>\n" : '';
+            $rss .= $i['category'] ? "<category>" . Jojo::xmlEscape($i['category']) . "</category>\n" : '';
             if ($image) {
                 $rss .= $i['imageurl'] && $i['imagedata'] ? '<enclosure url="' . $i['imageurl'] . '" length="' . $i['imagedata']['size'] . '" type="' . ( isset($i['imagedata']['mime']) ? $i['imagedata']['mime'] : 'image/jpeg' ) . '" />' . "\n" : '';
             }
@@ -3361,7 +3373,7 @@ function getSelectedPages($pageid, $root=0) {
         $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'Jojo::convertEntity4XML', $data);
         $xmldata = !$specialchars ?  str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', str_replace('&', '&amp;', $xmldata)))) : str_replace('&amp;#', '&#', str_replace('&', '&amp;', $xmldata));
         return $xmldata;
-        
+
     }
 
     /* Swap HTML named entity with its numeric equivalent. If the entity
@@ -3631,6 +3643,6 @@ function getSelectedPages($pageid, $root=0) {
         foreach ($css as $style) {
             $html = str_replace('<' . $style['tag'], '<' . $style['tag'] . ' style="' . $style['style'] . '"', $html);
         }
-        return $html;        
+        return $html;
     }
 }
