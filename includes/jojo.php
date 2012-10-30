@@ -263,7 +263,7 @@ if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
     $all = preg_replace('#\$_provides\[\'pluginClasses\'\](.*);#Ums', '', $all);
     $all = preg_replace('#/\*(.*)\*/#Ums', '', $all);
     $all = preg_replace('#\$_options\[\](.*);#Ums', '', $all);
-    $all = preg_replace('#\n(\n)+#', "\n", $all);
+    //$all = preg_replace('#\n(\n)+#', "\n", $all);
 
     /* Cache all table exists calls */
     $all = preg_replace_callback('#Jojo::tableExists\(\'([a-z0-9_]*)\'\)#Ums',
