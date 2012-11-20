@@ -43,7 +43,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             $searchtype = Jojo::getFormData('type', isset($_SESSION['jojo_search_type']) ? $_SESSION['jojo_search_type'] : '');
         }
         $smarty->assign('searchtype', $searchtype);
-        
+
         /* Get Search Language */
         $language = Jojo::getFormData('l', isset($_SESSION['jojo_search_language']) ? $_SESSION['jojo_search_language'] : '');
         $smarty->assign('language', $language);
@@ -168,7 +168,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         if ($q) {
 
             if (Jojo::getOption('search_urlquery', 'url')=='query' || !preg_match('/^([a-zA-Z0-9 -]*)$/', $q)) {
-                return _SITEURL . '/' . $prefix . 'search/?q=' . urlencode($q);
+                return _SITEURL . '/' . $prefix . 'search/?q=' . urlencode($q) . ($searchtype ? '&type=' . $searchtype : '');
             }
 
             /* Remove dashs from url rewriting */
