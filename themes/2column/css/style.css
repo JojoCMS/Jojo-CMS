@@ -1,27 +1,10 @@
-/*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
-*/
-body{color:#000;background:#FFF;}
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
-table{border-collapse:collapse;border-spacing:0;}
-fieldset,img{border:0;}
-address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
-li{list-style:none;}caption,th{text-align:left;}
-h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
-q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup,sub{line-height:-1px;vertical-align:text-top;}sub{vertical-align:text-bottom;}input, textarea, select{font-family:inherit;font-size:inherit;font-weight:inherit;}
-
 /* general styles */
 body {
-  text-align: center;
   font-family: Verdana, arial, sans-serif;
   background: #889;
 }
 
 body, td {
-  font-size: 1em;
   color: #222;
 }
 
@@ -48,66 +31,77 @@ a:hover {
 /* layout */
 
 #wrap {
-  margin: 10px auto;
-  text-align: left;
   background: #fff;
-  width: 950px;
 }
 
-#header {
-  clear: both;
-  padding: 10px;
-  background: #ffffee;  
-  border: 1px solid #ffd;
-  text-align: center;
-  font-size: 2em;
-  font-style: italic;
+header {
+  background: #ffffee;
 }
 
-#menu {
-  clear: both;
-  padding: 10px;
-  background: #eeffff;  
-  border: 1px solid #dff;
-  text-align: center;
+#logo {
+  border: 1px solid #CCCCCC;
+  padding: 5px;
+  display: block;
 }
 
-#menu ul {
-  
+nav {
+  background: #eeffff;
 }
 
-#menu ul li {
+nav ul li {
   float: left;
   list-style-type: none;
 }
 
-#menu ul li a {
-  display: block;
+#menu {
+  border: 1px solid #CCCCCC;
+  display: table;
+  width: 100%;
+  padding: 0;
+  margin: 5px 0;
+}
+
+#menu li {
+  display: table-cell;
+}
+
+#menu li a {
   padding: 3px 10px;
 }
 
-#sidebar {
-  float: right;
-  width: 178px !important;
-  width: 198px;
-  padding: 10px;
-  background: #eeeeff;  
-  border: 1px solid #ddf;
+#container {
+  background: #eeeeff;
 }
 
 #main {
-  float: left;
-  width: 728px !important;
-  width: 748px;
-  padding: 10px;
+  border: 1px solid #CCCCCC;
+  padding: 5px;
   background: #eeffee;
-  border: 1px solid #dfd;
 }
 
-#footer {
-  clear: both;
-  padding: 10px;
-  background: #fff5f5;  
-  border: 1px solid #fee;
+#sidebar {
+  border: 1px solid #CCCCCC;
+  padding: 5px;
+  background: #eeeeff;
+}
+
+footer {
+  background: #fff5f5;
   text-align: center;
+}
+
+footer nav {
+  border: 1px solid #CCCCCC;
+  padding: 5px;
+  background: #eeffee;
+}
+
+footer nav a {
+  border-left: 1px solid #CCCCCC;
+  padding: 0 10px;
+  line-height: 100%;
+}
+
+footer nav a.first-child {
+  border-left: none;
 }
