@@ -3373,7 +3373,10 @@ class Jojo {
         $xmldata  = preg_replace_callback('/&([a-zA-Z][a-zA-Z0-9]+);/', 'Jojo::convertEntity4XML', $data);
         $xmldata = !$specialchars ?  str_replace('<', '&lt;', str_replace('>', '&gt;', str_replace('"', '&quot;', str_replace('&', '&amp;', $xmldata)))) : str_replace('&amp;#', '&#', str_replace('&', '&amp;', $xmldata));
         return $xmldata;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fe43de682b3ce6e877e8e2880f28ff8851585258
     }
 
     /* Swap HTML named entity with its numeric equivalent. If the entity

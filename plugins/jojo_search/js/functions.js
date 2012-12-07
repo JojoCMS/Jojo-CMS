@@ -1,16 +1,16 @@
 $(document).ready(function () {
-    $('#search #q')
-        .bind('focus', function() {
-            $('#search #q').val($('#search #q').val() == 'Search' ? '' : $('#search #q').val());
+    $('.search .q').each( function(index) {
+        $(this).bind('focus', function() {
+            $(this).val($(this).val() == 'Search' ? '' : $(this).val()).css('font-style', 'normal');
         })
         .bind('blur', function() {
-            $('#search #q').val($('#search #q').val() == '' ? 'Search' : $('#search #q').val());
+            $(this).val($(this).val() == '' ? 'Search' : $(this).val());
         })
         .trigger('blur')
         .bind('keypress', function(e) {
                 if (e.keyCode == 13) {
-                    $('#search').submit();
+                    $(this).parent().submit();
                 }
-        })
-        ;
+        });
+    });
 });
