@@ -512,8 +512,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                     $articletree->addNode('p' . $p, $parent, $nodetitle, $url);
                 }
             }
-            /* Add RSS link for the plugin page */
-           $articletree->addNode('rss', $parent, $i['title'] . ' RSS Feed', $indexurl . 'rss/');
+            if ($i['rsslink']) {
+                /* Add RSS link for the plugin page */
+                $articletree->addNode('rss', $parent, $i['title'] . ' RSS Feed', $indexurl . 'rss/');
+            }
 
             /* Add to the sitemap array */
             if ($_INPLACE) {
@@ -790,7 +792,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $htmllanguage =  $mldata['sectiondata'][Jojo::getSectionRoot($article['pageid'])]['lc_defaultlang'];
             Jojo::updateQuery("UPDATE {article} SET `ar_htmllang`=? WHERE `articleid`=?", array($htmllanguage, $id));
         }
-        
+
         Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
         return true;
     }

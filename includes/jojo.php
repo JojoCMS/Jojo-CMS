@@ -241,6 +241,7 @@ $smarty->assign('NONSECUREURL',     _NONSECUREURL);
 $smarty->assign('RELATIVE_URL',     _RELATIVE_URL);
 $smarty->assign('issecure',         $issecure);
 $smarty->assign('ADMIN',            _ADMIN);
+$smarty->assign('SITEFOLDER',       _SITEFOLDER);
 if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
 
