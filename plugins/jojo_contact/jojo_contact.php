@@ -174,7 +174,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         if(!count($errors)){
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
-            $errors = $validationReturn[0];
+            $errors = $validationReturn;
         }
 
         unset($field);
