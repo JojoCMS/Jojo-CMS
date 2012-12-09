@@ -270,6 +270,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'customhead',
+    'category'    => 'Config',
+    'label'       => 'Global customhead',
+    'description' => 'Anything added here will be added to the end of the document head on all pages',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => '',
+);
+
+$_options[] = array(
     'id'          => 'multilanguage',
     'category'    => 'Config',
     'label'       => 'Multilanguage',

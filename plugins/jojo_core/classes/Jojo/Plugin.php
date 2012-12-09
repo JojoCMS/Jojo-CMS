@@ -91,7 +91,7 @@ class Jojo_Plugin {
         $result['followfrom']       = isset($this->page["pg_followfrom"]) && ($this->page["pg_followfrom"] == 'no') ? false : true;
         $result['javascript']        = '';
         $result['css']                 = '';
-        $result['head']               = isset($this->page["pg_head"]) ? $this->page["pg_head"] : '';
+        $result['head']               = Jojo::getOption('customhead', '') . (isset($this->page["pg_head"]) ? $this->page["pg_head"] : '');
         $result['ogtags']            = array();
         $result = Jojo::applyFilter('jojo_plugin:result', $result);
 
