@@ -156,6 +156,9 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
     static function getComments($itemid, $plugin, $pageid, $allowcomments=false)
     {
         global $smarty, $_USERGROUPS, $_USERID, $templateoptions;
+
+        $allowcomments = Jojo::applyFilter("jojo_comment:allow_new", $allowcomments);
+
         /* assign user variables for pre-populating fields for logged in users */
         if (!empty($_USERID)) {
             $user = Jojo::selectRow("SELECT userid, us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ?", array($_USERID));
