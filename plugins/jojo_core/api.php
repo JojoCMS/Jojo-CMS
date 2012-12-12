@@ -24,6 +24,9 @@ Jojo::addFilter('content', 'applyContentVars', 'Core');
 /* Replaces template/content snippets */
 Jojo::addFilter('output', 'getSnippet', 'Core');
 
+/* Replaces columnbreak filter with fluid column spans */
+Jojo::addFilter('content', 'pagebreak', 'Core');
+
 /* replaces <a href="#top"> with <a href="page/you/are/on/#top"> so it will work as expected */
 Jojo::addFilter('content', 'fixAnchorLinks', 'Core');
 
