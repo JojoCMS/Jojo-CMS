@@ -142,6 +142,10 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                 header('Content-Type: text/x-component');
                 break;
             default:
+                $mime = Jojo::getMimeType($file);
+                if ($mime) {
+                    header('Content-Type: '.$mime);
+                }
                 break;
         }
 

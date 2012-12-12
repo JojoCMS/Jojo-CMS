@@ -33,7 +33,7 @@
       <li><a href="{$ADMIN}/edit/page/">Add new page</a></li>
       <li><a href="{$ADMIN}/edit/page/">Edit an existing page</a><ul>
       {section name=t loop=$toppages}
-      <li><a href="{$ADMIN}/edit/page/{$toppages[t].pageid}/">{if $toppages[t].pg_menutitle}{$toppages[t].pg_menutitle}{else}{$toppages[t].pg_title}{/if}</a></li>
+      <li><a href="{$ADMIN}/edit/page/{$toppages[t].pageid}/" onclick="document.cookie='jstree_select=' + escape('#{$toppages[t].pageid}') + ';path={if strlen($SITEFOLDER) > 0}/{$SITEFOLDER}{/if}/{$ADMIN}/edit/page/;';return true;">{if $toppages[t].pg_menutitle}{$toppages[t].pg_menutitle}{else}{$toppages[t].pg_title}{/if}</a></li>
       {/section}
       </ul>
             </li>
