@@ -320,6 +320,27 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         return $snippets;
     }
 
+
+    /*
+    * Content snippet filter to replace [[snippet:]] in templates or content with defined html chunks
+    */
+    public static function getSnippet($content)
+    {
+        global $page, $sectiondata;
+        if (strpos($content, '[[snippet:') === false) {
+            return $content;
+        }
+        preg_match_all('/\[\[snippet: ?([^\]]*)\]\]/', $content, $matches);
+        foreach($matches[1] as $k => $search) {
+            $snippet = Jojo::selectRow("SELECT snippet FROM {snippet} WHERE " . ( is_numeric($search) ? "snippetid = '$search'" : " name = '$search'"));
+            if ($snippet) {
+                $content = str_replace($matches[0][$k], $snippet['snippet'], $content);
+            }
+        }
+
+         return $content;
+    }
+
     /* Add a message a the bottom of the site to alert to debug mode being enabled on this site */
     static function debugmodestatus() {
         if (_DEBUG) {
