@@ -251,7 +251,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             'primaryfields' => 'pg_title',
             'secondaryfields' => 'pg_title, pg_desc, pg_body',
         );
-        $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str=false);
+        $rawresults =  Jojo_Plugin_Jojo_search::searchPlugin($searchfields, $keywords, $language, $booleankeyword_str);
         $data = $rawresults ? self::getItemsById(array_keys($rawresults)) : '';
         $mldata = Jojo::getMultiLanguageData();
         $homes = $mldata['homes'];
