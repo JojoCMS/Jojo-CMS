@@ -40,7 +40,6 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
         }
 
         foreach ($pluginlocations as $loc => $type) {
-        
             /* Get plugins from Jojo plugins dir */
             $pluginnames = Jojo::scanDirectory($loc);
             foreach ($pluginnames as $i => $name) {
@@ -103,8 +102,6 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
             $options[] = $opt;
         }
         $smarty->assign('options', $options);
-
-        $smarty->assign('list', $list);
 
         $smarty->assign('plugins', $plugins);
 
