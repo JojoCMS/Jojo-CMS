@@ -658,6 +658,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'css_imports',
+    'category'    => 'CSS',
+    'label'       => 'Server side CSS Imports',
+    'description' => 'Have Jojo include CSS @imports on the server to save the browser using extra HTTP requests.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'normalize_cssreset',
     'category'    => 'CSS',
     'label'       => 'Normalize CSS Reset',

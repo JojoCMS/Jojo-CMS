@@ -336,4 +336,54 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         }
         exit;
     }
+
+    function parseImports($css) {
+        if (Jojo::getOption("css_imports", 'no') == 'yes') {
+            $pattern = "/@import url ?\(?(['\"]?)([^'\"\)]+)\\1\)?\s?(.*?)\;/ims";
+            preg_match_all($pattern, $css, $matches, PREG_SET_ORDER);
+            /*
+                $matches[0] = full import statement
+                $matches[2] = file path
+                $matches[3] = media query
+            */
+            $basedir = dirname(jojo::getFormData('uri'));
+            foreach ($matches as $import) {
+                $file = $basedir.'/'.$import[2];
+                $output = '';
+                $found = false;
+                // Todo: Add code to protect against "../../" strings. Should be able to trust the CSS files, but just to be safe.
+                /*while (strpos($file, '../')) {
+                    $file = preg_replace("#[^/]+/\.\./#", '', $file);
+                }*/
+                if ($import[3]) {
+                    $output = '@media '.$import[3].' { ';
+                }
+                foreach (Jojo::listThemes($file) as $pluginfile) {
+                    $output .= file_get_contents($pluginfile);
+                    $found = true;
+                    break;
+                }
+                if (!$found) {
+                    foreach (Jojo::listPlugins($file) as $pluginfile) {
+                        $output .= file_get_contents($pluginfile);
+                        $found = true;
+                        break;
+                    }
+                }
+                if ($found && $import[3]) {
+                    $output .= ' }';
+                } else {
+                    $log             = new Jojo_Eventlog();
+                    $log->code       = 'missing file';
+                    $log->importance = 'high';
+                    $log->shortdesc  = 'CSS Import failed for: '.$file;
+                    $log->desc       = 'CSS Import failed for: '.$file;
+                    $log->savetodb();
+                    unset($log);
+                }
+                $css = str_replace($import[0], $output, $css);
+            }
+        }
+        return $css;
+    }
 }

@@ -181,6 +181,7 @@ class Jojo_Stitcher {
     {
         $timer = Jojo::timer();
         $original = $css;
+        $css = Jojo_Plugin_Core_Css::parseImports($css);
         
         /* if option is set preprocess less css */
         if (Jojo::getOption('less', 'no') == 'yes') {
