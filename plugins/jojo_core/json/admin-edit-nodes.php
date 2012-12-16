@@ -96,7 +96,11 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
     } else {
         $categoryTable = new Jojo_Table($table->getOption('categorytable'));
     }
-    $node = ($node[0] == 'c') ? substr($node, 1) : $node;
+    $isCategoryNode = false;
+    if ($node[0] == 'c') {
+        $node = substr($node, 1);
+        $isCategoryNode = true;
+    }
     $pos = 0;
     $nodes = array();
     if ($categoryTable->getOption('parentfield')) {
@@ -163,55 +167,58 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
                 $nodes[$r['parent']]['attr'    ]['class'] = "folder";
             }
         }
-        if ($m2mfield) {
-            /* Add nodes from m2m categories */
-            $values = array();
-            if ($node == 0) {
-                // Root display, show products that aren't in any categories
-                $where = "IS NULL";
-            } else {
-                $where = "= ?";
-                $values = $node;
-            }
-            $query = sprintf("SELECT t.%s as id, %s as title FROM {%s} t LEFT JOIN {%s} l ON t.%s = l.%s WHERE l.%s ".$where,
-                            $table->getOption('primarykey'),
-                            $table->getOption('displayfield'),
-                            $t,
-                            $m2mfield->linktable,
-                            $table->getOption('primarykey'),
-                            $m2mfield->linkitemid,
-                            $m2mfield->linkcatid
-                            );
-            $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
-            $res = Jojo::selectQuery($query, $values);
+        if ($isCategoryNode || $node == 0) {
+            if ($m2mfield) {
+                /* Add nodes from m2m categories */
+                $values = array();
+                if ($node == 0) {
+                    // Root display, show products that aren't in any categories
+                    $where = "IS NULL";
+                } else {
+                    $where = "= ?";
+                    $values = $node;
+                }
+                $query = sprintf("SELECT t.%s as id, %s as title FROM {%s} t LEFT JOIN {%s} l ON t.%s = l.%s WHERE l.%s ".$where,
+                                $table->getOption('primarykey'),
+                                $table->getOption('displayfield'),
+                                $t,
+                                $m2mfield->linktable,
+                                $table->getOption('primarykey'),
+                                $m2mfield->linkitemid,
+                                $m2mfield->linkcatid
+                                );
+                $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
+                $res = Jojo::selectQuery($query, $values);
 
-            /* Add the nodes to the array for output */
-            foreach ($res as $r) {
-                $nodes[$r['id']] = array(
-                                    'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
-                                    'data'     => $r['title'],
-                                    'state'    => 'closed',
-                                   );
+                /* Add the nodes to the array for output */
+                foreach ($res as $r) {
+                    $nodes[$r['id']] = array(
+                                        'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                                        'data'     => $r['title'],
+                                        'state'    => 'closed',
+                                       );
+                }
             }
-        } else {
-            /* Add nodes from traditional categories */
-            $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ?",
-                            $table->getOption('primarykey'),
-                            $table->getOption('displayfield'),
-                            $t,
-                            $table->getOption('categoryfield')
-                            );
-            $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
-            $values = array($node);
-            $res = Jojo::selectQuery($query, $values);
+            if ($table->getOption('categoryfield')) {
+                /* Add nodes from traditional categories */
+                $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ?",
+                                $table->getOption('primarykey'),
+                                $table->getOption('displayfield'),
+                                $t,
+                                $table->getOption('categoryfield')
+                                );
+                $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
+                $values = array($node);
+                $res = Jojo::selectQuery($query, $values);
 
-            /* Add the nodes to the array for output */
-            foreach ($res as $r) {
-                $nodes[$r['id']] = array(
-                                    'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
-                                    'data'     => $r['title'],
-                                    'state'    => 'closed',
-                                   );
+                /* Add the nodes to the array for output */
+                foreach ($res as $r) {
+                    $nodes[$r['id']] = array(
+                                        'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                                        'data'     => $r['title'],
+                                        'state'    => 'closed',
+                                       );
+                }
             }
         }
 
