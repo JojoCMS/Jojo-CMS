@@ -347,14 +347,16 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     public static function pagebreak($content)
     {
         global $page, $smarty;
-        $columns=false;
-        $colcount = substr_count($content, '[[columnbreak]]');
-        switch ($colcount) {
+        $columns = substr_count($content, '[[columns]]');
+        $brcount = substr_count($content, '[[columnbreak]]');
+        $brcount =  (!$columns || columns==1) ?  $brcount : $brcount / $columns;
+
+        switch ($brcount) {
           case '1':
-            $colspan=6;
+            $colspan = 6;
             break;
           case '2':
-            $colspan=4;
+            $colspan = 4;
             break;
           case '3':
             $colspan=3;
