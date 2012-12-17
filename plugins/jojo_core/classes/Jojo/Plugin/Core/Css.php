@@ -156,7 +156,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     /* Hero unit file */
                     if (Jojo::getOption('tbootstrap_components_herounit', 'no') == 'yes')
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/hero-unit.less');
-                    
+
                     /* Bootstrap css as required by the javascript plugins */
                     /* Tooltips file */
                     if (Jojo::getOption('tbootstrap_js_tooltip', 'no') == 'yes')
@@ -173,7 +173,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     /* Carousel file */
                     if (Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/carousel.less');
-                    
+
                     /* Wells file */
                     if (Jojo::getOption('tbootstrap_miscellaneous_wells', 'no') == 'yes')
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/wells.less');
@@ -186,24 +186,26 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     /* Component animations file */
                     if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes')
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
-                    
+
                     /* get a pre-responsive file from theme if exists */
                     foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
                         $css->addFile($themefile);
                     }
-                    
+
                     /* Responsive files */
                     if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-767px-max.less');
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-768px-979px.less');
-                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-1200px-min.less');
+                        if (Jojo::getOption('tbootstrap_responsive_1200', 'yes') == 'yes') {
+                            $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-1200px-min.less');
+                        }
                     }
                     if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes' && Jojo::getOption('tbootstrap_components_navbar', 'no') == 'yes') {
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-navbar.less');
                     }
                 }
-                
+
                 /* Include css from each plugin */
                 foreach (Jojo::listPlugins('css/style_default.css', 'all', true) as $pluginfile) {
                     $css->addFile($pluginfile);
@@ -297,7 +299,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 }
                 break;
         }
-        
+
         /* additional CSS files as added by plugins / themes */
         $additional = Jojo::mergeCSS($file);
         foreach ($additional as $f) {

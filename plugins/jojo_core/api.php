@@ -947,6 +947,15 @@ $_options[] = array(
     'options'     => 'yes,no',
 );
 
+$_options[] = array(
+    'id'          => 'tbootstrap_responsive_1200',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Responsive 1200',
+    'description' => 'Include Twitter Bootstap\'s responsive.less files for super-wide 1200px version',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
 
 /* JS */
 
