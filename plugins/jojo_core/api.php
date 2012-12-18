@@ -25,7 +25,7 @@ Jojo::addFilter('content', 'applyContentVars', 'Core');
 Jojo::addFilter('output', 'getSnippet', 'Core');
 
 /* Replaces columnbreak filter with fluid column spans */
-Jojo::addFilter('content', 'pagebreak', 'Core');
+Jojo::addFilter('output', 'pagebreak', 'Core');
 
 /* replaces <a href="#top"> with <a href="page/you/are/on/#top"> so it will work as expected */
 Jojo::addFilter('content', 'fixAnchorLinks', 'Core');
@@ -947,6 +947,15 @@ $_options[] = array(
     'options'     => 'yes,no',
 );
 
+$_options[] = array(
+    'id'          => 'tbootstrap_responsive_1200',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Responsive 1200',
+    'description' => 'Include Twitter Bootstap\'s responsive.less files for super-wide 1200px version',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
 
 /* JS */
 
