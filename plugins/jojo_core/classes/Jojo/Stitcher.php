@@ -182,7 +182,7 @@ class Jojo_Stitcher {
         $timer = Jojo::timer();
         $original = $css;
         $css = Jojo_Plugin_Core_Css::parseImports($css);
-        
+
         /* if option is set preprocess less css */
         if (Jojo::getOption('less', 'no') == 'yes') {
             foreach (Jojo::listPlugins('external/lessphp/lessc.inc.php') as $pluginfile) {
@@ -195,6 +195,7 @@ class Jojo_Stitcher {
 
         require_once(_BASEPLUGINDIR . '/jojo_core/external/csstidy/class.csstidy.php');
         $csstidy = new csstidy();
+        $csstidy->set_cfg('override_properties', 1);
         $csstidy->load_template('highest_compression');
         if (_DEBUG) {
             $csstidy->load_template('default');
