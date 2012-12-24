@@ -49,6 +49,9 @@
 //////////////////////MANY2MANYFIELD//////////////////////
 class Jojo_Field_many2many extends Jojo_Field
 {
+    var $selections = array();
+    var $records = array();
+
     function __construct($fielddata = array())
     {
         parent::__construct($fielddata);
@@ -62,23 +65,36 @@ class Jojo_Field_many2many extends Jojo_Field
         return empty($this->error) ? true : false;
     }
 
+    function displayview() {
+        $this->populate();
+        $this->fd_readonly = true;
+        return $this->render();
+    }
+
     function displayedit()
     {
-        global $smarty;
+        $this->populate();
+        return $this->render();
+    }
+
+    function populate()
+    {
         $itemid = $this->table->getRecordID();
-        $tree = new hktree('tree');
+        //$this->tree = new hktree('tree');
 
         /* Get all the current selections */
-        $selections = Jojo::selectAssoc("SELECT " . $this->linkcatid . " as `key`, " . $this->linkcatid . " as `value` FROM {" . $this->linktable . "} WHERE `" . $this->linkitemid . "` = ?", array($itemid));
+        $this->selections = Jojo::selectAssoc("SELECT " . $this->linkcatid . " as `key`, " . $this->linkcatid . " as `value` FROM {" . $this->linktable . "} WHERE `" . $this->linkitemid . "` = ?", array($itemid));
 
-        /* Add group by level one */
         $tableoptions = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ? LIMIT 1", array($this->cattable));
+        /* Add group by level one */
+        /* Old code
         if ($tableoptions['td_group1'] != "") {
             $layer1 = Jojo::selectAssoc("SELECT " . $tableoptions['td_group1'] . ' as `key`, '  . $tableoptions['td_group1']." as `value` FROM {".$tableoptions['td_name']."} GROUP BY ".$tableoptions['td_group1']." ORDER BY ".$tableoptions['td_group1']."");
             foreach($layer1 as $k => $v) {
-                $tree->addNode($v, 0, '<strong>' . $v . '</strong>');
+                $this->tree->addNode($v, 0, '<strong>' . $v . '</strong>');
             }
         }
+        */
 
         /* Main query */
         $displayfield   = Jojo::either($tableoptions['td_displayfield'], $tableoptions['td_primarykey']);
@@ -95,17 +111,21 @@ class Jojo_Field_many2many extends Jojo_Field
                      Jojo::onlyIf($orderbyfield,' '.$orderbyfield.', ').
                      Jojo::onlyIf($displayfield,' '.$displayfield.', ').
                     ' display';
-        $records = Jojo::selectQuery($query);
-        
-        $smarty->assign('fieldname', $this->fd_field);
-        $smarty->assign('readonly', $this->fd_readonly);
-        $smarty->assign('selections', $selections);
-        $smarty->assign('records', $records);
-        
-        return $smarty->fetch('admin/fields/many2many.tpl');
+        $this->records = Jojo::selectQuery($query);
+        return true;
     }
 
+    function render()
+    {
+        global $smarty;
 
+        $smarty->assign('fieldname', $this->fd_field);
+        $smarty->assign('readonly', $this->fd_readonly);
+        $smarty->assign('selections', $this->selections);
+        $smarty->assign('records', $this->records);
+
+        return $smarty->fetch('admin/fields/many2many.tpl');
+    }
 
     function setvalue($newvalue)
     {

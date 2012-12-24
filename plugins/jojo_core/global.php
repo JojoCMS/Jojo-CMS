@@ -126,7 +126,7 @@ function _getNav($root, $subnavLevels, $field = 'mainnav')
             /* Add sub pages to this page */
             $n['subnav'] = _getNav($n['pageid'], $subnavLevels - 1, $field);
             $plugin = $n['pg_link'];
-             if ($plugin && class_exists($plugin) && method_exists($plugin, 'getNavItems')) {
+            if ($plugin && class_exists($plugin) && method_exists($plugin, 'getNavItems')) {
                 $pluginsubnav = call_user_func($plugin . '::getNavItems', $n['pageid'], $n['selected']);
                 $n['subnav'] = array_merge($pluginsubnav, $n['subnav']);
             }
