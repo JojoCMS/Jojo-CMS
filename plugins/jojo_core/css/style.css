@@ -97,21 +97,21 @@ img.icon-image
     line-height: 130%;
 }
 
-.date
+p.date
 {
     font-style: italic;
     font-size: 95%;
     margin-top: -3px;
 }
 
-.credit
+p.credit
 {
     font-style: italic;
     text-align: right;
     margin-top: -3px;
 }
 
-.caption {
+p.caption {
     font-style: italic;
 }
 

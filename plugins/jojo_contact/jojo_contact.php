@@ -414,7 +414,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $smarty->assign('option_form_captcha', $formCaptcha);
         /* Hide form on success Option */
         $smarty->assign('hideonsuccess',$hideonsuccess);
-
+        /* Use Anytime datepicker for date fields if option set */
+        $smarty->assign('anytime', (boolean)(Jojo::getOption('jquery_useanytime', 'no')=='yes'));
         if ($sent) {
             $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $formSuccessMessage : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
             $smarty->assign('sent', $sent);
@@ -476,8 +477,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
      public static function footjs()
      {
-        return '    <script src="http://malsup.github.com/jquery.form.js" type="text/javascript"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" type="text/javascript"></script>'."\n";
 
     }
 

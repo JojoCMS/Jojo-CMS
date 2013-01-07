@@ -11,11 +11,12 @@
     {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" /> {if $canonical || $correcturl}
     <link rel="canonical" href="{if $canonical}{$canonical}{else}{$correcturl}{/if}" /> {/if}
     {if !$robots_index || !$robots_follow || $isadmin}<meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}{if $ogmetatags && !$isadmin}
-    {$ogmetatags}{/if}{if $isadmin}
+    {$ogmetatags}{/if}{if $isadmin || $anytime}
+    <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/anytime/anytimec.css"}" />
+    {/if}{if $isadmin}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/jpop.css"}" />
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/admin.css"}" />
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/admin-print.css"}" media="print" />
-    <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/anytime/anytimec.css"}" />
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/markitup/skins/markitup/style.css"}" />
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/markitup/sets/html/style.css"}" />
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/markitup/sets/bbcode/style.css"}" />
@@ -39,9 +40,10 @@
     <style type="text/css">
         {$css}
     </style>
+    {/if}{if $isadmin || $anytime}
+    <script type="text/javascript" src="{jojoAsset file="external/anytime/anytimec.js"}"></script>
     {/if}{if $isadmin}
     <script type="text/javascript" src="{cycle values=$NEXTASSET}{jojoAsset file="js/jpop.js"}"></script>
-    <script type="text/javascript" src="{jojoAsset file="external/anytime/anytimec.js"}"></script>
     <script type="text/javascript" src="{jojoAsset file="external/tablesorter/jquery.tablesorter.min.js"}"></script>
     <script type="text/javascript" src="{jojoAsset file="external/markitup/jquery.markitup.pack.js"}"></script>
     <script type="text/javascript" src="{jojoAsset file="external/markitup/sets/html/set.js"}"></script>

@@ -1010,6 +1010,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'jquery_useanytime',
+    'category'    => 'JS',
+    'label'       => 'jQuery Anytime Datepicker',
+    'description' => 'Load jQuery Anytime for datepicker popups.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
     'id'          => 'commonjs_head',
     'category'    => 'JS',
     'label'       => 'Common.js in head',
