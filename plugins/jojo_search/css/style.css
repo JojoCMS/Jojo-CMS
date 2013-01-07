@@ -19,3 +19,8 @@
 #searchresults a.current-filter {
     font-weight:bold;
 }
+
+#searchresults select {
+  font-size: 91%;
+  width: auto;
+}

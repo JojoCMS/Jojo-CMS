@@ -54,6 +54,7 @@ class Jojo_Stitcher {
 
         /* Set the modified to this file if it's the most recent */
         $this->modified = max($this->modified, filemtime($file));
+        return true;
     }
 
     function addText($text)
@@ -176,134 +177,37 @@ class Jojo_Stitcher {
         return $js;
     }
 
-
-    /* a simple CSS optimisation function, which removes extra characters from CSS */
     function optimizeCSS($css)
     {
         $timer = Jojo::timer();
         $original = $css;
+        $css = Jojo_Plugin_Core_Css::parseImports($css);
 
-        /* Remove commented out blocks of code */
-        $css = preg_replace('#/\*(.*)\*/#Ums', '', $css);
-
-        preg_match_all('/([\r\n\s\S]*)\{([\r\n\s\S]*)}/Um', $css, $matches);
-
-        $temp = array();
-        $css = array();
-        foreach ($matches[1] as $k => $class) {
-            $class = "\n" . rtrim(str_replace(array("\n", "\r"), '', $class));
-            $class = substr($class, strrpos($class, "\n") + 1);
-            $attribs = trim(str_replace("\r\n", "\n", $matches[2][$k])) . ';';
-            $cleanAttribs = '';
-
-            /* Clean attribs*/
-            //preg_match_all('/([a-z \-]*):(.*);/mU', $attribs, $attribMatches);
-            preg_match_all('/([a-z \-]*):(.*)(?<!data:image\/png|data:image\/gif|data:image\/jpg|data:image\/jpeg);/mU', $attribs, $attribMatches); //fix for uri data
-            $attribs = '';
-
-            foreach ($attribMatches[1] as $j => $attribName) {
-                /* Replace strings that might only occure in attributes */
-                $value = trim(str_replace(array(' 0px', '.0em'), array(' 0', 'em'), ' ' . $attribMatches[2][$j]));
-
-                /* url('foo.jpg') => url(foo.jpg) */
-                $value = preg_replace('/url\\(\'(.+?)\'\\)/i', 'url(\\1)', $value);
-
-                $attribs .= sprintf("%s:%s;\n", trim($attribName), trim($value));
+        /* if option is set preprocess less css */
+        if (Jojo::getOption('less', 'no') == 'yes') {
+            foreach (Jojo::listPlugins('external/lessphp/lessc.inc.php') as $pluginfile) {
+                require_once($pluginfile);
+                break;
             }
-            $attribs = trim($attribs);
-
-            /* Check for a class already being declared */
-            if (isset($temp[$class]) && $class!='@font-face') {
-                /* Check for overwritten attributes */
-                foreach ($temp[$class] as $tk => $tattribs) {
-                    if ($tattribs == $attribs) {
-                        /* Second declaration same as first, removing first */
-                        unset($css[$temp[$class][$tk]['pos']]);
-                        unset($temp[$class][$tk]);
-                    } else {
-                        /* Extract attributes from first declaration */
-                        preg_match_all('/([a-z \-]*):(.*);/mU', $temp[$class][$tk]['attribs'], $attribMatches);
-                        $firstAttribs = array();
-                        foreach ($attribMatches[1] as $j => $attribName) {
-                            $firstAttribs[trim($attribName)] = $attribMatches[2][$j];
-                        }
-
-                        /* Remove over-written attribs from first declaration
-                           and clean attribs in the same loop */
-                        $cleanAttribs = '';
-                        preg_match_all('/([a-z \-]*):(.*);/mU', $attribs, $attribMatches);
-                        foreach ($attribMatches[1] as $j => $attribName) {
-                            /* Replace strings that might only occure in attributes */
-                            $value = trim(str_replace(array(' 0px', '.0em'), array(' 0', 'em'), ' ' . $attribMatches[2][$j]));
-
-                            /* Trim whitespace */
-                            $attribName = trim($attribName);
-
-                            /* url('foo.jpg') => url(foo.jpg) */
-                            $value = preg_replace('/url\\(\'(.+?)\'\\)/i', 'url(\\1)', $value);
-
-                            $cleanAttribs .= sprintf("%s:%s;\n", $attribName, $value);
-
-                            if (isset($firstAttribs[$attribName])) {
-                                unset($firstAttribs[$attribName]);
-                            }
-                        }
-                        $attribs = trim($cleanAttribs);
-
-                        /* Save remaining attributes in first delcaration*/
-                        if (count($firstAttribs) == 0) {
-                            /* No attributes left, delete */
-                            unset($css[$temp[$class][$tk]['pos']]);
-                            unset($temp[$class][$tk]);
-                        } else {
-                            $newAttribs = '';
-                            foreach ($firstAttribs as $name => $value) {
-                                $newAttribs .= sprintf("%s:%s;\n", $name, $value);
-                            }
-                            $newAttribs = trim($newAttribs);
-                            $css[$temp[$class][$tk]['pos']] =  array('class' => $class, 'attribs' => $newAttribs);
-                            $temp[$class][$tk]['attribs'] = $newAttribs;
-                        }
-                    }
-                }
-            }
-
-            if ($attribs) {
-                $css[] = array('class' => $class, 'attribs' => $attribs);
-                $temp[$class][] = array('pos' => max(array_keys($css)), 'attribs' => $attribs);
-            }
+            $lc = new lessc();
+            $css = $lc->parse($css);
         }
 
-        $optimizedText = '';
-        foreach($css as $c) {
-            if (_DEBUG) {
-                $optimizedText .= sprintf("%s{\n%s\n}\n", $c['class'], $c['attribs']);
-            } else {
-                $optimizedText .= sprintf("%s{%s}", $c['class'], str_replace("\n", '', $c['attribs']));
-            }
+        require_once(_BASEPLUGINDIR . '/jojo_core/external/csstidy/class.csstidy.php');
+        $csstidy = new csstidy();
+        $csstidy->set_cfg('override_properties', 1);
+        $csstidy->load_template('highest_compression');
+        if (_DEBUG) {
+            $csstidy->load_template('default');
         }
+        $csstidy->parse($css);
+        $optimized = $csstidy->print->plain();
 
-        /* use shorthand colour codes eg #ffffff => #fff */
-        $optimizedText = preg_replace('/#(0{3}|1{3}|2{3}|3{3}|4{3}|5{3}|6{3}|7{3}|8{3}|9{3}|a{3}|b{3}|c{3}|d{3}|e{3}|f{3}){2}/i', '#\\1', $optimizedText);
-
-        $search = array(
-                    ', ',                  /* ', ' => ', ' (remove spaces after commas) */
-                    'font-weight:bold;' ,  /* font-weight: bold; => font-weight: 700; */
-                    'font-weight:normal;', /* font-weight: normal; => font-weight: 400; */
-                    );
-
-        $replace = array(
-                    ',',
-                    'font-weight:700;',
-                    'font-weight:400;'
-                    );
-        $optimizedText = str_replace($search, $replace, $optimizedText);
-
-        $savings = strlen($original) - strlen($optimizedText);
+        $savings = strlen($css) - strlen($optimized);
         $this->header .= "/* Optimization saves $savings bytes & ".($this->numfiles -  1) . " HTTP requests\n";
         $this->header .= sprintf("   Optimization took: %0.2f ms */\n", Jojo::timer($timer) * 1000);
 
-        return $optimizedText;
+        return $optimized;
     }
 
     function sendCacheHeaders($timestamp)

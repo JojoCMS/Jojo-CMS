@@ -2,7 +2,8 @@
 {if $OPTIONS.comment_show_form == 'no'}<a href="#" id="post-comment-link" onclick="$('#post-comment').show(); $('#post-comment-link').hide(); return false;">{if $commentbutton}<img src="images/post-comment.gif" alt="Post Comment" style="border: 0;" />{else}<img src="images/blog_comment_icon.gif" alt="Post Comment" class="icon-image" />post a comment{/if}</a>{/if}
 <div class="post-comment" id="post-comment" style="clear: both;{if $OPTIONS.comment_show_form == 'yes'}display:block;{else}display:none;{/if}">
   <h3>Post Comment</h3>
-  <form method="post" action="" onsubmit="return checkComment({if $OPTIONS.comment_optional_email != 'yes'}true{else}false{/if});" class="contact-form">
+  <form id="commentform-{$pageid}" method="post" action="" onsubmit="return checkComment({if $OPTIONS.comment_optional_email != 'yes'}true{else}false{/if});" class="comment-form">
+  <fieldset>
 <p class="note"><span class="required">*</span> <em>required fields</em></p>
 {if !$user}<input type="hidden" name="userid" id="userid" value="{if $userid}{$userid}{/if}" />{/if}
     <div class="form-fieldset">
@@ -43,7 +44,7 @@
     <div class="form-fieldset captcha">
         <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
         <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
-    </div>    
+    </div>
     {/if}
     <div class="form-fieldset">
         <label for="comment">Comment</label>
@@ -54,6 +55,7 @@
         <input type="submit" name="submit" id="submit" value="Post Comment" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" />
   </div>
   <div class="clear"></div>
+  </fieldset>
   </form>
   <div class="note">We welcome comments provided they have something to contribute. Please note that all links will be created using the nofollow attribute. This is a spam free zone. HTML is stripped from comments, but BBCode is allowed.</div>
 </div>

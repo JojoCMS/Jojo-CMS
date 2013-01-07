@@ -320,6 +320,74 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         return $snippets;
     }
 
+
+    /*
+    * Content snippet filter to replace [[snippet:]] in templates or content with defined html chunks
+    */
+    public static function getSnippet($content)
+    {
+        global $page, $sectiondata;
+        if (strpos($content, '[[snippet:') === false) {
+            return $content;
+        }
+        preg_match_all('/\[\[snippet: ?([^\]]*)\]\]/', $content, $matches);
+        foreach($matches[1] as $k => $search) {
+            $snippet = Jojo::selectRow("SELECT snippet FROM {snippet} WHERE " . ( is_numeric($search) ? "snippetid = '$search'" : " name = '$search'"));
+            if ($snippet) {
+                $content = str_replace($matches[0][$k], $snippet['snippet'], $content);
+            } else {
+                $content = str_replace($matches[0][$k], '', $content);
+            }
+
+        }
+
+         return $content;
+    }
+
+    public static function pagebreak($content)
+    {
+        global $page, $smarty;
+        $columns = substr_count($content, '[[columns]]');
+        $brcount = substr_count($content, '[[columnbreak]]');
+        $brcount =  (!$columns || columns==1) ?  $brcount : $brcount / $columns;
+
+        switch ($brcount) {
+          case '1':
+            $colspan = 6;
+            break;
+          case '2':
+            $colspan = 4;
+            break;
+          case '3':
+            $colspan=3;
+            break;
+          case '5':
+            $colspan=2;
+            break;
+          default:
+            $colspan=12;
+        }
+
+        if (strpos($content, '[[columnbreak]]')) {
+            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), '[[columnbreak]]', $content);
+            $content = str_replace('[[columnbreak]]', '</div><div class="span' . $colspan . '">', $content);
+            if (strpos($content, '[[columns]]')!==false) {
+                $content = str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>'), '[[columns]]', $content);
+                $content =  str_replace('[[columns]]', '<div class="row-fluid"><div class="span' . $colspan . ' first">', $content);
+            } else {
+                 $content =  '<div class="row-fluid"><div class="span' . $colspan . ' first">' . "\n" . $content;
+            }
+            if (strpos($content, '[[endcolumns]]')) {
+                $content = str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>'), '[[endcolumns]]', $content);
+                $content = str_replace('[[endcolumns]]', '</div></div>', $content);
+            } else {
+                $content = $content . '</div></div>';
+            }
+       }
+
+        return $content;
+    }
+
     /* Add a message a the bottom of the site to alert to debug mode being enabled on this site */
     static function debugmodestatus() {
         if (_DEBUG) {

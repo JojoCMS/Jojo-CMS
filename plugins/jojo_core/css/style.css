@@ -36,14 +36,6 @@ div.error, div.errors {
   padding: 5px;
 }
 
-
-#login-form {
-  width: 350px;
-  border: 1px solid #aaa;
-  margin: 0 auto;
-  padding: 15px;
-}
-
 #login-form label, form.standard-form label {
   float: left;
   width: 150px;
@@ -55,11 +47,6 @@ div.error, div.errors {
 
 #login-form input, form.standard-form input, form.standard-form select, form.standard-form textarea, form.standard-form div.field {
   float: left;
-  margin-bottom: 3px;
-}
-
-#login-form br, form.standard-form br {
-  clear: left;
   margin-bottom: 3px;
 }
 
@@ -110,21 +97,21 @@ img.icon-image
     line-height: 130%;
 }
 
-.date
+p.date
 {
     font-style: italic;
     font-size: 95%;
     margin-top: -3px;
 }
 
-.credit
+p.credit
 {
     font-style: italic;
     text-align: right;
     margin-top: -3px;
 }
 
-.caption {
+p.caption {
     font-style: italic;
 }
 

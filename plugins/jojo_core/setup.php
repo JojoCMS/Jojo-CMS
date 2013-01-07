@@ -105,6 +105,12 @@ if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_url = 'admin/edit/page'
     Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Edit Pages', pg_link = 'jojo_plugin_admin_edit', pg_url = 'admin/edit/page', pg_parent = ?, pg_order=1", array($_ADMIN_CONTENT_ID));
 }
 
+// Edit Snippets
+if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_url = 'admin/edit/snippet'")) {
+    echo "Adding <b>Edit Snippets</b> Page to menu<br />";
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Snippets', pg_link = 'jojo_plugin_admin_edit', pg_url = 'admin/edit/snippet', pg_parent = ?, pg_order=5", array($_ADMIN_CONTENT_ID));
+}
+
 // Edit Users
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_url = 'admin/edit/user'")) {
     echo "Adding <b>Edit Users</b> Page to menu<br />";

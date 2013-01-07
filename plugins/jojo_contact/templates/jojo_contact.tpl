@@ -48,6 +48,7 @@
         </div>
     {elseif $f.type=='upload' || $f.type=='privateupload'}<input type="file" class="input fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />{if $f.required}<span class="required">*</span>{/if}
     {elseif $f.type=='emailwithconfirmation'}<input type="text" class="input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value=""{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.required}<span class="required">*</span>{/if}
+    {elseif $f.type=='date'}<input type="{$f.type}" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.required}<span class="required">*</span>{/if}
     {else}<input type="{$f.type}" class="input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.required}<span class="required">*</span>{/if}
         {/if}
         {if $f.description}<div class="form-field-description">{$f.description|nl2br}</div>
@@ -84,4 +85,13 @@
 </div>
 <div id="form{$form.form_id}message" class="message" {if !$message}style="display:none;"{/if}>{$message}</div>
 {if $sent && $form.form_tracking_code}{$form.form_tracking_code}
+{/if}
+{if $anytime}<script type="text/javascript">
+$(document).ready(function(){ldelim}
+{foreach from=$fields key=k item=f }{if $f.type=='date'}
+    $('#{$f.field}').AnyTime_noPicker();
+    $('#{$f.field}').AnyTime_picker({ldelim}format: "%d/%m/%Y"{rdelim} );
+{/if}{/foreach}
+{rdelim});
+</script>
 {/if}

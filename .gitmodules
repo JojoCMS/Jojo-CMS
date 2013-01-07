@@ -1,0 +1,12 @@
+[submodule "plugins/jojo_core/external/csstidy"]
+	path = plugins/jojo_core/external/csstidy
+	url = git://github.com/Hambrook/CSSTidy.git
+[submodule "plugins/jojo_core/external/lessphp"]
+	path = plugins/jojo_core/external/lessphp
+	url = git://github.com/leafo/lessphp.git
+[submodule "plugins/jojo_core/external/bootstrap"]
+	path = plugins/jojo_core/external/bootstrap
+	url = git://github.com/twitter/bootstrap.git
+[submodule "plugins/jojo_core/external/normalize"]
+	path = plugins/jojo_core/external/normalize
+	url = git://github.com/necolas/normalize.css.git

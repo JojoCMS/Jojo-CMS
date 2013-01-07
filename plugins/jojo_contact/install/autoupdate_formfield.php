@@ -130,6 +130,7 @@ checkboxes:Checkboxes
 radio:Radio Buttons
 select:Select Box
 list:List Box
+date:Date
 emailwithconfirmation:Email With Confirmation
 hidden:Hidden
 heading:Heading

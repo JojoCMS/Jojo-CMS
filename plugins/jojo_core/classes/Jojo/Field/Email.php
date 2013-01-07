@@ -73,12 +73,13 @@ class Jojo_Field_email extends Jojo_Field
     
     function setValue($newvalue)
     {
-        $this->value = $newvalue[1];
         $confirm = (strpos($this->fd_options, 'confirm') !== false) ? true : false;
         if ($confirm && ($newvalue[1] != $newvalue[2])) {
             $this->error = 'Email and confirmation must match';
             $this->value = '';
             return false;
+        } else {
+            $this->value = $newvalue;
         }
         return true;
     }

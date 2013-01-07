@@ -3247,6 +3247,74 @@ class Jojo {
         return $languagedata;
     }
 
+    function getNav($root, $subnavLevels, $field = 'mainnav')
+    {
+        global $_USERGROUPS, $selectedPages;
+
+        /* Get multilanguage data */
+            global $page;
+            $mldata = Jojo::getMultiLanguageData();
+            $home = isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root]['home'] : 1;
+            $roots = array_keys($mldata['sectiondata']);
+            $multisection = (boolean)(count($roots)>1);
+
+        /* Get pages from database */
+        static $_cached;
+        if (!isset($_cached[$field])) {
+            $now    = time();
+            // If pg_mainnavalways exists - and requested menu is mainnav - adjust query to include
+            // those pages that are configured to appear in all main nav menus.
+            if ($field == 'mainnav' && $multisection && Jojo::fieldExists ( 'page', 'pg_mainnavalways' )) {
+                $query = sprintf("SELECT * FROM {page}
+                             WHERE (pg_%s = 'yes' or pg_mainnavalways = 'yes')
+                             ORDER BY pg_order", $field);
+            } else {
+                $query = sprintf("SELECT * FROM {page}
+                             WHERE pg_%s = 'yes'
+                             ORDER BY pg_order", $field);
+            }
+            $_cached[$field] = array();
+            $result = Jojo::selectQuery($query);
+            // strip out expired / forbidden pages
+            $result = Jojo_Plugin_Core::cleanItems($result, 'nav');
+            foreach ($result as $k => $row) {
+                $r = $row['pg_parent'];
+                if (!isset($_cached[$field][$r])) {
+                    $_cached[$field][$r] = array();
+                }
+                $_cached[$field][$r][] = $row;
+                if ($field=='mainnav' && $multisection && isset($row['pg_mainnavalways']) && $row['pg_mainnavalways']=='yes' && $r!=$root && (in_array($r, $mldata['roots']) || $r==1)) {
+                    $_cached[$field][$root][] = $row;
+                }
+            }
+        }
+        $nav = isset($_cached[$field][$root]) ? $_cached[$field][$root] : array();
+
+        foreach ($nav as $id => &$n) {
+            /* Create the url for this page */
+            $n['url'] = ($n['pg_ssl'] == 'yes' ? _SECUREURL : _SITEURL ) . '/' . Jojo::getPageUrlPrefix($n['pageid']);
+            if ($n['pageid'] != $home && !in_array($n['pageid'], $roots)) {
+                /* Use page url is we have it, else generate something */
+                $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
+            }
+            /* Create title and label for display */
+            $n['title'] = htmlspecialchars(($n['pg_desc'] ? $n['pg_desc'] : ($n['pg_seotitle'] ? $n['pg_seotitle'] : $n['pg_title'])), ENT_COMPAT, 'UTF-8', false);
+            $n['label'] = htmlspecialchars(($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
+            /* Add field for selectedPages tree */
+            $n['selected'] = (boolean)($selectedPages && in_array($n['pageid'], $selectedPages));
+            if ($subnavLevels) {
+                /* Add sub pages to this page */
+                $n['subnav'] = Jojo::getNav($n['pageid'], $subnavLevels - 1, $field);
+                $plugin = $n['pg_link'];
+                 if ($plugin && class_exists($plugin) && method_exists($plugin, 'getNavItems')) {
+                    $pluginsubnav = call_user_func($plugin . '::getNavItems', $n['pageid'], $n['selected']);
+                    $n['subnav'] = array_merge($pluginsubnav, $n['subnav']);
+                }
+            }
+        }
+        return $nav;
+    }
+
     /* Get currently selected page and step back up through parents to build a current section/sub pages array */
     function getSelectedPages($pageid, $root=0) {
         if (!$pageid) {

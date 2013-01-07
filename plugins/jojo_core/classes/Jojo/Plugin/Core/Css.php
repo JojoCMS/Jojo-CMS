@@ -73,31 +73,175 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         $start = Jojo::timer();
         $css = new Jojo_Stitcher();
         $css->getServerCache();
+        $useLess = Jojo::getOption('less', 'no') == 'no' ? false : true;
         switch($file) {
             case 'styles':
                 /* Include Boilerplate css reset */
-                if  (Jojo::getOption('boilerplate_cssreset', 'no')=='yes') {
-                    $css->addFile(_BASEDIR . '/plugins/jojo_core/css/boilerplate_reset.css');
+                if  (Jojo::getOption('normalize_cssreset', 'no')=='yes') {
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/normalize/normalize.css');
                     if  (Jojo::getOption('modernizr', 'no')=='yes') {
-                        $css->addFile(_BASEDIR . '/plugins/jojo_core/css/boilerplate_modernizr.css');
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/css/boilerplate_modernizr.css');
                     }
                 }
+                if ($useLess) {
+                    /* start with the variable files */
+                    if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
+                    foreach (Jojo::listThemes('css/variables.less') as $themefile) {
+                        $variableFound = $css->addFile($themefile);
+                    }
+                    /* mixins files */
+                    if (Jojo::getOption('tbootstrap_mixins', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/mixins.less');
+                    foreach (Jojo::listThemes('css/mixins.less') as $themefile) {
+                        $variableFound = $css->addFile($themefile);
+                    }
+                    /* Body type and links file */
+                    if (Jojo::getOption('tbootstrap_scaffolding_typelinks', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/scaffolding.less');
+                    /* Grid System file */
+                    if (Jojo::getOption('tbootstrap_scaffolding_grid', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/grid.less');
+                    /* Layouts file */
+                    if (Jojo::getOption('tbootstrap_scaffolding_layout', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/layouts.less');
+                    /* Headings, body, etc file */
+                    if (Jojo::getOption('tbootstrap_bass_type', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/type.less');
+                    /* Code and pre file */
+                    if (Jojo::getOption('tbootstrap_bass_code', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/code.less');
+                    /* Labels and badges file */
+                    if (Jojo::getOption('tbootstrap_bass_labels', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/labels-badges.less');
+                    /* Tables file */
+                    if (Jojo::getOption('tbootstrap_bass_tables', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tables.less');
+                    /* Forms file */
+                    if (Jojo::getOption('tbootstrap_bass_forms', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/forms.less');
+                    /* Buttons file */
+                    if (Jojo::getOption('tbootstrap_bass_buttons', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/buttons.less');
+                    /* Icons file */
+                    if (Jojo::getOption('tbootstrap_bass_sprites', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/sprites.less');
+                    /* Button groups and dropdowns file */
+                    if (Jojo::getOption('tbootstrap_components_buttongroups', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/button-groups.less');
+                    /* Navs, tabs, and pills file */
+                    if (Jojo::getOption('tbootstrap_components_navs', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/navs.less');
+                    /* Navbar file */
+                    if (Jojo::getOption('tbootstrap_components_navbar', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/navbar.less');
+                    /* Breadcrumbs file */
+                    if (Jojo::getOption('tbootstrap_components_breadcrumbs', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/breadcrumbs.less');
+                    /* Pagination file */
+                    if (Jojo::getOption('tbootstrap_components_pagination', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/pagination.less');
+                    /* Pager file */
+                    if (Jojo::getOption('tbootstrap_components_pager', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/pager.less');
+                    /* Thumbnails file */
+                    if (Jojo::getOption('tbootstrap_components_thumbnails', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/thumbnails.less');
+                    /* Alerts file */
+                    if (Jojo::getOption('tbootstrap_components_alerts', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/alerts.less');
+                    /* Progress bars file */
+                    if (Jojo::getOption('tbootstrap_components_progressbars', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/progress-bars.less');
+                    /* Hero unit file */
+                    if (Jojo::getOption('tbootstrap_components_herounit', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/hero-unit.less');
+
+                    /* Bootstrap css as required by the javascript plugins */
+                    /* Tooltips file */
+                    if (Jojo::getOption('tbootstrap_js_tooltip', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tooltip.less');
+                    /* Popovers file */
+                    if (Jojo::getOption('tbootstrap_js_popover', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/popovers.less');
+                    /* Modals file */
+                    if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/modals.less');
+                    /* Dropdowns file */
+                    if (Jojo::getOption('tbootstrap_js_dropdown', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/dropdowns.less');
+                    /* Carousel file */
+                    if (Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/carousel.less');
+
+                    /* Wells file */
+                    if (Jojo::getOption('tbootstrap_miscellaneous_wells', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/wells.less');
+                    /* Close icon file */
+                    if (Jojo::getOption('tbootstrap_miscellaneous_close', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/close.less');
+                    /* Utilities file */
+                    if (Jojo::getOption('tbootstrap_miscellaneous_utilities', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
+                    /* Component animations file */
+                    if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes')
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
+
+                    /* get a pre-responsive file from theme if exists */
+                    foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
+                        $css->addFile($themefile);
+                    }
+
+                    /* Responsive files */
+                    if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-767px-max.less');
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-768px-979px.less');
+                        if (Jojo::getOption('tbootstrap_responsive_1200', 'yes') == 'yes') {
+                            $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-1200px-min.less');
+                        }
+                    }
+                    if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes' && Jojo::getOption('tbootstrap_components_navbar', 'no') == 'yes') {
+                        $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-navbar.less');
+                    }
+                }
+
                 /* Include css from each plugin */
                 foreach (Jojo::listPlugins('css/style_default.css', 'all', true) as $pluginfile) {
                     $css->addFile($pluginfile);
+                }
+                if ($useLess) {
+                    foreach (Jojo::listPlugins('css/style_default.less', 'all', true) as $pluginfile) {
+                        $css->addFile($pluginfile);
+                    }
                 }
 
                 foreach (Jojo::listPlugins('css/style.css', 'all', true) as $pluginfile) {
                     $css->addFile($pluginfile);
                 }
+                if ($useLess) {
+                    foreach (Jojo::listPlugins('css/style.less', 'all', true) as $pluginfile) {
+                        $css->addFile($pluginfile);
+                    }
+                }
 
                 foreach (Jojo::listPlugins('css/menu.css') as $pluginfile) {
                     $css->addFile($pluginfile);
+                }
+                if ($useLess) {
+                    foreach (Jojo::listPlugins('css/menu.less', 'all', true) as $pluginfile) {
+                        $css->addFile($pluginfile);
+                    }
                 }
 
                 /* Include theme css last */
                 foreach (Jojo::listThemes('css/style.css') as $themefile) {
                     $css->addFile($themefile);
+                }
+                if ($useLess) {
+                    foreach (Jojo::listThemes('css/style.less') as $themefile) {
+                        $css->addFile($themefile);
+                    }
                 }
 
                 /* Include css snippet from database */
@@ -155,7 +299,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 }
                 break;
         }
-        
+
         /* additional CSS files as added by plugins / themes */
         $additional = Jojo::mergeCSS($file);
         foreach ($additional as $f) {
@@ -193,5 +337,55 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             echo "/* Total time to ouput " . (Jojo::timer($start) * 1000) . " ms*/";
         }
         exit;
+    }
+
+    function parseImports($css) {
+        if (Jojo::getOption("css_imports", 'no') == 'yes') {
+            $pattern = "/@import url ?\(?(['\"]?)([^'\"\)]+)\\1\)?\s?(.*?)\;/ims";
+            preg_match_all($pattern, $css, $matches, PREG_SET_ORDER);
+            /*
+                $matches[0] = full import statement
+                $matches[2] = file path
+                $matches[3] = media query
+            */
+            $basedir = dirname(jojo::getFormData('uri'));
+            foreach ($matches as $import) {
+                $file = $basedir.'/'.$import[2];
+                $output = '';
+                $found = false;
+                // Todo: Add code to protect against "../../" strings. Should be able to trust the CSS files, but just to be safe.
+                /*while (strpos($file, '../')) {
+                    $file = preg_replace("#[^/]+/\.\./#", '', $file);
+                }*/
+                if ($import[3]) {
+                    $output = '@media '.$import[3].' { ';
+                }
+                foreach (Jojo::listThemes($file) as $pluginfile) {
+                    $output .= file_get_contents($pluginfile);
+                    $found = true;
+                    break;
+                }
+                if (!$found) {
+                    foreach (Jojo::listPlugins($file) as $pluginfile) {
+                        $output .= file_get_contents($pluginfile);
+                        $found = true;
+                        break;
+                    }
+                }
+                if ($found && $import[3]) {
+                    $output .= ' }';
+                } else {
+                    $log             = new Jojo_Eventlog();
+                    $log->code       = 'missing file';
+                    $log->importance = 'high';
+                    $log->shortdesc  = 'CSS Import failed for: '.$file;
+                    $log->desc       = 'CSS Import failed for: '.$file;
+                    $log->savetodb();
+                    unset($log);
+                }
+                $css = str_replace($import[0], $output, $css);
+            }
+        }
+        return $css;
     }
 }
