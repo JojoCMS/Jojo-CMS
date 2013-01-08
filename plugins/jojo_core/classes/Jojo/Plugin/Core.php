@@ -349,7 +349,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         global $page, $smarty;
         $columns = substr_count($content, '[[columns]]');
         $brcount = substr_count($content, '[[columnbreak]]');
-        $brcount =  (!$columns || columns==1) ?  $brcount : $brcount / $columns;
+        $brcount =  (!$columns || $columns==1) ?  $brcount : $brcount / $columns;
 
         switch ($brcount) {
           case '1':
