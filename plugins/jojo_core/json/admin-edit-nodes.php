@@ -191,7 +191,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
                             );
             $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
             $res = Jojo::selectQuery($query, $values);
-            
+
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes[$r['id']] = array(
@@ -212,7 +212,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
             $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
             $values = array($node);
             $res = Jojo::selectQuery($query, $values);
-            
+
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes[$r['id']] = array(
@@ -268,7 +268,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
             $values = array($node);
             $res = Jojo::selectQuery($query, $values);
         }
-        if ($m2mfield) {
+        if (isset($m2mfield) && $m2mfield) {
             $query = sprintf("SELECT n.%s as id, %s as title FROM {%s} n LEFT JOIN {%s} l ON n.%s = l.%s WHERE l.%s IS NULL",
                              $table->getOption('primarykey'),
                              $table->getOption('displayfield'),
