@@ -101,3 +101,47 @@ $_options[] = array(
     'options'     => 'yes,no',
     'plugin'      => 'jojo_comment'
 );
+
+$_options[] = array(
+    'id'          => 'comment_spam_links',
+    'category'    => 'Comments',
+    'label'       => 'Spam links',
+    'description' => 'Block comments with more than this number of links in the body',
+    'type'        => 'integer',
+    'default'     => '5',
+    'options'     => '',
+    'plugin'      => 'jojo_comment'
+);
+
+$_options[] = array(
+    'id'          => 'comment_spam_num',
+    'category'    => 'Comments',
+    'label'       => 'Spam comment number',
+    'description' => 'Number of comments allowed from one IP address within (#) mins',
+    'type'        => 'integer',
+    'default'     => '3',
+    'options'     => '',
+    'plugin'      => 'jojo_comment'
+);
+
+$_options[] = array(
+    'id'          => 'comment_spam_time',
+    'category'    => 'Comments',
+    'label'       => 'Spam timelimit',
+    'description' => 'Time limit of (#) comments allowed from one IP address',
+    'type'        => 'integer',
+    'default'     => '5',
+    'options'     => '',
+    'plugin'      => 'jojo_comment'
+);
+
+$_options[] = array(
+    'id'          => 'comment_spam_keywords',
+    'category'    => 'Comments',
+    'label'       => 'Spam keywords',
+    'description' => 'A newline seperated list of keywords. Block any comment with these words in the name or website fields',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => '',
+    'plugin'      => 'jojo_comment'
+);

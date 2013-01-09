@@ -260,13 +260,29 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         }
 
         /* rate limiting to prevent spam */
-        $rate_comments = 5; // maximum X posts
-        $rate_mins = 5;  // in X mins
+        $rate_comments = Jojo::getOption('comment_spam_num', 3); // maximum X posts
+        $rate_mins = Jojo::getOption('comment_spam_time', 5);  // in X mins
         $ratelimit = Jojo::selectQuery("SELECT * FROM {comment} WHERE ip='" . $ip . "' AND timestamp >" . strtotime('-' . $rate_mins . ' minutes'));
         if (count($ratelimit)>$rate_comments) {
             $errors[] = 'We limit comments to ' . $rate_comments . ' every ' . $rate_mins . ' minutes to prevent automated spam. Please try posting your comment again in a few minutes, and sorry for any inconvenience';
         }
 
+        $thisiscrap = false;
+        $crap = explode("\n", Jojo::getOption('comment_spam_keywords'));
+        foreach($crap as $c) {
+            if(strpos(strtolower($website), $c) !== false || strpos(strtolower($name), $c) !== false ) {
+                $thisiscrap = true;
+            }
+        }
+        if (substr_count($bbcomment, 'http://')>Jojo::getOption('comment_spam_links', 5)) {
+            $thisiscrap = true;
+        }
+
+        if ($thisiscrap) {
+            return false;
+            //could also at this point add $ip to a banned ips list rather than just silent failing them
+        }
+        $bbcomment = strip_tags($bbcomment);
         /* Convert BBCode to HTML */
         $bb = new bbconverter();
         $bb->truncateurl = 30;

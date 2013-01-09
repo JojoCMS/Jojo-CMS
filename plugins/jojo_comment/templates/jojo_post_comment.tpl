@@ -43,7 +43,7 @@
     </div>
     <div class="form-fieldset captcha">
         <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
-        <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
+        <p><img src="{$SITEULR}/external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
     </div>
     {/if}
     <div class="form-fieldset">
