@@ -1200,14 +1200,35 @@ class Jojo {
     }
 
     /* Convert multi-line textarea text to an array while removing empty values, stripping whitespace by default */
-    status function ta2array($text, $trimwhitespace=true)
+    static function ta2array($text, $trimwhitespace=true)
     {
         $text = preg_split("/[\r\n]+/", $text);
         if ($trimwhitespace) {
             $text = array_map('trim', $text);
         }
+        // Remove empty entries
         $text = array_filter($text, 'strlen');
         return $text;
+    }
+
+    /* Turns text from a text area into a key/value array */
+    /* Sample text:
+            foo=bar
+            one=two
+       becomes
+            array(2) {
+                foo => "bar",
+                one => "two"
+            }
+    */
+    staic function ta2kv($text, $delim="=")
+    {
+        $delim = preg_quote($delim, '/');
+	    preg_match_all("/([^\r\n".$delim."]+)?".$delim."([^\r\n".$delim."]+)/", $text, $matches); 
+        return array_combine(
+            array_map('trim', $matches[1]),
+            array_map('trim', $matches[2])
+        );
     }
 
     /* Convert comma separated values (single line) to an array, stripping empty values and whitespace by default */
@@ -1217,6 +1238,7 @@ class Jojo {
         if ($trimwhitespace) {
             $text = array_map('trim', $text);
         }
+        // Remove empty entries
         $text = array_filter($text, 'strlen');
         return $text;
     }
