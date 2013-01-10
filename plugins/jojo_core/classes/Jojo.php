@@ -1199,6 +1199,11 @@ class Jojo {
         return (strtolower($text) == 'yes');
     }
 
+    status function textarea2array($text)
+    {
+        return preg_split("/[\r\n]+/", $text, false, PREG_SPLIT_NO_EMPTY);
+    }
+
     /* Rewrites standard Jojo URLs */
     static function rewrite($table, $id, $name='index', $suffix='s', $allowurlprefix='', $pagenumber=1)
     {
