@@ -25,7 +25,7 @@
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
             </div>
     {elseif $f.type == 'radio'}<div class="form-field">
-            {foreach from=$f.options key=rk item=button}<input type="radio" class="radio{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="{$f.field}" id="{$f.field}_{$rk}" value="{$button}" {if $f.value == $button} checked="checked"{/if} /><label for="{$f.field}_{$rk}">{$button}</label>
+            {foreach from=$f.options key=rk item=button}<span class="radio"><input type="radio" class="radio{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="{$f.field}" id="{$f.field}_{$rk}" value="{$button}" {if $f.value == $button} checked="checked"{/if} /><label for="{$f.field}_{$rk}">{$button}</label></span>
             {/foreach}{if $f.required}<span class="required">*</span>{/if}
         </div>
     {elseif $f.type=='select'}<select name="{$f.field}" id="{$f.field}"{if $f.required} class="required"{/if}>
