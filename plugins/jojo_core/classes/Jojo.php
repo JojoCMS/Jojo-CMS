@@ -1199,9 +1199,26 @@ class Jojo {
         return (strtolower($text) == 'yes');
     }
 
-    status function textarea2array($text)
+    /* Convert multi-line textarea text to an array while removing empty values, stripping whitespace by default */
+    status function ta2array($text, $trimwhitespace=true)
     {
-        return preg_split("/[\r\n]+/", $text, false, PREG_SPLIT_NO_EMPTY);
+        $text = preg_split("/[\r\n]+/", $text);
+        if ($trimwhitespace) {
+            $text = array_map('trim', $text);
+        }
+        $text = array_filter($text, 'strlen');
+        return $text;
+    }
+
+    /* Convert comma separated values (single line) to an array, stripping empty values and whitespace by default */
+    static function csv2array($text, $trimwhitespace=true)
+    {
+        $text = explode(",", $text);
+        if ($trimwhitespace) {
+            $text = array_map('trim', $text);
+        }
+        $text = array_filter($text, 'strlen');
+        return $text;
     }
 
     /* Rewrites standard Jojo URLs */
