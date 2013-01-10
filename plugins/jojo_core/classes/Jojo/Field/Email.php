@@ -28,7 +28,7 @@ class Jojo_Field_email extends Jojo_Field
         parent::__construct($fielddata);
         $this->fd_size = 40;
     }
-    
+
     function setPostData($data = false)
     {
         $this->postdata = $data;
@@ -36,7 +36,7 @@ class Jojo_Field_email extends Jojo_Field
 
     function checkvalue()
     {
-       
+
         $confirm = (strpos($this->fd_options, 'confirm') !== false) ? true : false;
         if ($confirm && !empty($this->postdata[1]) && ($this->postdata[1] != $this->postdata[2])) {
             /* email and confirmation must match */
@@ -45,12 +45,12 @@ class Jojo_Field_email extends Jojo_Field
             /* Check if required field is empty */
             $this->error = "Required field";
         }
-        
+
         /* Check format of URL is valid, if it is, check the site exists and is live */
         if (!$this->isblank() && !Jojo::checkemailformat($this->value)) {
             $this->error = "The Email format is invalid";
         }
-        
+
         /* TODO: Check the domain is active or registered */
 
         return ($this->error == '');
@@ -70,7 +70,7 @@ class Jojo_Field_email extends Jojo_Field
 
         return  $smarty->fetch('admin/fields/email.tpl');
     }
-    
+
     function setValue($newvalue)
     {
         $confirm = (strpos($this->fd_options, 'confirm') !== false) ? true : false;
@@ -79,7 +79,7 @@ class Jojo_Field_email extends Jojo_Field
             $this->value = '';
             return false;
         } else {
-            $this->value = $newvalue;
+            $this->value = $newvalue[1];
         }
         return true;
     }
