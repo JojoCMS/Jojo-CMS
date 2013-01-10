@@ -269,9 +269,9 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
 
         $thisiscrap = false;
         if (Jojo::getOption('comment_spam_keywords', '')) {
-            $crap = explode("<br />", nl2br(trim(Jojo::getOption('comment_spam_keywords'))));
+            $crap = Jojo::ta2array(Jojo::getOption('comment_spam_keywords'));
             foreach($crap as $c) {
-                if(strpos(strtolower($website), trim($c)) !== false || strpos(strtolower($name), trim($c)) !== false ) {
+                if(strpos(strtolower($website), $c) !== false || strpos(strtolower($name), $c) !== false ) {
                     $thisiscrap = true;
                     break;
                 }
