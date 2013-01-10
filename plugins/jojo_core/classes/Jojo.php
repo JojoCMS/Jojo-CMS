@@ -1221,7 +1221,7 @@ class Jojo {
                 one => "two"
             }
     */
-    staic function ta2kv($text, $delim="=")
+    static function ta2kv($text, $delim="=")
     {
         $delim = preg_quote($delim, '/');
 	    preg_match_all("/([^\r\n".$delim."]+)?".$delim."([^\r\n".$delim."]+)/", $text, $matches); 
