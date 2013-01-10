@@ -1200,7 +1200,7 @@ class Jojo {
     }
 
     /* Convert multi-line textarea text to an array while removing empty values, stripping whitespace by default */
-    status function ta2array($text, $trimwhitespace=true)
+    static function ta2array($text, $trimwhitespace=true)
     {
         $text = preg_split("/[\r\n]+/", $text);
         if ($trimwhitespace) {
