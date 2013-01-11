@@ -1,0 +1,76 @@
+#systeminstaller_menu {
+    display: block;
+    font-size: 11px;
+    height: 21px;
+    line-height: 15px;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    text-align: left;
+    top: 0;
+    width: 31px;
+    z-index: 9999;
+}
+#si_menu_toggle,
+#si_plugin_list_toggle {
+    cursor: pointer;
+}
+.si_section {
+    border-top: 1px dashed #666;
+    padding: 8px 0;
+}
+.si_row {
+    text-align: right;
+}
+.si_row span {
+    float: left;
+    padding-right: 1em;
+}
+#si_inside h2,
+#si_inside h3 {
+    border: none;
+    color: #000;
+    margin: 0;
+}
+#si_inside h2 {
+    font-size: 120%;
+    line-height: 26px;
+    padding: 0 0 0 25px;
+}
+#si_inside h3 {
+    font-size: 110%;
+    padding: 0 0 5px 0;
+}
+#si_menu_toggle {
+    display: block;
+    float: left;
+    height: 21px;
+    margin-left: 10px;
+    width: 21px;
+}
+#si_menu_toggle img {
+    height: 16px;
+    width: 16px;
+    margin-top: 5px;
+}
+#si_inside strong {
+    line-height: 26px;
+}
+#si_inside {
+    display: none;
+    padding: 0 10px 10px 10px;
+}
+#systeminstaller_menu.visible {
+    background-color: #ddd;
+    box-shadow: 0 0 20px #000;
+    -moz-box-shadow: 0 0 20px #000;
+    -o-box-shadow: 0 0 20px #000;
+    -webkit-box-shadow: 0 0 20px #000;
+    display: block;
+    height: 100%;
+    overflow-y: scroll;
+    width: auto;
+}
+#systeminstaller_menu.visible #si_inside {
+    display: block;
+}
