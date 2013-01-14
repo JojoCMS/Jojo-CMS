@@ -2930,6 +2930,24 @@ class Jojo {
             return;
         }
 
+        /* Support for plugins to immitate "classes/Path/Classname.php" structure that the core uses */
+        $filename = 'classes/'.str_replace('_', '/', $classname).'.php';
+        $pluginFiles = Jojo::listThemes($filename);
+        foreach($pluginFiles as $file) {
+            require_once($file);
+            if (class_exists($classname)) {
+                return;
+            }
+        }
+        /* Search for the file in plugins and include it if we find it */
+        $pluginFiles = Jojo::listPlugins($filename);
+        foreach($pluginFiles as $file) {
+            require_once($file);
+            if (class_exists($classname)) {
+                return;
+            }
+        }
+
         $custom = array(
             'text_filter' => _BASEPLUGINDIR . '/jojo_core/external/Horde/Filter.php',
             'browser'     => _BASEPLUGINDIR . '/jojo_core/external/Horde/Browser.php',
