@@ -1199,6 +1199,50 @@ class Jojo {
         return (strtolower($text) == 'yes');
     }
 
+    /* Convert multi-line textarea text to an array while removing empty values, stripping whitespace by default */
+    static function ta2array($text, $trimwhitespace=true)
+    {
+        $text = preg_split("/[\r\n]+/", $text);
+        if ($trimwhitespace) {
+            $text = array_map('trim', $text);
+        }
+        // Remove empty entries
+        $text = array_filter($text, 'strlen');
+        return $text;
+    }
+
+    /* Turns text from a text area into a key/value array */
+    /* Sample text:
+            foo=bar
+            one=two
+       becomes
+            array(2) {
+                foo => "bar",
+                one => "two"
+            }
+    */
+    static function ta2kv($text, $delim="=")
+    {
+        $delim = preg_quote($delim, '/');
+	    preg_match_all("/([^\r\n".$delim."]+)?".$delim."([^\r\n".$delim."]+)/", $text, $matches); 
+        return array_combine(
+            array_map('trim', $matches[1]),
+            array_map('trim', $matches[2])
+        );
+    }
+
+    /* Convert comma separated values (single line) to an array, stripping empty values and whitespace by default */
+    static function csv2array($text, $trimwhitespace=true)
+    {
+        $text = explode(",", $text);
+        if ($trimwhitespace) {
+            $text = array_map('trim', $text);
+        }
+        // Remove empty entries
+        $text = array_filter($text, 'strlen');
+        return $text;
+    }
+
     /* Rewrites standard Jojo URLs */
     static function rewrite($table, $id, $name='index', $suffix='s', $allowurlprefix='', $pagenumber=1)
     {
@@ -2884,6 +2928,24 @@ class Jojo {
                 }
             }
             return;
+        }
+
+        /* Support for plugins to immitate "classes/Path/Classname.php" structure that the core uses */
+        $filename = 'classes/'.str_replace('_', '/', $classname).'.php';
+        $pluginFiles = Jojo::listThemes($filename);
+        foreach($pluginFiles as $file) {
+            require_once($file);
+            if (class_exists($classname)) {
+                return;
+            }
+        }
+        /* Search for the file in plugins and include it if we find it */
+        $pluginFiles = Jojo::listPlugins($filename);
+        foreach($pluginFiles as $file) {
+            require_once($file);
+            if (class_exists($classname)) {
+                return;
+            }
         }
 
         $custom = array(

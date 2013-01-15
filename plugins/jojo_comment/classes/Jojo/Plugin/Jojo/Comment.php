@@ -268,16 +268,18 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         }
 
         $thisiscrap = false;
-        $crap = explode("\n", Jojo::getOption('comment_spam_keywords'));
-        foreach($crap as $c) {
-            if(strpos(strtolower($website), $c) !== false || strpos(strtolower($name), $c) !== false ) {
-                $thisiscrap = true;
+        if (Jojo::getOption('comment_spam_keywords', '')) {
+            $crap = Jojo::ta2array(Jojo::getOption('comment_spam_keywords'));
+            foreach($crap as $c) {
+                if(strpos(strtolower($website), $c) !== false || strpos(strtolower($name), $c) !== false ) {
+                    $thisiscrap = true;
+                    break;
+                }
             }
         }
-        if (substr_count($bbcomment, 'http://')>Jojo::getOption('comment_spam_links', 5)) {
+        if (!$thisiscrap && substr_count($bbcomment, 'http://')>Jojo::getOption('comment_spam_links', 5)) {
             $thisiscrap = true;
         }
-
         if ($thisiscrap) {
             return false;
             //could also at this point add $ip to a banned ips list rather than just silent failing them

@@ -48,6 +48,9 @@ Jojo::addFilter('jojo_search', 'search', 'Core');
 /* Debug Mode Hook */
 Jojo::addHook('foot', 'debugmodestatus', 'Core');
 
+/* SystemInstaller Menu Hook */
+Jojo::addHook('foot', 'systeminstaller_menu', 'Core');
+
 Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'Core');
 
 /* Register URI patterns */
