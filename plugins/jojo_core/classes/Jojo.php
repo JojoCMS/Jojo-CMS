@@ -1224,7 +1224,7 @@ class Jojo {
     static function ta2kv($text, $delim="=")
     {
         $delim = preg_quote($delim, '/');
-	    preg_match_all("/([^\r\n".$delim."]+)?".$delim."([^\r\n".$delim."]+)/", $text, $matches); 
+	    preg_match_all("/([^\r\n".$delim."]+)?".$delim."([^\r\n".$delim."]+)/", $text, $matches);
         return array_combine(
             array_map('trim', $matches[1]),
             array_map('trim', $matches[2])
@@ -2447,7 +2447,7 @@ class Jojo {
     static function checkEmailFormat($email)
     {
       //  return eregi("^[a-z\'0-9]+([._-][a-z\'0-9]+)*@([a-z0-9]+([._-][a-z0-9]+))+$", $email);
-        return preg_match("#^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$#i", $email);
+        return preg_match("#^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+$#i", $email);
     }
 
     /* Gets the IP address of the visitor, bypassing proxies */
