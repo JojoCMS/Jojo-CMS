@@ -2447,7 +2447,8 @@ class Jojo {
     static function checkEmailFormat($email)
     {
       //  return eregi("^[a-z\'0-9]+([._-][a-z\'0-9]+)*@([a-z0-9]+([._-][a-z0-9]+))+$", $email);
-        return preg_match("#^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+$#i", $email);
+      //  return preg_match("#^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+$#i", $email);
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     /* Gets the IP address of the visitor, bypassing proxies */
