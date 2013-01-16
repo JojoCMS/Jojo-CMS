@@ -16,7 +16,7 @@
     {if ($f.fieldset && $f.fieldset!=$fields[$x].fieldset) || $k==0}{if $k>0}</fieldset>
     {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if}>{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
     {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset {if $f.type == 'emailwithconfirmation'}text{else}{$f.type}{/if}{if $f.class} {$f.class}{/if}">
-        {if $f.showlabel}<label for="{$f.field}">{if $f.display}{$f.display}:{/if}</label>
+        {if $f.showlabel}<label for="{$f.field}">{if $f.display}{$f.display}{/if}</label>
         {/if}
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
     {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>{if $f.required}<span class="required">*</span>{/if}
@@ -73,7 +73,7 @@
         </div>
     {/if}
         <div  class="form-fieldset submit">
-            {if $form.form_submit_label}<label>&nbsp;</label>{/if}<input type="submit" value="{$form.form_submit}" class="button" data-normalval="{$form.form_submit}" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
+            {if $form.form_submit_label}<label>&nbsp;</label>{/if}<input type="submit" value="{$form.form_submit}" class="button btn" data-normalval="{$form.form_submit}" onmouseover="this.className='button btn buttonrollover';" onmouseout="this.className='button btn'" /><br />
        </div>
         <div class="progress" style="display: none;">
             <div class="bar"></div >
