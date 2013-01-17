@@ -9,6 +9,7 @@
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
     {/if}{if $pg_metakeywords}<meta name="keywords" content="{$pg_metakeywords}" />
     {/if}<meta name="generator" content="Jojo CMS http://www.jojocms.org" /> {if $canonical || $correcturl}
+    <link rel="shortcut icon" type="image/x-icon" href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/favicon.ico" />
     <link rel="canonical" href="{if $canonical}{$canonical}{else}{$correcturl}{/if}" /> {/if}
     {if !$robots_index || !$robots_follow || $isadmin}<meta name="robots" content="{if !$robots_index || $isadmin}no{/if}index, {if !$robots_follow || $isadmin}no{/if}follow" />{/if}{if $ogmetatags && !$isadmin}
     {$ogmetatags}{/if}{if $isadmin || $anytime}
