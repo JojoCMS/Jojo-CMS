@@ -235,6 +235,9 @@ define('_BASEDIR',   '%s');
 define('_WEBDIR',    '%s');
 define('_MYSITEDIR', '%s');
 
+/* Shared plugin directory (if used) */
+// define('_ALTPLUGINDIR', '');
+
 /* Debug Options - not recommended for production installations */
 define('_DEBUG', false);
 

@@ -396,93 +396,182 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     }
 
     static function systeminstaller_menu() {
+
         /*
+
          * TODO
+
          *
+
          * Change format so that each section has a "$type" = "keyvalue/asis/template" and "$data" and is rendered accordingly
+
          * keyvalue will loop through $data and display key-value pairs
+
          * asis will simply display what is stored in $data
+
          * template will load the specified template from $template and supply $data to it
+
          *
+
          */
+
         global $_USERGROUPS;
+
         if (!in_array('sysinstall', $_USERGROUPS)) {
+
             return "";
+
         }
+
         global $smarty;
+
         $smarty->assign('_USERGROUPS', $_USERGROUPS);
 
+
+
         /****************  LINKS  ******************/
+
         $sysmenu['custom']['links'] = array(
+
             'Admin'     => "admin/",
+
             'Event Log' => "admin/eventlog/",
+
             'Options'   => "admin/options/",
+
             'Setup'     => "setup/",
+
             'Logout'    => "logout/"
+
         );
+
         $sysmenu['custom']['links'] = Jojo::applyFilter('sysmenu-links', $sysmenu['custom']['links']);
 
+
+
         /****************  JOJOCMS  ****************/
+
         $sysmenu['JojoCMS'] = array(
+
             "_BASEDIR"      => _BASEDIR,
-            "_ALTPLUGINDIR" => _ALTPLUGINDIR,
+
+            "_ALTPLUGINDIR" => (defined('_ALTPLUGINDIR') ? _ALTPLUGINDIR : 'not set'),
+
             "Version"       => @file_get_contents(_BASEDIR.'/version.txt')
+
         );
+
         // Git branch
+
         if (file_exists(_BASEDIR.'/.git/HEAD') && $gitbranch = @file_get_contents(_BASEDIR.'/.git/HEAD')) {
+
             $sysmenu['JojoCMS']['GIT Branch'] = substr($gitbranch, strrpos($gitbranch, '/')+1);
+
         }
+
+
 
         /***************  THIS USER  ****************/
+
         $sysmenu['custom']['user']['fields'] = array(
+
             'UserID' => 'userid',
+
             'Login' => 'us_login',
+
             'Email' => 'us_email',
+
             'Timezone' => 'us_timezone'
+
         );
+
         $sysmenu['custom']['user']['fields'] = Jojo::applyFilter('sysmenu-userfields', $sysmenu['custom']['user']['fields']);
+
         $sysmenu['custom']['user']['groups'] = implode(', ', $_USERGROUPS);
 
+
+
         /***************  THIS SITE  ****************/
+
         $sysmenu['This Website']["_WEBDIR"] = _WEBDIR;
+
         $sysmenu['This Website']["_MYSITEDIR"] = _MYSITEDIR;
 
+
+
         // Add the database name
+
         $sysmenu['This Website']["_DBNAME"] = _DBNAME;
+
         $sysmenu['This Website']["_DBUSER"] = _DBUSER;
 
+
+
         // Show the theme folder
+
         if (!isset($_SESSION['admintweaks']['theme'])) {
+
             $theme = Jojo::selectRow("SELECT `name` FROM {theme} WHERE `active` = 'yes'");
+
             if ($theme) {
+
                 $theme = $theme['name'];
+
                 $_SESSION['admintweaks']['theme'] = $theme;
+
                 //$themetestpath = '/'.$theme.'/templates/template.tpl';
+
             }
+
         }
+
         if ($_SESSION['admintweaks']['theme']) {
+
             $sysmenu['This Website']['Theme'] = $_SESSION['admintweaks']['theme'];
+
         }
+
+
 
         // Show the "last maintenance" time
+
         $lastmaintenance = Jojo::getOption("last_maintenance");
+
         $lastmaintenance = $lastmaintenance .= ' ('.date("c", $lastmaintenance).')';
+
         $sysmenu['This Website']['Last Maintenance'] = $lastmaintenance;
 
+
+
         // Allow other plugins to add to the fields
+
         $sysmenu = Jojo::applyFilter('sysmenu', $sysmenu);
 
+
+
         /****************  PLUGINS  ****************/
+
         // Show the installed plugins (after the filter so plugins can't hide themselves
+
         $plugins_raw = Jojo::selectQuery("SELECT name FROM {plugin} WHERE active = 'yes' ORDER BY priority DESC, name");
+
         $sysmenu['custom']['plugins'] = array();
+
         foreach ($plugins_raw as $pl) {
+
             $sysmenu['custom']['plugins'][] = $pl['name'];
+
         }
 
+
+
         $smarty->assign('sysmenu', $sysmenu);
+
         return $smarty->fetch('admin/systeminstaller-menu.tpl');
+
     }
+
+
 
     protected static function sendCacheHeaders($timestamp) {
         // A PHP implementation of conditional get, see
