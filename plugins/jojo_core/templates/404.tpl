@@ -32,7 +32,7 @@ var GOOG_FIXURL_SITE = '{/literal}{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if
 
 body, html {
   color: #444;
-  background: #eee;
+  background: #fff;
   font-family: arial, sans-serif;
   text-align: center;
 }
@@ -41,20 +41,16 @@ body, html {
   width: 600px;
   margin-left: auto;
   margin-right: auto;
-  background: #fff;
-  border: 1px solid #ccc;
   padding: 30px;
   text-align: left;
 }
 
 #logo {
-  float: left;
   margin-bottom: 20px;
   border: 0;
 }
 
 h1 {
-  float: right;
 }
 
 p {
@@ -101,7 +97,7 @@ li {
 <body>
 
 <div id="wrap">
-    <a href="{$SITEURL}"><img id="logo" src="images/logo.jpg" alt="" title="Return to the homepage" /></a>
+    <a href="{$SITEURL}"><img id="logo" src="images/v6000/logo.png" alt="" title="Return to the homepage" /></a>
     <h1>404 Page Not found</h1>
     <p>The page you have requested cannot be found. You may be able to find what you were looking for by following the links on our <a href="{$SITEURL}/">homepage</a>.</p>
     <h3>Site Links</h3>
