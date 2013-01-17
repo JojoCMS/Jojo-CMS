@@ -10,6 +10,7 @@
     top: 0;
     width: 31px;
     z-index: 9999;
+    color: #333333;
 }
 #si_menu_toggle,
 #si_plugin_list_toggle {
