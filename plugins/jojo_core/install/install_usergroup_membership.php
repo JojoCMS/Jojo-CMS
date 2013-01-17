@@ -35,6 +35,7 @@ if (isset($result['created'])) {
 
     echo "Adding Admin user to Admin user group<br />";
     Jojo::insertQuery("INSERT INTO {usergroup_membership} ( `userid`, `groupid` ) VALUES ('1', 'admin');");
+    Jojo::insertQuery("INSERT INTO {usergroup_membership} ( `userid`, `groupid` ) VALUES ('1', 'sysinstall');");
 }
 
 if (isset($result['added'])) {
