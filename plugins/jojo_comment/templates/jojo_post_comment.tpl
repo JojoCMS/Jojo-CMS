@@ -25,7 +25,7 @@
         <label for="email_subscribe">Subscribe to updates</label>
         <input type="checkbox" class="checkbox" size="40" name="email_subscribe" id="email_subscribe" value="subscribe"{if $article_user.email_subscribe} checked="checked"{/if} /><span>Receive email notifications for new comments</span>
     </div>
-    {/if}
+    {/if}{if $commentweblink}
     <div class="form-fieldset">
         <label for="website">Website</label>
         <input type="text" class="input text" size="40" name="website" id="website" value="{if $website}{$website}{/if}" />
@@ -35,7 +35,7 @@
         <label for="anchortext">Anchor text</label>
         <input type="text" class="input text" size="40" name="anchortext" id="anchortext" value="{if $anchortext}{$anchortext}{/if}" title="If we think your comment is especially good, we will use this anchor text for your link" />
     </div>
-    {/if}
+    {/if}{/if}
     {if !$user}
     <div class="form-fieldset">
         <label for="CAPTCHA">Spam prevention:</label>

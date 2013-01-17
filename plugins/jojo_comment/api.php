@@ -92,6 +92,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'comment_optional_website',
+    'category'    => 'Comments',
+    'label'       => 'Website link',
+    'description' => 'Allow posters to add a web address link to their name (good for their SEO, bad for attracting spambots)',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_comment'
+);
+
+$_options[] = array(
     'id'          => 'comment_show_num',
     'category'    => 'Comments',
     'label'       => 'Show number of comments on posts',

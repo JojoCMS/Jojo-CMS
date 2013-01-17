@@ -199,6 +199,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         }
         $templateoptions['frajax'] = true;
         $smarty->assign('templateoptions', $templateoptions);
+        $smarty->assign('commentweblink', (boolean)(Jojo::getOption('comment_optional_website', 'yes')=='yes'));
 
         if (Jojo::getOption('new_comment_position', 'below') == 'above') {
             /* New Comment form above the existing comments */
