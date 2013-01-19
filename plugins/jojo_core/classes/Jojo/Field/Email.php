@@ -79,7 +79,7 @@ class Jojo_Field_email extends Jojo_Field
             $this->value = '';
             return false;
         } else {
-            $this->value = $newvalue[1];
+            $this->value = $newvalue;
         }
         return true;
     }
