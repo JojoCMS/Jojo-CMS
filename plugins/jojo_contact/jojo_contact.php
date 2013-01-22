@@ -272,8 +272,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 /* store a copy of the message in the database*/
                 $res = Jojo::insertQuery("INSERT INTO {formsubmission} (`form_id`,`submitted`,`success`,`to_name`,`to_email`,`subject`,`from_name`,`from_email`,`content`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($formID, time(), 1, $to_name, $to_email, $subject, $from_name, $from_email, serialize($fields)) );
 
-                /* run success hook */
-                Jojo::runHook('contact_form_success', array($formID, $res));
                 /* add formSubmissionID for use in the template if ever needed (eg paypal form in response) */
                 $smarty->assign('formSubmissionID', $res);
 
@@ -300,6 +298,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $success = false;
             $smarty->assign('fields', $fields);
         }
+        /* run success hook */
+        Jojo::runHook('contact_form_success', array($formID, $res));
         return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 

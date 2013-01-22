@@ -1224,7 +1224,8 @@ class Jojo {
     static function ta2kv($text, $delim="=")
     {
         $delim = preg_quote($delim, '/');
-	    preg_match_all("/([^\r\n".$delim."]+)?".$delim."([^\r\n".$delim."]+)/", $text, $matches);
+        $text = preg_replace("/([\r\n]+)\\s+([\r\n]+)/", "$1", trim($text));
+        preg_match_all("/([^\r\n".$delim."]+)".$delim."?([^\r\n$]+)?/", $text, $matches);
         return array_combine(
             array_map('trim', $matches[1]),
             array_map('trim', $matches[2])
