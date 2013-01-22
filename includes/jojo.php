@@ -217,7 +217,8 @@ switch ($templateEngine) {
     case 'dwoo':
     default:
         require_once(_BASEPLUGINDIR . '/jojo_core/external/dwoo/dwooAutoload.php');
-        $smarty = new Dwoo_Smarty_Adapter();
+        require_once(_BASEPLUGINDIR . '/jojo_core/classes/jojo_dwoo_smarty_adapter.php');
+        $smarty = new Jojo_Dwoo_Smarty_Adapter();
         $smarty->show_compat_errors = true;
         $smarty->compile_dir  = _CACHEDIR . '/dwoo/templates_c';
         $smarty->cache_dir    = _CACHEDIR . '/dwoo/cache';
@@ -244,6 +245,7 @@ $smarty->assign('ADMIN',            _ADMIN);
 $smarty->assign('SITEFOLDER',       _SITEFOLDER);
 if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
+$smarty->assign('IS_MOBILE',            Jojo::isMobile());
 
 /* Include plugin api.php's so filters and hooks get added */
 if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
@@ -297,6 +299,12 @@ if (!isset($_SESSION['referer']) && isset($_SERVER['HTTP_REFERER']) && strpos($_
 }
 if (isset($_SESSION['referer_searchphrase'])) {
     setcookie('referer_searchphrase', $_SESSION['referer_searchphrase'], 0);
+}
+
+if (isset($_POST['set_mobile'])) {
+    $set_mobile = ($_POST['set_mobile'] == '1') ? true : false;
+    Jojo::setMobile($set_mobile);
+    Jojo::redirect(_PROTOCOL . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
 }
 
 /* Check for cached copy of page and display if required */

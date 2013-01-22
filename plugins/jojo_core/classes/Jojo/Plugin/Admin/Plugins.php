@@ -31,81 +31,41 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
 
         $plugins = array();
 
-
-        /* Get plugins from Jojo plugins dir */
-        $pluginnames = Jojo::scanDirectory(_BASEPLUGINDIR);
-        foreach ($pluginnames as $i => $name) {
-            /* ignore files, only look at directories */
-            if (!is_dir(_BASEPLUGINDIR . '/' . $name) && !strpos($name, '.phar')) continue;
-
-            /* Get plugin description */
-            $path = strpos($name, '.phar') ? 'phar://' . _BASEPLUGINDIR . '/' . $name : _BASEPLUGINDIR . '/' . $name;
-            $filename = $path . '/description.txt';
-            $description = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
-
-            /* Get plugin readme */
-            $filename = $path . '/readme.txt';
-            $readme = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
-            $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
-            $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
-
-            /* Get plugin status */
-            $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
-            $plugins[] = array(
-                                'name' => $name,
-                                'description' => $description,
-                                'readme' => $readme,
-                                'status' => $status,
-                                'type' => 'core'
-                                );
-
+        $pluginlocations = array(
+            _BASEPLUGINDIR => 'core',
+            _PLUGINDIR => 'client'
+        );
+        if (defined('_ALTPLUGINDIR')) {
+            $pluginlocations[_ALTPLUGINDIR] = 'shared';
         }
 
-        /* Get plugins from wwwroot/plugins dir */
-        $pluginnames = Jojo::scanDirectory(_PLUGINDIR);
-        $list = array();
-        foreach ($pluginnames as $i => $name) {
-            /* ignore files, only look at directories */
-            if (!is_dir(_PLUGINDIR . '/' . $name) && !strpos($name, '.phar')) continue;
+        foreach ($pluginlocations as $loc => $type) {
+            /* Get plugins from Jojo plugins dir */
+            $pluginnames = Jojo::scanDirectory($loc);
+            foreach ($pluginnames as $i => $name) {
+                /* ignore files, only look at directories */
+                if (!is_dir($loc . '/' . $name) && !strpos($name, '.phar')) continue;
 
-            /* Get plugin description */
-            $path = strpos($name, '.phar') ? 'phar://' . _PLUGINDIR . '/' . $name : _PLUGINDIR . '/' . $name;
-            $filename = $path . '/description.txt';
-            $description = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
+                /* Get plugin description */
+                $path = strpos($name, '.phar') ? 'phar://' . $loc . '/' . $name : $loc . '/' . $name;
+                $filename = $path . '/description.txt';
+                $description = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
 
-            /* Get plugin readme */
-            $filename = $path . '/readme.txt';
-            $readme = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
-            $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
-            $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
+                /* Get plugin readme */
+                $filename = $path . '/readme.txt';
+                $readme = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
+                $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
+                $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
 
-            /* Get plugin status */
-            $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
-            $plugins[] = array(
-                                'name' => $name,
-                                'description' => $description,
-                                'readme' => $readme,
-                                'status' => $status,
-                                'type' => 'client'
-                                );
-
-            /* Check for updated version */
-            for  ($s = 1; $s <= count($list); $s++) {
-                if ($list[$s]['NAME'] == $name) {
-                    $list[$s]['INSTALLED']= 'yes';
-
-                    $filename = $path . '/version.txt';
-
-                    if ( Jojo::fileExists($filename)) {
-                        $version = file_get_contents($filename);
-                    }
-
-                    $compareVersion = version_compare($version, $list[$s+1]['VERSION']);
-                    if ($compareVersion == -1) {
-                        $plugins[max(array_keys($plugins))]['download'] = "upgrade to Version " . $list[$s]['VERSION'];
-                        $plugins[max(array_keys($plugins))]['url'] = $list[$s]['URL'];
-                    }
-                }
+                /* Get plugin status */
+                $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
+                $plugins[] = array(
+                    'name' => $name,
+                    'description' => $description,
+                    'readme' => $readme,
+                    'status' => $status,
+                    'type' => $type
+                );
             }
         }
 
@@ -142,8 +102,6 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
             $options[] = $opt;
         }
         $smarty->assign('options', $options);
-
-        $smarty->assign('list', $list);
 
         $smarty->assign('plugins', $plugins);
 

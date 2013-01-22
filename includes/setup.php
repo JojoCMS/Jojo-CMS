@@ -175,6 +175,16 @@ foreach ($PLUGINS as $plugin) {
             }
         }
     }
+    
+    if (defined('_ALTPLUGINDIR')) {
+        if (false !== ($files = Jojo::scanDirectory(_ALTPLUGINDIR . '/' . $plugin . '/install'))) {
+            foreach ($files as $filename) {
+                if ($filename && $filename[0] != '.' && strpos($filename, '.php') != false) {
+                    require_once(_ALTPLUGINDIR . '/' . $plugin . '/install/' . $filename);
+                }
+            }
+        }
+    }
 
     if (false !== ($files = Jojo::scanDirectory(_PLUGINDIR . '/' . $plugin . '/install'))) {
         foreach ($files as $filename) {

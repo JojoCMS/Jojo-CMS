@@ -1534,3 +1534,13 @@ $_options[] = array(
     'default'     => 'no',
     'options'     => 'yes,no',
 );
+
+$_options[] = array(
+    'id'          => 'mobile_site',
+    'category'    => 'Config',
+    'label'       => 'Mobile site enabled',
+    'description' => 'Serve .mob.tpl files (if available) to mobile browsers. Note your theme will need to support this.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
