@@ -1,6 +1,6 @@
 <div id="searchresults">
 <form name="search1" action="{$searchurl}" method="post">
-    <input name="q" value="{if $keywords}{$keywords}{/if}" size="29" style="vertical-align:middle" />
+    <input name="q" type="text" value="{if $keywords}{$keywords}{/if}" size="29" />
     <select name="type" style="font-size: 90%">
         <option value="" {if $searchtype == ''}selected="selected"{/if}>any</option>
         <option value="all" {if $searchtype == 'all'}selected="selected"{/if}>all</option>
@@ -14,7 +14,7 @@
 {/foreach}
     </select>
 {/if}
-    <input class="button" type="submit" value="Search" />
+    <input class="button btn" type="submit" value="Search" />
 </form>
 <br/>
 

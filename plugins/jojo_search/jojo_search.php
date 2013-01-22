@@ -22,8 +22,11 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
 {
     public static function searchHTML()
     {
-        /* only show blog icons if the option is enabled */
         global $smarty;
+        $searchformlabel = Jojo::getOption('searchform_label', 'Search');
+        $searchformsubmit = Jojo::getOption('searchform_submit', 'Go');
+        $smarty->assign('searchformlabel', ($searchformlabel=='-1' ? '' : $searchformlabel));
+        $smarty->assign('searchformsubmit', ($searchformsubmit=='-1' ? '' : $searchformsubmit));
         $code = $smarty->fetch('jojo_searchform.tpl');
         return $code;
     }

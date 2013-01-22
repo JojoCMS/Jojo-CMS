@@ -22,7 +22,7 @@ Jojo::registerURI("search/[q:(.*)]", 'Jojo_Plugin_Jojo_search'); // "search/quer
 $_provides['pluginClasses'] = array(
         'Jojo_Plugin_Jojo_search' => 'Search - Site search page',
         );
-        
+
 Jojo::addHook('SearchForm', 'searchHTML', 'jojo_search');
 
 $_options[] = array(
@@ -44,6 +44,28 @@ $_options[] = array(
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
+    'plugin'      => 'jojo_search'
+);
+
+$_options[] = array(
+    'id'          => 'searchform_label',
+    'category'    => 'Search',
+    'label'       => 'Search form label',
+    'description' => 'Label to use on the search form. Set to -1 to hide',
+    'type'        => 'text',
+    'default'     => 'Search',
+    'options'     => '',
+    'plugin'      => 'jojo_search'
+);
+
+$_options[] = array(
+    'id'          => 'searchform_submit',
+    'category'    => 'Search',
+    'label'       => 'Search form submit',
+    'description' => 'Text to use on the search submit. Set to -1 for no text (and use css to add a background image instead)',
+    'type'        => 'text',
+    'default'     => 'Go',
+    'options'     => '',
     'plugin'      => 'jojo_search'
 );
 
