@@ -90,7 +90,7 @@
 $(document).ready(function(){ldelim}
 {foreach from=$fields key=k item=f }{if $f.type=='date'}
     $('#{$f.field}').AnyTime_noPicker();
-    $('#{$f.field}').AnyTime_picker({ldelim}format: "%d/%m/%Y"{rdelim} );
+    $('#{$f.field}').AnyTime_picker({ldelim}format: "%M %d, %Y"{rdelim} );
 {/if}{/foreach}
 {rdelim});
 </script>
