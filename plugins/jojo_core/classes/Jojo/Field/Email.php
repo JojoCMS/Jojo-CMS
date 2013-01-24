@@ -47,7 +47,7 @@ class Jojo_Field_email extends Jojo_Field
         }
 
         /* Check format of URL is valid, if it is, check the site exists and is live */
-        if ($this->isblank() && !Jojo::checkemailformat($this->value)) {
+        if (!$this->isblank() && !Jojo::checkemailformat($this->value)) {
             $this->error = "The Email format is invalid";
         }
 
