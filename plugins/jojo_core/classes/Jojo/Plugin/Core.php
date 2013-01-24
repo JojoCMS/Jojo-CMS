@@ -338,8 +338,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             } else {
                 $content = str_replace($matches[0][$k], '', $content);
             }
-
         }
+        /* Allow for recursive snippeting */
+        $content = self::getSnippet($content);
 
          return $content;
     }

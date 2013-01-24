@@ -22,7 +22,7 @@
 Jojo::addFilter('content', 'applyContentVars', 'Core');
 
 /* Replaces template/content snippets */
-Jojo::addFilter('output', 'getSnippet', 'Core');
+Jojo::addFilter('output', 'getSnippet', 'Core', 99);
 
 /* Replaces columnbreak filter with fluid column spans */
 Jojo::addFilter('output', 'pagebreak', 'Core');
@@ -49,7 +49,10 @@ Jojo::addFilter('jojo_search', 'search', 'Core');
 Jojo::addHook('foot', 'debugmodestatus', 'Core');
 
 /* SystemInstaller Menu Hook */
+
 Jojo::addHook('foot', 'systeminstaller_menu', 'Core');
+
+
 
 Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'Core');
 
