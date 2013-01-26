@@ -128,16 +128,15 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
                     $r['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
                 }
             }
-       }
+        }
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
-            $nodes[$r['id']] = array(
-                                'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
+            $nodes['c' . $r['id']] = array(
+                                'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => 'c'.$node),
                                 'data'     => $r['title'],
                                 'state'    => 'closed',
                                );
         }
-
         /* Find out which ones have child categories */
         $query = sprintf('SELECT DISTINCT %s as parent FROM {%s} WHERE %s IN (SELECT %s FROM {%s} WHERE %s = ?);',
                         $categoryTable->getOption('parentfield'),
@@ -150,7 +149,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
 
         $res = Jojo::selectQuery($query, array($node));
         foreach ($res as $r) {
-            $nodes[$r['parent']]['attr'    ]['class'] = "folder";
+            $nodes['c' . $r['parent']]['attr'    ]['class'] = "folder";
         }
 
         // Check for the category table since we won't always have it now
@@ -167,7 +166,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
 
             $res = Jojo::selectQuery($query, array($node));
             foreach ($res as $r) {
-                $nodes[$r['parent']]['attr'    ]['class'] = "folder";
+                $nodes['c' . $r['parent']]['attr'    ]['class'] = "folder";
             }
         }
         if ($m2mfield) {
@@ -195,7 +194,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes[$r['id']] = array(
-                    'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
+                    'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => 'c'.$node),
                     'data'     => $r['title'],
                     'state'    => 'closed',
                 );
@@ -215,7 +214,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
 
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
-                $nodes[$r['id']] = array(
+                $nodes['c' . $r['id']] = array(
                     'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
                     'data'     => $r['title'],
                     'state'    => 'closed',
@@ -247,7 +246,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
            }
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
-                $nodes[$r['id']] = array(
+                $nodes['c' . $r['id']] = array(
                                     'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
                                     'data'     => $r['title'],
                                     'state'    => 'closed',
