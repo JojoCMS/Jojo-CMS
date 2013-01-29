@@ -26,6 +26,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
         $searchformlabel = Jojo::getOption('searchform_label', 'Search');
         $searchformsubmit = Jojo::getOption('searchform_submit', 'Go');
         $smarty->assign('searchformlabel', ($searchformlabel=='-1' ? '' : $searchformlabel));
+        $smarty->assign('searchformdefault', (boolean)(Jojo::getOption('searchform_default', 'no')=='yes'));
         $smarty->assign('searchformsubmit', ($searchformsubmit=='-1' ? '' : $searchformsubmit));
         $code = $smarty->fetch('jojo_searchform.tpl');
         return $code;

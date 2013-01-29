@@ -70,6 +70,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'searchform_default',
+    'category'    => 'Search',
+    'label'       => 'Show default text',
+    'description' => 'Show "Search" in the input field (and remove with js on focus) - normally used when the label is hidden',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_search'
+);
+
+$_options[] = array(
     'id'          => 'search_image_format',
     'category'    => 'Search',
     'label'       => 'Result Image Format',
