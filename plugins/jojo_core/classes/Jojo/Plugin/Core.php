@@ -347,31 +347,47 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
     public static function pagebreak($content)
     {
-        global $page, $smarty;
-        $columns = substr_count($content, '[[columns]]');
-        $brcount = substr_count($content, '[[columnbreak]]');
-        $brcount =  (!$columns || $columns==1) ?  $brcount : $brcount / $columns;
+        if (strpos($content, '[[columnbreak')!==false) {
 
-        switch ($brcount) {
-          case '1':
-            $colspan = 6;
-            break;
-          case '2':
-            $colspan = 4;
-            break;
-          case '3':
-            $colspan=3;
-            break;
-          case '5':
-            $colspan=2;
-            break;
-          default:
-            $colspan=12;
-        }
+            $columns = substr_count($content, '[[columns]]');
+            $uneven = 0;
+            $brcount = substr_count($content, '[[columnbreak]]');
+            $brcount =  (!$columns || $columns==1) ?  $brcount : $brcount / $columns;
+            // 1/3 | 2/3 split
+            if ((!$columns || $columns==1) && substr_count($content, '[[columnbreak13]]')) {
+                $brcount = 13;
+                $uneven = 8;
+                $content =  str_replace('[[columnbreak13]]', '[[columnbreak]]', $content);
+            // 2/3 | 1/3 split
+            } elseif ((!$columns || $columns==1) && substr_count($content, '[[columnbreak23]]')) {
+                $brcount = 23;
+                $uneven = 4;
+                $content =  str_replace('[[columnbreak23]]', '[[columnbreak]]', $content);
+            }
 
-        if (strpos($content, '[[columnbreak]]')) {
-            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), '[[columnbreak]]', $content);
-            $content = str_replace('[[columnbreak]]', '</div><div class="span' . $colspan . '">', $content);
+            switch ($brcount) {
+              case '1':
+                $colspan = 6;
+                break;
+              case '2':
+                $colspan = 4;
+                break;
+              case '3':
+                $colspan=3;
+                break;
+              case '5':
+                $colspan=2;
+                break;
+              case '13':
+                $colspan = 4;
+                break;
+              case '23':
+                $colspan = 8;
+                break;
+              default:
+                $colspan=12;
+            }
+
             if (strpos($content, '[[columns]]')!==false) {
                 $content = str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>'), '[[columns]]', $content);
                 $content =  str_replace('[[columns]]', '<div class="row-fluid"><div class="span' . $colspan . ' first">', $content);
@@ -384,8 +400,12 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             } else {
                 $content = $content . '</div></div>';
             }
-       }
 
+            $colspan = $uneven ? $uneven : $colspan;
+
+            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), '[[columnbreak]]', $content);
+            $content = str_replace('[[columnbreak]]', '</div><div class="span' . $colspan . '">', $content);
+        }
         return $content;
     }
 

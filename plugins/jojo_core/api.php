@@ -24,9 +24,6 @@ Jojo::addFilter('content', 'applyContentVars', 'Core');
 /* Replaces template/content snippets */
 Jojo::addFilter('output', 'getSnippet', 'Core', 99);
 
-/* Replaces columnbreak filter with fluid column spans */
-Jojo::addFilter('output', 'pagebreak', 'Core');
-
 /* replaces <a href="#top"> with <a href="page/you/are/on/#top"> so it will work as expected */
 Jojo::addFilter('content', 'fixAnchorLinks', 'Core');
 
@@ -251,6 +248,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'columnbreaks',
+    'category'    => 'Config',
+    'label'       => 'Columns filter',
+    'description' => 'If enabled, content will be checked for columnbreak filters and split into fluid spans.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'contentcachetime',
     'category'    => 'Config',
     'label'       => 'Content cache time',
@@ -310,15 +317,6 @@ $_options[] = array(
     'options'     => '',
 );
 
-$_options[] = array(
-    'id'          => 'use_secondary_nav',
-    'category'    => 'Config',
-    'label'       => 'Use secondary navigation',
-    'description' => 'Enables / disables the Secondary Nav field on Edit pages. It is recommended this is set to NO unless it is specifically used by the site. Please run SETUP after changing this option.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
 
 $_options[] = array(
     'id'          => 'captcha_num_chars',
@@ -517,6 +515,16 @@ $_options[] = array(
     'type'        => 'integer',
     'default'     => '0',
     'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'use_secondary_nav',
+    'category'    => 'Navigation',
+    'label'       => 'Use secondary navigation',
+    'description' => 'Enables / disables the Secondary Nav field on Edit pages. It is recommended this is set to NO unless it is specifically used by the site. Please run SETUP after changing this option.',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
 );
 
 /* HTML Editor */

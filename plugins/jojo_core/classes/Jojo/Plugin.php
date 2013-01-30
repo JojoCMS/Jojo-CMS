@@ -118,6 +118,7 @@ class Jojo_Plugin {
               $result[$k] = $v;
         }
         $result['ogtags'] = (boolean)(Jojo::getOption('ogdata', 'no')=='yes') ? Jojo_Plugin_Core::ogdata($result) : array();
+        $result['content'] = (boolean)(Jojo::getOption('columnbreaks', 'no')=='yes') ? Jojo_Plugin_Core::pagebreak($result['content']) : $result['content'];
 
         if ($this->expired) {
             $result['content'] = $smarty->fetch('expired.tpl');
