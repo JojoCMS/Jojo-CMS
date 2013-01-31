@@ -388,23 +388,13 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 $colspan=12;
             }
 
-            if (strpos($content, '[[columns]]')!==false) {
-                $content = str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>'), '[[columns]]', $content);
-                $content =  str_replace('[[columns]]', '<div class="row-fluid"><div class="span' . $colspan . ' first">', $content);
-            } else {
-                 $content =  '<div class="row-fluid"><div class="span' . $colspan . ' first">' . "\n" . $content;
-            }
-            if (strpos($content, '[[endcolumns]]')) {
-                $content = str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>'), '[[endcolumns]]', $content);
-                $content = str_replace('[[endcolumns]]', '</div></div>', $content);
-            } else {
-                $content = $content . '</div></div>';
-            }
+            $colopen = '<div class="row-fluid"><div class="span' . $colspan . ' first"><div class="columncontent">';
+            $colclose = '</div></div></div>';
+            $colbreak = '</div></div><div class="span' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
 
-            $colspan = $uneven ? $uneven : $colspan;
-
-            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), '[[columnbreak]]', $content);
-            $content = str_replace('[[columnbreak]]', '</div><div class="span' . $colspan . '">', $content);
+            $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>'), $colopen, $content) : $colopen . "\n" . $content;
+            $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>'), $colclose, $content) : $content . "\n" . $colclose;
+            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), $colbreak, $content);
         }
         return $content;
     }
