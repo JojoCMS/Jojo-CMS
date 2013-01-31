@@ -251,6 +251,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage = self::cleanHTML($htmlmessage, $htmlcss);
         $smarty->assign('htmlmessage', $htmlmessage);
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
+        $res = false;
 
         if (!count($errors)) {
             if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
