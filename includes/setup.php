@@ -91,8 +91,21 @@ foreach($_folders as $folder => $name) {
     }
 }
 
+/* create an empty array for each table to hold indexes - plugins will add to this array before it is processed */
+global $_db;
+$indexes = array();
+Jojo::_connectToDB();
+$tables = $_db->getAssoc('SHOW FULL TABLES');
+foreach ($tables as $tblname => $tbltype)  {
+    if (_TBLPREFIX) {
+        if (strpos($tblname, _TBLPREFIX) !== 0) continue;
+        $tblname = str_replace(_TBLPREFIX, '', $tblname);
+    }
+    $indexes[$tblname] = array();
+}
+
 /* do we have any SQL to run before setup? */
-$sql = Jojo::getFormData('sql','');
+$sql = (count($indexes)) ? Jojo::getFormData('sql','') : false;
 if (!empty($sql)) {
     echo 'Running SQL: '.$sql."<br />\n";
     Jojo::structureQuery($sql);
@@ -120,20 +133,9 @@ $default_td = array();
 
 echo '<h1 id="h1">Running setup<div id="setup_loading"></div></h1><p>The Jojo setup script is an important part of the system. It applies version upgrades to the database, refreshes the cache, and performs other important housekeeping tasks. It is highly recommended that you run setup after every Jojo upgrade, and after adding any new files to plugins.</p><p>Consider running setup to be the equivalent of restarting Windows - it will fix all manner of problems, and is a good thing to do before seeking support.</p><p>If you do not see a "Setup Complete" message at the bottom of the page, it means the setup process has failed, which is usually due to a faulty install script in a plugin. The resulting error message should give some indication as to which plugin is responsible.</p>';
 
-/* create an empty array for each table to hold indexes - plugins will add to this array before it is processed */
-global $_db;
-$indexes = array();
-Jojo::_connectToDB();
+/* Install the basics first so that the autoloading works */
 include(_BASEPLUGINDIR . '/jojo_core/install/install_theme.php');
 include(_BASEPLUGINDIR . '/jojo_core/install/install_plugin.php');
-$tables = $_db->getAssoc('SHOW FULL TABLES');
-foreach ($tables as $tblname => $tbltype)  {
-    if (_TBLPREFIX) {
-        if (strpos($tblname, _TBLPREFIX) !== 0) continue;
-        $tblname = str_replace(_TBLPREFIX, '', $tblname);
-    }
-    $indexes[$tblname] = array();
-}
 
 /* Include all the php files in the install folder of the core plugin */
 $dir = _BASEPLUGINDIR . '/jojo_core/install/';
