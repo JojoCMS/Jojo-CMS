@@ -496,7 +496,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         } else {
             Imagejpeg($new_im, $cachefile, $quality);
             Imagejpeg($new_im, Jojo::publicCache($file), $quality);
-            Imagejpeg($new_im,'',$quality);
+            Imagejpeg($new_im,null,$quality);
         }
 
         // cleanup
