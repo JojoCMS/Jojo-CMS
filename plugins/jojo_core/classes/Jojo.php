@@ -3315,7 +3315,7 @@ class Jojo {
         return $languagedata;
     }
 
-    function getNav($root, $subnavLevels, $field = 'mainnav')
+    static function getNav($root, $subnavLevels, $field = 'mainnav')
     {
         global $_USERGROUPS, $selectedPages;
 
@@ -3384,7 +3384,7 @@ class Jojo {
     }
 
     /* Get currently selected page and step back up through parents to build a current section/sub pages array */
-    function getSelectedPages($pageid, $root=0) {
+    static function getSelectedPages($pageid, $root=0) {
         if (!$pageid) {
             return array();
         }
