@@ -354,12 +354,12 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $brcount = substr_count($content, '[[columnbreak]]');
             $brcount =  (!$columns || $columns==1) ?  $brcount : $brcount / $columns;
             // 1/3 | 2/3 split
-            if ((!$columns || $columns==1) && substr_count($content, '[[columnbreak13]]')) {
+            if (strpos($content, '[[columnbreak13]]')!==false) {
                 $brcount = 13;
                 $uneven = 8;
                 $content =  str_replace('[[columnbreak13]]', '[[columnbreak]]', $content);
             // 2/3 | 1/3 split
-            } elseif ((!$columns || $columns==1) && substr_count($content, '[[columnbreak23]]')) {
+            } elseif (strpos($content, '[[columnbreak23]]')!==false) {
                 $brcount = 23;
                 $uneven = 4;
                 $content =  str_replace('[[columnbreak23]]', '[[columnbreak]]', $content);
