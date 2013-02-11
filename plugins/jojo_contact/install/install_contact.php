@@ -122,7 +122,7 @@ $query = "
         `subject` varchar(255) NOT NULL,
         `from_name` varchar(255) NOT NULL,
         `from_email` varchar(255) NOT NULL,
-        `content` text NOT NULL,
+        `content` mediumtext NOT NULL,
         PRIMARY KEY  (`formsubmissionid`)
         ) ENGINE=InnoDB  AUTO_INCREMENT=1000;
     ";

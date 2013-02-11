@@ -339,7 +339,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         exit;
     }
 
-    function parseImports($css) {
+    function parseImports($css, $filepath=false) {
         if (Jojo::getOption("css_imports", 'no') == 'yes') {
             $pattern = "/@import url ?\(?(['\"]?)([^'\"\)]+)\\1\)?\s?(.*?)\;/ims";
             preg_match_all($pattern, $css, $matches, PREG_SET_ORDER);
@@ -348,7 +348,9 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 $matches[2] = file path
                 $matches[3] = media query
             */
-            $basedir = dirname(jojo::getFormData('uri'));
+
+            $basedir = ($filepath) ? dirname($filepath) : dirname(jojo::getFormData('uri'));
+
             foreach ($matches as $import) {
                 $file = $basedir.'/'.$import[2];
                 $output = '';
@@ -361,20 +363,21 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $output = '@media '.$import[3].' { ';
                 }
                 foreach (Jojo::listThemes($file) as $pluginfile) {
-                    $output .= file_get_contents($pluginfile);
+                    $output .= Jojo_Plugin_Core_Css::parseImports(file_get_contents($pluginfile), $file);
                     $found = true;
                     break;
                 }
                 if (!$found) {
                     foreach (Jojo::listPlugins($file) as $pluginfile) {
-                        $output .= file_get_contents($pluginfile);
+                        $output .= Jojo_Plugin_Core_Css::parseImports(file_get_contents($pluginfile), $file);
                         $found = true;
                         break;
                     }
                 }
                 if ($found && $import[3]) {
                     $output .= ' }';
-                } else {
+                }
+                if (!$found) {
                     $log             = new Jojo_Eventlog();
                     $log->code       = 'missing file';
                     $log->importance = 'high';
