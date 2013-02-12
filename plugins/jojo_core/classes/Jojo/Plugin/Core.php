@@ -392,9 +392,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $colclose = '</div></div></div>';
             $colbreak = '</div></div><div class="span' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
 
-            $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>'), $colopen, $content) : $colopen . "\n" . $content;
-            $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>'), $colclose, $content) : $content . "\n" . $colclose;
-            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), $colbreak, $content);
+            $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>','[[columns]]'), $colopen, $content) : $colopen . "\n" . $content;
+            $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>','[[endcolumns]]'), $colclose, $content) : $content . "\n" . $colclose;
+            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>','[[columnbreak]]'), $colbreak, $content);
         }
         return $content;
     }
