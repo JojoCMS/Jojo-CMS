@@ -18,13 +18,13 @@
  */
 
 /* Register URI patterns */
-Jojo::registerURI("[filename:LiveSearchSiteAuth\\.xml]", 'Jojo_Plugin_jojo_bing_verification');
+Jojo::registerURI("[filename:BingSiteAuth\\.xml]", 'Jojo_Plugin_jojo_bing_verification');
 
 $_options[] = array(
     'id' => 'bingverification',
     'category' => 'SEO',
     'label' => 'Bing Verification',
-    'description' => 'A newline separated list or users ID\'s for the Bing XML file LiveSearchSiteAuth.xml',
+    'description' => 'A newline separated list or users ID\'s for the Bing XML file BingSiteAuth.xml',
     'type' => 'textarea',
     'default' => '',
     'options' => '',
