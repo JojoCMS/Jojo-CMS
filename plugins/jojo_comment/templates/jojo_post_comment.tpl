@@ -52,7 +52,7 @@
     </div>
     <div class="form-fieldset">
         <label for="submit">&nbsp;</label>
-        <input type="submit" name="submit" id="submit" value="Post Comment" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" />
+        <input type="submit" name="submit" id="submit" value="Post Comment" class="button btn" onmouseover="this.className='button btn buttonrollover';" onmouseout="this.className='button btn'" />
   </div>
   <div class="clear"></div>
   </fieldset>
