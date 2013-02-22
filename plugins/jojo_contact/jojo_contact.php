@@ -155,7 +155,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
             /* if field is confirmation field then need to check both fields match */
             if($field['type'] == 'emailwithconfirmation') {
-                $confirmation = $_POST['form_' . $field['field'] . '_confirmation'];
+                $confirmation = $_POST[$field['field'] . '_confirmation'];
                 if($field['value'] != $confirmation) {
                     $errors[] = $field['display'] . ' and confirmation email fields must match';
                 }
@@ -317,7 +317,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
 
         $sent = false;
-        if (isset($_POST['submit'])) {
+        if (isset($_POST['contactsubmit'])) {
             $response = $this->sendEnquiry();
             $smarty->assign('message', $response['responsemessage']);
             $sent = $response['sent'];
@@ -370,7 +370,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     {
         global $smarty;
         $smarty->assign('content', '');
-        $sent = (boolean)(isset($_SESSION['sendstatus']) || isset($_POST['submit']));
+        $sent = (boolean)(isset($_SESSION['sendstatus']) || isset($_POST['contactsubmit']));
         $smarty->assign('message', (isset($_SESSION['sendstatus']) ? $_SESSION['sendstatus'] : ''));
         $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         $form = $formfields[0];

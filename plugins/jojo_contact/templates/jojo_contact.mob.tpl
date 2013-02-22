@@ -72,7 +72,7 @@
         </div>
     {/if}
         <div  class="form-fieldset submit">
-            {if $form.form_submit_label}<label>&nbsp;</label>{/if}<input type="submit" value="{$form.form_submit}" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
+            {if $form.form_submit_label}<label>&nbsp;</label>{/if}<input type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
        </div>
         <div class="progress" style="display: none;">
             <div class="bar"></div >

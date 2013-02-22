@@ -246,7 +246,7 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
             foreach ($res as $t) {
                 $ids[$t['plugin']][$t['itemid']] = true;
             }
-            
+
             /* If the item can't be found and it's not the index page, return a 404 */
             if (!empty($tags) && !$ids) {
                 include(_BASEPLUGINDIR . '/jojo_core/404.php');
