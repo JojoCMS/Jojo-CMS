@@ -121,6 +121,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             /* Assign smarty variables */
             $smarty->assign('numresults', count($results));
             $smarty->assign('resulttypes', $resulttypes);
+            $smarty->assign('searchtags', (boolean)(Jojo::getOption('search_tags', 'yes')=='yes'));
             $smarty->assign('keywords',   $displaykeywords);
             $smarty->assign('displaykeywords',  $displaykeywords);
             $smarty->assign('results',    $results);

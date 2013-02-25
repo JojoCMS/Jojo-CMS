@@ -20,14 +20,9 @@
 
 {if $results}
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance">Relevance</div>{/if}
-   <p>{$numresults} Search results for <b>{$displaykeywords}</b>.</p>
-{if $OPTIONS.search_filtering =='yes' && count($resulttypes) > 1}
-    <p class="links" id="search-filter">Filter results by: <a href="#" onclick="filterresults();return false;" id="filter-search-none" class="current-filter">None</a>
-{foreach from=$resulttypes item=cat}
-   | <a href="#" onclick="filterresults('search-cat-{$cat|strtolower|replace:' ':'-'}');return false;"  id="filter-search-cat-{$cat|strtolower|replace:' ':'-'}">{$cat}</a>&nbsp;
-{/foreach}
-    </p>
-{/if}
+    <p>{$numresults} Search results for <b>{$displaykeywords}</b>.</p>
+    {if $OPTIONS.search_filtering =='yes' && count($resulttypes) > 1}<p class="links" id="search-filter">Filter results by: <a href="#" onclick="filterresults();return false;" id="filter-search-none" class="current-filter">Everything</a>{foreach from=$resulttypes item=cat}{if $cat!='none'} | <a href="#" onclick="filterresults('search-cat-{$cat|strtolower|replace:' ':'-'}');return false;"  id="filter-search-cat-{$cat|strtolower|replace:' ':'-'}">{$cat}</a>&nbsp;{/if}{/foreach}</p>
+    {/if}
 
 {foreach item=res from=$results}
   <div class="search-result search-cat-{$res.type|strtolower|replace:' ':'-'}">
@@ -35,12 +30,9 @@
     <h3><a href="{$res.url}" title="{$res.title}">{$res.title}</a></h3>
     {if $res.image && $OPTIONS.search_images =='yes'}<a href="{$res.url}" title="{$res.title}" rel="nofollow"><img src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}v6000{/if}/{$res.image}" class="float-right" alt="{$res.title}" /></a>{/if}
     <p>{$res.body}</p>
-    {if $res.tags}<p class="links">Tagged with:
-{foreach from=$res.tags item=tag}
-<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag.url}/">{if $tag.cleanword==$keywords}<b>{$tag.cleanword}</b>{else}{$tag.cleanword}{/if}</a> |
-{/foreach}
-    </p>{/if}
-    <p class="links">{$res.type}: <a href="{$res.url}" title="{$res.title}" class="links" rel="nofollow" >&gt; {$res.displayurl}</a></p>
+    {if $res.tags && $searchtags}<p class="links">Tagged with: {foreach from=$res.tags item=tag}<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag.url}/">{if $tag.cleanword==$keywords}<b>{$tag.cleanword}</b>{else}{$tag.cleanword}{/if}</a> | {/foreach}</p>
+    {/if}
+    <p class="links">{if $res.type!='none' && $OPTIONS.search_filtering =='yes'}{$res.type}: {/if}<a href="{$res.url}" title="{$res.title}" class="links" rel="nofollow" >&gt; {$res.displayurl}</a></p>
   </div>
 {/foreach}
 <form name="search2" action="{$searchurl}" method="post">
@@ -53,12 +45,11 @@
 {if $MULTILANGUAGE && (count($languages)>1)}
     <select name="l">
         <option value=""{if $language == ''} selected="selected"{/if}>All Languages</option>
-{foreach from=$languages key=code item=name}
-        <option value="{$code}"{if $language == $code} selected="selected"{/if}>{$name|escape:"html":$charset}</option>
-{/foreach}
+        {foreach from=$languages key=code item=name}<option value="{$code}"{if $language == $code} selected="selected"{/if}>{$name|escape:"html":$charset}</option>
+        {/foreach}
     </select>
 {/if}
-    <input class="button" type="submit" value="Search" />
+    <input class="button btn" type="submit" value="Search" />
 </form>
 
 <script type="text/javascript">

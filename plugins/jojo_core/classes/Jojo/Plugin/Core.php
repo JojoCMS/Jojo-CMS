@@ -258,10 +258,10 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         if ($data) {
             foreach ($data as $result) {
                 $result['relevance'] = $rawresults[$result['id']]['relevance'];
-                $result['type'] = 'General Content';
+                $result['type'] = 'none';
                 $result['tags'] = isset($rawresults[$result['id']]['tags']) ? $rawresults[$result['id']]['tags'] : '';
                /* If its a root level page, just return the root and set the display url to 'home'*/
-                if (in_array($result['pageid'], $homes)) $result['displayurl'] = $result['absoluteurl'];
+                $result['displayurl'] = in_array($result['pageid'], $homes) ?  rtrim(str_replace('http://', '', $result['absoluteurl']), '/') : rtrim($result['url'], '/');
                 $results[] = $result;
             }
         }
