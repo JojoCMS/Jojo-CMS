@@ -195,7 +195,8 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 unset($items[$k]['pg_body']);
             } else {
                 // Snip for the index description
-                $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
+                $splitcontent = isset($i['pg_body']) ? Jojo::iExplode('[[snip]]', $i['pg_body']) : array();
+                $i['bodyplain'] = array_shift($splitcontent);
                 /* Strip all tags and template include code ie [[ ]] */
                 $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
                 $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];

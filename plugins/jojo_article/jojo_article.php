@@ -90,7 +90,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['seotitle']        = htmlspecialchars($i['ar_seotitle'], ENT_COMPAT, 'UTF-8', false);
             $i['author']        = htmlspecialchars($i['ar_author'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
-            $i['bodysnip'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
+            $splitcontent = Jojo::iExplode('[[snip]]', $i['ar_body']);
+            $i['bodysnip'] = array_shift($splitcontent);
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodysnip'] = strpos($i['bodysnip'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodysnip']) : $i['bodysnip'];
             $i['bodyplain'] = trim(strip_tags($i['bodysnip']));
