@@ -21,7 +21,7 @@
 class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 {
 
-    function sendEnquiry($formID=false)
+    public static function sendEnquiry($formID=false)
     {
         global $smarty;
         /* Check for form injection attempts */
@@ -342,7 +342,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* content filter to replace [[contactform:ID/name]] with html */
-    function contentFilter($content)
+    public static function contentFilter($content)
     {
 
         if (strpos($content, '[[contactform:') === false) {
@@ -366,7 +366,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* get the html of the form from an ID */
-    function getFormHtml($formID, $action=false, $js=false)
+    public static function getFormHtml($formID, $action=false, $js=false)
     {
         global $smarty;
         $smarty->assign('content', '');
@@ -433,7 +433,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* Create the array for the name and email addresses on the send to options */
-    function getToAddresses()
+    static function getToAddresses()
     {
         static $_toAddresses;
         /* Fetch options from database if we don't have them */
@@ -449,7 +449,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $_toAddresses;
     }
 
-    function cleanHTML($html, $css='')
+    static function cleanHTML($html, $css='')
     {
         // basic inline styling for supplied content
         $html = str_replace('<p>', '<p style="font-size:13px;' . $css . '">', $html);
@@ -460,7 +460,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $html;
     }
 
-    function personaliseMessage($html, $fields)
+    static function personaliseMessage($html, $fields)
     {
         // filter message for personalisation by field display name eg [[From Name]]
         if (strpos($html, '[[')!==false) {
@@ -553,7 +553,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* block private uploads from being downloaded without login */
-    function downloadFile($filename)
+    public static function downloadFile($filename)
     {
         global $_USERGROUPS;
         if (strpos($filename, "/uploads/private") !== false && !in_array('admin', $_USERGROUPS)) {
