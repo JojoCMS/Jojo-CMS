@@ -1010,7 +1010,7 @@ $_options[] = array(
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
     'default'     => '1.4.4',
-    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2',
+    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2,1.9.1',
 );
 
 $_options[] = array(
