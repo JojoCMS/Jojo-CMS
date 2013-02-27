@@ -339,7 +339,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         exit;
     }
 
-    function parseImports($css, $filepath=false) {
+    public static function parseImports($css, $filepath=false) {
         if (Jojo::getOption("css_imports", 'no') == 'yes') {
             $pattern = "/@import url ?\(?(['\"]?)([^'\"\)]+)\\1\)?\s?(.*?)\;/ims";
             preg_match_all($pattern, $css, $matches, PREG_SET_ORDER);

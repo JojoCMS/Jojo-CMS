@@ -418,7 +418,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         /* Use Anytime datepicker for date fields if option set */
         $smarty->assign('anytime', (boolean)(Jojo::getOption('jquery_useanytime', 'no')=='yes'));
         if ($sent) {
-            $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $formSuccessMessage : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
+            $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $form['form_success_message'] : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
             $smarty->assign('sent', $sent);
         }
         //reset send status
