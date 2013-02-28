@@ -2369,7 +2369,7 @@ class Jojo {
         }
 
         // Replace links
-        $pattern = "/<a([^>]*) href=\"(?!http|ftp|https)([^\"]*)\"/";
+        $pattern = "/<a([^>]*) href=\"(?!http|ftp|https|mailto)([^\"]*)\"/";
         $replace = "<a\${1} href=\"" . $base . "\${2}\"";
         $text = preg_replace($pattern, $replace, $text);
 
