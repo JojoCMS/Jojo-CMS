@@ -19,12 +19,12 @@ define('FILE_ERROR_DST_DIR_EXIST', 104);
  * @package ImageManager
  * @subpackage files
  */
-class Files 
+class Files
 {
-	
+
 	/**
 	 * Copy a file from source to destination. If unique == true, then if
-	 * the destination exists, it will be renamed by appending an increamenting 
+	 * the destination exists, it will be renamed by appending an increamenting
 	 * counting number.
 	 * @param string $source where the file is from, full path to the files required
 	 * @param string $destination_file name of the new file, just the filename
@@ -33,29 +33,29 @@ class Files
 	 * @param boolean $unique create unique destination file if true.
 	 * @return string the new copied filename, else error if anything goes bad.
 	 */
-	function copyFile($source, $destination_dir, $destination_file, $unique=true) 
+	static function copyFile($source, $destination_dir, $destination_file, $unique=true)
 	{
-		if(!is_uploaded_file($source) && !(file_exists($source) && is_file($source))) 
+		if(!is_uploaded_file($source) && !(file_exists($source) && is_file($source)))
 			return FILE_ERROR_NO_SOURCE;
 
 		$destination_dir = Files::fixPath($destination_dir);
 
-		if(!is_dir($destination_dir)) 
+		if(!is_dir($destination_dir))
 			Return FILE_ERROR_DST_DIR_FAILED;
 
 		$filename = Files::escape($destination_file);
 
-		if($unique) 
+		if($unique)
 		{
 			$dotIndex = strrpos($destination_file, '.');
 			$ext = '';
-			if(is_int($dotIndex)) 
+			if(is_int($dotIndex))
 			{
 				$ext = substr($destination_file, $dotIndex);
 				$base = substr($destination_file, 0, $dotIndex);
 			}
 			$counter = 0;
-			while(is_file($destination_dir.$filename)) 
+			while(is_file($destination_dir.$filename))
 			{
 				$counter++;
 				$filename = $base.'_'.$counter.$ext;
@@ -64,7 +64,7 @@ class Files
 
 		if (!copy($source, $destination_dir.$filename))
 			return FILE_ERROR_COPY_FAILED;
-		
+
 		//verify that it copied, new file must exists
 		if (is_file($destination_dir.$filename))
 			Return $filename;
@@ -77,7 +77,7 @@ class Files
 	 * @param string $newFolder specifiy the full path of the new folder.
 	 * @return boolean true if the new folder is created, false otherwise.
 	 */
-	function createFolder($newFolder) 
+	function createFolder($newFolder)
 	{
 		mkdir ($newFolder, 0777);
 		return chmod($newFolder, 0777);
@@ -90,7 +90,7 @@ class Files
 	 * @param string $filename the orginal filename
 	 * @return string the escaped safe filename
 	 */
-	function escape($filename)
+	static function escape($filename)
 	{
 		Return preg_replace('/[^\w\._]/', '_', $filename);
 	}
@@ -100,9 +100,9 @@ class Files
 	 * @param string $file file to be deleted
 	 * @return boolean true if deleted, false otherwise.
 	 */
-	function delFile($file) 
+	static function delFile($file)
 	{
-		if(is_file($file)) 
+		if(is_file($file))
 			Return unlink($file);
 		else
 			Return false;
@@ -116,13 +116,13 @@ class Files
 	 * error if the directory is not empty.
 	 * @return boolean true if deleted.
 	 */
-	function delFolder($folder, $recursive=false) 
+	static function delFolder($folder, $recursive=false)
 	{
 		$deleted = true;
-		if($recursive) 
+		if($recursive)
 		{
 			$d = dir($folder);
-			while (false !== ($entry = $d->read())) 
+			while (false !== ($entry = $d->read()))
 			{
 				if ($entry != '.' && $entry != '..')
 				{
@@ -130,13 +130,13 @@ class Files
 					//var_dump($obj);
 					if (is_file($obj))
 					{
-						$deleted &= Files::delFile($obj);					
+						$deleted &= Files::delFile($obj);
 					}
 					else if(is_dir($obj))
 					{
 						$deleted &= Files::delFolder($obj, $recursive);
 					}
-					
+
 				}
 			}
 			$d->close();
@@ -145,7 +145,7 @@ class Files
 
 		//$folder= $folder.'/thumbs';
 		//var_dump($folder);
-		if(is_dir($folder)) 
+		if(is_dir($folder))
 			$deleted &= rmdir($folder);
 		else
 			$deleted &= false;
@@ -158,7 +158,7 @@ class Files
 	 * @param string $path the path
 	 * @return string path with trailing /
 	 */
-	function fixPath($path) 
+	static function fixPath($path)
 	{
 		//append a slash to the path if it doesn't exists.
 		if(!(substr($path,-1) == '/'))
@@ -172,7 +172,7 @@ class Files
 	 * @param string $pathB path two
 	 * @return string a trailing slash combinded path.
 	 */
-	function makePath($pathA, $pathB) 
+	static function makePath($pathA, $pathB)
 	{
 		$pathA = Files::fixPath($pathA);
 		if(substr($pathB,0,1)=='/')
@@ -187,26 +187,26 @@ class Files
 	 * @param string $pathB the ending path with file
 	 * @return string combined file path.
 	 */
-	function makeFile($pathA, $pathB) 
-	{		
+	static function makeFile($pathA, $pathB)
+	{
 		$pathA = Files::fixPath($pathA);
 		if(substr($pathB,0,1)=='/')
 			$pathB = substr($pathB,1);
-		
+
 		Return $pathA.$pathB;
 	}
 
-	
+
 	/**
 	 * Format the file size, limits to Mb.
 	 * @param int $size the raw filesize
 	 * @return string formated file size.
 	 */
-	function formatSize($size) 
+	static function formatSize($size)
 	{
-		if($size < 1024) 
-			return $size.' bytes';	
-		else if($size >= 1024 && $size < 1024*1024) 
+		if($size < 1024)
+			return $size.' bytes';
+		else if($size >= 1024 && $size < 1024*1024)
 			return sprintf('%01.2f',$size/1024.0).' KB';
 		else
 			return sprintf('%01.2f',$size/(1024.0*1024)).' MB';
@@ -218,7 +218,7 @@ class Files
 	 * @param string dir path
 	 * @return int
 	 */
-	function dirSize($dirName = '.')
+	static function dirSize($dirName = '.')
 	{
 		$dir  = dir($dirName);
 		$size = 0;
@@ -239,14 +239,14 @@ class Files
 		$dir->close();
 		return $size;
 	}
-	
+
 	/**
 	 * Renames file, preserving its directory and extension
 	 * @param string $oldPath path to the old existing file
 	 * @param string new filename (just the name, without path or extension)
 	 * @author Krzysztof Kotowicz <koto@webworkers.pl>
 	 */
-	function renameFile($oldPath, $newName) {
+	static function renameFile($oldPath, $newName) {
 
 		if(!(file_exists($oldPath) && is_file($oldPath)))
 			return FILE_ERROR_NO_SOURCE;
@@ -264,12 +264,12 @@ class Files
 			return FILE_ERROR_COPY_FAILED;
 
 	}
-	
+
 	function rename ($oldPath,$newPath)
 	{
 		if(!(is_dir($oldPath) || is_file($oldPath)))
 			return FILE_ERROR_NO_SOURCE;
-		
+
 		if (file_exists($newPath))
 			return FILE_ERROR_DST_DIR_EXIST;
 
@@ -278,7 +278,7 @@ class Files
 			return FILE_ERROR_COPY_FAILED;
 		else return FILE_COPY_OK;
 	}
-	
+
 	/**
 	 * copy a directory and all subdirectories and files (recursive)
 	 * @author SBoisvert at Don'tSpamMe dot Bryxal dot ca (adapted from php.net)
@@ -287,14 +287,14 @@ class Files
 	 * @param string source directory
 	 * @param string destination directory
 	 * @param bool   overwrite existing files
-	 *  
+	 *
 	 * @return mixed bool true on pass, number on fail
 	 */
-  	function copyDir($basePath, $source, $dest, $overwrite = false)
+  	static function copyDir($basePath, $source, $dest, $overwrite = false)
 	{
 		if(!is_dir($basePath . $dest))
 		{
-			if (!@mkdir($basePath . $dest)) return FILE_ERROR_DST_DIR_FAILED;	
+			if (!@mkdir($basePath . $dest)) return FILE_ERROR_DST_DIR_FAILED;
 		}
 		if($handle = opendir($basePath . $source))
 		{        // if the folder exploration is sucsessful, continue
@@ -313,7 +313,7 @@ class Files
 							}
 						}*/
 						Files::copyFile($basePath . $path, $basePath . $dest . '/', $file, true);
-					} 
+					}
 					elseif(is_dir($basePath . $path))
 					{
 						if(!is_dir($basePath . $dest . '/' . $file))
