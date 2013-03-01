@@ -163,7 +163,7 @@ $_options[] = array(
     'label'       => 'Doctype',
     'description' => 'Declare Doctype as XHTML or HTML5.',
     'type'        => 'radio',
-    'default'     => 'xhtml',
+    'default'     => 'html5',
     'options'     => 'xhtml,html5',
 );
 
@@ -667,7 +667,7 @@ $_options[] = array(
     'label'       => 'Use LessPHP',
     'description' => 'Whether to use LessPHP and for CSS instead of the standard CSS files. Note must be yes to use any of the bootstrap css.',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -687,7 +687,7 @@ $_options[] = array(
     'label'       => 'Normalize CSS Reset',
     'description' => 'Add normalize.css (reset, media etc) to style.css',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -697,7 +697,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Variables',
     'description' => 'Include Twitter Bootstap\'s default variables.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -707,7 +707,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Mixins',
     'description' => 'Include Twitter Bootstap\'s default mixins.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -727,7 +727,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Grid System',
     'description' => 'Include Twitter Bootstap\'s grid.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -737,7 +737,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Layouts',
     'description' => 'Include Twitter Bootstap\'s layouts.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -937,7 +937,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Utilities',
     'description' => 'Include Twitter Bootstap\'s utilities.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -967,7 +967,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Responsive 1200',
     'description' => 'Include Twitter Bootstap\'s responsive.less files for super-wide 1200px version',
     'type'        => 'radio',
-    'default'     => 'yes',
+    'default'     => 'no',
     'options'     => 'yes,no',
 );
 
@@ -989,7 +989,7 @@ $_options[] = array(
     'label'       => 'Use Modernizr',
     'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no,custom',
 );
 
@@ -1009,8 +1009,8 @@ $_options[] = array(
     'label'       => 'jQuery version',
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
-    'default'     => '1.4.4',
-    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2',
+    'default'     => '1.7.2',
+    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2,1.9.1',
 );
 
 $_options[] = array(
