@@ -27,27 +27,42 @@ $num = $numarticles + 100;
     /* Create latest Articles array for sidebar: getArticles(x, start, categoryid) = list x# of articles */
     if (Jojo::getOption('article_sidebar_categories', 'no')=='yes') {
         $categories = Jojo::selectQuery("SELECT * FROM {articlecategory}");
-        $allarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
+        $allarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude, $include='', $minimal=true);
         $allarticles = array_slice ($allarticles, 0, $numarticles);
+        $articleids = array();
+        foreach ($allarticles as $a){
+            $articleids[] = $a['articleid'];
+        }
+        $allarticles = Jojo_Plugin_Jojo_article::getItemsById($articleids, $sortby='ar_date desc');
         $smarty->assign('allarticles',  $allarticles);
         foreach ($categories as $c) {
-            $catarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, $c['articlecategoryid'],  $c['sortby'], $exclude );
+            $catarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, $c['articlecategoryid'],  $c['sortby'], $exclude, $include='', $minimal=true );
             if (isset($catarticles[0])) {
                 $catarticles = array_slice ($catarticles, 0, $numarticles);
-                $smarty->assign('articles_' . str_replace(array('-', '/'), array('_', ''), $catarticles[0]['pg_url']), $catarticles);
+                $articleids = array();
+                foreach ($catarticles as $a){
+                    $articleids[] = $a['articleid'];
+                }
+                $catarticles = Jojo_Plugin_Jojo_article::getItemsById($articleids, $sortby='ar_date desc');
+               $smarty->assign('articles_' . str_replace(array('-', '/'), array('_', ''), $catarticles[0]['pg_url']), $catarticles);
             }
         }
     } else {
         if (Jojo::getOption('article_sidebar_randomise', 0) > 0) {
             $num = Jojo::getOption('article_sidebar_randomise', 0) + 100;
-            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude);
+            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all',  'ar_date desc', $exclude, $include='', $minimal=true);
             $recentarticles = array_slice ($recentarticles, 0, Jojo::getOption('article_sidebar_randomise', 0));
             shuffle($recentarticles);
         } else {
-            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude);
+            $recentarticles = Jojo_Plugin_Jojo_article::getArticles($num, 0, 'all', 'ar_date desc', $exclude, $include='', $minimal=true);
         }
         $recentarticles = array_slice($recentarticles, 0, $numarticles);
-        $smarty->assign('articles', $recentarticles );
+        $articleids = array();
+        foreach ($recentarticles as $a){
+            $articleids[] = $a['articleid'];
+        }
+        $recentarticles = Jojo_Plugin_Jojo_article::getItemsById($articleids, $sortby='ar_date desc');
+        $smarty->assign('articles', (Jojo::getOption('article_sidebar_randomise', 0) > 0 ? shuffle($recentarticles) : $recentarticles ) );
     }
 
 }

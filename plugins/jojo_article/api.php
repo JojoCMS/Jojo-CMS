@@ -106,17 +106,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'article_anchor_text',
-    'category'    => 'Articles',
-    'label'       => 'Article Anchor Text',
-    'description' => 'Allows users to choose the link text for their link. For good comments, this can be enabled.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'article_last_updated',
     'category'    => 'System',
     'label'       => 'Articles last updated',
