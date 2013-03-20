@@ -128,6 +128,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'article_buffer',
+    'category'    => 'Articles',
+    'label'       => 'Hidden article buffer',
+    'description' => "Number of recent articles likely to be not yet live or expired (0 if scheduling isn't used)",
+    'type'        => 'integer',
+    'default'     => '0',
+    'options'     => '',
+    'plugin'      => 'jojo_article'
+);
+
+$_options[] = array(
     'id'          => 'article_sidebar_randomise',
     'category'    => 'Articles',
     'label'       => 'Randmomise selection of teasers out of',
