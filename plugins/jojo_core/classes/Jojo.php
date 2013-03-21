@@ -1033,6 +1033,7 @@ class Jojo {
             'pml' => 'application/x-perfmon',
             'pmr' => 'application/x-perfmon',
             'pmw' => 'application/x-perfmon',
+            'png' => 'image/png',
             'pnm' => 'image/x-portable-anymap',
             'pot' => 'application/vnd.ms-powerpoint',
             'ppm' => 'image/x-portable-pixmap',
