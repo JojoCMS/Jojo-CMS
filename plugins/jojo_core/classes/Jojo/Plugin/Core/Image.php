@@ -448,7 +448,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
                 imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
                 imagealphablending($new_im, false);
-            } elseif ($pad) {
+            } 
+            if ($pad) {
                 $background = imagecolorallocate($new_im, 0xFF, 0xFF, 0xFF);//todo: allow this to be something other than white
                 imagefill($new_im, 0, 0, $background);
             }
