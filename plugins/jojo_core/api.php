@@ -1014,6 +1014,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'jquery_touch',
+    'category'    => 'JS',
+    'label'       => 'jQuery Mobile Touch',
+    'description' => 'Load jQuery Mobile touch event code (for triggering swipe and tap events etc).',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'jquery_ui',
     'category'    => 'JS',
     'label'       => 'jQuery UI',

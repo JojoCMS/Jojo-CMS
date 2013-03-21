@@ -83,7 +83,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
 
                 /* FRAJAX */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
-                
+
                 /* Twitter Bootstrap options */
                 /* Transitions */
                 if (Jojo::getOption('tbootstrap_js_transition', 'no') == 'yes')
@@ -124,7 +124,11 @@ if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
                 if (Jojo::getOption('tbootstrap_js_typeahead', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-typeahead.js');
 
-                /* Javascript from Plugins */
+                 /* jQueryMobile */
+                if (Jojo::getOption('jquery_touch', 'no') == 'yes')
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jquery/jquery.mobile.touch.js');
+
+               /* Javascript from Plugins */
                 foreach (Jojo::listPlugins('js/functions.js') as $pluginfile) {
                     $js->addFile($pluginfile);
                 }
