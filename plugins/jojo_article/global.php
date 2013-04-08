@@ -63,7 +63,8 @@ $num = $numarticles + $buffer;
             $articleids[] = $a['articleid'];
         }
         $recentarticles = Jojo_Plugin_Jojo_article::getItemsById($articleids, $sortby='ar_date desc');
-        $smarty->assign('articles', (Jojo::getOption('article_sidebar_randomise', 0) > 0 ? shuffle($recentarticles) : $recentarticles ) );
+        if (Jojo::getOption('article_sidebar_randomise', 0) > 0) shuffle($recentarticles);
+        $smarty->assign('articles', $recentarticles);
     }
 
 }

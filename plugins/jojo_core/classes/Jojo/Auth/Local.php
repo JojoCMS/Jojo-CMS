@@ -8,7 +8,6 @@ class Jojo_Auth_Local {
 
         if ($username) {
             /* Look up user by username and password from login form submission */
-            
             if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
                 $values = array($username, $username, $password, $password);
                 $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
