@@ -122,7 +122,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
-            unset($items[$k]['ar_bbbody']);
+             if (class_exists('Jojo_Plugin_Jojo_Tags') && Jojo::getOption('article_tags', 'no') == 'yes' ) {
+                /* Split up tags for display */
+                $i['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $i['articleid']);
+            }
+           unset($items[$k]['ar_bbbody']);
         }
         $items = array_values($items);
         return $items;

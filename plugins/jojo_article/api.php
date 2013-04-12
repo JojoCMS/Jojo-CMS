@@ -172,6 +172,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'article_tags',
+    'category'    => 'Articles',
+    'label'       => 'Get Tag info',
+    'description' => 'Always get tag data for articles',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_article'
+);
+
+$_options[] = array(
     'id'          => 'article_inplacesitemap',
     'category'    => 'Articles',
     'label'       => 'Articles sitemap location',
