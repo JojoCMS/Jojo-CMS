@@ -77,7 +77,11 @@ function showResponse(response)  {
         if (response.hideonsuccess==true) {
             $('#' + formid).hide();
         }
+        if ($('#' + formid + ' #form_redirect').length > 0 && $('#' + formid + ' #form_redirect').val() !== '') {
+            window.location.href = $('#' + formid + ' #form_redirect').val();
+        }
     }
+
     // Revert the button back to a usable state
     var submitEl = $('#' + formid + ' :submit');
     submitEl.removeAttr('disabled').val(submitEl.data('normalval'));
