@@ -260,6 +260,10 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
             $errors[] = 'Website format is invalid';
         }
 
+        if (Jojo::getOption('comment_useronly', 'no') == 'yes' && $email && !Jojo::selectRow("SELECT userid FROM {user} WHERE us_email=?", array($email)) ) {
+            $errors[] = 'Comments are restricted to registered users or subscribers only';
+        }
+
         /* rate limiting to prevent spam */
         $rate_comments = Jojo::getOption('comment_spam_num', 3); // maximum X posts
         $rate_mins = Jojo::getOption('comment_spam_time', 5);  // in X mins
