@@ -1,4 +1,5 @@
 {* Select an Editor *}
+<div style="float:left; padding-top:5px;">{$fd_name}</div>
 <div class="editor-format" style="float:right; padding-top:5px;">
   <strong>Editor Format:</strong>&nbsp;
   <label for="type_fm_{$fd_field}_html">
