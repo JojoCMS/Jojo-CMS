@@ -964,6 +964,7 @@ class Jojo {
             'evy' => 'application/envoy',
             'exe' => 'application/octet-stream',
             'fif' => 'application/fractals',
+            'flv' => 'video/x-flv',
             'flr' => 'x-world/x-vrml',
             'gif' => 'image/gif',
             'gtar' => 'application/x-gtar',
