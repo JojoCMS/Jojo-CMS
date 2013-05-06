@@ -2461,14 +2461,18 @@ class Jojo {
     /* Gets the IP address of the visitor, bypassing proxies */
     static function getIp()
     {
+        $ip = false;
         if ( (getenv('HTTP_X_FORWARDED_FOR') != '') && (strtolower(getenv('HTTP_X_FORWARDED_FOR')) != 'unknown')) {
             $iparray = explode(',', getenv('HTTP_X_FORWARDED_FOR'));
-            return $iparray[0];
+            $ip = $iparray[0];
         } elseif (getenv('REMOTE_ADDR') != '') {
-            return getenv('REMOTE_ADDR');
-        } else {
-            return false;
+            $ip = getenv('REMOTE_ADDR');
         }
+        /* check IP is valid format */
+        if (preg_match('/\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b/', $ip)) {
+        	return $ip;
+        }
+        return false;
     }
 
     /* reads the user agent string and gives the browser type - quick and simple detection */
