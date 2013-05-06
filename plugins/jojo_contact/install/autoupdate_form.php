@@ -237,6 +237,18 @@ $default_fd['form']['form_choice_list'] = array(
         'fd_tabname' => "Xtras"
     );
 
+// CSS Class
+$default_fd['form']['form_class'] = array(
+        'fd_name' => "Form Class",
+        'fd_type' => "text",
+        'fd_options' => "",
+        'fd_default' => "",
+        'fd_size' => "40",
+        'fd_help' => "A CSS class for this form (so forms or groups of forms can be styled independently)",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+
 // Google Analytics Goal Settings: Virtual page name for contact thankyou page Field
 $default_fd['form']['form_tracking_code_analytics'] = array(
         'fd_name' => "Google Analytics Goal Settings: Virtual page name for contact thankyou page",

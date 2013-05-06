@@ -12,7 +12,7 @@ $(document).ready(function() {
                         if (uploads.length>0) {
                             var percentVal = percentComplete + '%';
                             $('#' + formid + ' .progress').show();
-                            $('#' + formid + ' .progress .bar').width(percentVal)
+                            $('#' + formid + ' .progress .bar').width(percentVal);
                             $('#' + formid + ' .progress .percent').html(percentVal);
                         }
                     },
@@ -77,7 +77,11 @@ function showResponse(response)  {
         if (response.hideonsuccess==true) {
             $('#' + formid).hide();
         }
+        if ($('#' + formid + ' #form_redirect').length > 0 && $('#' + formid + ' #form_redirect').val() !== '') {
+            window.location.href = $('#' + formid + ' #form_redirect').val();
+        }
     }
+
     // Revert the button back to a usable state
     var submitEl = $('#' + formid + ' :submit');
     submitEl.removeAttr('disabled').val(submitEl.data('normalval'));
@@ -102,7 +106,7 @@ function setFormTabs(formid) {
         if (index==(numtabs -1)) {
             tabscript += "$('#" + formid + " div.submit').show();";
         }
-        tabscript += "return false;"
+        tabscript += "return false;";
         formlinks += '<a href="" id="' + formid + $(this).attr('id') + 'link" onclick="' + tabscript + '"';
         if (index==0) {
             formlinks += ' class="current"';

@@ -195,7 +195,8 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 unset($items[$k]['pg_body']);
             } else {
                 // Snip for the index description
-                $i['bodyplain'] = isset($i['pg_body']) ? array_shift(Jojo::iExplode('[[snip]]', $i['pg_body'])) : '';
+                $splitcontent = isset($i['pg_body']) ? Jojo::iExplode('[[snip]]', $i['pg_body']) : array();
+                $i['bodyplain'] = array_shift($splitcontent);
                 /* Strip all tags and template include code ie [[ ]] */
                 $i['bodyplain'] = trim(strip_tags($i['bodyplain']));
                 $i['bodyplain'] = strpos($i['bodyplain'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodyplain']) : $i['bodyplain'];
@@ -258,10 +259,10 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         if ($data) {
             foreach ($data as $result) {
                 $result['relevance'] = $rawresults[$result['id']]['relevance'];
-                $result['type'] = 'General Content';
+                $result['type'] = 'none';
                 $result['tags'] = isset($rawresults[$result['id']]['tags']) ? $rawresults[$result['id']]['tags'] : '';
                /* If its a root level page, just return the root and set the display url to 'home'*/
-                if (in_array($result['pageid'], $homes)) $result['displayurl'] = $result['absoluteurl'];
+                $result['displayurl'] = in_array($result['pageid'], $homes) ?  rtrim(str_replace('http://', '', $result['absoluteurl']), '/') : rtrim($result['url'], '/');
                 $results[] = $result;
             }
         }
@@ -392,9 +393,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $colclose = '</div></div></div>';
             $colbreak = '</div></div><div class="span' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
 
-            $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>'), $colopen, $content) : $colopen . "\n" . $content;
-            $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>'), $colclose, $content) : $content . "\n" . $colclose;
-            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>'), $colbreak, $content);
+            $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>','[[columns]]'), $colopen, $content) : $colopen . "\n" . $content;
+            $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>','[[endcolumns]]'), $colclose, $content) : $content . "\n" . $colclose;
+            $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>','[[columnbreak]]'), $colbreak, $content);
         }
         return $content;
     }

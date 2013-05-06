@@ -21,7 +21,7 @@
 class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 {
 
-    function sendEnquiry($formID=false)
+    public static function sendEnquiry($formID=false)
     {
         global $smarty;
         /* Check for form injection attempts */
@@ -155,7 +155,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
             /* if field is confirmation field then need to check both fields match */
             if($field['type'] == 'emailwithconfirmation') {
-                $confirmation = $_POST['form_' . $field['field'] . '_confirmation'];
+                $confirmation = $_POST[$field['field'] . '_confirmation'];
                 if($field['value'] != $confirmation) {
                     $errors[] = $field['display'] . ' and confirmation email fields must match';
                 }
@@ -317,7 +317,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
 
         $sent = false;
-        if (isset($_POST['submit'])) {
+        if (isset($_POST['contactsubmit'])) {
             $response = $this->sendEnquiry();
             $smarty->assign('message', $response['responsemessage']);
             $sent = $response['sent'];
@@ -329,8 +329,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $smarty->assign('sent', $sent);
 
         if (strpos($this->page['pg_body'], '[[contactform')===false) {
-            $smarty->assign('content', $this->page['pg_body']);
-            $content['content']    = $smarty->fetch('jojo_contact.tpl');
+            $content['content']  = $this->page['pg_body'] . $formhtml;
         } else {
             $formhtml = $smarty->fetch('jojo_contact.tpl');
             $this->page['pg_body'] = str_replace(array('<p>[[contactform]]</p>','<p>[[contactform]]&nbsp;</p>'), '[[contactform]]', $this->page['pg_body']);
@@ -342,7 +341,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* content filter to replace [[contactform:ID/name]] with html */
-    function contentFilter($content)
+    public static function contentFilter($content)
     {
 
         if (strpos($content, '[[contactform:') === false) {
@@ -366,11 +365,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* get the html of the form from an ID */
-    function getFormHtml($formID, $action=false, $js=false)
+    public static function getFormHtml($formID, $action=false, $js=false)
     {
         global $smarty;
         $smarty->assign('content', '');
-        $sent = (boolean)(isset($_SESSION['sendstatus']) || isset($_POST['submit']));
+        $sent = (boolean)(isset($_SESSION['sendstatus']) || isset($_POST['contactsubmit']));
         $smarty->assign('message', (isset($_SESSION['sendstatus']) ? $_SESSION['sendstatus'] : ''));
         $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         $form = $formfields[0];
@@ -418,7 +417,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         /* Use Anytime datepicker for date fields if option set */
         $smarty->assign('anytime', (boolean)(Jojo::getOption('jquery_useanytime', 'no')=='yes'));
         if ($sent) {
-            $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $formSuccessMessage : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
+            $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $form['form_success_message'] : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
             $smarty->assign('sent', $sent);
         }
         //reset send status
@@ -433,7 +432,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* Create the array for the name and email addresses on the send to options */
-    function getToAddresses()
+    static function getToAddresses()
     {
         static $_toAddresses;
         /* Fetch options from database if we don't have them */
@@ -449,7 +448,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $_toAddresses;
     }
 
-    function cleanHTML($html, $css='')
+    static function cleanHTML($html, $css='')
     {
         // basic inline styling for supplied content
         $html = str_replace('<p>', '<p style="font-size:13px;' . $css . '">', $html);
@@ -460,7 +459,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $html;
     }
 
-    function personaliseMessage($html, $fields)
+    static function personaliseMessage($html, $fields)
     {
         // filter message for personalisation by field display name eg [[From Name]]
         if (strpos($html, '[[')!==false) {
@@ -553,7 +552,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
     }
 
     /* block private uploads from being downloaded without login */
-    function downloadFile($filename)
+    public static function downloadFile($filename)
     {
         global $_USERGROUPS;
         if (strpos($filename, "/uploads/private") !== false && !in_array('admin', $_USERGROUPS)) {

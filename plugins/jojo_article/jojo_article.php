@@ -26,8 +26,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Get articles  */
-    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false) {
+    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false, $minimal=false) {
         global $page;
+        $now = time();
         if ($categoryid == 'all' && $include != 'alllanguages') {
             $categoryid = array();
             $sectionpages = self::getPluginPages('', $page->page['root']);
@@ -43,8 +44,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         /* if calling page is an article, Get current article, exclude from the list and up the limit by one */
         $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
         if ($num && $exclude) $num++;
-        $shownumcomments = (boolean)(class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
-        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
+        $shownumcomments = (boolean)(!$minimal && class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
+        $query  = "SELECT " . ($minimal ? "ar.articleid, ar_date, ar_title, ar_author, ar_livedate, ar_expirydate, ar_url," : "ar.*,  ac.*,");
+        $query  .= " p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
@@ -54,18 +56,24 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= $num ? " ORDER BY $sortby LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
         $articles = self::cleanItems($articles, $exclude, $include);
+        $articles = $minimal ? $articles : self::formatItems($articles, $exclude, $include);
         if (!$num)  $articles = self::sortItems($articles, $sortby);
         return $articles;
     }
 
      /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
     static function getItemsById($ids = false, $sortby='ar_date desc', $include=false) {
+        $shownumcomments = (boolean)(class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
         $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
+        $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
+        $query .= $shownumcomments ? " LEFT JOIN {comment} com ON (com.itemid = ar.articleid AND com.plugin = 'jojo_article')" : '';
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
+        $query .= $shownumcomments ? " GROUP BY articleid" : '';
         $items = Jojo::selectQuery($query);
         $items = self::cleanItems($items, '', $include);
+        $items = self::formatItems($items, '', $include);
         if ($items) {
             $items = is_array($ids) ? self::sortItems($items, $sortby) : $items[0];
             return $items;
@@ -82,15 +90,25 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if (!$pagedata || $i['ar_livedate']>$now || (!empty($i['ar_expirydate']) && $i['ar_expirydate']<$now) || (!empty($i['articleid']) && $i['articleid']==$exclude)  || (!empty($i['ar_url']) && $i['ar_url']==$exclude)) {
                 unset($items[$k]);
                 continue;
+            } else {
+                $i['pagetitle'] = $pagedata[0]['title'];
+                $i['pageurl']   = $pagedata[0]['url'];
             }
-            $i['pagetitle'] = $pagedata[0]['title'];
-            $i['pageurl']   = $pagedata[0]['url'];
+        }
+        $items = array_values($items);
+        return $items;
+    }
+
+    /* clean items for output */
+    static function formatItems($items, $exclude=false, $include=false) {
+        foreach ($items as $k=>&$i){
             $i['id']           = $i['articleid'];
             $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
             $i['seotitle']        = htmlspecialchars($i['ar_seotitle'], ENT_COMPAT, 'UTF-8', false);
             $i['author']        = htmlspecialchars($i['ar_author'], ENT_COMPAT, 'UTF-8', false);
             // Snip for the index description
-            $i['bodysnip'] = array_shift(Jojo::iExplode('[[snip]]', $i['ar_body']));
+            $splitcontent = Jojo::iExplode('[[snip]]', $i['ar_body']);
+            $i['bodysnip'] = array_shift($splitcontent);
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodysnip'] = strpos($i['bodysnip'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodysnip']) : $i['bodysnip'];
             $i['bodyplain'] = trim(strip_tags($i['bodysnip']));
@@ -104,7 +122,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
-            unset($items[$k]['ar_bbbody']);
+             if (class_exists('Jojo_Plugin_Jojo_Tags') && Jojo::getOption('article_tags', 'no') == 'yes' ) {
+                /* Split up tags for display */
+                $i['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $i['articleid']);
+            }
+           unset($items[$k]['ar_bbbody']);
         }
         $items = array_values($items);
         return $items;
@@ -252,7 +274,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             Jojo::getFeed($articles, $rssfields);
         }
 
-        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden');
+        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true);
 
         if ($articleid || !empty($url)) {
             /* find the current, next and previous items */
@@ -279,6 +301,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if (!$article) {
                 include(_BASEPLUGINDIR . '/jojo_core/404.php');
                 exit;
+            } else {
+                $article = self::getItemsById($article['articleid'], '', $include='showhidden');
             }
 
             if ($modarticle = Jojo::runHook('modify_article', array($article))) {
@@ -291,10 +315,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* calculate the next and previous articles */
             if (Jojo::getOption('article_next_prev') == 'yes') {
                 if (!empty($nextarticle)) {
-                    $smarty->assign('nextarticle', $nextarticle);
+                    $smarty->assign('nextarticle', self::getItemsById($nextarticle['articleid']));
                 }
                 if (!empty($prevarticle)) {
-                    $smarty->assign('prevarticle', $prevarticle);
+                    $smarty->assign('prevarticle', self::getItemsById($prevarticle['articleid']));
                 }
             }
 
@@ -386,6 +410,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             if ($pagenum[0] == 'p') {
                 $pagenum = substr($pagenum, 1);
             }
+            $smarty->assign('pagenum', $pagenum);
 
             /* get number of articles for pagination */
             $articlesperpage = Jojo::getOption('articlesperpage', 40);
@@ -395,33 +420,24 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* calculate pagination */
             if ($numpages == 1) {
                 $pagination = '';
-            } elseif ($numpages == 2 && $pagenum == 2) {
-                $pagination = sprintf('<a href="%s/p1/">previous...</a>', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']) );
-            } elseif ($numpages == 2 && $pagenum == 1) {
-                $pagination = sprintf('<a href="%s/p2/">more...</a>', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']) );
             } else {
-                $pagination = '<ul>';
-                for ($p=1;$p<=$numpages;$p++) {
-                    $url = $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']) . '/';
-                    if ($p > 1) {
-                        $url .= 'p' . $p . '/';
-                    }
-                    if ($p == $pagenum) {
-                        $pagination .= '<li>&gt; Page '.$p.'</li>'. "\n";
-                    } else {
-                        $pagination .= '<li>&gt; <a href="'.$url.'">Page '.$p.'</a></li>'. "\n";
-                    }
-                }
-                $pagination .= '</ul>';
+                $smarty->assign('numpages', $numpages);
+                $smarty->assign('pageurl', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']));
+                $pagination = $smarty->fetch('jojo_article_pagination.tpl');
             }
+
             $smarty->assign('pagination', $pagination);
-            $smarty->assign('pagenum', $pagenum);
 
             /* clear the meta description to avoid duplicate content issues */
             $content['metadescription'] = '';
 
-            /* get article content and assign to Smarty */
+            /* get article content for just the ones on the index page and assign to Smarty */
             $articles = array_slice($articles, $start, $articlesperpage);
+            $articleids = array();
+            foreach ($articles as $a){
+                $articleids[] = $a['articleid'];
+            }
+            $articles = self::getItemsById($articleids, $sortby, $include='showhidden');
             $smarty->assign('jojo_articles', $articles);
 
             $content['content'] = $smarty->fetch('jojo_article_index.tpl');

@@ -809,7 +809,7 @@ div.admin-home-item-right {
   z-index:103;
   top: 50%;
   left: 50%;
-  margin: -8px 0 0 -8px; /* -height/2 0 0 -width/2 */
+  margin: -8px 0 0 -8px;
 }
 
 #jpop_overlay {

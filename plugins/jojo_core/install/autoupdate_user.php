@@ -32,7 +32,7 @@ $default_fd['user']['userid'] = array(
         'fd_type' => "hidden",
         'fd_help' => "A unique ID, automatically assigned by the system",
         'fd_order' => "1",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
     );
 
 // Login Field
@@ -43,7 +43,7 @@ $default_fd['user']['us_login'] = array(
         'fd_size' => "20",
         'fd_help' => "Username for logging into the system",
         'fd_order' => "2",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_flags' => "REGISTER",
     );
 
@@ -54,7 +54,7 @@ $default_fd['user']['us_firstname'] = array(
         'fd_required' => "yes",
         'fd_size' => "20",
         'fd_order' => "3",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_flags' => "REGISTER,PROFILE,PRIVACY",
     );
 
@@ -65,7 +65,7 @@ $default_fd['user']['us_lastname'] = array(
         'fd_required' => "yes",
         'fd_size' => "20",
         'fd_order' => "4",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_flags' => "REGISTER,PROFILE,PRIVACY",
     );
 
@@ -75,7 +75,7 @@ $default_fd['user']['us_email'] = array(
         'fd_type' => "email",
         'fd_required' => "yes",
         'fd_order' => "5",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_flags' => "REGISTER,PROFILE,PRIVACY,PRIVATE",
     );
 
@@ -88,7 +88,7 @@ $default_fd['user']['us_password'] = array(
         'fd_size' => "30",
         'fd_help' => "Password must be at least 8 characters and contain at least 1 number",
         'fd_order' => "6",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_flags' => "REGISTER",
     );
 
@@ -98,7 +98,7 @@ $default_fd['user']['us_reminder'] = array(
         'fd_type' => "text",
         'fd_size' => "40",
         'fd_order' => "7",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
     );
 
 // Timezone Field
@@ -109,7 +109,7 @@ $default_fd['user']['us_timezone'] = array(
         'fd_size' => "5",
         'fd_help' => "The timezone offset for this user (NZ is 12)",
         'fd_order' => "8",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_units' => "GMT offset",
     );
 
@@ -118,7 +118,7 @@ $default_fd['user']['us_salt'] = array(
         'fd_name' => "Salt",
         'fd_type' => "hidden",
         'fd_order' => "9",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
     );
 
 // Lastfailure Field
@@ -135,7 +135,7 @@ $default_fd['user']['us_groups'] = array(
         'fd_name' => "Groups",
         'fd_type' => "many2many",
         'fd_order' => "11",
-        'fd_tabname' => "Details",
+        'fd_tabname' => "Base",
         'fd_m2m_linktable' => "usergroup_membership",
         'fd_m2m_linkitemid' => "userid",
         'fd_m2m_linkcatid' => "groupid",

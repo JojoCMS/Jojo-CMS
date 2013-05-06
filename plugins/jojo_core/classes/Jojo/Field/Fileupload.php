@@ -68,11 +68,10 @@ class Jojo_Field_fileupload extends Jojo_Field
                 /* If an image, then display a thumbnail image */
                 if ( (strtolower(Jojo::getFileExtension($this->value)) == "jpg") or (strtolower(Jojo::getFileExtension($this->value)) == "jpeg") or (strtolower(Jojo::getFileExtension($this->value)) == "gif") or (strtolower(Jojo::getFileExtension($this->value)) == "png") ) {
                     /* read cropdata */
-                    $imagedata = file_get_contents(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value);
-                    $cropdata = Jojo::selectRow("SELECT * FROM {cropdata} WHERE hash=?", sha1($imagedata));
-                    $crop_x = (isset($cropdata['x'])) ? $cropdata['x'] : false;
-                    $crop_y = (isset($cropdata['y'])) ? $cropdata['y'] : false;
-                    
+                    $cropdata = Jojo_Plugin_Core_Image::getCropData(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value);
+                    $crop_x = $cropdata[0];
+                    $crop_y = $cropdata[1];
+
                     //Find out the dimensions of the image (actual size)
                     $imagesize = ( Jojo::fileExists(_DOWNLOADDIR."/".$this->fd_table."s/".$this->value) && ($this->value != '') ) ? getimagesize(_DOWNLOADDIR."/".$this->fd_table."s/".$this->value) : false;
                     if (!$imagesize) { //this would happen for a file that is labelled as an image, but isn't a valid format
@@ -100,9 +99,9 @@ class Jojo_Field_fileupload extends Jojo_Field
         $cropval = ($crop_x && $crop_y) ? $crop_x .','. $crop_y : '';
         $retval .= '<input type="hidden" name="fm_crop_'.$this->fd_field.'" id="fm_crop_'.$this->fd_field.'" value="'.$cropval.'" />';
         $retval .= '<script type="text/javascript">var crop=$(\'#fm_crop_'.$this->fd_field.'\').val().split(\',\'); if (crop.length==2){$(\'#crop_canvas_'.$this->fd_field.'\').append(\'<div class="crop_point" style="margin:\'+(Math.round(crop[1]*'.($thumb_h/100).') - 25)+\'px 0 0 \'+(Math.round(crop[0]*'.($thumb_w/100).') - 25)+\'px;"></div>\');} $(\'#crop_canvas_'.$this->fd_field.'\').mousedown(function(event){$(\'#crop_canvas_'.$this->fd_field.'\').children(\'.crop_point\').remove();$(\'#crop_canvas_'.$this->fd_field.'\').append(\'<div class="crop_point" style="margin:\'+(event.pageY - this.offsetTop - 25)+\'px 0 0 \'+(event.pageX - this.offsetLeft - 25)+\'px;"></div>\');$(\'#fm_crop_'.$this->fd_field.'\').val( Math.round((event.pageX - this.offsetLeft)/'.($thumb_w/100).')+\',\'+Math.round((event.pageY - this.offsetTop)/'.($thumb_h/100).'));return false;});</script>';
-        
-        
-        
+
+
+
         return $retval;
     }
 
@@ -114,7 +113,7 @@ class Jojo_Field_fileupload extends Jojo_Field
             /* Make sure the file exists */
             if (file_exists(_DOWNLOADDIR . '/' . $this->fd_table . 's/' . $this->value)) {
                 $filesize = filesize(_DOWNLOADDIR . '/' . $this->fd_table . 's/' . $this->value);
-                $filetype = strtolower(Jojo::getfileextension($this->value));
+                $filetype = strtolower(Jojo::getFileExtension($this->value));
                 /* display logo image (dependent on file extension) if one exists, otherwise use the default (txt) */
                 if (file_exists(_BASEPLUGINDIR . '/jojo_core/images/cms/filetypes/' . $filetype . '.gif')) {
                     $filelogo = 'images/cms/filetypes/' . $filetype . '.gif';
@@ -124,7 +123,7 @@ class Jojo_Field_fileupload extends Jojo_Field
                 $retval = '<span title="' . Jojo::roundBytes($filesize) . "\"><a href=\"" . _SITEURL . "/downloads/" . $this->fd_table . "s/" . $this->value . "\" target=\"_BLANK\"><img src=\"" . $filelogo . "\" border=\"0\" align=\"absmiddle\"> " . $this->value . "</a></span><br>";
 
                 //If an image, then display a thumbnail image
-                if ( (strtolower(Jojo::getFileExtension($this->value)) == "jpg") or (strtolower(Jojo::getFileExtension($this->value)) == "jpeg") ) {
+                if ( $filetype == "jpg" || $filetype == "jpeg" ) {
                     /* Find out the dimensions of the image (actual size) */
                     $imagesize = getimagesize(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value);
                     /* this would happen for a file that is labelled as an image, but isn't a valid format */
@@ -157,7 +156,8 @@ class Jojo_Field_fileupload extends Jojo_Field
     {
         $retval = "";
         if (file_exists(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value)) {
-            if ( (strtolower(Jojo::getFileExtension($this->value)) == 'jpg') or (strtolower(Jojo::getFileExtension($this->value)) == 'jpeg') ) {
+            $filetype = strtolower(Jojo::getFileExtension($this->value));
+            if ($filetype == "jpg" || $filetype == "jpeg") {
                 /* Find out the dimensions of the image (actual size) */
                 $imagesize = getimagesize(_DOWNLOADDIR."/".$this->fd_table."s/".$this->value);
                 /* this would happen for a file that is labelled as an image, but isn't a valid format */
@@ -189,13 +189,13 @@ class Jojo_Field_fileupload extends Jojo_Field
         if (!empty($_POST['fm_'.$this->fd_field.'_delete'])) {
             return $this->deletefile();
         }
-        
+
         /* set cropdata if needed */
-        if (!empty($newvalue) && !empty($_POST['fm_crop_'.$this->fd_field])) {           
+        if (!empty($newvalue) && !empty($_POST['fm_crop_'.$this->fd_field])) {
             $crop = explode(',', $_POST['fm_crop_'.$this->fd_field]);
             $data = file_get_contents(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$newvalue);
             Jojo::updateQuery("REPLACE INTO {cropdata} SET hash=?, filename=?, x=?, y=?", array(sha1($data), $newvalue, $crop[0], $crop[1]));
-            
+
             /* wipe any cached copies of this image */
             $cache_folders = scandir(_CACHEDIR.'/images/');
             foreach ($cache_folders as $root) {
@@ -213,6 +213,7 @@ class Jojo_Field_fileupload extends Jojo_Field
         /* set some variables for convenience */
         $filename = str_replace(' ', '_', str_replace(array('?','&',"'",',','[',']'), '', stripslashes($_FILES["fm_FILE_".$this->fd_field]['name'])));
         $tmpfilename = $_FILES["fm_FILE_".$this->fd_field]['tmp_name'];
+        $filter = $this->fd_options;
 
         $this->value = $newvalue;
 
@@ -268,6 +269,9 @@ class Jojo_Field_fileupload extends Jojo_Field
                 /* move to final location */
                 if (file_exists($destination) || move_uploaded_file($tmpfilename, $destination)) {
                     $message = "Upload successful";
+                    if ($filter && Jojo_Plugin_Core_Image::applyFilter($destination, $filter)) {
+                        $message .= ". Transform successful";
+                    }
                     $this->value =  !empty($newname) ? $newname : $filename;
                 } else {
                     $this->error = "Possible hacking attempt. Script will now halt.";

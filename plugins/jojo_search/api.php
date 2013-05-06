@@ -103,6 +103,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'search_tags',
+    'category'    => 'Search',
+    'label'       => 'Show Tags with Results',
+    'description' => 'Show the tags assigned to each item (if used)',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_search'
+);
+
+$_options[] = array(
     'id'          => 'search_urlquery',
     'category'    => 'Search',
     'label'       => 'URL or Query',

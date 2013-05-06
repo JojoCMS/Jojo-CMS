@@ -365,6 +365,21 @@ class Jojo_Table {
         return false;
     }
 
+    /**
+     * Return all fields of a matching type
+     */
+    function getFieldsByType($type)
+    {
+        $fields = array();
+        foreach ($this->getFieldNames() as $fieldname) {
+            $f = $this->getField($fieldname);
+            if ($f instanceof $type) {
+                $fields[$fieldname] = $f;
+            }
+        }
+        return $fields;
+    }
+
     /* Set the value of a field */
     function setFieldValue($field, $value)
     {
