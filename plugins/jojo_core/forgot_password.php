@@ -55,7 +55,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
             $users = Jojo::selectQuery("SELECT userid, us_email, us_login, us_reminder FROM {user} WHERE us_email = ? OR us_login = ?", array($search, $search));
 
             if (!count($users)) {
-                $errors[] = 'There is no user in our system with email address or username: '.$search;
+                $errors[] = 'There is no user in our system with email address or username: '.htmlentities($search);
             }
             
             foreach ($users as $user) {
