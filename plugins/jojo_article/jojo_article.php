@@ -26,7 +26,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
 
     /* Get articles  */
-    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false, $minimal=false) {
+    static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false, $minimal=false, $featuredfirst=false) {
         global $page;
         $now = time();
         if ($categoryid == 'all' && $include != 'alllanguages') {
@@ -52,34 +52,58 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= $shownumcomments ? " LEFT JOIN {comment} com ON (com.itemid = ar.articleid AND com.plugin = 'jojo_article')" : '';
         $query .= " WHERE 1" . $categoryquery;
+        $query .= $featuredfirst ? " AND ar_featured=1" : '';
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
         $query .= $num ? " ORDER BY $sortby LIMIT $start,$num" : '';
         $articles = Jojo::selectQuery($query);
         $articles = self::cleanItems($articles, $exclude, $include);
         $articles = $minimal ? $articles : self::formatItems($articles, $exclude, $include);
         if (!$num)  $articles = self::sortItems($articles, $sortby);
-        return $articles;
+        if ($featuredfirst) {
+         	$numfeatured = count($articles);
+        	$query = str_replace('ar_featured=1', 'ar_featured=0', $query);
+       		if ($start) {
+        		$query = $num ? str_replace('LIMIT ' . $start . ',', 'LIMIT ' . ($start - $numfeatured) . ',', $query) : $query;
+			} else {
+        		$query = $num ? str_replace('LIMIT 0,' . $num, 'LIMIT 0,' . ($num - $numfeatured), $query) : $query;
+			}
+        	$nonfeaturedarticles = Jojo::selectQuery($query);
+			$nonfeaturedarticles = self::cleanItems($nonfeaturedarticles, $exclude, $include);
+			$nonfeaturedarticles = $minimal ? $nonfeaturedarticles : self::formatItems($nonfeaturedarticles, $exclude, $include);
+			if (!$num)  $nonfeaturedarticles = self::sortItems($nonfeaturedarticles, $sortby);
+			$articles = $start ? $nonfeaturedarticles : array_merge($articles, $nonfeaturedarticles);
+        }
+       $articles = array_values($articles);
+       return $articles;
     }
 
      /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
-    static function getItemsById($ids = false, $sortby='ar_date desc', $include=false) {
+    static function getItemsById($ids = false, $sortby=false, $include=false) {
         $shownumcomments = (boolean)(class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
-        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
+        $query  = "SELECT ar.articleid as id, ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
         $query .= $shownumcomments ? " LEFT JOIN {comment} com ON (com.itemid = ar.articleid AND com.plugin = 'jojo_article')" : '';
         $query .=  is_array($ids) ? " WHERE articleid IN ('". implode("',' ", $ids) . "')" : " WHERE articleid=$ids";
         $query .= $shownumcomments ? " GROUP BY articleid" : '';
-        $items = Jojo::selectQuery($query);
-        $items = self::cleanItems($items, '', $include);
-        $items = self::formatItems($items, '', $include);
+        $items = Jojo::selectAssoc($query);
         if ($items) {
-            $items = is_array($ids) ? self::sortItems($items, $sortby) : $items[0];
-            return $items;
-        } else {
-            return false;
+            if (is_array($ids) && $sortby) { 
+            	$items = self::sortItems($items, $sortby);
+            } elseif (is_array($ids)) {
+            	foreach ($ids as $i) {
+            		$sorteditems[] =  $items[$i];
+            	}
+            	$items = $sorteditems;
+            } 
+			$items = self::cleanItems($items, '', $include);
+			$items = self::formatItems($items, '', $include);
+        } 
+        if ($items) {
+        	return is_array($ids) ? $items : $items[0];
         }
+        return false;
     }
 
     /* clean items for output */
@@ -274,7 +298,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             Jojo::getFeed($articles, $rssfields);
         }
 
-        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true);
+		$featuredfirst = (boolean)(Jojo::getOption('article_features', 'never')=='index' || Jojo::getOption('article_features', 'never')=='always');
+        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true, $featuredfirst);
 
         if ($articleid || !empty($url)) {
             /* find the current, next and previous items */
@@ -434,9 +459,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* get article content for just the ones on the index page and assign to Smarty */
             $articles = array_slice($articles, $start, $articlesperpage);
             $articleids = array();
-            foreach ($articles as $a){
-                $articleids[] = $a['articleid'];
+            foreach ($articles as $k=>$a){
+                $articleids[$k] = $a['articleid'];
             }
+			$sortby = $featuredfirst ? false : $sortby;
             $articles = self::getItemsById($articleids, $sortby, $include='showhidden');
             $smarty->assign('jojo_articles', $articles);
 

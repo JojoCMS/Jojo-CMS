@@ -147,6 +147,18 @@ $default_fd['article']['ar_body'] = array(
         'fd_mode' => "advanced",
     );
 
+// Featured
+$default_fd['article']['ar_featured'] = array(
+        'fd_name' => "Featured Article",
+        'fd_type' => "yesno",
+        'fd_options' => "",
+        'fd_default' => 0,
+        'fd_help' => "Is this is a featured article (behaviour is handled by options)",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+        'fd_mode' => "advanced",
+    );
+
 // Comments Field
 $default_fd['article']['ar_comments'] = array(
         'fd_name' => "Comments enabled",

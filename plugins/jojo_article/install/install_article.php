@@ -39,6 +39,7 @@ if (class_exists('Jojo_Plugin_Jojo_comment')) {
 $query .= "
       `ar_author` varchar(255) NOT NULL default '',
       `ar_source` varchar(255) NOT NULL default '',
+      `ar_featured` tinyint(1) NOT NULL default '0',
       `ar_seotitle` varchar(255) NOT NULL default '',
       `ar_metadesc` varchar(255) NOT NULL default '',
       `ar_language` varchar(100) NOT NULL default 'en',
