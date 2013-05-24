@@ -116,7 +116,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             } elseif (Util::getFormData('form_' . $field['field'], '')) {
                 $field['value'] = ($field['type']!='heading') ? Util::getFormData('form_' . $field['field'], '') : $field['value'];
             } else {
-                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['value'];
+                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['display'];
             }
             /* set the fromemail value if appropriate */
 
@@ -171,7 +171,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
        }
 
-        if(!count($errors)){
+       if(!count($errors)){
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
             $errors = $validationReturn[0];
@@ -194,11 +194,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             } elseif ($f['type'] == 'note') {
                 continue;
             } elseif ($f['type'] == 'heading') {
-                $message .=  "\r\n" . $f['value'] . "\r\n";
-                for ($i=0; $i<strlen($f['value']); $i++) {
-                    $message .= '-';
-                }
-                $message .= "\r\n";
+                $message .=  "\r\n<b>" . $f['value'] . "</b>\r\n";
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
                 $message .= $f['display'] . ($f['filelink'] ? ' ' . _SITEURL . '/downloads' . $f['filelink'] : '') . "\r\n";
             } else {
@@ -267,7 +263,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
                 /* send a copy to the webmaster */
                if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
-                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email);
+                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
                 }
 
                 /* store a copy of the message in the database*/
@@ -331,7 +327,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         if (strpos($this->page['pg_body'], '[[contactform')===false) {
             $content['content']  = $this->page['pg_body'] . $formhtml;
         } else {
-            $formhtml = $smarty->fetch('jojo_contact.tpl');
             $this->page['pg_body'] = str_replace(array('<p>[[contactform]]</p>','<p>[[contactform]]&nbsp;</p>'), '[[contactform]]', $this->page['pg_body']);
             $content['content']    = str_replace('[[contactform]]', $formhtml, $this->page['pg_body']);
         }
