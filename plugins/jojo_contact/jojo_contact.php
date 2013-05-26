@@ -189,7 +189,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $message  = '';
         foreach ($fields as $f) {
-            if (isset($f['displayonly'])) {
+            if (isset($f['displayonly']) && $f['displayonly']==1) {
                 continue;
             } elseif ($f['type'] == 'note') {
                 continue;
@@ -205,7 +205,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $messagefields = '';
         foreach ($fields as $f) {
-            if (isset($f['displayonly']) || $f['type'] == 'note') { continue; };
+            if ((isset($f['displayonly']) && $f['displayonly']==1) || $f['type'] == 'note') { continue; };
             if ($f['type'] == 'heading') {
                 $messagefields .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
@@ -324,7 +324,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         }
         $smarty->assign('sent', $sent);
 
-        if (strpos($this->page['pg_body'], '[[contactform')===false) {
+        if (strpos($this->page['pg_body'], '[[contactform]]')===false) {
             $content['content']  = $this->page['pg_body'] . $formhtml;
         } else {
             $this->page['pg_body'] = str_replace(array('<p>[[contactform]]</p>','<p>[[contactform]]&nbsp;</p>'), '[[contactform]]', $this->page['pg_body']);
