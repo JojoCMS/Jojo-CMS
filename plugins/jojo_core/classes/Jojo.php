@@ -2458,6 +2458,14 @@ class Jojo {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+    /* Checks for a valid IP address
+     * TODO: IPV6 stuff, I guess.
+     */
+    static function checkIPFormat($ip)
+    {
+        return filter_var($ip_a, FILTER_VALIDATE_IP);
+    }
+
     /* Gets the IP address of the visitor, bypassing proxies */
     static function getIp()
     {
@@ -2469,7 +2477,7 @@ class Jojo {
             $ip = getenv('REMOTE_ADDR');
         }
         /* check IP is valid format */
-        if (preg_match('/\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b/', $ip)) {
+        if (Jojo::checkIPFormat($ip)) {
         	return $ip;
         }
         return false;
