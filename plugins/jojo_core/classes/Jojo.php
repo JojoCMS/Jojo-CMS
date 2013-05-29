@@ -2445,7 +2445,8 @@ class Jojo {
      */
     static function checkUrlFormat($url)
     {
-        return preg_match('#^http\\:\\/\\/[a-z0-9\-]+\.([a-z0-9\-]+\.)?[a-z]+#i', $url);
+        //return preg_match('#^http\\:\\/\\/[a-z0-9\-]+\.([a-z0-9\-]+\.)?[a-z]+#i', $url);
+        return filter_var($url, FILTER_VALIDATE_URL);
     }
 
     /* Checks that an email address looks valid
@@ -2463,7 +2464,7 @@ class Jojo {
      */
     static function checkIPFormat($ip)
     {
-        return filter_var($ip_a, FILTER_VALIDATE_IP);
+        return filter_var($ip, FILTER_VALIDATE_IP);
     }
 
     /* Gets the IP address of the visitor, bypassing proxies */
