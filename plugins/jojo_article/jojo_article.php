@@ -93,7 +93,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             	$items = self::sortItems($items, $sortby);
             } elseif (is_array($ids)) {
             	foreach ($ids as $i) {
-            		$sorteditems[] =  $items[$i];
+            		if (isset($items[$i])) {
+            			$sorteditems[] =  $items[$i];
+            		}
             	}
             	$items = $sorteditems;
             } 
