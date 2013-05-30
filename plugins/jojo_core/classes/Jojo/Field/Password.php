@@ -72,19 +72,8 @@ class Jojo_Field_password extends Jojo_Field
         if ($newvalue[1] == $newvalue[2]) {
             /* Check the password is not empty */
             if (!empty($newvalue[1])) {
-                /* SHA1 hash the value */
-
-                /* find the value of the salt from the salt field */
-                $saltfield = $this->fd_options;
-                if (!empty($saltfield)) {
-                    $data = Jojo::selectRow("SELECT `" . Jojo::clean($saltfield) . "` FROM {" . $this->table->getTableName() . "} WHERE `" . $this->table->getOption('primarykey') . "` = ?", array($this->table->getRecordID()));
-                    $salt = isset($data[Jojo::clean($saltfield)]) ? $data[Jojo::clean($saltfield)] : '';
-                } else {
-                    $salt = '';
-                }
-
-                $saltfield = $this->fd_options;
-                $this->value = sha1($newvalue[2].$salt);
+                /* Hash the value, it's auto-salted */
+                $this->value = Jojo_Auth_Local::hashPassword($newvalue[2]);
             }
             return true;
         } else {

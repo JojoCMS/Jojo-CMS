@@ -40,8 +40,8 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
                 $errors[] = 'There was an error with your login session. Please login again and try again';
             } else {
                 /* ensure current password is correct */
-                $data = Jojo::selectQuery("SELECT * FROM {user} WHERE userid = ? AND (us_password=SHA1(CONCAT(?, us_salt)) OR us_password=MD5(CONCAT(?, us_salt)))", array($_USERID, $old, $old));
-                if (count($data) != 1) {
+                $data = Jojo::selectRow("SELECT * FROM {user} WHERE userid = ?", array($_USERID));
+                if (!Jojo_Auth_Local::checkPassword($old, $data['us_password'], $data['us_salt'])) {
                     $errors[] = 'Your current password does not match';
                 }
             }
@@ -64,13 +64,13 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
             }
 
             if (!count($errors)) {
-                $salt = Jojo::randomString(16);
-                Jojo::updateQuery("UPDATE {user} SET us_salt=?, us_password=? WHERE userid=? LIMIT 1", array($salt, sha1($new.$salt), $_USERID));
+                $newpass = Jojo_Auth_Local::hashPassword($new);
+                Jojo::updateQuery("UPDATE {user} SET us_password=? WHERE userid=? LIMIT 1", array($new, $_USERID));
 
                 /* get user details for the email */
-                $users = Jojo::selectQuery("SELECT us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ? LIMIT 1", $_USERID);
-                $user = $users[0];
+                $user = Jojo::selectRow("SELECT us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ? LIMIT 1", $_USERID);
 
+                // TODO: Make this optional, not every site wants to send their users passwords to them
                 error_reporting(0);
                 $mail = new htmlMimeMail();
 

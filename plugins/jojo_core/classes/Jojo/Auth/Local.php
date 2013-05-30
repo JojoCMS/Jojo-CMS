@@ -7,22 +7,33 @@ class Jojo_Auth_Local {
         $remember = Jojo::getFormData('remember', false);
 
         if ($username) {
-            /* Look up user by username and password from login form submission */
-            
-            if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
-                $values = array($username, $username, $password, $password);
-                $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
+            $wherequery = "us_login = ?";
+            /* Allow loggin in my email or just username? */
+            if (Jojo::getOption('allow_email_login', 'yes') == 'yes') {
+                $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND us_locked = 0", array($username));
             } else {
-                $values = array($username, $password, $password);
-                $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND (us_password = SHA1(CONCAT(?, us_salt)) OR us_password = MD5(CONCAT(?, us_salt))) AND us_locked = 0", $values);
+                $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND us_locked = 0", array($username));
+            }
+
+            if (!$userdata) { return false; }
+
+            /* Try PHPass' Blowfish algo, then fall back to SHA1 then MD5 */
+            if (self::checkPassword($password, $userdata["us_password"])) {
+                // Logged in
+                $logindata = $userdata;
+            } else {
+                /* Old methods. Authenticate then upgrade. */
+                if (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
+                    /* Success, but let's upgrade the password */
+                    $logindata = $userdata;
+                    $newpassword = self::hashPassword($password);
+                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newpassword, $userdata["us_login"]));
+                } else {
+                    // Login failed
+                    return false;
+                }
             }
             $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
-
-            /* Make sure all users have salted passwords - if it's not salted, add salt */
-            if ($logindata && empty($logindata['us_salt'])) {
-                $salt = Jojo::randomString(16);
-                Jojo::updateQuery("UPDATE {user} SET us_salt = ?, us_password = ? WHERE userid = ?", array($salt, sha1($password . $salt), $logindata['userid']));
-            }
 
             if ($logindata && $logindata['us_failures'] > 0) {
                 /* Reset login failure count */
@@ -84,5 +95,34 @@ class Jojo_Auth_Local {
             $smarty->assign('loginmessage', $loginmessage);
             return false;
         }
+    }
+
+    /* Hash a password using PHPass' blowfish algo. Salts are auto handled in the hash. */
+    public static function hashPassword($password) {
+        require_once(_BASEDIR."/plugins/jojo_core/external/phpass/PasswordHash.php");
+        $phpass = new PasswordHash(10, false); // The 'false' triggers Blowfish if available. */
+        return $phpass->HashPassword($password);
+    }
+
+    /* Check a password */
+    public static function checkPassword($password, $hash, $salt=false) {
+        // Try PHPass' Blowfish algo first
+        require_once(_BASEDIR."/plugins/jojo_core/external/phpass/PasswordHash.php");
+        $phpass = new PasswordHash(10, false);
+        if ($hash && $phpass->CheckPassword($password, $hash)) {
+            return true;
+        }
+        // Try the old methods
+        if ($salt && self::checkOldPassword($password, $hash, $salt)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Check old SHA1 and MD5 passwords, but don't upgrade them. */
+    public static function checkOldPassword($password, $hash, $salt) {
+        if (SHA1($password.$salt) == $hash) { return true; }
+        if (MD5($password.$salt) == $hash) { return true; }
+        return false;
     }
 }

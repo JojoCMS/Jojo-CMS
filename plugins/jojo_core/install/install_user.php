@@ -23,7 +23,7 @@ $query = "
     CREATE TABLE {user} (
       `userid` int(11) NOT NULL auto_increment,
       `us_login` varchar(100) NOT NULL default '',
-      `us_password` varchar(40) NOT NULL default '',
+      `us_password` varchar(60) NOT NULL default '',
       `us_salt` varchar(16) NOT NULL default '',
       `us_lastfailure` datetime NOT NULL default '0000-00-00 00:00:00',
       `us_failures` int(11) NOT NULL default '0',
@@ -47,7 +47,8 @@ if (isset($result['created'])) {
 
     // Default user - u:admin p:(value of _MASTERPASS constant)
     echo "Adding admin user<br />";
-    Jojo::insertQuery("INSERT INTO {user} SET  userid=1, us_login='admin', us_password=?, us_firstname='admin', us_lastname='admin'", array(sha1(_MASTERPASS)));
+    $passwordhash = Jojo_Auth_Local::hashPassword(_MASTERPASS);
+    Jojo::insertQuery("INSERT INTO {user} SET  userid=1, us_login='admin', us_password=?, us_firstname='admin', us_lastname='admin'", array($passwordhash));
 }
 
 if (isset($result['added'])) {
