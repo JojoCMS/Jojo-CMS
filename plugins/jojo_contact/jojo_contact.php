@@ -40,7 +40,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         if ($formID) {
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         } else {
-            $pageID = $this->page['pageid'];
+            //$pageID = $this->page['pageid'];
+            global $page;
+            $pageID = $page->page['pageid'];
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
         }
 
