@@ -43,8 +43,9 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
             } else {
                 $userid = $users[0]['userid'];
                 $newpassword = Jojo::makepassword();
+                $newpasswordhash = Jojo_Auth_Local::hashPassword($newpassword);
                 /* Save new password to DB. Clear old reminder. Clear reset code. Display password on screen. */
-                Jojo::updateQuery("UPDATE {user} SET us_password = ?, us_salt='', us_reminder='', us_reset='' WHERE userid = ? LIMIT 1", array(sha1($newpassword), $userid));
+                Jojo::updateQuery("UPDATE {user} SET us_password = ?, us_reminder='', us_reset='' WHERE userid = ? LIMIT 1", array($newpasswordhash, $userid));
                 $messages[] = "Your password has been reset to <b>$newpassword</b>";
                 $smarty->assign('changed', true);
                 $smarty->assign('newpassword', $newpassword);
