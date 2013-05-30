@@ -316,7 +316,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $sent = false;
         if (isset($_POST['contactsubmit'])) {
-            $response = $this->sendEnquiry();
+            $response = $this->sendEnquiry($formID);
             $smarty->assign('message', $response['responsemessage']);
             $sent = $response['sent'];
             /* redirect visitor to thank you page if one has been configured */
