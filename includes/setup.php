@@ -497,7 +497,7 @@ foreach ($tables as $tblname => $tbltype)  {
         }
         echo "Index on `" . implode((array)$i, '` and `') . '`';
         echo "<span style='color:orange'>missing</span><br />\n";
-        $sql = "ALTER TABLE  `$tblname` ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
+        $sql = "ALTER TABLE  {$tblname} ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
         echo ".Executing Query: <span style='color:blue'>$sql</span><br />\n";
         $res = Jojo::structureQuery($sql);
         if ($res) echo "<span style='color:green'>Done</span><br />\n";          
