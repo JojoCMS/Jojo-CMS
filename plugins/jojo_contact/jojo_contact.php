@@ -312,7 +312,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $pageID = $this->page['pageid'];
         $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri FROM {form} f WHERE f.form_page_id = ?", array($pageID));
         $formID = $form ? $form['form_id'] : '';
-        $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
 
         $sent = false;
         if (isset($_POST['contactsubmit'])) {
@@ -326,6 +325,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         }
         $smarty->assign('sent', $sent);
 
+        $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
+        
         if (strpos($this->page['pg_body'], '[[contactform]]')===false) {
             $content['content']  = $this->page['pg_body'] . $formhtml;
         } else {
