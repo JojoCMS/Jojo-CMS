@@ -25,7 +25,7 @@ class Jojo_Auth_Local {
                 if (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
                     /* Check if the password field has been upgraded */
                     if (self::getPasswordFieldLength() < 60) {
-                        return false;
+                        return true;
                     }
                     /* Success, but let's upgrade the password */
                     $logindata = $userdata;
@@ -131,9 +131,9 @@ class Jojo_Auth_Local {
 
     /* Get password field length */
     public static function getPasswordFieldLength() {
-        $pwField = Jojo::selectRow("SELECT fd_sqltype FROM {fielddata} WHERE fd_table ='user' AND fd_field = 'us_password'");
+        $pwField = Jojo::selectRow("SHOW COLUMNS FROM {user} WHERE Field = 'us_password'");
         if (!$pwField) { return false; }
-        $pwField = strtolower($pwField["fd_sqltype"]);
+        $pwField = strtolower($pwField["Type"]);
         $pwField = (int)str_replace(array("varchar(", ")"), "", $pwField);
         return $pwField;
     }
