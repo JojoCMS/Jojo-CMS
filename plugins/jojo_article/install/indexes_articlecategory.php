@@ -17,10 +17,9 @@
   $indexes[TABLENAME] has already been defined. Add string (for single-column indexes) or array (for multi-column indexes) elements to this
   eg $indexes['my_table'][] = 'my_field';
      $indexes['my_table'][] = array('my_field', 'my_other_field');
-  
+
   DO NOT overwrite the base array - this will prevent other plugins from defining indexes on this table
   eg $indexes['my_table'] = array('my_field'); //don't do this
  */
 
 $indexes['articlecategory'][] = 'pageid';
-$indexes['articlecategory'][] = 'ac_url';

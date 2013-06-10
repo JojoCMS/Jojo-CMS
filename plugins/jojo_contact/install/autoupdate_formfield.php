@@ -226,6 +226,16 @@ $default_fd['formfield']['ff_is_email'] = array(
         'fd_order' => $o++
     );
 
+// Display-Only Field
+$default_fd['formfield']['ff_displayonly'] = array(
+        'fd_name' => "Display online only",
+        'fd_type' => "yesno",
+        'fd_required' => "yes",
+        'fd_default' => "0",
+        'fd_help' => "Show online but don't add to email printouts",
+        'fd_order' => $o++
+    );
+
 // Show Label?
 $default_fd['formfield']['ff_showlabel'] = array(
         'fd_name' => "Show Label?",

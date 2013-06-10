@@ -170,7 +170,7 @@ $_options[] = array(
 $_options[] = array(
     'id'          => 'boilerplate_htmltag',
     'category'    => 'Config',
-    'label'       => 'Bolierplate Html tag',
+    'label'       => 'Boilerplate Html tag',
     'description' => 'Add browser conditionals to html tag',
     'type'        => 'radio',
     'default'     => 'no',
@@ -987,7 +987,7 @@ $_options[] = array(
     'id'          => 'modernizr',
     'category'    => 'JS',
     'label'       => 'Use Modernizr',
-    'description' => 'Add modernizr script classes to html tag. Yes uses V1.6 included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
+    'description' => 'Add modernizr script classes to html tag. Yes uses v2.6.2 minimal included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
     'default'     => 'yes',
     'options'     => 'yes,no,custom',
@@ -1011,6 +1011,16 @@ $_options[] = array(
     'type'        => 'radio',
     'default'     => '1.7.2',
     'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2,1.9.1',
+);
+
+$_options[] = array(
+    'id'          => 'jquery_touch',
+    'category'    => 'JS',
+    'label'       => 'jQuery Mobile Touch',
+    'description' => 'Load jQuery Mobile touch event code (for triggering swipe and tap events etc).',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
 );
 
 $_options[] = array(
@@ -1511,6 +1521,16 @@ $_options[] = array(
     'category'    => 'Social Networking',
     'label'       => 'Google+ link',
     'description' => 'the full url of your Google+ page',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'linkedin_link',
+    'category'    => 'Social Networking',
+    'label'       => 'LinkedIn link',
+    'description' => 'the full url of your LinkedIn page',
     'type'        => 'text',
     'default'     => '',
     'options'     => ''

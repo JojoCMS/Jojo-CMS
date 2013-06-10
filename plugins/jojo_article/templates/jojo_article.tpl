@@ -1,7 +1,7 @@
 {if $error}<div class="error">{$error}</div>{/if}
 
 {if $jojo_article}
-<div id="article">
+<div id="article"{if $jojo_article.ar_featured} class="featured"{/if}>
     <div id="article-toplinks">
     {if $prevarticle}<a href="{$prevarticle.url}" class="prev-article" title="Previous">&lt;&lt; {$prevarticle.title}</a>{/if}
     {if $nextarticle}<a href="{$nextarticle.url}" class="next-article" title="Next">{$nextarticle.title} &gt;&gt;</a>{/if}

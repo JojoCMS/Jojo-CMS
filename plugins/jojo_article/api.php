@@ -84,6 +84,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'article_features',
+    'category'    => 'Articles',
+    'label'       => 'Featured first',
+    'description' => 'Put featured articles first: always, in the index only, in the sidebar only, or never (and just class them for alternate styling)',
+    'type'        => 'radio',
+    'default'     => 'never',
+    'options'     => 'always,index,sidebar,never',
+    'plugin'      => 'jojo_article'
+);
+
+$_options[] = array(
     'id'          => 'article_next_prev',
     'category'    => 'Articles',
     'label'       => 'Show Next / Previous links',
@@ -106,17 +117,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'article_anchor_text',
-    'category'    => 'Articles',
-    'label'       => 'Article Anchor Text',
-    'description' => 'Allows users to choose the link text for their link. For good comments, this can be enabled.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-    'plugin'      => 'jojo_article'
-);
-
-$_options[] = array(
     'id'          => 'article_last_updated',
     'category'    => 'System',
     'label'       => 'Articles last updated',
@@ -134,6 +134,17 @@ $_options[] = array(
     'description' => 'The number of articles to be displayed as snippets in a teaser box on other pages - set to 0 to disable',
     'type'        => 'integer',
     'default'     => '3',
+    'options'     => '',
+    'plugin'      => 'jojo_article'
+);
+
+$_options[] = array(
+    'id'          => 'article_buffer',
+    'category'    => 'Articles',
+    'label'       => 'Hidden article buffer',
+    'description' => "Number of recent articles likely to be not yet live or expired (0 if scheduling isn't used)",
+    'type'        => 'integer',
+    'default'     => '0',
     'options'     => '',
     'plugin'      => 'jojo_article'
 );
@@ -165,6 +176,17 @@ $_options[] = array(
     'category'    => 'Articles',
     'label'       => 'Exclude current article from list',
     'description' => 'Exclude the article from the sidebar list when on that articles page',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_article'
+);
+
+$_options[] = array(
+    'id'          => 'article_tags',
+    'category'    => 'Articles',
+    'label'       => 'Get Tag info',
+    'description' => 'Always get tag data for articles',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',

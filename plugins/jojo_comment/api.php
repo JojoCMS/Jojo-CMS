@@ -114,6 +114,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'comment_useronly',
+    'category'    => 'Comments',
+    'label'       => 'Registered Users only',
+    'description' => 'Restrict comments to email addresses that match a current user',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_comment'
+);
+
+$_options[] = array(
     'id'          => 'comment_spam_links',
     'category'    => 'Comments',
     'label'       => 'Spam links',

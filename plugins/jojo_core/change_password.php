@@ -65,7 +65,7 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
 
             if (!count($errors)) {
                 $newpass = Jojo_Auth_Local::hashPassword($new);
-                Jojo::updateQuery("UPDATE {user} SET us_password=? WHERE userid=? LIMIT 1", array($new, $_USERID));
+                Jojo::updateQuery("UPDATE {user} SET us_password=? WHERE userid=? LIMIT 1", array($newpass, $_USERID));
 
                 /* get user details for the email */
                 $user = Jojo::selectRow("SELECT us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ? LIMIT 1", $_USERID);

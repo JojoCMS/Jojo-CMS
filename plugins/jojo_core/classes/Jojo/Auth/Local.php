@@ -7,9 +7,8 @@ class Jojo_Auth_Local {
         $remember = Jojo::getFormData('remember', false);
 
         if ($username) {
-            $wherequery = "us_login = ?";
-            /* Allow loggin in my email or just username? */
-            if (Jojo::getOption('allow_email_login', 'yes') == 'yes') {
+            /* Allow logging in by email or just username? */
+            if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
                 $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND us_locked = 0", array($username));
             } else {
                 $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND us_locked = 0", array($username));
@@ -19,17 +18,21 @@ class Jojo_Auth_Local {
 
             /* Try PHPass' Blowfish algo, then fall back to SHA1 then MD5 */
             if (self::checkPassword($password, $userdata["us_password"])) {
-                // Logged in
+                /* Logged in */
                 $logindata = $userdata;
             } else {
                 /* Old methods. Authenticate then upgrade. */
                 if (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
+                    /* Check if the password field has been upgraded */
+                    if (self::getPasswordFieldLength() < 60) {
+                        return false;
+                    }
                     /* Success, but let's upgrade the password */
                     $logindata = $userdata;
                     $newpassword = self::hashPassword($password);
                     Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newpassword, $userdata["us_login"]));
                 } else {
-                    // Login failed
+                    /* Login failed */
                     return false;
                 }
             }
@@ -124,5 +127,14 @@ class Jojo_Auth_Local {
         if (SHA1($password.$salt) == $hash) { return true; }
         if (MD5($password.$salt) == $hash) { return true; }
         return false;
+    }
+
+    /* Get password field length */
+    public static function getPasswordFieldLength() {
+        $pwField = Jojo::selectRow("SELECT fd_sqltype FROM {fielddata} WHERE fd_table ='user' AND fd_field = 'us_password'");
+        if (!$pwField) { return false; }
+        $pwField = strtolower($pwField["fd_sqltype"]);
+        $pwField = (int)str_replace(array("varchar(", ")"), "", $pwField);
+        return $pwField;
     }
 }

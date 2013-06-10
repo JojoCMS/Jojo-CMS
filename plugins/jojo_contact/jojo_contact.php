@@ -40,7 +40,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         if ($formID) {
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         } else {
-            $pageID = $this->page['pageid'];
+            //$pageID = $this->page['pageid'];
+            global $page;
+            $pageID = $page->page['pageid'];
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
         }
 
@@ -116,7 +118,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             } elseif (Util::getFormData('form_' . $field['field'], '')) {
                 $field['value'] = ($field['type']!='heading') ? Util::getFormData('form_' . $field['field'], '') : $field['value'];
             } else {
-                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['value'];
+                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['display'];
             }
             /* set the fromemail value if appropriate */
 
@@ -171,7 +173,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
        }
 
-        if(!count($errors)){
+       if(!count($errors)){
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
             $errors = $validationReturn[0];
@@ -189,16 +191,12 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $message  = '';
         foreach ($fields as $f) {
-            if (isset($f['displayonly'])) {
+            if (isset($f['displayonly']) && $f['displayonly']==1) {
                 continue;
             } elseif ($f['type'] == 'note') {
                 continue;
             } elseif ($f['type'] == 'heading') {
-                $message .=  "\r\n" . $f['value'] . "\r\n";
-                for ($i=0; $i<strlen($f['value']); $i++) {
-                    $message .= '-';
-                }
-                $message .= "\r\n";
+                $message .=  "\r\n<b>" . $f['value'] . "</b>\r\n";
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
                 $message .= $f['display'] . ($f['filelink'] ? ' ' . _SITEURL . '/downloads' . $f['filelink'] : '') . "\r\n";
             } else {
@@ -209,7 +207,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         $messagefields = '';
         foreach ($fields as $f) {
-            if (isset($f['displayonly']) || $f['type'] == 'note') { continue; };
+            if ((isset($f['displayonly']) && $f['displayonly']==1) || $f['type'] == 'note') { continue; };
             if ($f['type'] == 'heading') {
                 $messagefields .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
@@ -267,7 +265,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
                 /* send a copy to the webmaster */
                if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
-                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email);
+                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
                 }
 
                 /* store a copy of the message in the database*/
@@ -314,25 +312,24 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $pageID = $this->page['pageid'];
         $form = Jojo::selectRow("SELECT form_id, form_thank_you_uri FROM {form} f WHERE f.form_page_id = ?", array($pageID));
         $formID = $form ? $form['form_id'] : '';
-        $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
 
         $sent = false;
         if (isset($_POST['contactsubmit'])) {
-            $response = $this->sendEnquiry();
+            $response = $this->sendEnquiry($formID);
             $smarty->assign('message', $response['responsemessage']);
             $sent = $response['sent'];
             /* redirect visitor to thank you page if one has been configured */
-            if ($sent && $optionNewDatabaseMethod && !empty($form['form_thank_you_uri'])) {
-                Jojo::redirect(_SITEURL.'/'.$form['form_thank_you_uri'], 302);
+            if ($sent && !empty($form['form_thank_you_uri'])) {
+                Jojo::redirect(_SITEURL . '/' . $form['form_thank_you_uri'], 302);
             }
         }
         $smarty->assign('sent', $sent);
 
-        if (strpos($this->page['pg_body'], '[[contactform')===false) {
-            $smarty->assign('content', $this->page['pg_body']);
-            $content['content']    = $smarty->fetch('jojo_contact.tpl');
+        $formhtml = self::getFormHtml($formID, $this->getCorrectUrl());
+        
+        if (strpos($this->page['pg_body'], '[[contactform]]')===false) {
+            $content['content']  = $this->page['pg_body'] . $formhtml;
         } else {
-            $formhtml = $smarty->fetch('jojo_contact.tpl');
             $this->page['pg_body'] = str_replace(array('<p>[[contactform]]</p>','<p>[[contactform]]&nbsp;</p>'), '[[contactform]]', $this->page['pg_body']);
             $content['content']    = str_replace('[[contactform]]', $formhtml, $this->page['pg_body']);
         }

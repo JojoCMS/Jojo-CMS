@@ -964,6 +964,7 @@ class Jojo {
             'evy' => 'application/envoy',
             'exe' => 'application/octet-stream',
             'fif' => 'application/fractals',
+            'flv' => 'video/x-flv',
             'flr' => 'x-world/x-vrml',
             'gif' => 'image/gif',
             'gtar' => 'application/x-gtar',
@@ -1033,6 +1034,7 @@ class Jojo {
             'pml' => 'application/x-perfmon',
             'pmr' => 'application/x-perfmon',
             'pmw' => 'application/x-perfmon',
+            'png' => 'image/png',
             'pnm' => 'image/x-portable-anymap',
             'pot' => 'application/vnd.ms-powerpoint',
             'ppm' => 'image/x-portable-pixmap',
@@ -2443,7 +2445,8 @@ class Jojo {
      */
     static function checkUrlFormat($url)
     {
-        return preg_match('#^http\\:\\/\\/[a-z0-9\-]+\.([a-z0-9\-]+\.)?[a-z]+#i', $url);
+        //return preg_match('#^http\\:\\/\\/[a-z0-9\-]+\.([a-z0-9\-]+\.)?[a-z]+#i', $url);
+        return filter_var($url, FILTER_VALIDATE_URL);
     }
 
     /* Checks that an email address looks valid
@@ -2456,17 +2459,29 @@ class Jojo {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+    /* Checks for a valid IP address
+     * TODO: IPV6 stuff, I guess.
+     */
+    static function checkIPFormat($ip)
+    {
+        return filter_var($ip, FILTER_VALIDATE_IP);
+    }
+
     /* Gets the IP address of the visitor, bypassing proxies */
     static function getIp()
     {
+        $ip = false;
         if ( (getenv('HTTP_X_FORWARDED_FOR') != '') && (strtolower(getenv('HTTP_X_FORWARDED_FOR')) != 'unknown')) {
             $iparray = explode(',', getenv('HTTP_X_FORWARDED_FOR'));
-            return $iparray[0];
+            $ip = $iparray[0];
         } elseif (getenv('REMOTE_ADDR') != '') {
-            return getenv('REMOTE_ADDR');
-        } else {
-            return false;
+            $ip = getenv('REMOTE_ADDR');
         }
+        /* check IP is valid format */
+        if (Jojo::checkIPFormat($ip)) {
+        	return $ip;
+        }
+        return false;
     }
 
     /* reads the user agent string and gives the browser type - quick and simple detection */
