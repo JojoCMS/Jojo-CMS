@@ -47,6 +47,7 @@ $query = "
         `form_multipage` tinyint(1) NOT NULL default '0',
         `form_submit_end` tinyint(1) NOT NULL default '1',
         `form_uploadfolder` varchar(255) NOT NULL,
+        `form_class` varchar(100) NOT NULL default '',
         PRIMARY KEY  (`form_id`)
         ) ENGINE=InnoDB  ;
     ";

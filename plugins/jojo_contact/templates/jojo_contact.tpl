@@ -1,7 +1,8 @@
 {if $content}{$content}
 {/if}<div{if $form.form_hideonsuccess && $message && $sent} style="display:none;"{/if}>
-<form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" enctype="multipart/form-data" class="contact-form{if $form.form_multipage} multipage{/if}">
+<form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" enctype="multipart/form-data" class="contact-form{if $form.form_multipage} multipage{/if}{if $form.form_class} {$form.form_class}{/if}">
 <input type="hidden" name="form_id" id="form_id" value="{$form.form_id}" />
+<input type="hidden" name="form_redirect" id="form_redirect" value="{$form.form_redirect_url}" />
 <input type="hidden" name="MAX_FILE_SIZE" value="{if $maxuploadvalue}{$maxuploadvalue}{else}5000000{/if}" />
 <div>
 {if $toaddresses}<div class="form-fieldset">

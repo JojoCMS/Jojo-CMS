@@ -6,12 +6,7 @@
   z-index:103;
   top: 50%;
   left: 50%;
-  margin: -8px 0 0 -8px; /* -height/2 0 0 -width/2 */
-}
-
-* html #jpop_loading {
-  position: absolute;
-  margin-top: expression(0 - parseInt(this.offsetHeight / 2) + (TBWindowMargin = document.documentElement && document.documentElement.scrollTop || document.body.scrollTop) + 'px');
+  margin: -8px 0 0 -8px;
 }
 
 #jpop_overlay {
@@ -28,11 +23,6 @@
   width:100%;
 }
 
-* html #jpop_overlay {
-  position: absolute;
-  height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
-}
-
 .jpop_content {
   z-index:101;
   position: fixed;
@@ -47,15 +37,10 @@
   padding: 10px;
 }
 
-* html .jpop_content {
-  position: absolute;
-  margin-top: expression((TBWindowMargin = document.documentElement && document.documentElement.scrollTop || document.body.scrollTop) + 'px');
-}
-
 .jpop {
   display: none;
 }
 
 select.jpop_select {
-  _display: none;
+  display: none;
 }

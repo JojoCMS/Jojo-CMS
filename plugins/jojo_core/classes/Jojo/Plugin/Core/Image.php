@@ -36,7 +36,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
-        
+
         $pad = false;
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {
@@ -321,7 +321,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $new_height = $new_width = $size;
             $shortest = min($im_height, $im_width);
             $radius = ($shortest / 2); // Not radius, but you get the point (half the width/height)
-            
+
             //find the offset for cropping
             $cropdata = self::getCropData($filename);
             if (is_array($cropdata)) {
@@ -335,7 +335,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 $startx = ($im_width / 2) - $radius;
                 $starty = ($im_height / 2) - $radius;
             }
-            
+
             //resize
             $im_height = $im_width = min($im_height, $im_width);
         } elseif (!empty($fitmaxw) && !empty($fitmaxh)) {
@@ -378,8 +378,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $starty = 0;
             $factor1 = $im_width/$maxw;
             $factor2 = $im_height/$maxh;
-            
-            
+
+
             $cropdata = self::getCropData($filename);
             if (is_array($cropdata)) {
                 /* we have crop data, so crop around the crop point */
@@ -412,7 +412,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     $starty -= ($im_height / 2);
                 }
             }
-            
+
         } elseif (!empty($maxh)) {
             /* Resize tp maximum height */
             $factor = $maxh / $im_height;
@@ -448,7 +448,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
                 imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
                 imagealphablending($new_im, false);
-            } elseif ($pad) {
+            }
+            if ($pad) {
                 $background = imagecolorallocate($new_im, 0xFF, 0xFF, 0xFF);//todo: allow this to be something other than white
                 imagefill($new_im, 0, 0, $background);
             }
@@ -512,7 +513,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
     static function isRemoteFile($filename) {
         return (preg_match('|^https?\://|i', $filename));
     }
-    
+
     /* retrieves crop data, returning false or array(x,y) with the center point of an image. Todo, cache to a file to avoid DB query */
     static function getCropData($filepath)
     {
@@ -523,5 +524,29 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         $crop_x = (isset($cropdata['x'])) ? $cropdata['x'] : false;
         $crop_y = (isset($cropdata['y'])) ? $cropdata['y'] : false;
         return array($crop_x, $crop_y);
+    }
+
+    static function applyFilter($file, $filter) {
+        $filetype = Jojo::getFileExtension($file);
+        if ($filetype == 'gif') {
+            $im = imagecreatefromgif($file);
+        } elseif ($filetype == 'png') {
+            $im = imagecreatefrompng($file);
+        } elseif ($filetype == 'jpg' ||  $filetype == 'jpeg') {
+            $im = imagecreatefromjpeg($file);
+        }
+        if ($im && imagefilter($im, constant($filter))) {
+           if ($filetype == "gif") {
+                Imagegif($im, $file);
+            } else if ($filetype == "png") {
+                imagesavealpha($new_im, true);
+                Imagepng($im, $file);
+            } else {
+                $quality = Jojo::getOption('jpeg_quality', 85);
+                Imagejpeg($im, $file, $quality);
+            }
+            return true;
+        }
+        return false;
     }
 }
