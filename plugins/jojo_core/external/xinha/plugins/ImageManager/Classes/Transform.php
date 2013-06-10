@@ -119,18 +119,18 @@ Class Image_Transform
      * @see PEAR::isError()
      * @see Image_Transform::setOption()
      */
-    function &factory($driver)
+    static function &factory($driver)
     {
         if ('' == $driver) {
             die("No image library specified... aborting.  You must call ::factory() with one parameter, the library to load.");
 
         }
-        $this->uid = md5($_SERVER['REMOTE_ADDR']);
 
         include_once "../ImageManager/Classes/$driver.php";
 
         $classname = "Image_Transform_Driver_{$driver}";
         $obj = new $classname;
+        $obj->uid = md5($_SERVER['REMOTE_ADDR']);
         return $obj;
     }
 
@@ -456,7 +456,7 @@ Class Image_Transform
      * @access private
      * @return PEAR_error
      */
-    function _resize() {
+    function _resize($new_x, $new_y) {
         return null; //PEAR::raiseError("No Resize method exists", true);
     }
 
@@ -536,7 +536,7 @@ Class Image_Transform
 
 
     /* Methods to add to the driver classes in the future */
-    function addText()
+    function addText($params)
     {
         return null; //PEAR::raiseError("No addText method exists", true);
     }
@@ -551,12 +551,12 @@ Class Image_Transform
         return null; //PEAR::raiseError("No addBorder method exists", true);
     }
 
-    function crop()
+    function crop($new_x, $new_y, $new_width, $new_height)
     {
         return null; //PEAR::raiseError("No crop method exists", true);
     }
 
-    function flip() 
+    function flip($horizontal) 
     {
         return null;
     }

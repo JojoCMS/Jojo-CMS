@@ -84,6 +84,17 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'article_features',
+    'category'    => 'Articles',
+    'label'       => 'Featured first',
+    'description' => 'Put featured articles first: always, in the index only, in the sidebar only, or never (and just class them for alternate styling)',
+    'type'        => 'radio',
+    'default'     => 'never',
+    'options'     => 'always,index,sidebar,never',
+    'plugin'      => 'jojo_article'
+);
+
+$_options[] = array(
     'id'          => 'article_next_prev',
     'category'    => 'Articles',
     'label'       => 'Show Next / Previous links',

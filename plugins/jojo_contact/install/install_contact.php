@@ -87,6 +87,7 @@ $query = "
         `ff_cols` int(11) NOT NULL,
         `ff_description` text NOT NULL,
         `ff_class` varchar(100) NOT NULL default '',
+        `ff_displayonly` tinyint(1) NOT NULL default '0',
         `ff_is_email` tinyint(1) NOT NULL default '0',
         `ff_is_name` tinyint(1) NOT NULL default '0',
         `ff_showlabel` tinyint(1) NOT NULL default '1',

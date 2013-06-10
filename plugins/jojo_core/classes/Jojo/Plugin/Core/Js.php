@@ -89,10 +89,9 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 if (Jojo::getOption('tbootstrap_js_transition', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-transition.js');
                 /* Modals */
-                /*
-if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-modal.js');
-*/
+                if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
+                                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-modal.js');
+
                 /* Dropdowns */
                 if (Jojo::getOption('tbootstrap_js_dropdown', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-dropdown.js');
