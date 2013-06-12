@@ -1360,6 +1360,16 @@ $_options[] = array(
     'options'     => 'yes,no',
 );
 
+$_options[] = array(
+    'id'          => 'password_hash_count',
+    'category'    => 'Security',
+    'label'       => 'Password Hash Count',
+    'description' => 'The number of times to hash user passwords. Higher is harder to crack, but will cause a slight delay as users sign in',
+    'type'        => 'text',
+    'default'     => '10',
+    'options'     => '',
+);
+
 /* SEO */
 
 $_options[] = array(

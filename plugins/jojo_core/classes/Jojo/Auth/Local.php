@@ -29,14 +29,20 @@ class Jojo_Auth_Local {
                     }
                     /* Success, but let's upgrade the password */
                     $logindata = $userdata;
-                    $newpassword = self::hashPassword($password);
-                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newpassword, $userdata["us_login"]));
+                    $newhash = self::hashPassword($password);
+                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
                 } else {
                     /* Login failed */
                     return false;
                 }
             }
             $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
+
+            if (self::getPasswordHashCount($userdata["us_password"]) !== Jojo::getOption("password_hash_count", 10)) {
+                /* Update the hash count for this user's password to match the current global setting */
+                $newhash = self::hashPassword($password);
+                Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
+            }
 
             if ($logindata && $logindata['us_failures'] > 0) {
                 /* Reset login failure count */
@@ -136,5 +142,11 @@ class Jojo_Auth_Local {
         $pwField = strtolower($pwField["Type"]);
         $pwField = (int)str_replace(array("varchar(", ")"), "", $pwField);
         return $pwField;
+    }
+
+    /* Get the hash count for a password to see if we should re-generate it */
+    public static function getPasswordHashCount($password) {
+        $segments = explode("$", $password);
+        return (int)$segments[2];
     }
 }
