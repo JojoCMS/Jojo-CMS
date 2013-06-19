@@ -228,7 +228,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
 
         /* Get variables from POST */
         $name            = htmlspecialchars(Jojo::getFormData('name', ''), ENT_COMPAT, 'UTF-8', false);
-        $authorcomment   = Jojo::getFormData('authorcomment',   'no');
+        $authorcomment   = (Jojo::getFormData('authorcomment', 'no') == 'yes');
         $email           = trim(Jojo::getFormData('email',           ''));
         $email_subscribe = Jojo::getFormData('email_subscribe', false) ? true : false;
         $website         = Jojo::getFormData('website',         '');
