@@ -16,7 +16,7 @@ class Jojo_Auth_Local {
 
             if (!$userdata) { return false; }
 
-            /* Try PHPass' Blowfish algo, then fall back to SHA1 then MD5 */
+            /* Try PHPass' Blowfish algo, then fall back to the older methods */
             if (self::checkPassword($password, $userdata["us_password"])) {
                 /* Logged in */
                 $logindata = $userdata;
@@ -24,44 +24,43 @@ class Jojo_Auth_Local {
                 /* Old methods. Authenticate then upgrade. */
                 if (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
                     /* Check if the password field has been upgraded */
-                    if (self::getPasswordFieldLength() < 60) {
-                        return true;
+                    if (self::getPasswordFieldLength() >= 60) {
+                        /* Success, but let's upgrade the password */
+                        $logindata = $userdata;
+                        $newhash = self::hashPassword($password);
+                        Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
                     }
-                    /* Success, but let's upgrade the password */
-                    $logindata = $userdata;
-                    $newhash = self::hashPassword($password);
-                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
-                } else {
-                    /* Login failed */
-                    return false;
                 }
-            }
-            $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
-
-            if (self::getPasswordHashCount($userdata["us_password"]) !== Jojo::getOption("password_hash_count", 10)) {
-                /* Update the hash count for this user's password to match the current global setting */
-                $newhash = self::hashPassword($password);
-                Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
-            }
-
-            if ($logindata && $logindata['us_failures'] > 0) {
-                /* Reset login failure count */
-                Jojo::updateQuery("UPDATE {user} SET us_failures = 0 WHERE userid = ?", $logindata['userid']);
-            }
-
-            if ($logindata && $remember) {
-                /* Set remember password cookie */
-                $code = Jojo::randomstring(16);
-                setcookie("jojoR", base64_encode($logindata['userid'] . ':' . $code), time() + (60 * 60 * 24 * 365), '/' . _SITEFOLDER);
-                $values = array((int)$logindata['userid'], $code, time());
-                $res = Jojo::insertQuery("INSERT INTO {auth_token} SET userid = ?, token = ?, lastused = ?", array($values));
             }
 
             if ($logindata) {
+                $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
+
+                if (self::getPasswordHashCount($userdata["us_password"]) !== Jojo::getOption("password_hash_count", 10)) {
+                    /* Update the hash count for this user's password to match the current global setting */
+                    $newhash = self::hashPassword($password);
+                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
+                }
+
+                if ($logindata['us_failures'] > 0) {
+                    /* Reset login failure count */
+                    Jojo::updateQuery("UPDATE {user} SET us_failures = 0 WHERE userid = ?", $logindata['userid']);
+                }
+
+                if ($remember) {
+                    /* Set remember password cookie */
+                    $code = Jojo::randomstring(16);
+                    setcookie("jojoR", base64_encode($logindata['userid'] . ':' . $code), time() + (60 * 60 * 24 * 365), '/' . _SITEFOLDER);
+                    $values = array((int)$logindata['userid'], $code, time());
+                    $res = Jojo::insertQuery("INSERT INTO {auth_token} SET userid = ?, token = ?, lastused = ?", array($values));
+                }
+
                 /* After login hook */
-                 $_SESSION['loggingin'] = true;
+                $_SESSION['loggingin'] = true;
                 return $logindata['userid'];
             }
+
+            /* Login failed */
 
             /* Submitted a username but the password didn't match */
             $loginmessage = 'Your username or password is incorrect';
