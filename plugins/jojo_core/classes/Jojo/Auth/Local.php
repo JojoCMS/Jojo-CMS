@@ -9,7 +9,7 @@ class Jojo_Auth_Local {
         if ($username) {
             /* Allow logging in by email or just username? */
             if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
-                $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND us_locked = 0", array($username));
+                $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE ((us_login = ?) OR (us_email = ?)) AND us_locked = 0", array($username, $username));
             } else {
                 $userdata = Jojo::selectRow("SELECT * FROM {user} WHERE us_login = ? AND us_locked = 0", array($username));
             }
@@ -24,11 +24,11 @@ class Jojo_Auth_Local {
                 /* Old methods. Authenticate then upgrade. */
                 if (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
                     /* Check if the password field has been upgraded */
-                    if (self::getPasswordFieldLength() >= 60) {
+                    if (self::checkPasswordFieldLength()) {
                         /* Success, but let's upgrade the password */
                         $logindata = $userdata;
                         $newhash = self::hashPassword($password);
-                        Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
+                        Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE userid = ?", array($newhash, $userdata["userid"]));
                     }
                 }
             }
@@ -36,10 +36,10 @@ class Jojo_Auth_Local {
             if ($logindata) {
                 $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
 
-                if (self::getPasswordHashCount($userdata["us_password"]) !== Jojo::getOption("password_hash_count", 10)) {
+                if (self::checkPasswordNeedsRehash($userdata["us_password"])) {
                     /* Update the hash count for this user's password to match the current global setting */
                     $newhash = self::hashPassword($password);
-                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE us_login = ?", array($newhash, $userdata["us_login"]));
+                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE userid = ?", array($newhash, $userdata["userid"]));
                 }
 
                 if ($logindata['us_failures'] > 0) {
@@ -108,15 +108,18 @@ class Jojo_Auth_Local {
     /* Hash a password using PHPass' blowfish algo. Salts are auto handled in the hash. */
     public static function hashPassword($password) {
         require_once(_BASEDIR."/plugins/jojo_core/external/phpass/PasswordHash.php");
-        $phpass = new PasswordHash(10, false); // The 'false' triggers Blowfish if available. */
+        $hashCount = Jojo::getOption("password_cost", 10);
+        $phpass = new PasswordHash($hashCount, false); // The 'false' triggers Blowfish if available. */
         return $phpass->HashPassword($password);
     }
 
     /* Check a password */
     public static function checkPassword($password, $hash, $salt=false) {
+        $hashCount = Jojo::getOption("password_cost", 10);
+
         // Try PHPass' Blowfish algo first
         require_once(_BASEDIR."/plugins/jojo_core/external/phpass/PasswordHash.php");
-        $phpass = new PasswordHash(10, false);
+        $phpass = new PasswordHash($hashCount, false);
         if ($hash && $phpass->CheckPassword($password, $hash)) {
             return true;
         }
@@ -135,16 +138,20 @@ class Jojo_Auth_Local {
     }
 
     /* Get password field length */
-    public static function getPasswordFieldLength() {
+    public static function checkPasswordFieldLength() {
         $pwField = Jojo::selectRow("SHOW COLUMNS FROM {user} WHERE Field = 'us_password'");
         if (!$pwField) { return false; }
         $pwField = strtolower($pwField["Type"]);
         $pwField = (int)str_replace(array("varchar(", ")"), "", $pwField);
-        return $pwField;
+        return ($pwField == 255);
     }
 
-    /* Get the hash count for a password to see if we should re-generate it */
-    public static function getPasswordHashCount($password) {
+    public static function checkBuiltinPasswordFunctions() {
+        return (function_exists("password_hash") && function_exists("password_verify") && function_exists("password_needs_rehash"));
+    }
+
+    /* Check if a password should be rehashed to match newer security settings */
+    public static function checkPasswordNeedsRehash($password) {
         $segments = explode("$", $password);
         return (int)$segments[2];
     }

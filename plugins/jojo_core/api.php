@@ -1361,10 +1361,10 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'password_hash_count',
+    'id'          => 'password_cost',
     'category'    => 'Security',
-    'label'       => 'Password Hash Count',
-    'description' => 'The number of times to hash user passwords. Higher is harder to crack, but will cause a slight delay as users sign in',
+    'label'       => 'Password Cost',
+    'description' => 'The cost of hashing user passwords. Higher is harder to crack, but will cause a slight delay as users sign in',
     'type'        => 'text',
     'default'     => '10',
     'options'     => '',
