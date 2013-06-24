@@ -1,18 +1,17 @@
-
 #post-comment {
-  display:none;
+  display: none;
 }
 
 #post-comment-link {
-  display:block;
+  display: block;
 }
 
-form.contact-form {
+form.comment-form {
   clear: left;
   margin: 5px 0;
 }
 
-form.contact-form label {
+form.comment-form label {
   float: left;
   width: 150px;
   display: block;
@@ -21,62 +20,30 @@ form.contact-form label {
   margin-bottom: 3px;
 }
 
-form.contact-form .input {
+form.comment-form .input {
   float: left;
   margin-bottom: 3px;
   margin-right: 5px;
   padding: 1px;
 }
 
-form.contact-form select {
+form.comment-form select {
   float: left;
   margin-bottom: 3px;
   margin-right: 5px;
 }
 
-form.contact-form div.form-fieldset{
+form.comment-form div.form-fieldset {
   clear: left;
   margin-bottom: 5px;
 }
 
-form.contact-form div.form-field {
-  float: left;
-  margin-bottom: 3px;
-  width: 300px;
-}
-
-form.contact-form div.form-field br {
-  margin: 15px 0;
-}
-
-form.contact-form div.form-field input {
-  float: none;
-}
-
-form.contact-form div.form-field-description {
-  float: left;
-  margin-bottom: 3px;
-  width: 300px;
-  clear: both;
-  margin-left: 155px;
-  font-size: 0.8em;
-  line-height: 110%;
-}
-
-form.contact-form div.form-field label {
-  float: none;
-  width: auto;
-  display: inline;
-  text-align: left;
-  margin-left: 5px;
-}
-
-form.contact-form div.captcha {
+form.comment-form div.captcha {
     margin:0 0 0 155px;
-    width:300px;
+    width: 300px;
 }
 
-form.contact-form input.button {
+form.comment-form input.button {
   cursor: pointer;
 }
 
