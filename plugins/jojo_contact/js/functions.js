@@ -30,13 +30,21 @@ $(document).ready(function() {
                         $('#' + formid + 'message').show().html('There has been a failure to communicate. Your request has been stored however and will be attended to shortly');
                     }
                 };
-                $('#' + formid).validate({
-                 errorElement: 'span',
-                 submitHandler: function(form) {
-                   $(form).ajaxSubmit(options);
-                   return false;
-                 }
-                });
+                // validate and ajax submit
+                if (!$(this).hasClass('no-validate') && !$(this).hasClass('no-ajax')) {
+                    $('#' + formid).validate({
+                        errorElement: 'span',
+                        submitHandler: function(form) {
+                            $(form).ajaxSubmit(options);
+                            return false;
+                        }
+                    });
+                // validate only with native submit
+                } else if (!$(this).hasClass('no-validate')) {
+                    $('#' + formid).validate({
+                        errorElement: 'span'
+                    });
+                } 
             }
             if ($(this).attr('id').length >0 && $("fieldset", this).length>1 && $(this).hasClass('multipage')) {
                 setFormTabs($(this).attr('id'));
