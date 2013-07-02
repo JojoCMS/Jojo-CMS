@@ -167,3 +167,15 @@ $_options[] = array(
     'options'     => '',
     'plugin'      => 'jojo_comment'
 );
+
+$_options[] = array(
+    'id'          => 'comment_webmaster',
+    'category'    => 'Comments',
+    'label'       => 'Comment Email to Webmaster',
+    'description' => 'Copy admin emails to webmaster as well as site contact.',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+    'plugin'      => 'jojo_comment'
+);
+

@@ -361,7 +361,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
 
         /* Email comment to webmaster and site contact */
         Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Comment - ' . $title, $message, $name, $email);
-        if(_WEBMASTERADDRESS != _CONTACTADDRESS) Jojo::simplemail(_FROMNAME, _CONTACTADDRESS, Jojo::getOption('sitetitle') . ' Comment - ' . $title, $message, $name, $email);
+        if(_WEBMASTERADDRESS != _CONTACTADDRESS && Jojo::getOption('comment_webmaster', 'yes')=='yes') Jojo::simplemail(_FROMNAME, _CONTACTADDRESS, Jojo::getOption('sitetitle') . ' Comment - ' . $title, $message, $name, $email);
 
         /* add subscription if needed, and update all subscriptions to say the topic has a new comment */
         if ($commentsubscriptions && $email_subscribe && !empty($_USERID)) {
