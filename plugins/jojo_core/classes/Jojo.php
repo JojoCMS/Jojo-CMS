@@ -3791,7 +3791,7 @@ class Jojo {
     }
 
     static function inlineStyle($html, $css=array(), $list2table=false) {
-        if ($listtable) {
+        if ($list2table) {
             $html = str_replace('<ul>', '<table cellspacing="0" cellpadding="0" border="0">', $html);
             $html = str_replace('<li>', '<tr><td align="left" valign="top"><p>&bull;&nbsp;&nbsp;</p></td><td><p>', $html);
             $html = str_replace('</li>', '</p></td></tr>', $html);
