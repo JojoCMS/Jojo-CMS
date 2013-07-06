@@ -298,8 +298,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $smarty->assign('fields', $fields);
         }
         $_SESSION['sendstatus'] = $response;
-        /* run success hook */
-        Jojo::runHook('contact_form_success', array($formID, $res));
+        /* run success if we are successful hook */
+        if ($success) {
+            Jojo::runHook('contact_form_success', array($formID, $res));
+        }
         return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 
