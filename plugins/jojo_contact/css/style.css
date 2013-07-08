@@ -16,7 +16,10 @@ form.contact-form .input {
   float: left;
   margin-bottom: 3px;
   margin-right: 5px;
-  padding: 1px;
+}
+
+form.contact-form .add-on {
+    float: left;
 }
 
 form.contact-form select {
@@ -59,6 +62,11 @@ form.contact-form div.form-field br {
 
 form.contact-form div.form-field input {
   float: none;
+}
+
+form.contact-form div.form-field input.radio, form.contact-form div.form-field input.checkbox {
+  float: none;
+   margin-right: 5px;
 }
 
 form.contact-form div.form-field-description {

@@ -381,11 +381,13 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         foreach ($formfields as $ff) {
             foreach ($ff as $k=>$v) {
                 $key = str_replace('ff_', '', $k);
-                $fields[$f][$key] = $v;
+                $fields[$f][$key] = nl2br($v);
             }
-            $fields[$f]['fieldsetid']       = isset($ff['ff_fieldset']) && $ff['ff_fieldset'] ? Jojo::cleanURL($ff['ff_fieldset']) : '';
-            $fields[$f]['field']       = isset($ff['ff_fieldname']) && $ff['ff_fieldname'] ? Jojo::cleanURL($ff['ff_fieldname']) : Jojo::cleanURL($ff['ff_display']);
-            $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
+            $fields[$f]['fieldsetid']   = isset($ff['ff_fieldset']) && $ff['ff_fieldset'] ? Jojo::cleanURL($ff['ff_fieldset']) : '';
+            $fields[$f]['field']        = isset($ff['ff_fieldname']) && $ff['ff_fieldname'] ? Jojo::cleanURL($ff['ff_fieldname']) : Jojo::cleanURL($ff['ff_display']);
+            $fields[$f]['options']      = explode("\r\n", $ff['ff_options']);
+            $fields[$f]['prependvalue'] = isset($ff['ff_prependvalue']) ? $ff['ff_prependvalue'] : '';
+            $fields[$f]['appendvalue']  = isset($ff['ff_appendvalue']) ? $ff['ff_appendvalue'] : '';
            $f++;
         }
         $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
