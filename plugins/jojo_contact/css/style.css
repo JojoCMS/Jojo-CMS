@@ -12,7 +12,7 @@ form.contact-form div.form-heading {
 }
 form.contact-form textarea {
     height: auto;
-
+    vertical-align: top;
 }
 
 form.contact-form input.button {
@@ -21,6 +21,7 @@ form.contact-form input.button {
 
 form span.required, form span.error {
   color: red;
+  padding-left: 5px;
 }
 
 form.contact-form  input.date {

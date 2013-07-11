@@ -34,6 +34,13 @@ $(document).ready(function() {
                 if (!$(this).hasClass('no-validate') && !$(this).hasClass('no-ajax')) {
                     $('#' + formid).validate({
                         errorElement: 'span',
+                        validClass: 'success',
+                        success: function(label, element) {
+                            label.closest('.control-group').addClass("success").removeClass("error");
+                        },
+                        highlight: function(element) {
+                            $(element).closest('.control-group').addClass("error").removeClass("success");
+                        },
                         submitHandler: function(form) {
                             $(form).ajaxSubmit(options);
                             return false;
@@ -42,7 +49,14 @@ $(document).ready(function() {
                 // validate only with native submit
                 } else if (!$(this).hasClass('no-validate')) {
                     $('#' + formid).validate({
-                        errorElement: 'span'
+                        errorElement: 'span',
+                        validClass: 'success',
+                        success: function(label, element) {
+                            label.closest('.control-group').addClass("success").removeClass("error");
+                        },
+                        highlight: function(element) {
+                            $(element).closest('.control-group').addClass("error").removeClass("success");
+                        }
                     });
                 } 
             }
@@ -64,7 +78,14 @@ function preFlight(formData, jqForm, options) {
     // returning anything other than false will allow the form submit to continue
     if (!$('#form' + formID).valid()) {
         $('#form' + formID).validate( {
-            errorElement: 'span'
+            errorElement: 'span',
+            validClass: 'success',
+            success: function(label, element) {
+                label.closest('.control-group').addClass("success").removeClass("error");
+            },
+            highlight: function(element) {
+                $(element).closest('.control-group').addClass("error").removeClass("success");
+            }
         });
         return false;
     }

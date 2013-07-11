@@ -14,26 +14,8 @@ em {
     font-style: italic;
 }
 
-div.message {
-  border: 3px solid #077A12;
-  background: #068912 url('../images/cms/bg-message.gif') left top repeat;
-  color: #fff;
-  font-weight: 700;
-  padding: 5px;
-  margin-bottom: 20px;
-}
-
 div.message ul li {
-  color: #fff;
   list-style: none;
-}
-
-div.error, div.errors {
-  border: 3px solid #EA0505;
-  background: red url('../images/cms/bg-error.gif') left top repeat;
-  color: #fff;
-  font-weight: 700;
-  padding: 5px;
 }
 
 #login-form label, form.standard-form label {

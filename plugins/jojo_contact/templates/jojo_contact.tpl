@@ -68,8 +68,8 @@
             <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
             <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
         </div>
-        <div class="form-fieldset">
-            <label for="CAPTCHA">Spam prevention<span class="required">*</span></label>
+        <div class="form-fieldset control-group">
+            <label for="CAPTCHA" class="control-label">Spam prevention<span class="required">*</span></label>
             <input type="text" class="input text required" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" />
         </div>
     {/if}
