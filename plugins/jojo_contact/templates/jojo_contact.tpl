@@ -1,6 +1,6 @@
 {if $content}{$content}
 {/if}<div{if $form.form_hideonsuccess && $message && $sent} style="display:none;"{/if}>
-<form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" enctype="multipart/form-data" class="contact-form{if $form.form_multipage} multipage{/if}{if $form.form_class} {$form.form_class}{/if}">
+<form name="{$form.form_name|escape:'htmlall'}" id="form{$form.form_id}" method="post" action="{$posturl}" enctype="multipart/form-data" class="contact-form{if $form.form_multipage} multipage{/if}{if $form.form_horizontal} form-horizontal{/if}{if $form.form_class} {$form.form_class}{/if}">
 <input type="hidden" name="form_id" id="form_id" value="{$form.form_id}" />
 <input type="hidden" name="form_redirect" id="form_redirect" value="{$form.form_redirect_url}" />
 <input type="hidden" name="MAX_FILE_SIZE" value="{if $maxuploadvalue}{$maxuploadvalue}{else}5000000{/if}" />
@@ -16,17 +16,17 @@
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}
     {if ($f.fieldset && $f.fieldset!=$fields[$x].fieldset) || $k==0}{if $k>0}</fieldset>
     {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if}>{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
-    {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset {if $f.type == 'emailwithconfirmation'}text{else}{$f.type}{/if}{if $f.prependvalue} input-prepend{/if}{if $f.appendvalue} input-append{/if}{if $f.class} {$f.class}{/if}">
-        {if $f.showlabel || $f.padlabel}<label for="{$f.field}">{if $f.display && $f.showlabel}{$f.display}{/if}{if $f.required}<span class="required">*</span>{/if}</label>
+    {/if}{if !in_array($f.type,array('heading','note')) && $f.type!='hidden'}<div class="form-fieldset control-group {if $f.type == 'emailwithconfirmation'}text{else}{$f.type}{/if}{if $f.prependvalue} input-prepend{/if}{if $f.appendvalue} input-append{/if}{if $f.class} {$f.class}{/if}">
+        {if $f.showlabel || $f.padlabel}<label for="{$f.field}" class="control-label">{if $f.display && $f.showlabel}{$f.display}{/if}{if $f.required}<span class="required">*</span>{/if}</label>
         {/if}
     {/if}{if $f.prependvalue}<span class="add-on">{$f.prependvalue}</span>{/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
     {elseif $f.type == 'textarea'}<textarea class="input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>
-    {elseif $f.type == 'checkboxes'}<div class="form-field">
-            {foreach from=$f.options key=ck item=fo}<div class="checkbox"><label for="{$f.field}_{$ck}" class="checkbox"><input type="checkbox" class="checkbox{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="{$f.field}[]" id="{$f.field}_{$ck}" value="{$fo}"{if $f.valuearr}{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach}{elseif $f.value == 'checked'} checked="checked"{/if} />{$fo}</label></div>
+    {elseif $f.type == 'checkboxes'}<div class="form-field controls">
+            {foreach from=$f.options key=ck item=fo}<label for="{$f.field}_{$ck}" class="checkbox{if $f.class} {$f.class}{/if}"><input type="checkbox"{if $f.required} class="required"{/if} name="{$f.field}[]" id="{$f.field}_{$ck}" value="{$fo}"{if $f.valuearr}{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach}{elseif $f.value == 'checked'} checked="checked"{/if} />{$fo}</label>
             {/foreach}
             </div>
-    {elseif $f.type == 'radio'}<div class="form-field">
-            {foreach from=$f.options key=rk item=button}<span class="radio"><label for="{$f.field}_{$rk}" class="radio"><input type="radio" class="radio{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="{$f.field}" id="{$f.field}_{$rk}" value="{$button}" {if $f.value == $button} checked="checked"{/if} />{$button}</label></span>
+    {elseif $f.type == 'radio'}<div class="form-field controls">
+            {foreach from=$f.options key=rk item=button}<label for="{$f.field}_{$rk}" class="radio{if $f.class} {$f.class}{/if}"><input type="radio"{if $f.required} class="required"{/if} name="{$f.field}" id="{$f.field}_{$rk}" value="{$button}" {if $f.value == $button} checked="checked"{/if} />{$button}</label>
             {/foreach}
         </div>
     {elseif $f.type=='select'}<select name="{$f.field}" id="{$f.field}"{if $f.required} class="required"{/if}>
@@ -69,12 +69,12 @@
             <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
         </div>
         <div class="form-fieldset">
-            <label for="CAPTCHA">Spam prevention:</label>
-            <input type="text" class="input text required" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" /><span class="required">*</span>
+            <label for="CAPTCHA">Spam prevention<span class="required">*</span></label>
+            <input type="text" class="input text required" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" />
         </div>
     {/if}
-        <div  class="form-fieldset submit">
-            {if $form.form_submit_label}<label>&nbsp;</label>{/if}<input type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="button btn" data-normalval="{$form.form_submit}" onmouseover="this.className='button btn buttonrollover';" onmouseout="this.className='button btn'" /><br />
+        <div class="form-fieldset submit">
+            {if $form.form_submit_label}<label class="control-label">&nbsp;</label>{/if}<input type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="button btn" data-normalval="{$form.form_submit}" onmouseover="this.className='button btn buttonrollover';" onmouseout="this.className='button btn'" /><br />
        </div>
         <div class="progress" style="display: none;">
             <div class="bar"></div >

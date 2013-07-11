@@ -249,6 +249,17 @@ $default_fd['form']['form_class'] = array(
         'fd_tabname' => "Xtras"
     );
 
+// Horizontal form
+$default_fd['form']['form_horizontal'] = array(
+        'fd_name' => "Horizontal-style form",
+        'fd_type' => "yesno",
+        'fd_required' => "no",
+        'fd_default' => "0",
+        'fd_help' => "Display label / field groups horizontally (rather than stacked). Requires Bootstrap forms option to be enabled",
+        'fd_order' => $o++,
+        'fd_tabname' => "Xtras"
+    );
+
 // Google Analytics Goal Settings: Virtual page name for contact thankyou page Field
 $default_fd['form']['form_tracking_code_analytics'] = array(
         'fd_name' => "Google Analytics Goal Settings: Virtual page name for contact thankyou page",
