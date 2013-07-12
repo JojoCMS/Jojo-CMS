@@ -2,7 +2,7 @@ $(document).ready(function() {
     if ($('.contact-form').length >0) {
         var d = new Date();
         $('.contact-form').each(function(index) {
-            if ($(this).attr('id').length >0) {
+            if ($(this).attr('id')) {
                 var formid = $(this).attr('id');
                 var uploads = $(this).find('.fileupload');
                 var options = {
@@ -59,9 +59,9 @@ $(document).ready(function() {
                         }
                     });
                 } 
-            }
-            if ($(this).attr('id').length >0 && $("fieldset", this).length>1 && $(this).hasClass('multipage')) {
-                setFormTabs($(this).attr('id'));
+                if ($("fieldset", this).length>1 && $(this).hasClass('multipage')) {
+                    setFormTabs($(this).attr('id'));
+                }
             }
         });
     }

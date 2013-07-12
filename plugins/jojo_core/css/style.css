@@ -1,51 +1,5 @@
-ul li {
-    list-style:disc;
-}
-
-ol li {
-    list-style:decimal;
-}
-
-strong {
-    font-weight: bold;
-}
-
-em {
-    font-style: italic;
-}
-
 div.message ul li {
   list-style: none;
-}
-
-#login-form label, form.standard-form label {
-  float: left;
-  width: 150px;
-  display: block;
-  text-align: right;
-  margin-right: 5px;
-  margin-bottom: 3px;
-}
-
-#login-form input, form.standard-form input, form.standard-form select, form.standard-form textarea, form.standard-form div.field {
-  float: left;
-  margin-bottom: 3px;
-}
-
-form.standard-form label {
-  width: 40%;
-}
-
-form.standard-form div.field {
-  width: 300px;
-}
-
-form.standard-form div.field label {
-  float: none;
-  width: auto;
-  display: inline;
-  text-align: left;
-  margin-left: 5px;
 }
 
 .hidden {
@@ -66,28 +20,24 @@ form.standard-form div.field label {
     margin: 3px 0 5px 10px;
 }
 
-img.icon-image
-{
+img.icon-image {
     vertical-align: -4px;
     margin-right: 3px;
     display: inline;
 }
 
-.note
-{
+.note {
     font-size: 93%;
     line-height: 130%;
 }
 
-p.date
-{
+p.date {
     font-style: italic;
     font-size: 95%;
     margin-top: -3px;
 }
 
-p.credit
-{
+p.credit {
     font-style: italic;
     text-align: right;
     margin-top: -3px;
