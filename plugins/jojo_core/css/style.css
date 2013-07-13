@@ -1,3 +1,7 @@
+[class^="icon-"], [class*=" icon-"] {
+    background-image: url("../external/bootstrap/img/glyphicons-halflings.png");
+}
+
 div.message ul li {
   list-style: none;
 }

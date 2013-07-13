@@ -2,14 +2,13 @@
 
 <div id="message"></div>
 
-{section name=p loop=$themes}
-    <div class="theme-box{if $themes[p].status== 'active'} installed{/if}" title="{$themes[p].description|escape:'htmlall':$charset}">
-      <h3>{$themes[p].name}</h3>
-      <img src="images/w160/themes/{$themes[p].name}.jpg" alt="{$themes[p].name}" /><br />
-      <button rel="{$themes[p].name}"><img class="icon" src="images/cms/icons/brick_add.png" alt="" id="theme-{$themes[p].name}-install" title="Install" /> {if $themes[p].status== 'active'}re{/if}install</button>
-
+{foreach from=$themes item=t}
+    <div class="theme-box{if $t.status=='active'} well{/if}" title="{$t.description|escape:'htmlall':$charset}">
+        <h3>{$t.name}</h3>
+        <img src="images/160x100/themes/{$t.name}.jpg" alt="{$t.name}" /><br />
+        <button class="btn" rel="{$t.name}">{if $t.status== 'active'}<i class="icon-refresh"></i> reinstall{else}<i class="icon-upload"></i> install{/if}</button>
     </div>
-{/section}
+{/foreach}
 
 <script type="text/javascript">
 {literal}

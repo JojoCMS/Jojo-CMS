@@ -49,6 +49,8 @@
     <script type="text/javascript" src="{jojoAsset file="external/markitup/jquery.markitup.pack.js"}"></script>
     <script type="text/javascript" src="{jojoAsset file="external/markitup/sets/html/set.js"}"></script>
     <script type="text/javascript" src="{jojoAsset file="external/markitup/sets/bbcode/set.js"}"></script>
+    <script type="text/javascript" src="{jojoAsset file="external/bootstrap/js/bootstrap-dropdown.js"}"></script>
+    <script type="text/javascript" src="{jojoAsset file="external/bootstrap/js/bootstrap-tab.js"}"></script>
     <script type="text/javascript" src="{cycle values=$NEXTASSET}{jojoAsset file="js/admin.js"}"></script>
     {else}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition == 'top'}
     {include file="analytics.tpl"}

@@ -183,15 +183,13 @@ class Jojo_Stitcher {
         $original = $css;
         $css = Jojo_Plugin_Core_Css::parseImports($css);
 
-        /* if option is set preprocess less css */
-        if (Jojo::getOption('less', 'no') == 'yes') {
-            foreach (Jojo::listPlugins('external/lessphp/lessc.inc.php') as $pluginfile) {
-                require_once($pluginfile);
-                break;
-            }
-            $lc = new lessc();
-            $css = $lc->parse($css);
+        /* preprocess less css */
+        foreach (Jojo::listPlugins('external/lessphp/lessc.inc.php') as $pluginfile) {
+            require_once($pluginfile);
+            break;
         }
+        $lc = new lessc();
+        $css = $lc->parse($css);
 
         require_once(_BASEPLUGINDIR . '/jojo_core/external/csstidy/class.csstidy.php');
         $csstidy = new csstidy();

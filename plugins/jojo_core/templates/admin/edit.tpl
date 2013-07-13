@@ -26,61 +26,26 @@
         <input type="hidden" name="id" id="id" value="{$currentrecord|replace:" ":"-"}" />
         <input type="hidden" name="prefix" id="prefix" value="{$prefix}" />
 
-        <div id="buttons">
-            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="button-wrap-add jojo-admin-button" title="Add new {$displayname}" />{/if}
-
-            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="button-wrap-save jojo-admin-button" title="Save the changes to this {$displayname}" />
-            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="button-wrap-delete jojo-admin-button" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
-            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="button-wrap-duplicate jojo-admin-button" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
-            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="button-wrap-addchild jojo-admin-button" title="Add a new {$displayname} underneath this one" />{/if}
-
-            <!--<input type="submit" name="btn_help" id="btn_help" value="Help" class="button-wrap-help button" onmouseover="this.className='button-wrap-help button button-hover';" onmouseout="this.className='button-wrap-help button'" onclick="showhide('help'); return false;" title="Show help information" />-->
-            <div class="clear"></div>
+        <div id="buttons" class="btn-group">
+            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn" title="Add new {$displayname}" />{/if}
+            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn" title="Save the changes to this {$displayname}" />
+            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
+            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
+            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn" title="Add a new {$displayname} underneath this one" />{/if}
         </div><!-- [end buttons] -->
 
-
-
-        <div id="tabs">
-            <script type="text/javascript">
-            /* <![CDATA[ */
-            {literal}
-                function selecttab(showid) {
-                    if ( (showid == '') || (isNull(showid)) || (!document.getElementById('tab-'+showid)) ) {
-                        if (document.getElementById('tab-{/literal}{$defaulttab|replace:" ":""}{literal}')) {
-                            var showid = '{/literal}{$defaulttab|replace:" ":""}{literal}';
-                        } else {
-                            var showid = 'Fields';
-                        }
-                    }
-                    {/literal}
-
-                {foreach from=$tabnames item=t}
-                    if (document.getElementById('tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}{/if}')) {ldelim}document.getElementById('tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}{/if}').style.display = 'none';{rdelim}
-                    $('#tabbutton-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}{/if}').removeClass('selected');
-                {/foreach}
-                    {literal}
-                    if (document.getElementById('tab-' + showid)) {
-                        document.getElementById('tab-' + showid).style.display = 'block';
-                        $('#tabbutton-' + showid).addClass('selected');
-                    }
-
-                }
-            {/literal}
-            /* ]]> */
-            </script>
-
-            <ul class="tabs">
-            {if $numtabs > 1}{foreach from=$tabnames item=t}
-                <li id="tabbutton-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}{/if}" class="tab"><a href="#" onclick="selecttab('{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}{/if}'); return false;">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
-            {/foreach}{/if}
-            </ul>
-            <div class="clear"></div>
-        </div><!-- [end tabs] -->
-
-        <div id="fields">
-        {foreach from=$tabnames item=tab}
         {if $numtabs > 1}
-            <div class="field-page" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""}{/if}">
+        <div id="tabs">
+            <ul class="nav nav-tabs">
+            {foreach from=$tabnames key=k item=t}
+                <li{if $k==0}  class="active"{/if}><a href="#tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
+            {/foreach}
+            </ul>
+        </div>
+        {/if}
+        <div id="fields" class="tab-content">
+        {foreach from=$tabnames key=k item=tab}
+        {if $numtabs > 1}<div class="tab-pane{if $k==0} active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""}{/if}">
         {/if}
             <table class="stdtable" width="100%">
     {assign var=private value=false}
@@ -113,8 +78,7 @@
             </table>
 
 
-        {if $numtabs > 1}
-            </div>
+        {if $numtabs > 1}</div>
         {/if}
         {/foreach}
         </div>
