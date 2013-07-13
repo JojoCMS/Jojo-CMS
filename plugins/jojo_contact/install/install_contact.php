@@ -46,6 +46,7 @@ $query = "
         `form_thank_you_uri` varchar(255) NOT NULL,
         `form_multipage` tinyint(1) NOT NULL default '0',
         `form_submit_end` tinyint(1) NOT NULL default '1',
+        `form_horizontal` tinyint(1) NOT NULL default '0',
         `form_uploadfolder` varchar(255) NOT NULL,
         `form_class` varchar(100) NOT NULL default '',
         PRIMARY KEY  (`form_id`)
@@ -81,7 +82,9 @@ $query = "
         `ff_validation` enum('email','url','text','number','date') NOT NULL,
         `ff_type` ENUM('text','textarea','checkboxes','radio','select','list','date','emailwithconfirmation','hidden','heading','note','upload','privateupload') NOT NULL,
         `ff_size` int(11) NOT NULL,
+        `ff_prependvalue` text NOT NULL,
         `ff_value` text NOT NULL,
+        `ff_appendvalue` text NOT NULL,
         `ff_options` text NOT NULL,
         `ff_rows` int(11) NOT NULL,
         `ff_cols` int(11) NOT NULL,
@@ -91,6 +94,7 @@ $query = "
         `ff_is_email` tinyint(1) NOT NULL default '0',
         `ff_is_name` tinyint(1) NOT NULL default '0',
         `ff_showlabel` tinyint(1) NOT NULL default '1',
+        `ff_padlabel` tinyint(1) NOT NULL default '0',
         `ff_order` int(11) NOT NULL,
         PRIMARY KEY  (`formfield_id`)
         ) ENGINE=InnoDB  AUTO_INCREMENT=1000;

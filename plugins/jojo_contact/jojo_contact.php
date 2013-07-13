@@ -297,8 +297,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $success = false;
             $smarty->assign('fields', $fields);
         }
-        /* run success hook */
-        Jojo::runHook('contact_form_success', array($formID, $res));
+        $_SESSION['sendstatus'] = $response;
+        /* run success if we are successful hook */
+        if ($success) {
+            Jojo::runHook('contact_form_success', array($formID, $res));
+        }
         return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 
@@ -316,7 +319,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $sent = false;
         if (isset($_POST['contactsubmit'])) {
             $response = $this->sendEnquiry($formID);
-            $smarty->assign('message', $response['responsemessage']);
             $sent = $response['sent'];
             /* redirect visitor to thank you page if one has been configured */
             if ($sent && !empty($form['form_thank_you_uri'])) {
@@ -381,11 +383,13 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         foreach ($formfields as $ff) {
             foreach ($ff as $k=>$v) {
                 $key = str_replace('ff_', '', $k);
-                $fields[$f][$key] = $v;
+                $fields[$f][$key] = nl2br($v);
             }
-            $fields[$f]['fieldsetid']       = isset($ff['ff_fieldset']) && $ff['ff_fieldset'] ? Jojo::cleanURL($ff['ff_fieldset']) : '';
-            $fields[$f]['field']       = isset($ff['ff_fieldname']) && $ff['ff_fieldname'] ? Jojo::cleanURL($ff['ff_fieldname']) : Jojo::cleanURL($ff['ff_display']);
-            $fields[$f]['options']     = explode("\r\n", $ff['ff_options']);
+            $fields[$f]['fieldsetid']   = isset($ff['ff_fieldset']) && $ff['ff_fieldset'] ? Jojo::cleanURL($ff['ff_fieldset']) : '';
+            $fields[$f]['field']        = isset($ff['ff_fieldname']) && $ff['ff_fieldname'] ? Jojo::cleanURL($ff['ff_fieldname']) : Jojo::cleanURL($ff['ff_display']);
+            $fields[$f]['options']      = explode("\r\n", $ff['ff_options']);
+            $fields[$f]['prependvalue'] = isset($ff['ff_prependvalue']) ? $ff['ff_prependvalue'] : '';
+            $fields[$f]['appendvalue']  = isset($ff['ff_appendvalue']) ? $ff['ff_appendvalue'] : '';
            $f++;
         }
         $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
@@ -415,7 +419,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         /* Use Anytime datepicker for date fields if option set */
         $smarty->assign('anytime', (boolean)(Jojo::getOption('jquery_useanytime', 'no')=='yes'));
         if ($sent) {
-            $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $form['form_success_message'] : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
+            $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $_SESSION['sendstatus'] : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
             $smarty->assign('sent', $sent);
         }
         //reset send status

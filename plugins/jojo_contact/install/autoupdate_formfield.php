@@ -153,12 +153,31 @@ $default_fd['formfield']['ff_options'] = array(
         'fd_order' => $o++
     );
 
+// Prepend Value Field
+$default_fd['formfield']['ff_prependvalue'] = array(
+        'fd_name' => "Prepend Value",
+        'fd_type' => "text",
+        'fd_size' => "10",
+        'fd_help' => "Display in front of the value - eg $",
+        'fd_order' => $o++
+    );
+
 // Default Value Field
 $default_fd['formfield']['ff_value'] = array(
         'fd_name' => "Default Value",
-        'fd_type' => "text",
-        'fd_size' => "60",
+        'fd_type' => "textarea",
+        'fd_rows' => "2",
+        'fd_cols' => "58",
         'fd_help' => "A default value if any.",
+        'fd_order' => $o++
+    );
+
+// Prepend Value Field
+$default_fd['formfield']['ff_appendvalue'] = array(
+        'fd_name' => "Append Value",
+        'fd_type' => "text",
+        'fd_size' => "10",
+        'fd_help' => "Display after the value - eg cm",
         'fd_order' => $o++
     );
 
@@ -240,8 +259,18 @@ $default_fd['formfield']['ff_displayonly'] = array(
 $default_fd['formfield']['ff_showlabel'] = array(
         'fd_name' => "Show Label?",
         'fd_type' => "yesno",
-        'fd_required' => "yes",
+        'fd_required' => "no",
         'fd_default' => "0",
         'fd_help' => "Show the label name for this field (or just the input)",
+        'fd_order' => $o++
+    );
+
+// Show Label?
+$default_fd['formfield']['ff_padlabel'] = array(
+        'fd_name' => "Pad (empty) Label?",
+        'fd_type' => "yesno",
+        'fd_required' => "no",
+        'fd_default' => "0",
+        'fd_help' => "Pad the label space for this field (if it's set to not show)",
         'fd_order' => $o++
     );
