@@ -338,6 +338,11 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Dropdowns file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/dropdowns.less');
 
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-767px-max.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-768px-979px.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-1200px-min.less');
+
                 /* Include admin css from each plugin */
                 foreach (Jojo::listPlugins('css/admin.css') as $pluginfile) {
                     $css->addFile($pluginfile);

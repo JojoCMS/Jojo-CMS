@@ -1,16 +1,3 @@
-/* handler for admin navigation */
-$(document).ready(function(){
-  $('#adminnav a').click(
-    function(){
-      var id='adminsubnav'+$(this).attr('id');
-      if (!$('#'+id).length) return true;
-      $('div.adminsubnav ul').removeClass('current');
-      $('#'+id).addClass('current');
-      return false;
-    }
-  );
-});
-
 // insertcode is used for bold, italic, underline and quote and just
 // wraps the tags around a selection or prompts the user for some
 // text to apply the tag to

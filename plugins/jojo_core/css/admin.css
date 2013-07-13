@@ -8,13 +8,12 @@
 @baseFontSize: 13px;
 
 body {
-  margin: 0 10px;
-  margin-bottom: 20px;
+    padding: 0 10px;
 }
 
 h1 {
   font-size: 24px;
-  margin: 12px 12px;
+  margin: 12px 0;
 }
 
 h2 {
@@ -30,26 +29,15 @@ h3 {
 h4 {
   font-size: 14px;
   color: @tertiary;
-  margin-top: 18px;
-  margin-bottom: 5px;
+  margin: 18px 0 5px;
 }
 
 p {
   margin: 0 0 8px;
 }
 
-
 .paragraph {
   line-height: 150%;
-}
-
-a, a:link, a:visited, a:active, a:hover {
-  text-decoration: none;
-  color: #546CA8;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 textarea {
@@ -68,22 +56,6 @@ input, textarea, .uneditable-input {
     width: auto;
 }
 
-optgroup {
-  font-weight: normal;
-  font-style:normal;
-  color: #999;
-}
-
-div.admin-home-item-left ul li, ul.admin-list li {
-  list-style-image: url(data:image/gif;base64,R0lGODlhBgALAJECAJOUl6Gipv///wAAACH5BAEAAAIALAAAAAAGAAsAAAIOlI8XCXvQEHTzOXOTNgUAOw==); /* ../images/cms/admin/bullet.gif */
-    ul li {
-        list-style-image: url(data:image/gif;base64,R0lGODlhBgALAJECAJ/IjK/Vnv///wAAACH5BAEAAAIALAAAAAAGAAsAAAIOlI8XCXvQEHTzOXOTNgUAOw==); /* ../images/cms/admin/bullet2.gif */
-        ul li {
-          list-style-image: url(data:image/gif;base64,R0lGODlhBgALAJECANRiptuJu////wAAACH5BAEAAAIALAAAAAAGAAsAAAIOlI8XCXvQEHTzOXOTNgUAOw==); /* ../images/cms/admin/bullet3.gif */
-        }
-    }
-}
-
 #wrap {
   width: 100%;
 }
@@ -99,11 +71,9 @@ div.admin-home-item-left ul li, ul.admin-list li {
     height: 35px;
     color: #9b8c6f;
     font-size: 135%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 10px;
+    margin: 10px 0;
     h2 {
-      margin-right: 31px;
+      margin: 0 31px 0 0;
       float: right;
       font-weight: normal;
     }
@@ -115,29 +85,6 @@ div.admin-home-item-left ul li, ul.admin-list li {
 }
 
 /* Body */
-
-#container {
-  width: 100%;
-  border: 0;
-}
-
-#records {
-  width: 30%;
-  float: left;
-/*  overflow: hidden; */
-  margin: 0 10px;
-}
-
-#recordlist select {
-  height: 400px;
-  border: 1px solid #eee;
-}
-
-#fields-wrap {
-  width: 60%;
-  float: left;
-  margin: 0 5px;
-}
 
 #buttons {
   padding: 0 0 10px;
@@ -162,8 +109,6 @@ img.boxed {
   background: #fff;
 }
 
-
-
 .field-page {
   display: none;
 }
@@ -175,45 +120,6 @@ div.clear {
 
 /* Buttons */
 
-.jojo-admin-button-spaceright {
-  margin-right: 20px;
-}
-
-.jojo-admin-button-launcheditor {
-  margin-left: 5px;
-  margin-bottom: 7px;
-  vertical-align: middle;
-}
-
-/*-- [Standard table styles] --*/
-table.stdtable {
-  padding: 0;
-}
-
-tr.row1 {
-  background: transparent;
-}
-
-tr.row1:hover {
-  background: transparent;
-}
-
-tr.row2 {
-  background: transparent;
-}
-
-tr.row2:hover {
-  background: transparent;
-}
-
-tr.rowheader,td.rowheader {
-  background: #221F20 url('../images/cms/admin/gardyneholt-bg-top.jpg') left top repeat;
-  text-align: center;
-  color: #fff;
-  text-transform: none;
-  font-weight: bold;
-}
-
 .hide {
   background: #f00 !important;
   display: none;
@@ -222,21 +128,6 @@ tr.rowheader,td.rowheader {
 tr.rowfooter {
   background: #f8f8f8;
   text-align: center;
-}
-
-td.col1 {
-  text-align: right;
-  color: #667;
-  width: 100px;
-  padding-right: 5px;
-  padding-top: 7px;
-  padding-bottom: 3px;
-  vertical-align:top;
-}
-
-td.col2 {
-  text-align: left;
-  vertical-align: top;
 }
 
 td.cell2 {
@@ -513,39 +404,6 @@ input.date {
 option.expired {
   color: #999;
 }
-
-div.admin-home {
-  width: 100%;
-  background: transparent url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAPAAA/+4ADkFkb2JlAGTAAAAAAf/bAIQABgQEBAUEBgUFBgkGBQYJCwgGBggLDAoKCwoKDBAMDAwMDAwQDA4PEA8ODBMTFBQTExwbGxscHx8fHx8fHx8fHwEHBwcNDA0YEBAYGhURFRofHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8f/8AAEQgLuAABAwERAAIRAQMRAf/EAFEAAQEBAQEAAAAAAAAAAAAAAAADAgEGAQEBAAAAAAAAAAAAAAAAAAAAARABAQEAAAAAAAAAAAAAAAAAABIREQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD1QoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADoNYDWA3IN4Dcg3IKSDcgpgKYCmApIKYCmArIKyCkgrIKSCsiNyKtIikg3IqsiKYCmA3IN4Ckg3gNYD//Z) center bottom no-repeat; /* ../images/cms/admin/bg-menu.jpg */
-}
-
-div.admin-home li {
-  margin: 3px 0pt;
-  margin-left: 18px;;
-}
-
-div.admin-home-left {
-  float: left;
-  width: 46%;
-  padding: 0 15px;
-}
-
-div.admin-home-right {
-  float: right;
-  width: 46%;
-  padding: 0 15px;
-}
-
-div.admin-home-item-left {
-}
-
-div.admin-home-item-right {
-}
-
-.hidden {
-  display: none;
-}
-
 
 #jpop_loading{
   position: fixed;

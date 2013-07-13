@@ -1,11 +1,5 @@
 <style type="text/css">
 {literal}
-#option-categories {
-  float: left;
-  width: 200px;
-  padding: 0 10px;
-}
-
 #option-categories li {
   list-style-image: url('images/cms/admin/bullet2.gif');
 }
@@ -16,13 +10,6 @@
 
 #option-categories li a.selected {
   font-weight: bold;
-}
-
-#option-items {
-  float: left;
-  width: 600px;
-  background: transparent url('images/cms/admin/bg-menu.jpg') left bottom no-repeat;
-  padding: 0 10px 150px 10px;
 }
 
 .options-title {

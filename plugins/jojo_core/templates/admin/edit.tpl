@@ -9,8 +9,8 @@
 </script>
 
 {jojoHook hook="admin_edit_top"}
-
-<div id="records">
+<div class="row">
+<div id="records" class="span4">
     <div id="recordlist">
         {$recordlist}
     </div>
@@ -18,10 +18,10 @@
 </div><!-- [end records] -->
 
 <!-- [Fields] -->
-<div id="fields-wrap">
+<div id="fields-wrap" class="span8">
     <div id="message"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
     <div id="error" style="display:none;">{if $error}{$error}{/if}</div>
-    <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe">
+    <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe" class="form-horizontal">
         <!-- [Hidden field with ID here] -->
         <input type="hidden" name="id" id="id" value="{$currentrecord|replace:" ":"-"}" />
         <input type="hidden" name="prefix" id="prefix" value="{$prefix}" />
@@ -37,64 +37,46 @@
         {if $numtabs > 1}
         <div id="tabs">
             <ul class="nav nav-tabs">
-            {foreach from=$tabnames key=k item=t}
-                <li{if $k==0}  class="active"{/if}><a href="#tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
+            {foreach from=$tabnames key=k item=t}<li{if $k==0} class="active"{/if}><a href="#tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""}{/if}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
             {/foreach}
             </ul>
         </div>
         {/if}
         <div id="fields" class="tab-content">
-        {foreach from=$tabnames key=k item=tab}
-        {if $numtabs > 1}<div class="tab-pane{if $k==0} active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""}{/if}">
-        {/if}
-            <table class="stdtable" width="100%">
-    {assign var=private value=false}
-    {foreach from=$fields key=fieldname item=field}
-                {if $field.tabname == $tab.tabname && $field.flags.PRIVACY && $private==false}
-                <tr>
-                    <td></td><td></td><td><span class="note">Keep private</span></td>
-                </tr>
-                {assign var=private value=true}
-                {/if}
-    {/foreach}            
-    {foreach from=$fields key=fieldname item=field}
-        {if $field.tabname == $tab.tabname}
-            {if $field.error}<tr id="row_{$fieldname}" class="error">{else}<tr id="row_{$fieldname}" class="{if $field.type=='hidden' || $field.type=='privacy'}hidden {/if}">{/if}
-            {if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no'}
-            <td class="col2" colspan="2" id="wrap_{$fieldname}">
-            {else}
-            <td class="col1">{if $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}">{$field.name}:</label>{/if}</td>
-            <td class="col2" title="{$field.help|replace:"\"":""}" id="wrap_{$fieldname}">
+            {foreach from=$tabnames key=k item=tab}
+            {if $numtabs > 1}
+            <div class="tab-pane{if $k==0} active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""}{/if}">
             {/if}
-                {$field.html}
-                {if $field.error}<img src="images/cms/icons/error.png" border="0" alt="Error: {$field.error}"  title="Error: {$field.error}" />{/if}
-                {if $field.required=="yes"} <img src="images/cms/icons/star.png" title="Required Field" alt="" />{/if}
-            </td>
+          
+            {foreach from=$fields key=fieldname item=field}
+            {if $field.tabname == $tab.tabname}
+                <div id="row_{$fieldname}" class="form-fieldset control-group{if $field.error} error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
+                
+                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="control-label">{$field.name}:</label>{/if}
+                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}"{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="controls"{/if}>
+                        {$field.html}
+                        {if $field.error}<img src="images/cms/icons/error.png" border="0" alt="Error: {$field.error}"  title="Error: {$field.error}" />{/if}
+                        {if $field.required=="yes"}<i class="input-append icon-exclamation-sign"></i>{/if}
+                        {if $field.flags.PRIVACY}&nbsp;&nbsp;<input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label class="checkbox inline note"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>{/if}
+                    </div>
 
-            <td style="width:10px">{if $field.flags.PRIVACY}<input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />{else}&nbsp;{/if}</td>
-            </tr>
-        {/if}
-    {/foreach}
-            </table>
+                </div>
+            {/if}
+            {/foreach}
 
-
-        {if $numtabs > 1}</div>
-        {/if}
-        {/foreach}
+            {if $numtabs > 1}
+            </div>
+            {/if}
+            {/foreach}
         </div>
     </form>
 </div>
-
+</div>
 {jojoHook hook="admin_edit_bottom"}
 
 <script type="text/javascript">{literal}/* <![CDATA[ */
 
 $('#btn_save').click(function(){$('.jTagEditor-editor:visible').change();});
-
-
-  if (document.getElementById('tabs')) {
-    selecttab('Content');
-  }
   /* add mouseover effects to new, save, delete buttons */
   $('#buttons input').hover(function(){$(this).addClass('jojo-admin-button-hover');},function(){$(this).removeClass('jojo-admin-button-hover');});
 /* ]]> */{/literal}</script>

@@ -1,19 +1,3 @@
-{* Select an Editor *}
-<div style="float:left; padding-top:5px;">{$fd_name}</div>
-<div class="editor-format" style="float:right; padding-top:5px;">
-  <strong>Editor Format:</strong>&nbsp;
-  <label for="type_fm_{$fd_field}_html">
-      {if $editortype != "bb"}{* this required for AJAX loading *}<!-- [editor:html] -->{/if}
-      <input type="radio"{if $editortype != "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_html" onclick="$('#editor_{$fd_field}_bb').hide(); $('#editor_{$fd_field}_html').show(); setTextEditorContent('fm_{$fd_field}');" value="html" /> HTML
-  </label>
-  <label for="type_fm_{$fd_field}_bb">
-    {if $editortype == "bb"}{* this required for AJAX loading *}<!-- [editor:bb] -->{/if}
-    <input type="radio"{if $editortype == "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_bb" onclick="$('#editor_{$fd_field}_bb').show(); $('#editor_{$fd_field}_html').hide(); setTextEditorContent('fm_{$fd_field}');" value="bb" /> BBCode
-  </label>
-  <a href="http://www.jojocms.org/docs/38/wysiwyg-vs-bbcode/" target="_BLANK">
-      <img src="images/cms/icons/help.png" alt="" title="The difference between WYSIWYG editor and BBCode editor" />
-  </a>
-</div>
 
 {* HTML Editor *}
 {if $OPTIONS.wysiwyg_style=='popup'}
@@ -30,7 +14,7 @@
     </div>
 </div>
 {else}
-<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" rows="10" cols="80" style="width:100%"></textarea>
+<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:100%"></textarea>
 
 {/if}
 
@@ -49,8 +33,24 @@
     </div>
 </div>
 
+{* Select an Editor *}
+<div class="editor-format" style="text-align:right;">
+  <strong>Editor Format:</strong>&nbsp;
+  <label for="type_fm_{$fd_field}_html" class="radio inline">
+      {if $editortype != "bb"}{* this required for AJAX loading *}<!-- [editor:html] -->{/if}
+      <input type="radio"{if $editortype != "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_html" onclick="$('#editor_{$fd_field}_bb').hide(); $('#editor_{$fd_field}_html').show(); setTextEditorContent('fm_{$fd_field}');" value="html" /> HTML
+  </label>
+  <label for="type_fm_{$fd_field}_bb" class="radio inline">
+    {if $editortype == "bb"}{* this required for AJAX loading *}<!-- [editor:bb] -->{/if}
+    <input type="radio"{if $editortype == "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_bb" onclick="$('#editor_{$fd_field}_bb').show(); $('#editor_{$fd_field}_html').hide(); setTextEditorContent('fm_{$fd_field}');" value="bb" /> BBCode
+  </label>
+  <a href="http://www.jojocms.org/docs/38/wysiwyg-vs-bbcode/" target="_BLANK">
+      <img src="images/cms/icons/help.png" alt="" title="The difference between WYSIWYG editor and BBCode editor" />
+  </a>
+</div>
+
 {* Raw content *}
-<textarea class="hidden" name="fm_{$fd_field}" id="fm_{$fd_field}" rows="10" cols="30">{$value}</textarea>
+<div class="hidden"><textarea name="fm_{$fd_field}" id="fm_{$fd_field}" rows="10" cols="30">{$value}</textarea></div>
 
 {* Initialize editors *}
 
@@ -66,5 +66,4 @@ $(document).ready(function() {ldelim}
 //        $.get('{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html',  function(data) {ldelim}$('#editor_{$fd_field}_html').html(data);{rdelim});
     {rdelim}
 );
-
 </script>
