@@ -1,7 +1,7 @@
 {include file="admin/header.tpl"}
 <div id="event-log">
-<p><a href="#" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</a><a href="#" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</a></p>
-<table>
+<p><a href="#" class="btn" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</a><a href="#" class="btn" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</a></p>
+<table class="table">
     <thead>
         <tr>
             <th>Date / Time</th>

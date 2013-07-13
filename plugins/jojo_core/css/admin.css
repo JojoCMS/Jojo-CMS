@@ -4,7 +4,7 @@
 
 /* BS overrides */
 @linkColor: @primary;
-@baseLineHeight: 17px;
+@baseLineHeight: 16px;
 @baseFontSize: 13px;
 
 body {
@@ -331,10 +331,6 @@ input.jojo-admin-edit-cancel {
   background: transparent url('../images/cms/bg-error-bubble.gif') left top no-repeat;
 }
 
-#event-log {
-  margin-left: 15px;
-}
-
 #event-log table tr.critical {
   background: #f00;
 }
@@ -380,11 +376,6 @@ input.jojo-admin-edit-cancel {
 
 #redirect-content span.col_med {
   width: 100px;
-}
-
-
-input.counter {
-  width: auto;
 }
 
 input.date {
@@ -533,20 +524,11 @@ div.theme-box button {
 }
 
 /* tables */
-table.sortabletable {
-    width: 100%;
-}
-
 table.sortabletable thead tr .header {
 	background: url('../images/cms/bg.gif') center right no-repeat;
 	cursor: pointer;
-	border: 1px solid #AAAAAA;
-	padding: 4px 20px 4px 4px;
 }
 
-table.sortabletable tbody tr.odd td, table.sortabletable tbody tr.row1 td {
-	background-color:#F9F9FC;
-}
 table.sortabletable thead tr .headerSortUp {
 	background-image: url('../images/cms/incrementup.gif');
 }
@@ -556,5 +538,5 @@ table.sortabletable thead tr .headerSortDown {
 }
 
 table.sortabletable thead tr .headerSortDown, table.sortabletable thead tr .headerSortUp {
-background-color: #ddddef;
+background-color: lighten(@primary, 50%);
 }

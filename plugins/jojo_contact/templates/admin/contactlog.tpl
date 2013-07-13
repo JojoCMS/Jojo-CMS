@@ -2,14 +2,16 @@
 <div id="event-log">
 Export selected form's submissions as a CSV file<br />
 <form action='' method="post">
-            <select name="form_id" id="form_id">
+        <div class="form-fieldset control-group input-append">
+        <select name="form_id" id="form_id">
                 {foreach from=$forms item=f}
                 <option value="{$f.form_id}">{$f.form_name}</option>
                 {/foreach}
         </select>
-        <input type="submit" name="submit" value="Submit" class="button" onmouseover="this.className='button buttonrollover';" onmouseout="this.className='button'" /><br />
+        <input type="submit" name="submit" value="Submit" class="btn" />
+        </div>
 </form>
-<table class="sortabletable">
+<table class="sortabletable table table-bordered table-striped">
     <thead>
         <tr>
             <th></th>

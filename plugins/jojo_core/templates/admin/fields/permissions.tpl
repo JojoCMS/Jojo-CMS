@@ -36,20 +36,20 @@
         </script>
 {/literal}
 <p><b>Permissions for this Record</b> (these override the inherited permissions)</p>
-<table style="border-collapse: collapse;" cellspacing="0">
+<table class="table table-bordered">
 <tr>
 <td style="width:120px">&nbsp;</td>
         {foreach from=$_permOptions key=perm item=name}
-            <th style="border: 1px solid #aaa; text-align: center; padding:3px">{$name}</th>
+            <th style="text-align: center;">{$name}</th>
         {/foreach}
 </tr>
 
         <!-- Output permissions for each group  -->
         {if $readonly !="yes"}
             {foreach from=$groups key=group item=groupname}
-                <tr><td style="border: 1px solid #aaa; padding:2px;">{$groupname}</td>
+                <tr><td>{$groupname}</td>
                 {foreach from=$_permOptions key=perm item=name}
-                    <td style="border: 1px solid #aaa; text-align: center; padding:2px;">
+                    <td style="text-align: center;">
                     {if isset($perms[$group]) && isset($perms[$group][$perm])}
                         <img src="images/cms/{if $perms[$group][$perm]}yes_active.gif{else}no_active.gif{/if}" alt="{if $perms[$group][$perm]}Yes{else}No{/if}" title="{if $perms[$group][$perm]}Yes{else}No{/if}" id="img_{$group}.{$perm}" onclick="togglePerm('{$group}.{$perm}','');" />
                         <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="{if $perms[$group][$perm]}Y{else}N{/if}" />
@@ -76,11 +76,11 @@
                 <tr><td style="border: 1px solid black">{$groupname}</td>
                 {foreach from=$_permOptions key=perm item=name}
                     {if isset($perms[$group]) && isset($perms[$group][$perm])}
-                        <td style="border: 1px solid #aaa; text-align: center; padding:2px;">
+                        <td style="text-align: center;">
                             <img src="images/cms/{if $perms[$group][$perm]}yes_grey.gif{else}no_grey.gif{/if}" alt="{if $perms[$group][$perm]}Yes{else}No{/if}" title="{if $perms[$group][$perm]}Yes{else}No{/if}" />
                         </td>
                     {else}
-                        <td style="border: 1px solid #aaa; text-align: center; padding:2px;">
+                        <td style="text-align: center;">
                             <img src="images/cms/inherit_grey.gif" alt="Inherited" title="Inherited" />
                         </td>
                     {/if}
