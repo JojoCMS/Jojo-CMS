@@ -28,6 +28,7 @@ img.icon-image {
     vertical-align: -4px;
     margin-right: 3px;
     display: inline;
+    background-image: none;
 }
 
 .note {
