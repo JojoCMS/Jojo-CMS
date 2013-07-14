@@ -14,7 +14,7 @@
     </div>
 </div>
 {else}
-<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:100%"></textarea>
+<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:95%"></textarea>
 
 {/if}
 

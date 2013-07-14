@@ -403,17 +403,25 @@ option.expired {
     background-position: top left;
 }
 
-.htmlarea .toolbar .buttonActive, .htmlarea .toolbar .buttonPressed {
-    padding: 0;
+.htmlarea {
+    border: 1px solid #ccc;
+    .toolbar {
+        .buttonActive, .htmlarea .toolbar .buttonPressed {
+            padding: 0;
+        }
+        table {
+            background: none repeat scroll 0 0 transparent;
+        }
+        .buttonPressed {
+            background: none repeat scroll 0 0 black;
+        }    
+    }
+    .dialog h1 {
+        border-radius: 0;
+        border: none;
+    }
 }
 
-.htmlarea .toolbar table {
-    background: none repeat scroll 0 0 transparent;
-}
-
-.htmlarea .toolbar .buttonPressed {
-    background: none repeat scroll 0 0 black;
-}
 
 .crop_canvas {
   position: absolute;
