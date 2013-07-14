@@ -177,7 +177,7 @@ foreach ($PLUGINS as $plugin) {
             }
         }
     }
-    
+
     if (defined('_ALTPLUGINDIR')) {
         if (false !== ($files = Jojo::scanDirectory(_ALTPLUGINDIR . '/' . $plugin . '/install'))) {
             foreach ($files as $filename) {
@@ -453,15 +453,19 @@ foreach ($tables as $tblname => $tbltype)  {
                         fd_sqltype = ?, fd_options = ? WHERE fielddataid = ? LIMIT 1";
             $values = array($fieldtype, $options, $res[0]['fielddataid']);
             Jojo::updateQuery($query, $values);
+        } elseif ($fieldtype != $res[0]['fd_sqltype']) {
+            /* Update the sqltype for other fields, but don't bother updating other details (eg for ENUMs) */
+            $query = "UPDATE {fielddata} SET fd_sqltype = ? WHERE fielddataid = ?";
+            $values = array($fieldtype, $res[0]['fielddataid']);
+            Jojo::updateQuery($query, $values);
         }
     }
-    
+
     /* setup indexes for the table */
     echo '<div><h4>Checking indexes for '.$tblname.'...</h4>';
-    
+
     /* Get the existing indexes */
     $table_indexes = Jojo::selectQuery("SHOW INDEXES FROM {".$tblname."}");
-
     $existingIndexes = array();
     foreach ($table_indexes as $row2) {
         if (!isset($existingIndexes[$row2['Key_name']])) {
@@ -500,9 +504,9 @@ foreach ($tables as $tblname => $tbltype)  {
         $sql = "ALTER TABLE  {$tblname} ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
         echo ".Executing Query: <span style='color:blue'>$sql</span><br />\n";
         $res = Jojo::structureQuery($sql);
-        if ($res) echo "<span style='color:green'>Done</span><br />\n";          
+        if ($res) echo "<span style='color:green'>Done</span><br />\n";
     }
-    
+
 }
 
 /* Delete TABLEDATA entries for tables that no longer exist... */
