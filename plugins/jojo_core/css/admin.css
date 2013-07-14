@@ -53,6 +53,10 @@ input, textarea, .uneditable-input {
     width: auto;
 }
 
+input[type="radio"], input[type="checkbox"] {
+    margin: 2px 0 0;
+}
+
 /* Header */
 
 #admintitle {

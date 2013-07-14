@@ -1,7 +1,7 @@
 
 {* HTML Editor *}
 {if $OPTIONS.wysiwyg_style=='popup'}
-<div id="editor_{$fd_field}_html" class="HTMLEditor"  style="display: none;color:#666677;">{$fd_name}:
+<div id="editor_{$fd_field}_html" class="HTMLEditor"  style="display: none;color:#666677;">
     <button class="jojo-admin-button-launcheditor" onclick="{strip}
         $('#xinha-iframe').attr('src','{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html');
         jpop($('#wysiwyg-popup'),820,525);
@@ -10,7 +10,7 @@
         Open Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_html_outer">
-        <textarea class="markItUp" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
+        <textarea class="markItUp" style="width:95%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
 {else}
@@ -34,8 +34,8 @@
 </div>
 
 {* Select an Editor *}
-<div class="editor-format" style="text-align:right;">
-  <strong>Editor Format:</strong>&nbsp;
+<div class="editor-format" style="float:right;">
+  <label class="control-label">Editor Format:</label>
   <label for="type_fm_{$fd_field}_html" class="radio inline">
       {if $editortype != "bb"}{* this required for AJAX loading *}<!-- [editor:html] -->{/if}
       <input type="radio"{if $editortype != "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_html" onclick="$('#editor_{$fd_field}_bb').hide(); $('#editor_{$fd_field}_html').show(); setTextEditorContent('fm_{$fd_field}');" value="html" /> HTML
