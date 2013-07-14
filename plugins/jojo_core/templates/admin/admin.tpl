@@ -52,7 +52,7 @@
         <li>Contact your {if $OPTIONS.webmasteraddress}<a href="mailto:{$OPTIONS.webmasteraddress}">web developer</a>{else}web developer{/if} for direct support</li>
         <li>Read the <a href="http://www.jojocms.org/docs/" target="_BLANK">Jojo documentation</a></li>
         <li>Browse or search the <a href="http://www.jojocms.org/forums/" target="_BLANK">Forums</a></li>
-        <li>Submit a <a href="http://bugs.jojocms.org" target="_BLANK">bug report</a></li>
+        <li>Submit a <a href="https://github.com/JojoCMS/Jojo-CMS/issues?state=open" target="_BLANK">bug report</a></li>
         <li>Contact the Jojo team directly - <a href="http://www.jojocms.org/contact/">www.jojocms.org/contact/</a> (if posting in the <a href="http://www.jojocms.org/forums/" target="_BLANK">forums</a> is not appropriate)</li>
         </ul>
 
