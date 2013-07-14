@@ -599,7 +599,8 @@ class Jojo_Table {
             } elseif ($menutype == 'array') {
                 return $tree->printout_array();
             } else {
-                $html .= "<form id=\"jump\" name=\"jump\" method=\"post\" action=\"" . $prefix . "/" . $this->table . "/\">\n<select name=\"jumpid\" size=\"25\" style=\"width: 100%\" onchange=\"frajax('load', '" . $this->table . "',this.value); return false;\">\n";
+                $html .= '<form id="jump" name="jump" method="post" action="' . $prefix . "/" . $this->table . '">
+                <select name="jumpid" size="25" style="width: 100%" onchange="frajax(\'load\', \'' . $this->table . "',this.value); return false;\">\n";
 
                 $html .= $tree->printout_select(10, $this->currentrecord);
                 $html .= "</select>";

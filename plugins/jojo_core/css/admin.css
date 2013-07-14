@@ -1,4 +1,4 @@
-@primary: #404886;
+@primary: #465CAA;
 @secondary: #5E7FBB;
 @tertiary: #666;
 
@@ -9,6 +9,7 @@
 
 body {
     padding: 0 10px;
+    color: @tertiary;
 }
 
 h1 {
@@ -53,9 +54,10 @@ input, textarea, .uneditable-input {
 #admintitle {
     margin: 10px 0;
     h2 {
-      margin: 0 31px 0 0;
+      margin: 10px 10px 0 0;
       float: right;
       font-weight: normal;
+      font-size: 18px;
     }
 }
 
@@ -268,10 +270,9 @@ input.jojo-admin-edit-cancel {
     position: absolute;
     z-index: 100;
     top: 90px;
-    left: 860px;
+    right: 20px;
     margin: 0;
     padding: 10px;
-    width: 196px;
     h4 {
       margin: 0 0 8px;
     }
