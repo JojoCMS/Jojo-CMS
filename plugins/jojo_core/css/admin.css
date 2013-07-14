@@ -48,32 +48,15 @@ input, textarea, .uneditable-input {
     width: auto;
 }
 
-#wrap {
-  width: 100%;
-}
-
 /* Header */
 
-#header {
-  border-bottom: 1px solid #eeeeee;
-}
-
 #admintitle {
-    clear: both;
-    height: 35px;
-    color: #9b8c6f;
-    font-size: 135%;
     margin: 10px 0;
     h2 {
       margin: 0 31px 0 0;
       float: right;
       font-weight: normal;
     }
-}
-
-#adminlogo {
-  float: left;
-  border: 0;
 }
 
 /* Body */
@@ -154,22 +137,6 @@ div.message {
 div.message div {
   padding-left: 25px;
   background-image: url('../images/cms/message.png');
-  background-position: left top;
-  background-repeat: no-repeat;
-}
-
-div.error {
-  border: 3px solid #EA0505;
-  background: #f00 url('../images/cms/bg-error.gif') left top repeat;
-  color: #fff;
-  padding: 5px;
-  margin: 5px;
-  font-weight: bold;
-}
-
-div.error div {
-  padding-left: 25px;
-  background-image: url('../images/cms/error.png');
   background-position: left top;
   background-repeat: no-repeat;
 }
@@ -298,30 +265,21 @@ input.jojo-admin-edit-cancel {
 }
 
 #message, #error {
-  position: absolute;
-  z-index: 100;
-  top: 90px;
-  left: 860px;
-  margin: 0;
-  padding: 10px 10px 50px 40px;
-  background: transparent url('../images/cms/bg-message-bubble.gif') left bottom no-repeat;
-  width: 146px !important;
-  width: 196px;
+    position: absolute;
+    z-index: 100;
+    top: 90px;
+    left: 860px;
+    margin: 0;
+    padding: 10px;
+    width: 196px;
+    h4 {
+      margin: 0 0 8px;
+    }
+    p {
+      margin: 0;
+    }
 }
 
-#message h4, #error h4 {
-  margin: -20px -10px 0 -40px;
-  padding: 10px 10px 0 40px;
-  background: transparent url('../images/cms/bg-message-bubble.gif') left top no-repeat;
-}
-
-#error {
-  background: transparent url('../images/cms/bg-error-bubble.gif') left bottom no-repeat;
-}
-
-#error h4 {
-  background: transparent url('../images/cms/bg-error-bubble.gif') left top no-repeat;
-}
 
 #event-log table tr.critical {
   background: #f00;

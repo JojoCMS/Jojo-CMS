@@ -19,8 +19,8 @@
 
 <!-- [Fields] -->
 <div id="fields-wrap" class="span8">
-    <div id="message"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
-    <div id="error" style="display:none;">{if $error}{$error}{/if}</div>
+    <div id="message" class="alert alert-block alert-info"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
+    <div id="error" style="display:none;" class="alert alert-block alert-error">{if $error}{$error}{/if}</div>
     <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe" class="form-horizontal">
         <!-- [Hidden field with ID here] -->
         <input type="hidden" name="id" id="id" value="{$currentrecord|replace:" ":"-"}" />

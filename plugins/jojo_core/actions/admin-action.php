@@ -111,19 +111,23 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
     $errors = $table->fieldErrors();
     if (is_array($errors)) {
         /* Error with one of the values */
-        $frajax->script('parent.$("#error").html("<h4>Error</h4>The following errors were found...<br />' . implode('<br />', $errors).'").fadeIn("slow");');
+        $frajax->script('parent.$("#error").html("<h4>Error</h4><p>The following errors were found...<br />' . implode('<br />', $errors).'</p>").fadeIn("slow");');
         $frajax->script('parent.$("#message").fadeOut();');
         $frajax->assign("h1", "innerHTML", 'Save Error');
+        foreach ($errors as $k=>$e) {
+            $frajax->script('parent.$("#row_' . $k . '").addClass("error");');
+        }
         exit();
     } else {
         /* Save record */
         $frajax->assign("h1", "innerHTML", 'Saving...');
+        $frajax->script('parent.$(".control-group").removeClass("error");');
 
         $res = $table->saveRecord();
         if ($res !== false) {
             /* Success message */
             $frajax->script('parent.$("#h1").html("Save successful.").show("fast");');
-            $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>'.$res.'").fadeIn("slow").fadeTo(5000, 1).fadeOut("slow");');
+            $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4><p>'.$res.'</p>").fadeIn("slow").fadeTo(5000, 1).fadeOut("slow");');
 
             /* Clear the content cache after saving */
             Jojo::clearCache();
@@ -191,6 +195,7 @@ if (Jojo::getPost('btn_addsimilar', false)) {
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>Please change the ' . $table->getOption('displayname') . ' fields as appropriate and press save to create a new ' . $table->getOption('displayname') . '.").fadeIn("slow");');
     $frajax->assign("h1", "innerHTML", 'Copy of ' . $table->getOption('displayvalue'));
+    $frajax->script('parent.$(".control-group").removeClass("error");');
 
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();
@@ -248,6 +253,7 @@ if (Jojo::getPost('btn_addchild', false)) {
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn("slow");');
     $frajax->assign("h1", "innerHTML", 'New Child');
+    $frajax->script('parent.$(".control-group").removeClass("error");');
 
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();

@@ -47,7 +47,7 @@
                   </select>
     {elseif $opt.op_type == 'checkbox'}
                 <span id="{$opt.op_name}">
-                    {foreach from=$opt.options item=option}<input type="checkbox" name="temp" value="{$option}" {if in_array($option, $opt.values)} checked="checked"{/if} onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#{$opt.op_name} input:checked').serialize().replace(/temp=/g, '').replace(/&/g, ',') );" /> {$option}
+                    {foreach from=$opt.options item=option}<label class="checkbox inline"><input type="checkbox" name="temp" value="{$option}" {if in_array($option, $opt.values)} checked="checked"{/if} onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#{$opt.op_name} input:checked').serialize().replace(/temp=/g, '').replace(/&/g, ',') );" /> {$option}</label>
                     {/foreach}
                 </span>
     {elseif $opt.op_type == 'text' || $opt.op_type == 'integer'}

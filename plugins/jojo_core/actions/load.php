@@ -30,6 +30,7 @@ $frajax->title = 'Load record - ' . _SITETITLE;
 $frajax->sendHeader();
 $frajax->scrollToTop();
 $frajax->assign('h1', 'innerHTML', 'Loading...');
+$frajax->script('parent.$(".control-group").removeClass("error");');
 
 $content = array();
 
