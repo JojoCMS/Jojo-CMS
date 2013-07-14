@@ -33,6 +33,8 @@ class Jojo_Auth_Local {
             }
 
             if ($logindata) {
+                /* Set up the values for the filter */
+                $values = array($username, $username, $password, $password);
                 $logindata = Jojo::applyFilter('auth_local_logindata', $logindata, $values);
 
                 if (self::checkPasswordNeedsRehash($userdata["us_password"])) {
