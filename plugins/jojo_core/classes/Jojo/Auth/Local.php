@@ -15,22 +15,21 @@ class Jojo_Auth_Local {
             }
 
             if (!$userdata) { return false; }
-
+            $logindata = false;
             /* Try PHPass' Blowfish algo, then fall back to the older methods */
             if (self::checkPassword($password, $userdata["us_password"])) {
                 /* Logged in */
                 $logindata = $userdata;
-            } else {
                 /* Old methods. Authenticate then upgrade. */
-                if (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
-                    /* Check if the password field has been upgraded */
-                    if (self::checkPasswordFieldLength()) {
-                        /* Success, but let's upgrade the password */
-                        $logindata = $userdata;
-                        $newhash = self::hashPassword($password);
-                        Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE userid = ?", array($newhash, $userdata["userid"]));
-                    }
+            } elseif (self::checkOldPassword($password, $userdata["us_password"], $userdata["us_salt"])) {
+                /* Check if the password field has been upgraded */
+                if (self::checkPasswordFieldLength()) {
+                    /* Success, but let's upgrade the password */
+                    $logindata = $userdata;
+                    $newhash = self::hashPassword($password);
+                    Jojo::updateQuery("UPDATE {user} SET us_password = ? WHERE userid = ?", array($newhash, $userdata["userid"]));
                 }
+                $logindata = $userdata;
             }
 
             if ($logindata) {
