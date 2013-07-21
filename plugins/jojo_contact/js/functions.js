@@ -94,6 +94,12 @@ function preFlight(formData, jqForm, options) {
     $('#form' + formID + ' :submit')
         .attr('disabled', 'disabled')
         .val('Loading...');
+        
+    // trigger event tracking
+    if (typeof triggerAnalyticsEventTracking == 'function') {
+    	triggerAnalyticsEventTracking();
+    }
+    
     return true;
 }
 
