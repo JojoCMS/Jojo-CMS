@@ -97,7 +97,9 @@ function preFlight(formData, jqForm, options) {
         
     // trigger event tracking
     if (typeof triggerAnalyticsEventTracking == 'function') {
-    	triggerAnalyticsEventTracking();
+    	if (typeof(_gaq) != 'undefined') {
+    		triggerAnalyticsEventTracking();
+    	}
     }
     
     return true;
