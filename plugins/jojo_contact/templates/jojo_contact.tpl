@@ -9,6 +9,10 @@
 		function triggerAnalyticsEventTracking(){literal}{{/literal}
 			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{$pg_url}']);
 		{literal}}{/literal}
+		
+		function fieldsettriggeranalyticstracking($fieldsettitle){literal}{{/literal}
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{$pg_url}']);
+		{literal}}{/literal} 
 		-->
 	</script>
 <div>
