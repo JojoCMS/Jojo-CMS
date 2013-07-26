@@ -4,6 +4,17 @@
 <input type="hidden" name="form_id" id="form_id" value="{$form.form_id}" />
 <input type="hidden" name="form_redirect" id="form_redirect" value="{$form.form_redirect_url}" />
 <input type="hidden" name="MAX_FILE_SIZE" value="{if $maxuploadvalue}{$maxuploadvalue}{else}5000000{/if}" />
+<script type="text/javascript">
+		<!--
+		function triggerAnalyticsEventTracking(){literal}{{/literal}
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{$pg_url}']);
+		{literal}}{/literal}
+		
+		function fieldsettriggeranalyticstracking($fieldsettitle){literal}{{/literal}
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{$pg_url}']);
+		{literal}}{/literal} 
+		-->
+	</script>
 <div>
 {if $toaddresses}<div class="form-fieldset">
         <label for="form_sendto">Send Enquiry To:</label>

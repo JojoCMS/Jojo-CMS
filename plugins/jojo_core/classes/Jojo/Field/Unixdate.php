@@ -42,10 +42,10 @@ class Jojo_Field_unixdate extends Jojo_Field
         global $smarty;
 
         //template uses Any+Time: documentation at http://www.ama3.com/anytime/
-        $formatteddate = ($this->value > 0) ? strftime("%Y-%m-%d %H:%M", $this->value) : '';
+        $formatteddate = ($this->value) ? strftime("%Y-%m-%d %H:%M", $this->value) : '';
         $smarty->assign('formatteddate', $formatteddate);
 
-        $printabledate = ($this->value > 0) ? strftime("%c", $this->value) : '';
+        $printabledate = ($this->value) ? strftime("%c", $this->value) : '';
         $smarty->assign('printabledate', $printabledate);
 
         $smarty->assign('readonly', $this->fd_readonly);
