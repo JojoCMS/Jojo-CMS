@@ -1279,7 +1279,7 @@ class Jojo {
         if ($table.$suffix == 'pages') {
             return $id . $pagecode . '/' . $name . '/'; // 23/name-of-page/
         } else {
-            return $table . $suffix . '/' . $id . $pagecode . '/' . $name . '/'; // table-name/23p2/name-of-item/
+            return $table . $suffix . '/' . $id . $pagecode . ($name ? '/' . $name : '') . '/'; // table-name/23p2/name-of-item/
         }
     }
 
