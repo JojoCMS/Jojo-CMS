@@ -662,16 +662,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'less',
-    'category'    => 'CSS',
-    'label'       => 'Use LessPHP',
-    'description' => 'Whether to use LessPHP and for CSS instead of the standard CSS files. Note must be yes to use any of the bootstrap css.',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
     'id'          => 'css_imports',
     'category'    => 'CSS',
     'label'       => 'Server side CSS Imports',
@@ -717,7 +707,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Body type and links',
     'description' => 'Include Twitter Bootstap\'s scaffolding.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -787,7 +777,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Forms',
     'description' => 'Include Twitter Bootstap\'s forms.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -797,7 +787,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Buttons',
     'description' => 'Include Twitter Bootstap\'s buttons.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -1010,7 +1000,7 @@ $_options[] = array(
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
     'default'     => '1.7.2',
-    'options'     => '1.3.2, 1.4.2,1.4.4,1.6.4,1.7.2,1.9.1',
+    'options'     => '1.7.2,1.9.1',
 );
 
 $_options[] = array(
