@@ -94,6 +94,14 @@ function preFlight(formData, jqForm, options) {
     $('#form' + formID + ' :submit')
         .attr('disabled', 'disabled')
         .val('Loading...');
+        
+    // trigger event tracking
+    if (typeof triggerAnalyticsEventTracking == 'function') {
+    	if (typeof(_gaq) != 'undefined') {
+    		triggerAnalyticsEventTracking();
+    	}
+    }
+    
     return true;
 }
 
@@ -169,6 +177,7 @@ function setFormTabNav(formid, tabid) {
     $(fieldsets).each(function(index) {
         if ($(this).attr('id')==tabid) {
             next = true;
+            fieldsettriggeranalyticstrackingtest("'" + $("legend", this).html() + "'");
         } else if (next==true) {
             nexttabid = $(this).attr('id');
             return false;
@@ -199,6 +208,14 @@ function setFormTabNav(formid, tabid) {
     if (tabid==$(fieldsets).last().attr('id')) {
         $('#' + formid + ' .form-submit').show();
     }
+}
+
+function fieldsettriggeranalyticstrackingtest($fieldsettitle) {
+	if (typeof(_gaq) != 'undefined') {
+		if (typeof fieldsettriggeranalyticstracking == 'function') {
+			fieldsettriggeranalyticstracking($fieldsettitle);
+		}
+	}
 }
 
 /*!
