@@ -2,10 +2,6 @@
     background-image: url("../external/bootstrap/img/glyphicons-halflings.png");
 }
 
-div.message ul li {
-  list-style: none;
-}
-
 .hidden {
   display: none;
 }
@@ -31,27 +27,6 @@ img.icon-image {
     background-image: none;
 }
 
-.note {
-    font-size: 93%;
-    line-height: 130%;
-}
-
-p.date {
-    font-style: italic;
-    font-size: 95%;
-    margin-top: -3px;
-}
-
-p.credit {
-    font-style: italic;
-    text-align: right;
-    margin-top: -3px;
-}
-
-p.caption {
-    font-style: italic;
-}
-
 form.post_redirect_form {
   display: inline;
 }
@@ -68,9 +43,5 @@ button.post_redirect_submit span {
 
 button.post_redirect_submit span:hover {
   text-decoration: underline;
-}
-
-input.checkbox {
-  margin-right: 5px;
 }
 
