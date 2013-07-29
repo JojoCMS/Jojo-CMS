@@ -64,7 +64,7 @@
         </div>
 
         {if $p.readme}
-        <div class="well" id="readme-{$p.name}">
+        <div class="readme well" id="readme-{$p.name}">
             <h4 style="margin-top:0;">readme.txt</h4>
             {$p.readme}
         </div>
