@@ -792,6 +792,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'tbootstrap_bass_media',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Media',
+    'description' => 'Include Twitter Bootstap\'s media.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'tbootstrap_bass_sprites',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Icons',

@@ -124,6 +124,9 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Icons file */
                 if (Jojo::getOption('tbootstrap_bass_sprites', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/sprites.less');
+                /* Media file */
+                if (Jojo::getOption('tbootstrap_bass_media', 'no') == 'yes')
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/media.less');
                 /* Button groups and dropdowns file */
                 if (Jojo::getOption('tbootstrap_components_buttongroups', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/button-groups.less');
