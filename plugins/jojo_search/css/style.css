@@ -20,3 +20,7 @@
 #searchresults select {
   width: auto;
 }
+
+#searchresults .btn {
+  vertical-align: top;
+}
