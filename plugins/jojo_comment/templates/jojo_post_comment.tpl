@@ -12,8 +12,9 @@
     </div>
     {if $user.isadmin}
     <div class="form-fieldset control-group">
-        <label for="authorcomment" class="control-label">Author Comment</label>
-        <input type="checkbox" class="checkbox" name="authorcomment" id="authorcomment" value="yes" checked="checked" title="Different styling will be used on this comment to indicate it was made by the author" />
+        <div class="form-field controls">
+         <label for="authorcomment" class="checkbox"><input type="checkbox" name="authorcomment" id="authorcomment" value="yes" checked="checked" title="Different styling will be used on this comment to indicate it was made by the author" />Author Comment</label>
+        </div>
     </div>
     {/if}
     <div class="form-fieldset control-group">
@@ -22,8 +23,9 @@
     </div>
     {if $user && $OPTIONS.comment_subscriptions == 'yes'}
     <div class="form-fieldset control-group">
-        <label for="email_subscribe" class="control-label">Subscribe to updates</label>
-        <input type="checkbox" class="checkbox" size="40" name="email_subscribe" id="email_subscribe" value="subscribe"{if $article_user.email_subscribe} checked="checked"{/if} /><span>Receive email notifications for new comments</span>
+        <div class="form-field controls">
+        <label for="email_subscribe" class="checkbox"><input type="checkbox" size="40" name="email_subscribe" id="email_subscribe" value="subscribe"{if $article_user.email_subscribe} checked="checked"{/if} />Send me email notifications of new comments</label>
+        </div>
     </div>
     {/if}{if $commentweblink}
     <div class="form-fieldset control-group">
