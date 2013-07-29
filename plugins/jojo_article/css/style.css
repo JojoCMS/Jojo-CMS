@@ -12,35 +12,11 @@
   font-size: 0.9em;
 }
 
-#articles .article-date, #article .article-date {
-  float:right;
-  font-size: 0.9em;
-  font-style: italic;
-  margin: 0 0 7px;
-}
-
-#article .article-date {
-  float:none;
-}
-
 #articles .article-numcomments {
   float:right;
   font-size: 0.9em;
   font-style: italic;
   margin: 0 15px 7px;
-
-}
-
-.links {
-  margin:10px 0;
-}
-
-.more {
- text-align: right;
-}
-
-#article .note {
-  margin:10px 0;
 }
 
 img.index-thumb {
