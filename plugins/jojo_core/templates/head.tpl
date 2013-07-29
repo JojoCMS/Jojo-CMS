@@ -15,9 +15,7 @@
     {$ogmetatags}{/if}{if $isadmin || $anytime}
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/anytime/anytimec.css"}" />
     {/if}{if $isadmin}
-    <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/jpop.css"}" />
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/admin.css"}" />
-    <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/admin-print.css"}" media="print" />
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/markitup/skins/markitup/style.css"}" />
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/markitup/sets/html/style.css"}" />
     <link rel="stylesheet" type="text/css" href="{jojoAsset file="external/markitup/sets/bbcode/style.css"}" />

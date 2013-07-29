@@ -398,6 +398,9 @@ option.expired {
   display: none;
 }
 
+select.jpop_select {
+  display: none;
+}
 .jstree > ul > li {
     font-size: 12px;
 }
@@ -447,10 +450,7 @@ option.expired {
 ul.plugins li {
   border-top: 1px solid #ccc;
   list-style: none;
-  margin: 0;
   padding: 8px;
-  clear: both;
-  line-height: 16px;
 }
 
 ul.plugins li button {
@@ -460,12 +460,8 @@ ul.plugins li button {
 
 ul.plugins {
   margin: 0 30px 0 0;
-  padding: 0;
-  border-bottom: 0px solid #ccc;
 }
-ul.plugins p {
-    margin: 0;
-}
+
 div.options, div.readme {
   display: none;
 }
