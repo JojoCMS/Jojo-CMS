@@ -1,26 +1,24 @@
-#searchresults div.search-relevance {
-  color: #999;
-  font-size: 91%;
-  line-height: 100%;
-  float: right;
-  margin-top: 4px;
-}
-
-#searchresults div.search-relevance-display {
-  float: right;
-  height: 9px;
-  background: transparent url('../images/relevance.png') no-repeat right;
-  margin: 6px 1px 6px 8px;
-}
-
-#searchresults a.current-filter {
-    font-weight:bold;
-}
-
-#searchresults select {
-  width: auto;
-}
-
-#searchresults .btn {
-  vertical-align: top;
+#searchresults {
+    .search-relevance {
+      color: #999;
+      font-size: 91%;
+      line-height: 100%;
+      float: right;
+      margin-top: 4px;
+    }
+    .search-relevance-display {
+      float: right;
+      height: 9px;
+      background: transparent url('../images/relevance.png') no-repeat right;
+      margin: 6px 1px 6px 8px;
+    }
+    a.current-filter {
+        font-weight:bold;
+    }
+    select {
+      width: auto;
+    }
+    .btn {
+      vertical-align: top;
+    }
 }
