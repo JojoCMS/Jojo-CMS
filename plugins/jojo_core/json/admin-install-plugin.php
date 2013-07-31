@@ -39,7 +39,7 @@ if (!$plugin) {
 Jojo::insertQuery("REPLACE INTO {plugin} SET name = ?, active = 'yes'", $plugin);
 
 /* Force the plugin cache to be refreshed */
-Jojo::listPlugins('setup.php', $plugin, true);
+Jojo::listPlugins('setup.php', $plugin, true, true);
 
 /* Run setup */
 $isAdmin = true;
