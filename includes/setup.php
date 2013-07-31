@@ -325,7 +325,7 @@ $existingtables = array();
 $existingfields = array();
 
 /* ensure the previous command gives us a tables array */
-if (!is_array($tables)) {
+if (!$tables) {
     $tablestemp = $_db->MetaTables('TABLES');
     $tables = array();
     foreach ($tablestemp as $t) {
