@@ -68,6 +68,9 @@ $smarty->assign('subnav', $subnav);
 /* Current year (e.g. for copyright statement) */
 $smarty->assign('currentyear', date('Y'));
 
+/* Breadcrumb separator */
+$smarty->assign('sep', htmlspecialchars(Jojo::getOption('breadcrumbs_sep', '>'), ENT_COMPAT, 'UTF-8', false));
+
 /* Functions */
 function _getNav($root, $subnavLevels, $field = 'mainnav')
 {

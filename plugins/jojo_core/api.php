@@ -488,6 +488,16 @@ $_options[] = array(
 /* Navigation */
 
 $_options[] = array(
+    'id'          => 'breadcrumbs_sep',
+    'category'    => 'Navigation',
+    'label'       => 'Breadcrumb separation character',
+    'description' => '',
+    'type'        => 'text',
+    'default'     => '>',
+    'options'     => ''
+);
+
+$_options[] = array(
     'id'          => 'nav_mainnav',
     'category'    => 'Navigation',
     'label'       => 'Mainnav levels',
