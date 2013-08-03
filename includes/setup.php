@@ -153,7 +153,7 @@ Jojo::updateQuery("REPLACE INTO {plugin} ( `name` , `active`, `priority` ) VALUE
 $themes = Jojo::selectQuery("SELECT * FROM {theme} WHERE active = 'yes'");
 if (!count($themes)) {
     /* Enabled default theme */
-    $currenttheme = 'refresh'; //default theme
+    $currenttheme = '2column'; //default theme
     Jojo::updateQuery("REPLACE INTO {theme} ( `name` , `active` ) VALUES ( '".$currenttheme."', 'yes');");
 } else {
     $currenttheme = $themes[0]['name'];
