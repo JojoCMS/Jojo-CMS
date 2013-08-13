@@ -107,6 +107,9 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* Popovers */
                 if (Jojo::getOption('tbootstrap_js_popover', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-popover.js');
+                /* Affix plugin */
+                if (Jojo::getOption('tbootstrap_js_affix', 'no') == 'yes')
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-affix.js');
                 /* Alert messages */
                 if (Jojo::getOption('tbootstrap_js_alert', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-alert.js');
