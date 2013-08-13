@@ -47,7 +47,7 @@ if (isset($result['created'])) {
 
     // Default user - u:admin p:(value of _MASTERPASS constant)
     echo "Adding admin user<br />";
-    $passwordhash = Jojo_Auth_Local::hashPassword(_MASTERPASS);
+    $passwordhash = Jojo_Auth_Local::hashPassword(_MASTERPASS, true);
     Jojo::insertQuery("INSERT INTO {user} SET  userid=1, us_login='admin', us_password=?, us_firstname='admin', us_lastname='admin'", array($passwordhash));
 }
 
