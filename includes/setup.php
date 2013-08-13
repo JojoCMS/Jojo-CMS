@@ -133,6 +133,13 @@ $default_td = array();
 
 echo '<h1 id="h1">Running setup<div id="setup_loading"></div></h1><p>The Jojo setup script is an important part of the system. It applies version upgrades to the database, refreshes the cache, and performs other important housekeeping tasks. It is highly recommended that you run setup after every Jojo upgrade, and after adding any new files to plugins.</p><p>Consider running setup to be the equivalent of restarting Windows - it will fix all manner of problems, and is a good thing to do before seeking support.</p><p>If you do not see a "Setup Complete" message at the bottom of the page, it means the setup process has failed, which is usually due to a faulty install script in a plugin. The resulting error message should give some indication as to which plugin is responsible.</p>';
 
+/* On first run, ensure database is set to utf8 as a default collation */
+if (!$indexes) {
+    $query = "ALTER DATABASE " . _DBNAME . " DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;";
+    echo 'Running SQL: '.$query."<br />\n";
+    $_db->Execute($query);
+}
+
 /* Install the basics first so that the autoloading works */
 include(_BASEPLUGINDIR . '/jojo_core/install/install_theme.php');
 include(_BASEPLUGINDIR . '/jojo_core/install/install_plugin.php');
