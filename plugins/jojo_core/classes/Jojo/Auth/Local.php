@@ -107,9 +107,9 @@ class Jojo_Auth_Local {
     }
 
     /* Hash a password using PHPass' blowfish algo. Salts are auto handled in the hash. */
-    public static function hashPassword($password) {
+    public static function hashPassword($password, $install=false) {
         require_once(_BASEDIR."/plugins/jojo_core/external/phpass/PasswordHash.php");
-        $hashCount = Jojo::getOption("password_cost", 10);
+        $hashCount = $install ? 10 : Jojo::getOption("password_cost", 10);
         $phpass = new PasswordHash($hashCount, false); // The 'false' triggers Blowfish if available. */
         return $phpass->HashPassword($password);
     }
