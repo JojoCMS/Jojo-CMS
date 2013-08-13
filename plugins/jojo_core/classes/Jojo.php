@@ -2012,6 +2012,7 @@ class Jojo {
                     /* Search for the page with the url that best matches the current uri */
                     $uri_pieces = explode('/', $uri);
                     $uri_heirachy_list = array();
+                    $placeholders = array();
                     foreach ($uri_pieces as $slug) {
                         $values[] = implode('/', $uri_pieces);
                         $placeholders[] = '?';
