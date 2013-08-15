@@ -84,6 +84,10 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* FRAJAX */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
 
+                /* Respond: media-query polyfill for IE if responsive used */
+                if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/respond/respond.src.js');
+                }
                 /* Twitter Bootstrap options */
                 /* Transitions */
                 if (Jojo::getOption('tbootstrap_js_transition', 'no') == 'yes')
@@ -107,6 +111,9 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* Popovers */
                 if (Jojo::getOption('tbootstrap_js_popover', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-popover.js');
+                /* Affix plugin */
+                if (Jojo::getOption('tbootstrap_js_affix', 'no') == 'yes')
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-affix.js');
                 /* Alert messages */
                 if (Jojo::getOption('tbootstrap_js_alert', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-alert.js');

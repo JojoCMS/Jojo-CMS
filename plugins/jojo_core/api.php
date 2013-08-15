@@ -1134,6 +1134,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'tbootstrap_js_affix',
+    'category'    => 'JS',
+    'label'       => 'Bootstrap Affix plugin',
+    'description' => 'Include Twitter Bootstap\'s bootstrap-affix.js file into common.js',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'tbootstrap_js_alert',
     'category'    => 'JS',
     'label'       => 'Bootstrap Alert messages',
