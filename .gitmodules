@@ -10,3 +10,6 @@
 [submodule "plugins/jojo_core/external/normalize"]
 	path = plugins/jojo_core/external/normalize
 	url = git://github.com/necolas/normalize.css.git
+[submodule "plugins/jojo_core/external/respond"]
+	path = plugins/jojo_core/external/respond
+	url = https://github.com/scottjehl/Respond.git
