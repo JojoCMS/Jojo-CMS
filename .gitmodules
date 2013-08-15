@@ -6,7 +6,7 @@
 	url = git://github.com/leafo/lessphp.git
 [submodule "plugins/jojo_core/external/bootstrap"]
 	path = plugins/jojo_core/external/bootstrap
-	url = git://github.com/twitter/bootstrap.git
+	url = https://github.com/twbs/bootstrap.git
 [submodule "plugins/jojo_core/external/normalize"]
 	path = plugins/jojo_core/external/normalize
 	url = git://github.com/necolas/normalize.css.git
