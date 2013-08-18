@@ -185,14 +185,15 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 if (Jojo::getOption('tbootstrap_miscellaneous_utilities', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                 /* Component animations file */
-                if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes')
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/accordion.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
 
                 /* get a pre-responsive file from theme if exists */
                 foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
                     $css->addFile($themefile);
                 }
-
+                    
                 /* Responsive files */
                 if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
@@ -325,6 +326,8 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Close icon file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/close.less'); 
                 /* Bootstrap css as required by the javascript plugins */
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/accordion.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
                 /* Tooltips file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tooltip.less');
                 /* Popovers file */
