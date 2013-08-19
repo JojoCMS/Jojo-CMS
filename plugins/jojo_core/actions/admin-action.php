@@ -65,6 +65,7 @@ $frajax->title = 'Admin Action - ' . _SITETITLE;
 $frajax->sendHeader();
 $frajax->scrollToTop();
 $frajax->assign("h1", "innerHTML", 'Processing...');
+$frajax->script('parent.$("#error").hide()');
 
 $content = array();
 
@@ -112,7 +113,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
     if (is_array($errors)) {
         /* Error with one of the values */
         $frajax->script('parent.$("#error").html("<h4>Error</h4><p>The following errors were found...<br />' . implode('<br />', $errors).'</p>").fadeIn("slow");');
-        $frajax->script('parent.$("#message").fadeOut();');
+        $frajax->script('parent.$("#message").hide();');
         $frajax->assign("h1", "innerHTML", 'Save Error');
         foreach ($errors as $k=>$e) {
             $frajax->script('parent.$("#row_' . $k . '").addClass("error");');
@@ -127,7 +128,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
         if ($res !== false) {
             /* Success message */
             $frajax->script('parent.$("#h1").html("Save successful.").show("fast");');
-            $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4><p>'.$res.'</p>").fadeIn("slow").fadeTo(5000, 1).fadeOut("slow");');
+            $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4><p>'.$res.'</p>").fadeIn().fadeTo(10000, 1).fadeOut();');
 
             /* Clear the content cache after saving */
             Jojo::clearCache();
@@ -147,7 +148,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
 
         } else {
             /* Error saving */
-            $frajax->script('parent.$("#error").html("<h4>Error</h4> Saving failed").fadeIn("slow");');
+            $frajax->script('parent.$("#error").html("<h4>Error</h4> Saving failed").fadeIn();');
             $frajax->assign("h1", "innerHTML", 'Save Error');
         }
     }
@@ -181,7 +182,7 @@ if (Jojo::getPost('btn_delete', false)) {
         $frajax->redirect(_SITEURL . '/' . Jojo::getFormData('prefix') . '/' . $t . '/');
     } else {
         /* Error deleting */
-        $frajax->script('parent.$("#error").html("<h4>Error</h4>Deleting failed").fadeIn("slow");');
+        $frajax->script('parent.$("#error").html("<h4>Error</h4>Deleting failed").fadeIn();');
         $frajax->assign("h1", "innerHTML", 'Delete Error');
     }
     exit();
@@ -193,7 +194,7 @@ if (Jojo::getPost('btn_addsimilar', false)) {
     $primaryKey = $table->getOption('primarykey');
     $table->setFieldValue($primaryKey, '');
 
-    $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>Please change the ' . $table->getOption('displayname') . ' fields as appropriate and press save to create a new ' . $table->getOption('displayname') . '.").fadeIn("slow");');
+    $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>Please change the ' . $table->getOption('displayname') . ' fields as appropriate and press save to create a new ' . $table->getOption('displayname') . '.").fadeIn();');
     $frajax->assign("h1", "innerHTML", 'Copy of ' . $table->getOption('displayvalue'));
     $frajax->script('parent.$(".control-group").removeClass("error");');
 
@@ -235,7 +236,7 @@ if (Jojo::getPost('btn_addsimilar', false)) {
     }
     $frajax->assign("id", "value", '');
 
-    $frajax->script('parent.$("#message").fadeOut("fast");');
+    $frajax->script('parent.$("#message").delay(5000).fadeOut();');
     $frajax->script('parent.$("#btn_addsimilar").fadeOut("fast");');
     $frajax->script('parent.$("#btn_delete").fadeOut("fast");');
     $frajax->script('parent.$("#btn_addchild").fadeOut("fast");');
@@ -251,7 +252,7 @@ if (Jojo::getPost('btn_addchild', false)) {
         $parentlanguage = Jojo::getFormData('fm_' . $languagefield, '');
     }
 
-    $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn("slow");');
+    $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn();');
     $frajax->assign("h1", "innerHTML", 'New Child');
     $frajax->script('parent.$(".control-group").removeClass("error");');
 
@@ -296,7 +297,7 @@ if (Jojo::getPost('btn_addchild', false)) {
     }
 
     $frajax->assign("id", "value", '');
-    $frajax->script('parent.$("message").hide("fast");');
+    $frajax->script('parent.$("message").delay(5000).fadeOut();');
     $frajax->script('parent.$("#btn_addsimilar").fadeOut("fast");');
     $frajax->script('parent.$("#btn_delete").fadeOut("fast");');
     $frajax->script('parent.$("#btn_addchild").fadeOut("fast");');
