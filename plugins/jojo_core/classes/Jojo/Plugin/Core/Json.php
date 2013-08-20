@@ -33,13 +33,21 @@ class Jojo_Plugin_Core_Json extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
-        $files = Jojo::listPlugins('json/' . $file);
+        /* Check for override in a Theme */
+        $files = Jojo::listThemes('json/' . $file);
+
         if (isset($files[0])) {
             $file = $files[0];
         } else {
-            /* Not found, 404 time */
-            header("HTTP/1.0 404 Not Found", true, 404);
-            exit;
+            /* Check for external in a Plugin */
+            $files = Jojo::listPlugins('json/' . $file);
+            if (isset($files[0])) {
+                $file = $files[0];
+            } else {
+                /* Not found, 404 time */
+                header("HTTP/1.0 404 Not Found", true, 404);
+                exit;
+            }
         }
 
         /* Change to directory */
@@ -52,3 +60,6 @@ class Jojo_Plugin_Core_Json extends Jojo_Plugin_Core {
         exit;
    }
 }
+
+
+
