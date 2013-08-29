@@ -1,13 +1,13 @@
 ﻿{include file="admin/header.tpl"}
 <div class="row">
-    <div class="span4">
+    <div class="col-md-4">
         <div>
             <h3>Available plugins</h3>
             <ul class="plugins">
         {foreach from=$plugins item=p}{if $p.status!='active'}
                 <li class="{$p.type}" title="{$p.description|escape:'htmlall':'utf-8'}">
                     <span>{$p.name|replace:'_':' '|ucwords}</span>
-                    <button class="btn" rel="{$p.name}"><i class="icon-upload"></i></button>
+                    <button class="btn" rel="{$p.name}"><i class="glyphicon-upload"></i></button>
                 </li>
         {/if}{/foreach}
             </ul>
@@ -19,7 +19,7 @@
 
     </div>
 
-    <div class="span8">
+    <div class="col-md-8">
         <h2>Installed plugins</h2>
         {foreach from=$plugins item=p}
         {if $p.status=='active'}<div>
@@ -71,10 +71,10 @@
         {/if}
 
         <div id="buttons" class="btn-group">
-            <button class='btn reinstall' rel='{$p.name}'><i class="icon-refresh"></i> Reinstall</button>
-            {if $p.status != 'not installed' && $p.name!='jojo_core'}<button class="btn uninstall" rel="{$p.name}"><i class="icon-remove"></i> Uninstall</button>{/if}
-            {if $hasoptions}<button class="btn" id="show-options-{$p.name}"><i class="icon-list"></i> Options</button>{/if}
-            {if $p.readme}<button class="btn" id="show-readme-{$p.name}"><i class="icon-book"></i> Readme</button>{/if}
+            <button class='btn reinstall' rel='{$p.name}'><i class="glyphicon-refresh"></i> Reinstall</button>
+            {if $p.status != 'not installed' && $p.name!='jojo_core'}<button class="btn uninstall" rel="{$p.name}"><i class="glyphicon-remove"></i> Uninstall</button>{/if}
+            {if $hasoptions}<button class="btn" id="show-options-{$p.name}"><i class="glyphicon-list"></i> Options</button>{/if}
+            {if $p.readme}<button class="btn" id="show-readme-{$p.name}"><i class="glyphicon-book"></i> Readme</button>{/if}
         </div>
         <script type="text/javascript">
             $('#show-options-{$p.name}').click(function(){ldelim}$('#options-{$p.name}').toggle();{rdelim});
