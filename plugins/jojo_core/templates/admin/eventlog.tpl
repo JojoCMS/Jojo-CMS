@@ -18,7 +18,7 @@
                 {if $e.el_desc}<a href="#" onclick="$('#desc_{$e.eventlogid}').show('fast');return false;"><img src="images/cms/icons/add.png" alt="more..." /></a>{/if}
                 {$e.el_shortdesc}
 {if $e.el_desc}
-                <div class="hidden" style="font-weight:400;" id="desc_{$e.eventlogid}">
+                <div style="font-weight:400;display:none;" id="desc_{$e.eventlogid}">
                     {$e.el_desc|nl2br}<br />
                     {if $e.el_uri}URI : {$e.el_uri}<br />{/if}
                     {if $e.el_referer}Referrer: {$e.el_referer}<br />{/if}
