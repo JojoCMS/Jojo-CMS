@@ -38,7 +38,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
             $fields = unserialize($e['content']);
             $message  = '';
             foreach ($fields as $f) {
-                if (isset($f['displayonly'])) { continue; };
+                if (isset($f['displayonly']) && $f['displayonly']) { continue; };
                 if ($f['type'] == 'note') { continue; };
                 if ($f['type'] == 'heading') {
                     $message .=  "\r\n" . $f['value'] . "\r\n";
