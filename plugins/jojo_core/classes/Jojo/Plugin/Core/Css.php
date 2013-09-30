@@ -82,6 +82,9 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                         $css->addFile(_BASEPLUGINDIR . '/jojo_core/css/boilerplate_modernizr.css');
                     }
                 }
+                if (Jojo::getOption('jquery_useanytime', 'no')=='yes') {
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.css');
+                }
                 /* start with the variable files */
                 if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
@@ -276,8 +279,14 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 break;
 
             case 'admin':
-               /* Include Boilerplate css reset */
+                /* Include Boilerplate css reset */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/normalize/normalize.css');
+                /* Include Anytime datepicker css */
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.css');
+                /* Include Markitup editor css */
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/skins/markitup/style.css');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/style.css');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/style.css');
                 /* start with the variable files */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
                 /* mixins files */

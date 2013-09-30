@@ -84,6 +84,10 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* FRAJAX */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
 
+                if (Jojo::getOption('jquery_useanytime', 'no')=='yes') {
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
+                }
+                
                 /* Respond: media-query polyfill for IE if responsive used */
                 if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/respond/respond.src.js');
@@ -142,6 +146,45 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 if (Jojo::getOption('js')) {
                     $js->addText(Jojo::getOption('js'));
                 }
+
+                break;
+                
+            case 'commonadmin':
+                /* Dynamic Javascript */
+                $js->addText("var siteurl = '" . Jojo::getOption('siteurl') . "';");
+                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , Jojo::getOption('siteurl')) . "';");
+
+                /* Core functions */
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
+
+                /* FRAJAX */
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
+
+                /* Admin helpers */
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/jpop.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/tablesorter/jquery.tablesorter.min.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.pack.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/set.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/set.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
+
+                /* Respond: media-query polyfill for IE if responsive used */
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/respond/respond.src.js');
+
+                /* Twitter Bootstrap options */
+                /* Transitions */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-transition.js');
+                /* Dropdowns */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-dropdown.js');
+                /* Togglable tabs */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-tab.js');
+                /* Alert messages */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-alert.js');
+                /* Buttons */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-button.js');
+
+                /* Core functions */
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/admin.js');
 
                 break;
 
