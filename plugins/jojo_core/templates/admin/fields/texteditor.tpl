@@ -36,11 +36,11 @@
 {* Select an Editor *}
 <div class="editor-format" style="float:right;">
   <label class="control-label">Editor Format:</label>
-  <label for="type_fm_{$fd_field}_html" class="radio inline">
+  <label for="type_fm_{$fd_field}_html" class="radio-inline">
       {if $editortype != "bb"}{* this required for AJAX loading *}<!-- [editor:html] -->{/if}
       <input type="radio"{if $editortype != "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_html" onclick="$('#editor_{$fd_field}_bb').hide(); $('#editor_{$fd_field}_html').show(); setTextEditorContent('fm_{$fd_field}');" value="html" /> HTML
   </label>
-  <label for="type_fm_{$fd_field}_bb" class="radio inline">
+  <label for="type_fm_{$fd_field}_bb" class="radio-inline">
     {if $editortype == "bb"}{* this required for AJAX loading *}<!-- [editor:bb] -->{/if}
     <input type="radio"{if $editortype == "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_bb" onclick="$('#editor_{$fd_field}_bb').show(); $('#editor_{$fd_field}_html').hide(); setTextEditorContent('fm_{$fd_field}');" value="bb" /> BBCode
   </label>

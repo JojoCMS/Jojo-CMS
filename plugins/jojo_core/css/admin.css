@@ -82,7 +82,7 @@ th, td {
 
 #menu {
     margin: 20px 0 0;
-    float: left;
+    display: inline-block;
 }
 
 /* Body */
@@ -305,6 +305,15 @@ input.jojo-admin-edit-cancel {
     }
 }
 
+.counter.form-control {
+    padding: 0;
+}
+
+.form-group .inline {
+  display: inline-block;
+  float: none;
+  vertical-align: -12px;
+}
 
 #event-log table tr.critical {
   background: #f00;
@@ -466,12 +475,12 @@ select.jpop_select {
 ul.plugins li {
   border-top: 1px solid #ccc;
   list-style: none;
-  padding: 8px;
+  padding: 10px 8px;
 }
 
 ul.plugins li button {
   float: right;
-  margin-top: -5px;
+  margin-top: -7px;
 }
 
 ul.plugins {

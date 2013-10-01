@@ -7,7 +7,7 @@
         {foreach from=$plugins item=p}{if $p.status!='active'}
                 <li class="{$p.type}" title="{$p.description|escape:'htmlall':'utf-8'}">
                     <span>{$p.name|replace:'_':' '|ucwords}</span>
-                    <button class="btn" rel="{$p.name}"><i class="glyphicon-upload"></i></button>
+                    <button class="btn btn-default" rel="{$p.name}"><i class="glyphicon glyphicon-upload"></i></button>
                 </li>
         {/if}{/foreach}
             </ul>
@@ -26,7 +26,7 @@
           <h3>{$p.name|replace:'_':' '|ucwords}</h3>
           {if $p.description}<p>{$p.description}</p>{/if}
 
-          <div class="options well" id="options-{$p.name}">
+          <div class="options panel panel-default panel-body" id="options-{$p.name}">
           {assign var='hasoptions' value=false}
           {foreach from=$options key=k item=opt}
             {if $opt.op_plugin == $p.name}
@@ -38,22 +38,22 @@
                 </div>
                 <div class="controls">
     {if $opt.op_type == 'radio'}
-                {foreach from=$opt.options item=radioOption}<label class="radio inline"><input type="radio" name="option-{$opt.op_name}" onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}','{$radioOption}');"{if $radioOption == $opt.op_value} checked="checked"{/if}/>{$radioOption}</label>
+                {foreach from=$opt.options item=radioOption}<label class="radio-inline"><input type="radio" name="option-{$opt.op_name}" onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}','{$radioOption}');"{if $radioOption == $opt.op_value} checked="checked"{/if}/>{$radioOption}</label>
                 {/foreach}
     {elseif $opt.op_type == 'select'}
-                  <select id="option-{$opt.op_name}" name="option-{$opt.op_name}" onchange="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#option-{$opt.op_name} :selected').val());">
+                  <select class="form-control" id="option-{$opt.op_name}" name="option-{$opt.op_name}" onchange="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#option-{$opt.op_name} :selected').val());">
                   {foreach from=$opt.options item=option}<option {if $option == $opt.op_value} selected="selected"{/if}>{$option}</option>
                   {/foreach}
                   </select>
     {elseif $opt.op_type == 'checkbox'}
                 <span id="{$opt.op_name}">
-                    {foreach from=$opt.options item=option}<label class="checkbox inline"><input type="checkbox" name="temp" value="{$option}" {if in_array($option, $opt.values)} checked="checked"{/if} onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#{$opt.op_name} input:checked').serialize().replace(/temp=/g, '').replace(/&/g, ',') );" /> {$option}</label>
+                    {foreach from=$opt.options item=option}<label class="checkbox-inline"><input type="checkbox" name="temp" value="{$option}" {if in_array($option, $opt.values)} checked="checked"{/if} onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', $('#{$opt.op_name} input:checked').serialize().replace(/temp=/g, '').replace(/&/g, ',') );" /> {$option}</label>
                     {/foreach}
                 </span>
     {elseif $opt.op_type == 'text' || $opt.op_type == 'integer'}
-                <input type="text" size="60" name="option-{$opt.op_name}" value="{$opt.op_value|escape:'html'}" onchange="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', this.value);" />
+                <input class="form-control" type="text" size="60" name="option-{$opt.op_name}" value="{$opt.op_value|escape:'html'}" onchange="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}', this.value);" />
     {else}
-                <textarea rows="8" cols="50" name="option-{$opt.op_name}" onchange="$('#savemsg_{$opt.op_name}').hide().html('Saving...').show();  frajax('admin-set-options','{$opt.op_name}', this.value)">{$opt.op_value|escape:'html'}</textarea>
+                <textarea class="form-control" rows="8" cols="50" name="option-{$opt.op_name}" onchange="$('#savemsg_{$opt.op_name}').hide().html('Saving...').show();  frajax('admin-set-options','{$opt.op_name}', this.value)">{$opt.op_value|escape:'html'}</textarea>
     {/if}
                  </div>
                {if $opt.op_description}<p>{$opt.op_description}</p>{/if}
@@ -64,17 +64,17 @@
         </div>
 
         {if $p.readme}
-        <div class="readme well" id="readme-{$p.name}">
+        <div class="readme panel panel-default panel-body" id="readme-{$p.name}">
             <h4 style="margin-top:0;">readme.txt</h4>
             {$p.readme}
         </div>
         {/if}
 
         <div id="buttons" class="btn-group">
-            <button class='btn reinstall' rel='{$p.name}'><i class="glyphicon-refresh"></i> Reinstall</button>
-            {if $p.status != 'not installed' && $p.name!='jojo_core'}<button class="btn uninstall" rel="{$p.name}"><i class="glyphicon-remove"></i> Uninstall</button>{/if}
-            {if $hasoptions}<button class="btn" id="show-options-{$p.name}"><i class="glyphicon-list"></i> Options</button>{/if}
-            {if $p.readme}<button class="btn" id="show-readme-{$p.name}"><i class="glyphicon-book"></i> Readme</button>{/if}
+            <button class='btn btn-default reinstall' rel='{$p.name}'><i class="glyphicon glyphicon-refresh"></i> Reinstall</button>
+            {if $p.status != 'not installed' && $p.name!='jojo_core'}<button class="btn btn-default uninstall" rel="{$p.name}"><i class="glyphicon glyphicon-remove"></i> Uninstall</button>{/if}
+            {if $hasoptions}<button class="btn btn-default" id="show-options-{$p.name}"><i class="glyphicon glyphicon-list"></i> Options</button>{/if}
+            {if $p.readme}<button class="btn btn-default" id="show-readme-{$p.name}"><i class="glyphicon glyphicon-book"></i> Readme</button>{/if}
         </div>
         <script type="text/javascript">
             $('#show-options-{$p.name}').click(function(){ldelim}$('#options-{$p.name}').toggle();{rdelim});

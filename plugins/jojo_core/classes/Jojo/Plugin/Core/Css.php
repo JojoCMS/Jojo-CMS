@@ -184,7 +184,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                 /* Component animations file */
                 if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes')
-                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/accordion.less');
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/panels.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
 
                 /* get a pre-responsive file from theme if exists */
@@ -312,6 +312,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Hero unit file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/jumbotron.less');
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/wells.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/panels.less');
                 /* Close icon file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/close.less'); 
                 /* Bootstrap css as required by the javascript plugins */

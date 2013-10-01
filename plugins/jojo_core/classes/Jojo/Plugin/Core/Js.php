@@ -91,44 +91,41 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* Twitter Bootstrap options */
                 /* Transitions */
                 if (Jojo::getOption('tbootstrap_js_transition', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-transition.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/transition.js');
                 /* Modals */
                 if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
-                                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-modal.js');
+                                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/modal.js');
 
                 /* Dropdowns */
                 if (Jojo::getOption('tbootstrap_js_dropdown', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-dropdown.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/dropdown.js');
                 /* Scrollspy */
                 if (Jojo::getOption('tbootstrap_js_scrollspy', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-scrollspy.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/scrollspy.js');
                 /* Togglable tabs */
                 if (Jojo::getOption('tbootstrap_js_tab', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-tab.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/tab.js');
                 /* Tooltips */
                 if (Jojo::getOption('tbootstrap_js_tooltip', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_popover', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-tooltip.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/tooltip.js');
                 /* Popovers */
                 if (Jojo::getOption('tbootstrap_js_popover', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-popover.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/popover.js');
                 /* Affix plugin */
                 if (Jojo::getOption('tbootstrap_js_affix', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-affix.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/affix.js');
                 /* Alert messages */
                 if (Jojo::getOption('tbootstrap_js_alert', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-alert.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/alert.js');
                 /* Buttons */
                 if (Jojo::getOption('tbootstrap_js_button', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-button.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/button.js');
                 /* Collapse */
                 if (Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes' || (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes' && Jojo::getOption('tbootstrap_components_navbar', 'no') == 'yes'))
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-collapse.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/collapse.js');
                 /* Carousel */
                 if (Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-carousel.js');
-                /* Typeahead */
-                if (Jojo::getOption('tbootstrap_js_typeahead', 'no') == 'yes')
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/bootstrap-typeahead.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/carousel.js');
 
                  /* jQueryMobile */
                 if (Jojo::getOption('jquery_touch', 'no') == 'yes')

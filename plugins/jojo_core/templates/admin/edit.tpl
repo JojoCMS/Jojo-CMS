@@ -10,7 +10,7 @@
 
 {jojoHook hook="admin_edit_top"}
 <div class="row">
-<div id="records" class="span4">
+<div id="records" class="col-md-4">
     <div id="recordlist">
         {$recordlist}
     </div>
@@ -18,7 +18,7 @@
 </div><!-- [end records] -->
 
 <!-- [Fields] -->
-<div id="fields-wrap" class="span8">
+<div id="fields-wrap" class="col-md-8">
     <div id="message" class="alert alert-block alert-info"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
     <div id="error" style="display:none;" class="alert alert-block alert-error">{if $error}{$error}{/if}</div>
     <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe" class="form-horizontal">
@@ -27,11 +27,11 @@
         <input type="hidden" name="prefix" id="prefix" value="{$prefix}" />
 
         <div id="buttons" class="btn-group">
-            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn" title="Add new {$displayname}" />{/if}
-            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn" title="Save the changes to this {$displayname}" />
-            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
-            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
-            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn" title="Add a new {$displayname} underneath this one" />{/if}
+            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn btn-default btn-sm" title="Add new {$displayname}" />{/if}
+            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn btn-default btn-sm" title="Save the changes to this {$displayname}" />
+            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn btn-default btn-sm" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
+            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default btn-sm" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
+            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default btn-sm" title="Add a new {$displayname} underneath this one" />{/if}
         </div><!-- [end buttons] -->
 
         {if $numtabs > 1}
@@ -50,10 +50,10 @@
           
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
-                <div id="row_{$fieldname}" class="form-fieldset control-group{if $field.error} error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
+                <div id="row_{$fieldname}" class="form-group{if $field.error} error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
                 
-                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="control-label">{$field.name}:</label>{/if}
-                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}"{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="controls"{/if}>
+                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="col-md-2">{$field.name}:</label>{/if}
+                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}"{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="col-md-10"{/if}>
                         {$field.html}
                         {if $field.error}<img src="images/cms/icons/error.png" border="0" alt="Error: {$field.error}"  title="Error: {$field.error}" />{/if}
                         {if $field.required=="yes"}<i class="input-append icon-exclamation-sign"></i>{/if}
@@ -77,8 +77,6 @@
 <script type="text/javascript">{literal}/* <![CDATA[ */
 
 $('#btn_save').click(function(){$('.jTagEditor-editor:visible').change();});
-  /* add mouseover effects to new, save, delete buttons */
-  $('#buttons input').hover(function(){$(this).addClass('jojo-admin-button-hover');},function(){$(this).removeClass('jojo-admin-button-hover');});
 /* ]]> */{/literal}</script>
 
 {include file="admin/footer.tpl"}

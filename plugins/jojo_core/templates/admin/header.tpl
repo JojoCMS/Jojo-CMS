@@ -8,7 +8,7 @@
             <div id="admin-nav">
                 <ul class="nav nav-pills">
                     {foreach from=$jojo_admin_nav key=k item=n}<li class="{if $n.subnav}dropdown{/if}{if $n.selected} active{/if}">
-                        <a {if !$n.subnav}href="{$n.url}"{else}class="dropdown-toggle" data-toggle="dropdown" href="#"{/if} id="_{$k}" title="{$n.title}"{if $n.title=='Logout'} class="btn"{/if}>{$n.label}{if $n.subnav}<b class="caret"></b>{/if}</a>{if $n.subnav} 
+                        <a {if !$n.subnav}href="{$n.url}"{else}class="dropdown-toggle" data-toggle="dropdown" href="" data-target="#"{/if} id="_{$k}" title="{$n.title}"{if $n.title=='Logout'} class="btn"{/if}>{$n.label}{if $n.subnav}<b class="caret"></b>{/if}</a>{if $n.subnav} 
                         <ul class="dropdown-menu" id="adminsubnav_{$k}">
                             {foreach from=$n.subnav item=s}<li{if $s.selected} class="active"{/if}><a href="{$s.url}" title="{$s.title}">{$s.label}</a></li>{if $s.subnav}
                             {foreach from=$s.subnav item=t}<li{if $t.selected} class="active"{/if}><a href="{$t.url}" title="{$t.title}">&gt; {$t.label}</a></li>
