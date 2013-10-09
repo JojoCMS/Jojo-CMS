@@ -129,20 +129,20 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function formatItems($items, $exclude=false, $include=false) {
         foreach ($items as $k=>&$i){
             $i['id']           = $i['articleid'];
-            $i['title']        = htmlspecialchars($i['ar_title'], ENT_COMPAT, 'UTF-8', false);
-            $i['seotitle']        = htmlspecialchars($i['ar_seotitle'], ENT_COMPAT, 'UTF-8', false);
-            $i['author']        = htmlspecialchars($i['ar_author'], ENT_COMPAT, 'UTF-8', false);
+            $i['title']        = Jojo::htmlspecialchars($i['ar_title']);
+            $i['seotitle']        = Jojo::htmlspecialchars($i['ar_seotitle']);
+            $i['author']        = Jojo::htmlspecialchars($i['ar_author']);
             // Snip for the index description
             $splitcontent = Jojo::iExplode('[[snip]]', $i['ar_body']);
             $i['bodysnip'] = array_shift($splitcontent);
             /* Strip all tags and template include code ie [[ ]] */
             $i['bodysnip'] = strpos($i['bodysnip'], '[[')!==false ? preg_replace('/\[\[.*?\]\]/', '',  $i['bodysnip']) : $i['bodysnip'];
             $i['bodyplain'] = trim(strip_tags($i['bodysnip']));
-            $i['description'] = $i['ar_desc'] ? htmlspecialchars($i['ar_desc'], ENT_COMPAT, 'UTF-8', false) : (strlen($i['bodyplain']) >400 ?  substr($mbody=wordwrap($i['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $i['bodyplain']);
+            $i['description'] = $i['ar_desc'] ? Jojo::htmlspecialchars($i['ar_desc']) : (strlen($i['bodyplain']) >400 ?  substr($mbody=wordwrap($i['bodyplain'], 400, '$$'), 0, strpos($mbody,'$$')) : $i['bodyplain']);
             $i['snippet']       = isset($i['snippet']) ? $i['snippet'] : '400';
             $i['thumbnail']       = isset($i['thumbnail']) ? $i['thumbnail'] : 's150';
             $i['mainimage']       = isset($i['mainimage']) ? $i['mainimage'] : 'v60000';
-            $i['readmore'] = isset($i['readmore']) ? str_replace(' ', '&nbsp;', htmlspecialchars($i['readmore'], ENT_COMPAT, 'UTF-8', false)) : '&gt;&nbsp;read&nbsp;more';
+            $i['readmore'] = isset($i['readmore']) ? str_replace(' ', '&nbsp;', Jojo::htmlspecialchars($i['readmore'])) : '&gt;&nbsp;read&nbsp;more';
             $i['date']       = $i['ar_date'];
             $i['datefriendly'] = isset($i['dateformat']) && !empty($i['dateformat']) ? strftime($i['dateformat'], $i['ar_date']) :  Jojo::formatTimestamp($i['ar_date'], "medium");
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
@@ -822,7 +822,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
         foreach ($items as $i) {
             $nav[$i['id']]['url'] = $i['url'];
-            $nav[$i['id']]['title'] = ($i['seotitle'] ? $i['seotitle'] : ($i['ar_desc'] ? htmlspecialchars($i['ar_desc'], ENT_COMPAT,'UTF-8',false) : $i['title']));
+            $nav[$i['id']]['title'] = ($i['seotitle'] ? $i['seotitle'] : ($i['ar_desc'] ? Jojo::htmlspecialchars($i['ar_desc']) : $i['title']));
             $nav[$i['id']]['label'] = $i['title'];
             $nav[$i['id']]['selected'] = (boolean)($selected && (($id && $id== $i['id']) ||(!empty($url) && $i['url'] == $url)));
         }
