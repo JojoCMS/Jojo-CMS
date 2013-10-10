@@ -3336,7 +3336,7 @@ class Jojo {
         return $languagedata;
     }
 
-    static function getNav($root, $subnavLevels, $field = 'mainnav')
+    static function getNav($root=0, $subnavLevels=0, $field='mainnav')
     {
         global $_USERGROUPS, $selectedPages;
 
