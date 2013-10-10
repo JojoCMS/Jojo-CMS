@@ -1605,3 +1605,14 @@ $_options[] = array(
     'default'     => 'no',
     'options'     => 'yes,no',
 );
+
+$_options[] = array(
+    'id'          => 'initialscale',
+    'category'    => 'Config',
+    'label'       => 'Initial Scale',
+    'description' => 'Initial Scale = 1 is included in the head by default. Set to no to remove (for sites you want zoomed to fit on mobile)',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
+);
+
