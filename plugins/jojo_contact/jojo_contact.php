@@ -407,6 +407,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $toAddresses[$k]['email'] = Jojo::cleanURL($toname);
             }
             $smarty->assign('toaddresses', $toAddresses);
+            $smarty->assign('form_choice_multiple', (boolean)(isset($form['form_choice_multiple']) && $form['form_choice_multiple']));
         }
 
         $smarty->assign('posturl', ($action ? (strpos('http', $action)!==false ? _SITEURL . '/' : '') . $action : ''));

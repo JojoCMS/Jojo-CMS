@@ -68,6 +68,39 @@ $default_fd['form']['form_to'] = array(
         'fd_tabname' => "Details",
     );
 
+// Provide a choice for who the enquiry goes to Field
+$default_fd['form']['form_choice'] = array(
+        'fd_name' => "or Provide a choice of destinations",
+        'fd_type' => "yesno",
+        'fd_required' => "no",
+        'fd_default' => "0",
+        'fd_help' => "If yes this will give the contact form a drop down box so the user can choose who the enquiry goes to. This will not work if the Choice List if left blank.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Details"
+    );
+
+// Choice List of who enquiry can go to Field
+$default_fd['form']['form_choice_list'] = array(
+        'fd_name' => "Choice List of who enquiry can go to",
+        'fd_type' => "textarea",
+        'fd_rows' => "4",
+        'fd_cols' => "58",
+        'fd_help' => "List the people and email addresses of who can be contacted. Enter the name of person then , email address , then next person etc. For Example: Marketing Manager,marketing@domain.com\nSales Manager,sales@domain.com\nCustomer Support,support@domain.com",
+        'fd_order' => $o++,
+        'fd_tabname' => "Details"
+    );
+
+// Chice list format
+$default_fd['form']['form_choice_multiple'] = array(
+        'fd_name' => "Choice List as Multiple",
+        'fd_type' => "yesno",
+        'fd_required' => "no",
+        'fd_default' => "0",
+        'fd_help' => "Show Choice List as a multiple select list box rather than a single choice dropdown",
+        'fd_order' => $o++,
+        'fd_tabname' => "Details"
+    );
+
 // Destination
 $default_fd['form']['form_send'] = array(
         'fd_name' => "Send",
@@ -211,28 +244,6 @@ $default_fd['form']['form_hideonsuccess'] = array(
         'fd_required' => "no",
         'fd_default' => "0",
         'fd_help' => "If yes this will hide the form after submit and just display the success message.",
-        'fd_order' => $o++,
-        'fd_tabname' => "Xtras"
-    );
-
-// Provide a choice for who the enquiry goes to Field
-$default_fd['form']['form_choice'] = array(
-        'fd_name' => "Provide a choice of destinations",
-        'fd_type' => "yesno",
-        'fd_required' => "no",
-        'fd_default' => "0",
-        'fd_help' => "If yes this will give the contact form a drop down box so the user can choose who the enquiry goes to. This will not work if the Choice List if left blank.",
-        'fd_order' => $o++,
-        'fd_tabname' => "Xtras"
-    );
-
-// Choice List of who enquiry can go to Field
-$default_fd['form']['form_choice_list'] = array(
-        'fd_name' => "Choice List of who enquiry can go to",
-        'fd_type' => "textarea",
-        'fd_rows' => "4",
-        'fd_cols' => "58",
-        'fd_help' => "List the people and email addresses of who can be contacted. Enter the name of person then , email address , then next person etc. For Example: Marketing Manager,marketing@domain.com\nSales Manager,sales@domain.com\nCustomer Support,support@domain.com",
         'fd_order' => $o++,
         'fd_tabname' => "Xtras"
     );

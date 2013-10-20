@@ -346,6 +346,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
          return $content;
     }
 
+    /*
+    * Content pseudo-filter to replace [[columnbreak]] etc in content with fluid column divs
+    */
     public static function pagebreak($content)
     {
         if (strpos($content, '[[columnbreak')!==false) {
@@ -396,6 +399,30 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>','[[columns]]'), $colopen, $content) : $colopen . "\n" . $content;
             $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>','[[endcolumns]]'), $colclose, $content) : $content . "\n" . $colclose;
             $content = str_replace(array('<p>[[columnbreak]]</p>', '<p>[[columnbreak]] </p>', '<p>[[columnbreak]]&nbsp;</p>','[[columnbreak]]'), $colbreak, $content);
+        }
+        return $content;
+    }
+
+    /*
+    * Content pseudo-filter to replace [[subpages]] in content with subpages list
+    */
+    public static function subpages($content)
+    {
+        if (strpos($content, '[[subpages]]')!==false) {
+            global $page;
+            $pageid = $page->id;
+            $subpages = Jojo::getNav($pageid, 1);
+            if ($subpages) {
+                $html = '<ul>' . "\n";
+                foreach ($subpages as $s) {
+                    $html .= '<li><a href="' . $s['url'] . '" title="' . $s['title'] . '">' . $s['label'] . '</a></li>' . "\n";
+                }
+                $html .= '</ul>';
+            } else {
+                $html = '';
+            }
+
+            $content = str_replace(array('<p>[[subpages]]</p>', '<p>[[subpages]] </p>', '<p>[[subpages]]&nbsp;</p>','[[subpages]]'), $html, $content);
         }
         return $content;
     }

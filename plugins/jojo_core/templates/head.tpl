@@ -4,7 +4,7 @@
     <title>{if $displaytitle}{$displaytitle}{/if}</title>
     <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />
     {if $htmldoctype}<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width{if !$OPTIONS.initialscale || $OPTIONS.initialscale=='yes'}, initial-scale=1.0{/if}" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
     {/if}{if $pg_metakeywords}<meta name="keywords" content="{$pg_metakeywords}" />

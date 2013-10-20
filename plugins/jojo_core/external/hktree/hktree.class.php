@@ -32,6 +32,7 @@ class hktree
     var $parentnode = array();
     var $liststyletype = '';      //Deprecated
     var $liststyle = 'circle';    //The type of list style to use on plain lists
+    var $listclass = '';          //The class use on plain lists
     var $selected = '';           //Selected item in select lists
     var $disabled = '';           //item in select list that should be disabled (if item has children, they get disabled to)
 
@@ -130,6 +131,7 @@ class hktree
         if (isset($this->children[$start]) && is_array($this->children[$start])) {
             $this->depth = $this->depth + 1;
             $this->bulletlist .= "<ul";
+            $this->bulletlist .= ($this->listclass) ? ' class="' . $this->listclass . '"' : '';
             $this->bulletlist .= ($this->liststyle) ? ' style="list-style-type: ' . $this->liststyle . ';"' : '';
             $this->bulletlist .= ">\n";
             for ($i=0;$i<count($this->children[$start]);$i++) {
@@ -159,6 +161,7 @@ class hktree
             $this->depth = $this->depth + 1;
             if ($this->depth > 1) {
                 $this->bulletlist .= "<ul";
+                $this->bulletlist .= ($this->listclass) ? ' class="' . $this->listclass . '"' : '';
                 $this->bulletlist .= ($this->liststyle) ? ' style="list-style-type: ' . $this->liststyle . ';"' : '';
                 $this->bulletlist .= ">\n";
             }

@@ -63,7 +63,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             $keywords       = explode(' ', trim($keywords));
             $keywords_str   = implode(' ', $keywords);
             $keywords_clean = implode('-', $keywords);
-            $displaykeywords = htmlspecialchars($keywords_str, ENT_COMPAT, 'UTF-8', false);
+            $displaykeywords = Jojo::htmlspecialchars($keywords_str);
 
             $booleanphrase = false;
 
@@ -80,7 +80,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
             $breadcrumb = array();
             $breadcrumb['name']     = ucfirst($displaykeywords);
             $breadcrumb['rollover'] = sprintf('Search Results for "%s"', $displaykeywords);
-            $breadcrumb['url']      = parent::getCorrectUrl() . htmlspecialchars($keywords_clean, ENT_COMPAT, 'UTF-8', false);
+            $breadcrumb['url']      = parent::getCorrectUrl() . Jojo::htmlspecialchars($keywords_clean);
             $breadcrumbs[]          = $breadcrumb;
 
             /* Set page title */
