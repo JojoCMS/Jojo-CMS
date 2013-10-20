@@ -2,7 +2,7 @@
 
 <div class="admin-home row">
 
-<div class="span6">
+<div class="col-md-6">
 
     {if !($browser->getBrowser() == 'mozilla' ||
                            $browser->hasFeature('issafari') ||
@@ -60,7 +60,7 @@
 
 </div>
 
-<div class="span5 offset1">
+<div class="col-md-5 offset1">
 
     <div class="admin-home-item-right">
         <h4>Edit Site Options</h4>

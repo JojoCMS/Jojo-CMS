@@ -567,6 +567,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
         $plugins_raw = Jojo::selectQuery("SELECT name FROM {plugin} WHERE active = 'yes' ORDER BY priority DESC, name");
 
+        $sysmenu['custom']['plugincount'] = count($plugins_raw);
         $sysmenu['custom']['plugins'] = array();
 
         foreach ($plugins_raw as $pl) {

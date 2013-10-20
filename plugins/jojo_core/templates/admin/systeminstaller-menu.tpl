@@ -7,7 +7,7 @@
             {if $sysmenu.custom.links}
                 <div class="si_section">
                     <h3>Links</h3>
-                    {foreach $sysmenu.custom.links item=l key=t implode=", "}<a href="{$l}">{$t}</a>{/foreach}
+                    {foreach from=$sysmenu.custom.links item=l key=t implode=", "}<a href="{$l}">{$t}</a><br />{/foreach}
                 </div>
             {/if}
 
@@ -20,16 +20,16 @@
             {if $sysmenu.custom.user.fields}
                 <div class="si_section">
                     <h3>This User</h3>
-                    {foreach $sysmenu.custom.user.fields item=f key=k}
+                    {foreach from=$sysmenu.custom.user.fields item=f key=k}
                         <div class="si_row"><span>{$k}:</span> &nbsp;{$userrecord.$f}</div>
                     {/foreach}
                 </div>
             {/if}
 
-            {foreach $sysmenu item=smenu key=sheading}{if $sheading !== "custom"}
+            {foreach from=$sysmenu item=smenu key=sheading}{if $sheading !== "custom"}
                 <div class="si_section">
                     <h3>{$sheading}</h3>
-                    {foreach $smenu item=v key=k}
+                    {foreach from=$smenu item=v key=k}
                         <div class="si_row"><span>{$k}:</span> &nbsp;{$v}</div>
                     {/foreach}
                 </div>
@@ -37,10 +37,10 @@
 
             <div class="si_section">
                 <h3 id="si_plugin_list_toggle" onclick="{literal}javascript:$('#si_plugin_list').slideToggle();{/literal}">
-                    Plugins ({count($sysmenu.custom.plugins)})
+                    Plugins ({$sysmenu.custom.plugincount})
                 </h3>
                 <div id="si_plugin_list" style="display:none">
-                    {foreach $sysmenu.custom.plugins item=pl}
+                    {foreach from=$sysmenu.custom.plugins item=pl}
                         {$pl}<br />
                     {/foreach}
                 </div>

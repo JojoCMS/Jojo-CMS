@@ -33,7 +33,7 @@ Export selected form's submissions as a CSV file<br />
             <td>{$e.from_email}</td>
             <td id="desc_{$e.formsubmissionid}">
             <span class="short">{$e.shortdesc}<a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').show();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><img src="images/cms/icons/add.png" alt="more..." /></a></span>
-            <span class="full" style="display:none">{$e.desc}<br /><a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').toggle();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><img src="images/cms/icons/less.png" alt="less..." /></a></span>
+            <span class="full" style="display:none;">{$e.desc}<br /><a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').toggle();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><img src="images/cms/icons/less.png" alt="less..." /></a></span>
             </td>
         </tr>
 {/foreach}
