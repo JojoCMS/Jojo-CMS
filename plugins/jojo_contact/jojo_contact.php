@@ -79,22 +79,18 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
 
+        $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
+        $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
 
-        if ($form['form_choice'] && $form['form_choice_list']) {
-            $sendto       =  $_POST['form_sendto'];
-            $formchoices = explode("\r\n", $form['form_choice_list']);
-            foreach ($formchoices as $to) {
-                $to = explode(',', $to);
-                $to_email =  trim(array_pop($to));
-                $to_name  =  str_replace('#', '', trim(implode(',', $to)));
-                if (Jojo::cleanURL($to_name)==$sendto) {
+        if ($form['form_choice'] && $form['form_choice_list'] && isset($_POST['form_sendto'])) {
+            $formchoices = Jojo::ta2kv($form['form_choice_list'], ',');
+            foreach ($formchoices as $k=>$v) {
+                if (Jojo::cleanURL($k)==$_POST['form_sendto']) {
+                    $to_email =  $v;
+                    $to_name  =  str_replace('#', '', $k);
                     break;
                 }
             }
-
-        } else {
-            $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
-            $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
         }
 
         foreach ($fields as &$field) {
@@ -147,10 +143,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                         //do we need to check anything?
                         break;
                     case 'integer':
-                        if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not an integer value';}
+                        if ( !is_numeric(str_replace(',', '', $field['value'])) ) {$errors[] = $field['display'] . ' is not an integer value';}
                         break;
                     case 'numeric':
-                        if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not an integer value';}
+                        if ( !is_numeric(str_replace(',', '', $field['value'])) ) {$errors[] = $field['display'] . ' is not a number';}
                         break;
                 }
             }
@@ -259,7 +255,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $smarty->assign('contactFrom_tracking_analytics', $formAnalytics);
 
                 /* send a confirmation to the enquirer */
-                if ($autoreply) {
+                if ($autoreply && $from_email!=$sender_email) {
                     Jojo::simpleMail($from_name, $from_email, $subject, $message, $to_name, $to_email, $replymessage);
                 }
 
