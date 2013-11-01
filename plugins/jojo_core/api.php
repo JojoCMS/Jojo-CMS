@@ -550,6 +550,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'pseudobreaks',
+    'category'    => 'HTML Editor',
+    'label'       => 'Convert // pseudo-breaks in headings etc to <br />',
+    'description' => 'if yes headings will be checked for //, converted for inline use and stripped for SEO titles',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'wysiwyg',
     'category'    => 'HTML Editor',
     'label'       => 'WYSIWYG Editor',
@@ -615,7 +625,7 @@ $_options[] = array(
     'label'       => 'File Upload Types',
     'description' => 'sets the allowed file link file types - comma separated list of file extensions',
     'type'        => 'text',
-    'default'     => 'jpg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls',
+    'default'     => 'jpg,jpeg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls',
     'options'     => '',
 );
 
