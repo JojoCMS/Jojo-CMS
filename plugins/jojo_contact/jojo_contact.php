@@ -127,7 +127,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
              }
 
             /* check value is set on required fields */
-            if ($field['required'] && empty($field['value'])) {
+            if ($field['required'] && empty($field['value']) && $field['value']!=='0') {
                 $errors[] = $field['display'] . ' is a required field';
             }
             if (!empty($field['value'])) {
@@ -143,10 +143,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                         //do we need to check anything?
                         break;
                     case 'integer':
-                        if ( !is_numeric(str_replace(',', '', $field['value'])) ) {$errors[] = $field['display'] . ' is not an integer value';}
+                        if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not an integer value';}
                         break;
                     case 'numeric':
-                        if ( !is_numeric(str_replace(',', '', $field['value'])) ) {$errors[] = $field['display'] . ' is not a number';}
+                        if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not a number';}
                         break;
                 }
             }
@@ -257,6 +257,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 /* send a confirmation to the enquirer */
                 if ($autoreply && $from_email!=$sender_email) {
                     Jojo::simpleMail($from_name, $from_email, $subject, $message, $to_name, $to_email, $replymessage);
+                }
+
+                /* send a copy to the main email as well the multi-choice one (if option is set) */
+               if ($form['form_choice'] && $form['form_choice_list'] && isset($_POST['form_sendto']) && isset($form['form_choice_cc']) && $form['form_choice_cc'] && $form['form_to'] && $to_email != $form['form_to']) {
+                    Jojo::simpleMail(Jojo::either(_FROMNAME, _WEBMASTERNAME), $form['form_to'], $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
                 }
 
                 /* send a copy to the webmaster */

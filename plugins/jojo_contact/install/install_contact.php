@@ -37,6 +37,7 @@ $query = "
         `form_choice` tinyint(1) NOT NULL default '0',
         `form_choice_list` text NOT NULL,
         `form_choice_multiple` tinyint(1) NOT NULL default '0',
+        `form_choice_cc` tinyint(1) NOT NULL default '0',
         `form_autoreply` tinyint(1) NOT NULL default '0',
         `form_autoreply_body` text NULL,
         `form_autoreply_bodycode` text NULL,

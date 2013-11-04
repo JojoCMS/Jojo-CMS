@@ -19,7 +19,7 @@
 {if $toaddresses}<div class="form-fieldset">
         <label for="form_sendto">##Send Enquiry To##<span class="required">*</span></label>
         <select name="form_sendto" id="form_sendto" class="required"{if $form_choice_multiple} multiple="multiple"{/if}>
-            {foreach item=to from=$toaddresses}<option value="{$to.email}">{$to.name}</option>
+            {foreach item=to from=$toaddresses key=k}<option value="{$to.email}"{if $k==0} selected="selected"{/if}>{$to.name}</option>
             {/foreach}
         </select>
     </div>
