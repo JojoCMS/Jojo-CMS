@@ -251,7 +251,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
 
                 /* success */
-                $response = $formSuccessMessage;
+                $responsemessage = $formSuccessMessage;
                 $smarty->assign('contactFrom_tracking_analytics', $formAnalytics);
 
                 /* send a confirmation to the enquirer */
@@ -278,7 +278,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $success = true;
 
             } else {
-                $response = 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.';
+                $responsemessage = 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.';
                 $success = false;
 
                 /* store a copy of the message in the database*/
@@ -294,16 +294,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 unset($log);
             }
         } else {
-            $response =  implode("<br />\n", $errors);
+            $responsemessage =  implode("<br />\n", $errors);
             $success = false;
             $smarty->assign('fields', $fields);
         }
-        $_SESSION['sendstatus'] = $response;
+        $_SESSION['sendstatus'] = $responsemessage;
         /* run success if we are successful hook */
         if ($success) {
             Jojo::runHook('contact_form_success', array($formID, $res));
         }
-        return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
+        return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$responsemessage, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 
     function _getContent()

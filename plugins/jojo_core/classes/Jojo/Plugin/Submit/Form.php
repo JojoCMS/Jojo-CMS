@@ -27,7 +27,7 @@ class Jojo_Plugin_Submit_Form extends Jojo_Plugin
     {
         $formID = isset($_POST['form_id']) ? $_POST['form_id'] : '';
         if ($formID) {
-            $_SESSION['sendstatus'] = Jojo_Plugin_Jojo_contact::sendEnquiry($formID);
+            $response = Jojo_Plugin_Jojo_contact::sendEnquiry($formID);
             $referring_page = $_SERVER['HTTP_REFERER'];
             header('location: ' .  $referring_page);
             exit();
