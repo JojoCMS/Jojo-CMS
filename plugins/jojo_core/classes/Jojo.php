@@ -2722,6 +2722,11 @@ class Jojo {
         return Text_Filter::filter($html, 'html2text');
     }
 
+    static function pseudobreaks($text, $remove=false)
+    {
+        return $remove ? str_replace('//', '', $text) : str_replace('//', '<br />', $text);
+    }
+
     /**
      * Compares the current host with the list of localhosts as defined in dev_domains list. Returns true if a match is found.
      */
@@ -3387,8 +3392,10 @@ class Jojo {
                 $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
             }
             /* Create title and label for display */
-            $n['title'] = htmlspecialchars(($n['pg_desc'] ? $n['pg_desc'] : ($n['pg_seotitle'] ? $n['pg_seotitle'] : $n['pg_title'])), ENT_COMPAT, 'UTF-8', false);
-            $n['label'] = htmlspecialchars(($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']), ENT_COMPAT, 'UTF-8', false);
+            $n['title'] = Jojo::htmlspecialchars($n['pg_desc'] ? $n['pg_desc'] : ($n['pg_seotitle'] ? $n['pg_seotitle'] : $n['pg_title']));
+            $n['title'] = Jojo::getOption('pseudobreaks', 'no')=='yes' ? Jojo::pseudobreaks($n['title'], 'remove') : $n['title'];
+            $n['label'] = Jojo::htmlspecialchars($n['pg_menutitle'] ? $n['pg_menutitle'] : $n['pg_title']);
+            $n['label'] = Jojo::getOption('pseudobreaks', 'no')=='yes' ? Jojo::pseudobreaks($n['label'], 'remove') : $n['label'];
             /* Add field for selectedPages tree */
             $n['selected'] = (boolean)($selectedPages && in_array($n['pageid'], $selectedPages));
             if ($subnavLevels) {

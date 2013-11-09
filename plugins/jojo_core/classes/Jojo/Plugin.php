@@ -78,11 +78,16 @@ class Jojo_Plugin {
     {
         global $smarty;
         $result = array();
-        $result['title']                = htmlspecialchars($this->page["pg_title"], ENT_COMPAT, 'UTF-8', false);
-        $result['menutitle']        =  htmlspecialchars(Jojo::either($this->page["pg_menutitle"],$this->page["pg_title"]), ENT_COMPAT, 'UTF-8', false);
-        $result['seotitle']           =  htmlspecialchars(Jojo::either($this->page["pg_seotitle"],$this->page["pg_title"]), ENT_COMPAT, 'UTF-8', false);
-        $result['desc']               = htmlspecialchars($this->page["pg_desc"], ENT_COMPAT, 'UTF-8', false);
-        $result['metadescription']  =  htmlspecialchars(Jojo::either($this->page["pg_metadesc"],$this->page["pg_desc"]), ENT_COMPAT, 'UTF-8', false);
+        $result['title']                = Jojo::htmlspecialchars($this->page["pg_title"]);
+        $result['menutitle']        =  Jojo::htmlspecialchars(Jojo::either($this->page["pg_menutitle"],$this->page["pg_title"]));
+        $result['seotitle']           =  Jojo::htmlspecialchars(Jojo::either($this->page["pg_seotitle"],$this->page["pg_title"]));
+        if (Jojo::getOption('pseudobreaks', 'no')=='yes') {
+            $result['title']                = Jojo::pseudobreaks($result['title']);
+            $result['menutitle']        =  Jojo::pseudobreaks($result['menutitle'], 'remove');
+            $result['seotitle']           =  Jojo::pseudobreaks($result['seotitle'], 'remove');
+        }
+        $result['desc']               = Jojo::htmlspecialchars($this->page["pg_desc"], ENT_COMPAT, 'UTF-8', false);
+        $result['metadescription']  =  Jojo::htmlspecialchars(Jojo::either($this->page["pg_metadesc"],$this->page["pg_desc"]));
         $result['metakeywords'] = '';
         $result['content']           = $this->page["pg_body"];
         $result['rssicon']            = array();

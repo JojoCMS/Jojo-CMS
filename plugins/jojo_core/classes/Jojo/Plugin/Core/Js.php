@@ -160,9 +160,12 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* Admin helpers */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/jpop.js');
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/tablesorter/jquery.tablesorter.min.js');
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.pack.js');
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/set.js');
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/set.js');
+                if (Jojo::getOption('wysiwyg_style')=='popup') {
+                    /* Include Markitup editor css if using popup editor*/
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.pack.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/set.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/set.js');
+                }
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
 
                 /* Respond: media-query polyfill for IE if responsive used */

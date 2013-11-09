@@ -79,22 +79,18 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
 
+        $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
+        $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
 
-        if ($form['form_choice'] && $form['form_choice_list']) {
-            $sendto       =  $_POST['form_sendto'];
-            $formchoices = explode("\r\n", $form['form_choice_list']);
-            foreach ($formchoices as $to) {
-                $to = explode(',', $to);
-                $to_email =  trim(array_pop($to));
-                $to_name  =  str_replace('#', '', trim(implode(',', $to)));
-                if (Jojo::cleanURL($to_name)==$sendto) {
+        if ($form['form_choice'] && $form['form_choice_list'] && isset($_POST['form_sendto'])) {
+            $formchoices = Jojo::ta2kv($form['form_choice_list'], ',');
+            foreach ($formchoices as $k=>$v) {
+                if (Jojo::cleanURL($k)==$_POST['form_sendto']) {
+                    $to_email =  $v;
+                    $to_name  =  str_replace('#', '', $k);
                     break;
                 }
             }
-
-        } else {
-            $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
-            $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
         }
 
         foreach ($fields as &$field) {
@@ -131,7 +127,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
              }
 
             /* check value is set on required fields */
-            if ($field['required'] && empty($field['value'])) {
+            if ($field['required'] && empty($field['value']) && $field['value']!=='0') {
                 $errors[] = $field['display'] . ' is a required field';
             }
             if (!empty($field['value'])) {
@@ -150,7 +146,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                         if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not an integer value';}
                         break;
                     case 'numeric':
-                        if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not an integer value';}
+                        if (!is_numeric($field['value'])) {$errors[] = $field['display'] . ' is not a number';}
                         break;
                 }
             }
@@ -255,12 +251,17 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
 
                 /* success */
-                $response = $formSuccessMessage;
+                $responsemessage = $formSuccessMessage;
                 $smarty->assign('contactFrom_tracking_analytics', $formAnalytics);
 
                 /* send a confirmation to the enquirer */
-                if ($autoreply) {
+                if ($autoreply && $from_email!=$sender_email) {
                     Jojo::simpleMail($from_name, $from_email, $subject, $message, $to_name, $to_email, $replymessage);
+                }
+
+                /* send a copy to the main email as well the multi-choice one (if option is set) */
+               if ($form['form_choice'] && $form['form_choice_list'] && isset($_POST['form_sendto']) && isset($form['form_choice_cc']) && $form['form_choice_cc'] && $form['form_to'] && $to_email != $form['form_to']) {
+                    Jojo::simpleMail(Jojo::either(_FROMNAME, _WEBMASTERNAME), $form['form_to'], $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
                 }
 
                 /* send a copy to the webmaster */
@@ -277,7 +278,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $success = true;
 
             } else {
-                $response = 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.';
+                $responsemessage = 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.';
                 $success = false;
 
                 /* store a copy of the message in the database*/
@@ -293,16 +294,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 unset($log);
             }
         } else {
-            $response =  implode("<br />\n", $errors);
+            $responsemessage =  implode("<br />\n", $errors);
             $success = false;
             $smarty->assign('fields', $fields);
         }
-        $_SESSION['sendstatus'] = $response;
+        $_SESSION['sendstatus'] = $responsemessage;
         /* run success if we are successful hook */
         if ($success) {
             Jojo::runHook('contact_form_success', array($formID, $res));
         }
-        return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$response, 'hideonsuccess'=>$form['form_hideonsuccess']);
+        return array('id'=>'form' . $formID, 'sent'=>$success, 'responsemessage'=>$responsemessage, 'hideonsuccess'=>$form['form_hideonsuccess']);
     }
 
     function _getContent()

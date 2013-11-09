@@ -16,12 +16,12 @@
 		-->
 	</script>
 <div>
-{if $toaddresses}<div class="form-fieldset">
-        <label for="form_sendto">##Send Enquiry To##<span class="required">*</span></label>
-        <select name="form_sendto" id="form_sendto" class="required"{if $form_choice_multiple} multiple="multiple"{/if}>
-            {foreach item=to from=$toaddresses}<option value="{$to.email}">{$to.name}</option>
+{if $toaddresses}<div class="form-fieldset control-group">
+        <label for="form_sendto" class="control-label">##Send Enquiry To##<span class="required">*</span></label>
+        <div class="form-field controls"><select name="form_sendto" id="form_sendto" class="required"{if $form_choice_multiple} multiple="multiple"{/if}>
+            {foreach item=to from=$toaddresses key=k}<option value="{$to.email}"{if $k==0} selected="selected"{/if}>{$to.name}</option>
             {/foreach}
-        </select>
+        </select></div>
     </div>
 {/if}
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}

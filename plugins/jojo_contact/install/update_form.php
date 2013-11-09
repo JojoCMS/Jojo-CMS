@@ -101,6 +101,18 @@ $default_fd['form']['form_choice_multiple'] = array(
         'fd_tabname' => "Details"
     );
 
+
+// Choice list CC
+$default_fd['form']['form_choice_cc'] = array(
+        'fd_name' => "CC Destination for Multiple ",
+        'fd_type' => "yesno",
+        'fd_required' => "no",
+        'fd_default' => "0",
+        'fd_help' => "Copy email to Destination Email as well as sending to the chosen multiple",
+        'fd_order' => $o++,
+        'fd_tabname' => "Details"
+    );
+
 // Destination
 $default_fd['form']['form_send'] = array(
         'fd_name' => "Send",
