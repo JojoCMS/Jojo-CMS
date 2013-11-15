@@ -36,8 +36,8 @@
     {/if}{if $commonhead && !$isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}{jojoAsset file="js/common.js"}"></script>
     {/if}{if $head}{$head}
     {/if}{if $isadmin}<script type="text/javascript" src="{cycle values=$NEXTASSET}{jojoAsset file="js/commonadmin.js"}"></script>
-    {else}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition == 'top'}
-    {include file="analytics.tpl"}
-    {/if}{/if}{if $customhead}
+    {else}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition == 'top'}{include file="analytics.tpl"}
+    {/if}{/if}{if $customhead} 
     {$customhead}
-    {/if}{jojoHook hook="customhead"}</head>
+    {/if}{jojoHook hook="customhead"}
+</head>

@@ -48,4 +48,5 @@
 {/if}
     /*]]>*/
     </script>{if $sent && $OPTIONS.contact_tracking_code}
-    {$OPTIONS.contact_tracking_code}{/if}
+    {$OPTIONS.contact_tracking_code}
+    {/if}
