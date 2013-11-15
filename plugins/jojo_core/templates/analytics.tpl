@@ -1,6 +1,14 @@
 <!-- [Google Analytics] -->
-{if $OPTIONS.analyticscodetype=='async'}    <script{if !$htmldoctype} type="text/javascript"{/if}>
+    <script{if !$htmldoctype} type="text/javascript"{/if}>
     /*<![CDATA[*/
+{if $OPTIONS.analyticscodetype=='universal'}{literal}
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');{/literal}
+  ga('create', '{$OPTIONS.analyticscode}', '{if $issecure}{$SITEURL|replace:"https://":""|replace:"www.":""}{else}{$SITEURL|replace:"http://":""|replace:"www.":""}{/if}');
+  ga('send', 'pageview');
+{elseif $OPTIONS.analyticscodetype=='async'}
     var _gaq = [];
     _gaq.push(['_setAccount', '{$OPTIONS.analyticscode}']{if $OPTIONS.crossdomainanalytics=="yes"}, ['_setDomainName', 'none'], ['_setAllowLinker', true]
     {/if}{if $sent and $contactFrom_tracking_analytics}, ['_trackPageview',"{$contactFrom_tracking_analytics}"]
@@ -12,11 +20,7 @@
         ga.src = '{if $issecure}https://ssl.{else}http://www.{/if}google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     {literal}}{/literal})();
-    /*]]>*/
-    </script>{if $OPTIONS.contact_tracking_code}
-    {$OPTIONS.contact_tracking_code}{/if}
-{else}{* old Google analytics code *}   <script type="text/javascript">
-    /*<![CDATA[*/
+{else}{* old Google analytics code *}
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
     /*]]>*/
@@ -41,7 +45,7 @@
        {$google_ecommerce}
     {/if}
     {literal}} catch(err) {}{/literal}
+{/if}
     /*]]>*/
     </script>{if $sent && $OPTIONS.contact_tracking_code}
     {$OPTIONS.contact_tracking_code}{/if}
-{/if}
