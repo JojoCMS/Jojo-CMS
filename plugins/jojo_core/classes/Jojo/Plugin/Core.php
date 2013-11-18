@@ -395,6 +395,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $colopen = '<div class="row-fluid"><div class="span' . $colspan . ' first"><div class="columncontent">';
             $colclose = '</div></div></div>';
             $colbreak = '</div></div><div class="span' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
+            $colbreak = Jojo::applyFilter("columns_breakformat", $colbreak);
 
             $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>','[[columns]]'), $colopen, $content) : $colopen . "\n" . $content;
             $content = strpos($content, '[[endcolumns]]') ? str_replace(array('<p>[[endcolumns]]</p>', '<p>[[endcolumns]] </p>', '<p>[[endcolumns]]&nbsp;</p>','[[endcolumns]]'), $colclose, $content) : $content . "\n" . $colclose;
