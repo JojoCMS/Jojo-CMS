@@ -96,6 +96,21 @@ class Jojo_Table {
                     $page = Jojo::selectRow("SELECT pg_title, pg_menutitle FROM {page} WHERE pageid = ? ", array($pageid));
                     $fieldvalues['DISPLAYFIELDVALUE'] = Jojo::either($page['pg_menutitle'], $page['pg_title']);
                 }
+            } elseif ($displayfieldtype == 'dblist') {
+                $id = isset($fieldvalues[$this->getOption('displayfield')]) ? $fieldvalues[$this->getOption('displayfield')] : '';
+                $tablename = $displayfielddata['fd_options'];
+                if ($id && $tablename) {
+                    $tableoptions = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ?", $tablename);
+                    $tableidfield         = $tableoptions['td_primarykey'];
+                    $tabledisplayfield    = Jojo::either($tableoptions['td_displayfield'], $tableoptions['td_primarykey']);
+                    $query = sprintf("SELECT %s AS display FROM {%s} WHERE %s",
+                            $tabledisplayfield,
+                            $tableoptions['td_name'],
+                            '`' . $tableidfield . '`' . '=' . $id
+                        );
+                    $item = Jojo::selectRow($query);
+                    $fieldvalues['DISPLAYFIELDVALUE'] = $item['display'];
+                }
             }
         }
         /* Set all the fields to their values */
@@ -491,6 +506,23 @@ class Jojo_Table {
                     $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_menutitle, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
                     foreach ($records as &$r) {
                         $r['display'] = isset($displaytitles[$r['display']]['pg_title']) ? ($displaytitles[$r['display']]['pg_menutitle'] ? $displaytitles[$r['display']]['pg_menutitle'] : $displaytitles[$r['display']]['pg_title']) . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['display']]['pg_language'] . ')' : '') : 'page missing';
+                    }
+                } elseif ($displayfieldtype == 'dblist') {
+                    $tablename = $displayfielddata['fd_options'];
+                    if ($tablename) {
+                        $tableoptions = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ?", $tablename);
+                        $tableidfield         = $tableoptions['td_primarykey'];
+                        $tabledisplayfield    = Jojo::either($tableoptions['td_displayfield'], $tableoptions['td_primarykey']);
+                        $query = sprintf("SELECT %s AS id, %s, %s AS display FROM {%s}",
+                                $tableidfield,
+                                $tableidfield,
+                                $tabledisplayfield,
+                                $tableoptions['td_name']
+                            );
+                        $displaytitles = Jojo::selectAssoc($query);
+                        foreach ($records as &$r) {
+                            $r['display'] = isset($displaytitles[$r['display']]['display']) ? $displaytitles[$r['display']]['display'] : $r['display'];
+                        }
                     }
                 }
             }
