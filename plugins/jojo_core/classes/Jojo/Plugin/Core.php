@@ -335,6 +335,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         foreach($matches[1] as $k => $search) {
             $snippet = Jojo::selectRow("SELECT snippet FROM {snippet} WHERE " . ( is_numeric($search) ? "snippetid = '$search'" : " name = '$search'"));
             if ($snippet) {
+                $snippet['snippet'] = Jojo::applyFilter('content', $snippet['snippet']);
                 $content = str_replace($matches[0][$k], $snippet['snippet'], $content);
             } else {
                 $content = str_replace($matches[0][$k], '', $content);
@@ -342,7 +343,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         }
         /* Allow for recursive snippeting */
         $content = self::getSnippet($content);
-
+        $content = Jojo::applyFilter('output', $content);
          return $content;
     }
 
