@@ -71,7 +71,7 @@ class Jojo_Field_texteditor extends Jojo_Field
             $editortype = $result[1];
             $this->value = $result[2];
         } else {
-            $editortype = 'bb';
+            $editortype = 'wysiwyg';
         }
 
         $smarty->assign('rows', $this->rows);

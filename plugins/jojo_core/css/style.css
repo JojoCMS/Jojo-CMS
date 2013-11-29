@@ -4,6 +4,7 @@
 
 .hidden {
   display: none;
+  visibility: inherit;
 }
 
 .clear {
