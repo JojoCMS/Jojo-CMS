@@ -7,11 +7,11 @@
 <script type="text/javascript">
 		<!--
 		function triggerAnalyticsEventTracking(){literal}{{/literal}
-			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{$pg_url}']);
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{if $pg_url}{$pg_url}{/if}']);
 		{literal}}{/literal}
 		
 		function fieldsettriggeranalyticstracking($fieldsettitle){literal}{{/literal}
-			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{$pg_url}']);
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{if $pg_url}{$pg_url}{/if}']);
 		{literal}}{/literal} 
 		-->
 	</script>
