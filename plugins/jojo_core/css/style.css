@@ -1,6 +1,4 @@
-[class^="icon-"], [class*=" icon-"] {
-    background-image: url("../external/bootstrap/img/glyphicons-halflings.png");
-}
+@icon-font-path: '../external/bootstrap/fonts/';
 
 .hidden {
   display: none;
