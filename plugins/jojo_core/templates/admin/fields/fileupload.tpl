@@ -1,4 +1,4 @@
-<div class="col-md-6">
+<div class="col-md-7">
 <span title="{$filesize}"><a href="{_SITEURL}/downloads/{$fd_table}s/{value}" target="_BLANK">
 <img src="{$filelogo}" border="0" align="absmiddle"> {$value} </a></span><br>
 
