@@ -27,11 +27,11 @@
         <input type="hidden" name="prefix" id="prefix" value="{$prefix}" />
 
         <div id="buttons" class="btn-group">
-            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn btn-default btn-sm" title="Add new {$displayname}" />{/if}
-            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn btn-default btn-sm" title="Save the changes to this {$displayname}" />
-            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn btn-default btn-sm" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
-            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default btn-sm" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
-            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default btn-sm" title="Add a new {$displayname} underneath this one" />{/if}
+            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn btn-default" title="Add new {$displayname}" />{/if}
+            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn btn-default" title="Save the changes to this {$displayname}" />
+            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn btn-default" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
+            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
+            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default" title="Add a new {$displayname} underneath this one" />{/if}
         </div><!-- [end buttons] -->
 
         {if $numtabs > 1}

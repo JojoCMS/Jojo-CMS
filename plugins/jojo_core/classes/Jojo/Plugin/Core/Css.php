@@ -88,6 +88,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* start with the variable files */
                 if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                 foreach (Jojo::listThemes('css/variables.less') as $themefile) {
                     $variableFound = $css->addFile($themefile);
                 }
@@ -119,6 +120,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Forms file */
                 if (Jojo::getOption('tbootstrap_bass_forms', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/forms.less');
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/input-groups.less');
                 /* Buttons file */
                 if (Jojo::getOption('tbootstrap_bass_buttons', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/buttons.less');
@@ -281,8 +283,9 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 }
                 /* start with the variable files */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
-                /* mixins files */
+                /* mixins and utilities files */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/mixins.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                 /* Body type and links file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/scaffolding.less');
                 /* Grid System file */
@@ -298,6 +301,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tables.less');
                 /* Forms file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/forms.less');
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/input-groups.less');
                 /* Buttons file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/buttons.less');
                 /* Icons file */

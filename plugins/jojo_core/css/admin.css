@@ -363,7 +363,7 @@ input.jojo-admin-edit-cancel {
 }
 
 input.date {
-  background: url('../images/cms/icons/calendar_view_day.png') no-repeat top right;
+  background: url('../images/cms/icons/calendar_view_day.png') no-repeat right 4px;
 }
 
 #help-text {
@@ -513,6 +513,14 @@ table.sortabletable thead tr .headerSortDown, table.sortabletable thead tr .head
 background-color: lighten(@primary, 50%);
 }
 
-.tab-pane {
-    padding: 20px 10px;
+.tab-content {
+    padding: 20px 5px;
 }
+
+span.order img {
+    display: block;
+}
+span.input-group-addon.order {
+    padding: 4px 12px;
+}
+

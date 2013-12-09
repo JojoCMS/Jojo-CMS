@@ -186,9 +186,9 @@ function setTextEditorContent(id) {
 
 // function parameters are: field - the string field, count - the field for remaining characters number and max - the maximum number of characters
 function countDown(fieldid, countid, max) {
-  field = document.getElementById(fieldid);
-  count = document.getElementById(countid);
-  count.value = max - field.value.length;
+  var field = $('#' + fieldid);
+  var count = $('#' + countid);
+  count.html(max - field.val().length);
 }
 
 /* things to do after document has loaded */
