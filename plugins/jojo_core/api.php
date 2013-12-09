@@ -1291,10 +1291,10 @@ $_options[] = array(
     'id'          => 'analyticscodetype',
     'category'    => 'Google Analytics',
     'label'       => 'Analytics Code Type',
-    'description' => 'The type of Google analytics code - new asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored.',
+    'description' => 'The type of Google analytics code - universal, asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored. Google will move all properties to Universal eventually. Universal should not be used until the account has been switched.',
     'type'        => 'radio',
     'default'     => 'ga',
-    'options'     => 'async,ga',
+    'options'     => 'universal,async,ga',
 );
 
 $_options[] = array(

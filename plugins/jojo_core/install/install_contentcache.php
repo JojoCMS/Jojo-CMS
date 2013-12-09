@@ -23,7 +23,7 @@ $query = "
     CREATE TABLE {contentcache} (
       `cc_url` varchar(255) NOT NULL default '',
       `cc_userid` int(11) NOT NULL default '0',
-      `cc_content` text NOT NULL,
+      `cc_content` longtext NOT NULL,
       `cc_cached` int(11) NOT NULL default '0',
       `cc_expires` int(11) NOT NULL default '0',
       PRIMARY KEY  (`cc_url`,`cc_userid`)

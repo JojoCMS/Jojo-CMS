@@ -168,9 +168,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 }
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
 
-                /* Respond: media-query polyfill for IE if responsive used */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/respond/respond.src.js');
-
                 /* Twitter Bootstrap options */
                 /* Transitions */
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/transition.js');

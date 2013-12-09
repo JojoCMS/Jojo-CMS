@@ -86,7 +86,7 @@ class Jojo_Plugin {
             $result['menutitle']        =  Jojo::pseudobreaks($result['menutitle'], 'remove');
             $result['seotitle']           =  Jojo::pseudobreaks($result['seotitle'], 'remove');
         }
-        $result['desc']               = Jojo::htmlspecialchars($this->page["pg_desc"], ENT_COMPAT, 'UTF-8', false);
+        $result['desc']               = Jojo::htmlspecialchars($this->page["pg_desc"]);
         $result['metadescription']  =  Jojo::htmlspecialchars(Jojo::either($this->page["pg_metadesc"],$this->page["pg_desc"]));
         $result['metakeywords'] = '';
         $result['content']           = $this->page["pg_body"];
