@@ -92,10 +92,10 @@ class Jojo_Field_fileupload extends Jojo_Field
             }
         }
 
-        $class = ($this->error != "") ? ' class="error"' : '';
+        $class = ($this->error != "") ? 'error' : '';
         $retval .= '<input type="hidden" name="fm_'.$this->fd_field."\" value=\"".$this->value."\" /><input type=\"hidden\" name=\"fm_".$this->fd_field."_delete\" value=\"\" />";
         $retval .= '<div style="color: #999">'.$this->value.'</div>';
-        $retval .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->fd_maxvalue.'" />'."\n".'<input'.$class.' type="file" name="fm_FILE_'.$this->fd_field.'" id="fm_FILE_'.$this->fd_field.'"  size="'.$this->fd_size.'" value=""'.$readonly.' onchange="fullsave=true;" title="'.htmlentities($this->fd_help).'" />';
+        $retval .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->fd_maxvalue.'" />'."\n".'<input class="form-control ' . $class . '" type="file" name="fm_FILE_'.$this->fd_field.'" id="fm_FILE_'.$this->fd_field.'"  size="'.$this->fd_size.'" value=""'.$readonly.' onchange="fullsave=true;" title="'.htmlentities($this->fd_help).'" />';
         $cropval = ($crop_x && $crop_y) ? $crop_x .','. $crop_y : '';
         $retval .= '<input type="hidden" name="fm_crop_'.$this->fd_field.'" id="fm_crop_'.$this->fd_field.'" value="'.$cropval.'" />';
         $retval .= '<script type="text/javascript">var crop=$(\'#fm_crop_'.$this->fd_field.'\').val().split(\',\'); if (crop.length==2){$(\'#crop_canvas_'.$this->fd_field.'\').append(\'<div class="crop_point" style="margin:\'+(Math.round(crop[1]*'.($thumb_h/100).') - 25)+\'px 0 0 \'+(Math.round(crop[0]*'.($thumb_w/100).') - 25)+\'px;"></div>\');} $(\'#crop_canvas_'.$this->fd_field.'\').mousedown(function(event){$(\'#crop_canvas_'.$this->fd_field.'\').children(\'.crop_point\').remove();$(\'#crop_canvas_'.$this->fd_field.'\').append(\'<div class="crop_point" style="margin:\'+(event.pageY - this.offsetTop - 25)+\'px 0 0 \'+(event.pageX - this.offsetLeft - 25)+\'px;"></div>\');$(\'#fm_crop_'.$this->fd_field.'\').val( Math.round((event.pageX - this.offsetLeft)/'.($thumb_w/100).')+\',\'+Math.round((event.pageY - this.offsetTop)/'.($thumb_h/100).'));return false;});</script>';
@@ -138,7 +138,7 @@ class Jojo_Field_fileupload extends Jojo_Field
             }
         }
 
-        if ($this->error != '') {$class = ' class="error"';}
+        if ($this->error != '') {$class = ' error';}
 
         return $retval;
     }
