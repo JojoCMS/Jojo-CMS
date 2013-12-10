@@ -37,55 +37,54 @@
 {/literal}
 <p><b>Permissions for this Record</b> (these override the inherited permissions)</p>
 <table class="table table-bordered">
-<tr>
-<td style="width:120px">&nbsp;</td>
+    <tr>
+        <td>&nbsp;</td>
         {foreach from=$_permOptions key=perm item=name}
             <th style="text-align: center;">{$name}</th>
         {/foreach}
-</tr>
+    </tr>
+<!-- Output permissions for each group  -->
+{if $readonly !="yes"}{foreach from=$groups key=group item=groupname}
+    <tr>
+        <td>{$groupname}</td>
+    {foreach from=$_permOptions key=perm item=name}
+        <td style="text-align: center;">
+    {if isset($perms[$group]) && isset($perms[$group][$perm])}
+            <img src="images/cms/{if $perms[$group][$perm]}yes_active.gif{else}no_active.gif{/if}" alt="{if $perms[$group][$perm]}Yes{else}No{/if}" title="{if $perms[$group][$perm]}Yes{else}No{/if}" id="img_{$group}.{$perm}" onclick="togglePerm('{$group}.{$perm}','');" />
+            <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="{if $perms[$group][$perm]}Y{else}N{/if}" />
+    {elseif isset($defaultperms[$group]) && isset($defaultperms[$group][$perm])}
+            <img src="images/cms/{if $defaultperms[$group][$perm]}yes_grey.gif{else}no_grey.gif{/if}"
+            alt="{if $defaultperms[$group][$perm]}Yes{else}No{/if}"
+            title="{if $defaultperms[$group][$perm]}Yes{else}No{/if}"
+            id="img_{$group}.{$perm}"
+            onclick="togglePerm('{$group}.{$perm}','{if $defaultperms[$group][$perm]}Y{else}N{/if}');" />
+            <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="I" />
+    {else}
+            <img src="images/cms/no_grey.gif" alt="No" title="No" id="img_{$group}.{$perm}" onclick="togglePerm('{$group}.{$perm}','');" />
+            <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="I" />
+    {/if}
+        </td>
+    {/foreach}
+    </tr>
+{/foreach}
+</table>
+<em>The greyed-out values indicate the permissions are being inherited from a parent object</em>
 
-        <!-- Output permissions for each group  -->
-        {if $readonly !="yes"}
-            {foreach from=$groups key=group item=groupname}
-                <tr><td>{$groupname}</td>
-                {foreach from=$_permOptions key=perm item=name}
-                    <td style="text-align: center;">
-                    {if isset($perms[$group]) && isset($perms[$group][$perm])}
-                        <img src="images/cms/{if $perms[$group][$perm]}yes_active.gif{else}no_active.gif{/if}" alt="{if $perms[$group][$perm]}Yes{else}No{/if}" title="{if $perms[$group][$perm]}Yes{else}No{/if}" id="img_{$group}.{$perm}" onclick="togglePerm('{$group}.{$perm}','');" />
-                        <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="{if $perms[$group][$perm]}Y{else}N{/if}" />
-                    {elseif isset($defaultperms[$group]) && isset($defaultperms[$group][$perm])}
-                        <img src="images/cms/{if $defaultperms[$group][$perm]}yes_grey.gif{else}no_grey.gif{/if}"
-                        alt="{if $defaultperms[$group][$perm]}Yes{else}No{/if}"
-                        title="{if $defaultperms[$group][$perm]}Yes{else}No{/if}"
-                        id="img_{$group}.{$perm}"
-                        onclick="togglePerm('{$group}.{$perm}','{if $defaultperms[$group][$perm]}Y{else}N{/if}');" />
-                        <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="I" />
-                    {else}
-                        <img src="images/cms/no_grey.gif" alt="No" title="No" id="img_{$group}.{$perm}" onclick="togglePerm('{$group}.{$perm}','');" />
-                        <input type="hidden" name="fm_{$fd_field}[{$group}.{$perm}]" id="fm_{$fd_field}_{$group}.{$perm}_" value="I" />
-                    {/if}
-                    </td>
-                {/foreach}
-                </tr>
-
-            {/foreach}
-            </table>
-            <em>The greyed-out values indicate the permissions are being inherited from a parent object</em>
-         {else}
-            {foreach from=$groups key=group item=groupname}
-                <tr><td style="border: 1px solid black">{$groupname}</td>
-                {foreach from=$_permOptions key=perm item=name}
-                    {if isset($perms[$group]) && isset($perms[$group][$perm])}
-                        <td style="text-align: center;">
-                            <img src="images/cms/{if $perms[$group][$perm]}yes_grey.gif{else}no_grey.gif{/if}" alt="{if $perms[$group][$perm]}Yes{else}No{/if}" title="{if $perms[$group][$perm]}Yes{else}No{/if}" />
-                        </td>
-                    {else}
-                        <td style="text-align: center;">
-                            <img src="images/cms/inherit_grey.gif" alt="Inherited" title="Inherited" />
-                        </td>
-                    {/if}
-                {/foreach}
-               </tr>
-            {/foreach}
-            </table>
-        {/if}
+{else}{foreach from=$groups key=group item=groupname}
+    <tr>
+        <td style="border: 1px solid black">{$groupname}</td>
+    {foreach from=$_permOptions key=perm item=name}
+    {if isset($perms[$group]) && isset($perms[$group][$perm])}
+        <td style="text-align: center;">
+            <img src="images/cms/{if $perms[$group][$perm]}yes_grey.gif{else}no_grey.gif{/if}" alt="{if $perms[$group][$perm]}Yes{else}No{/if}" title="{if $perms[$group][$perm]}Yes{else}No{/if}" />
+        </td>
+    {else}
+        <td style="text-align: center;">
+            <img src="images/cms/inherit_grey.gif" alt="Inherited" title="Inherited" />
+        </td>
+    {/if}
+    {/foreach}
+   </tr>
+{/foreach}
+</table>
+{/if}

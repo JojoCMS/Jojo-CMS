@@ -116,13 +116,13 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
         $frajax->script('parent.$("#message").hide();');
         $frajax->assign("h1", "innerHTML", 'Save Error');
         foreach ($errors as $k=>$e) {
-            $frajax->script('parent.$("#row_' . $k . '").addClass("error");');
+            $frajax->script('parent.$("#row_' . $k . '").addClass("has-error");');
         }
         exit();
     } else {
         /* Save record */
         $frajax->assign("h1", "innerHTML", 'Saving...');
-        $frajax->script('parent.$(".control-group").removeClass("error");');
+        $frajax->script('parent.$(".form-group").removeClass("has-error");');
 
         $res = $table->saveRecord();
         if ($res !== false) {
@@ -196,7 +196,7 @@ if (Jojo::getPost('btn_addsimilar', false)) {
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>Please change the ' . $table->getOption('displayname') . ' fields as appropriate and press save to create a new ' . $table->getOption('displayname') . '.").fadeIn();');
     $frajax->assign("h1", "innerHTML", 'Copy of ' . $table->getOption('displayvalue'));
-    $frajax->script('parent.$(".control-group").removeClass("error");');
+    $frajax->script('parent.$(".form-group").removeClass("has-error");');
 
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();
@@ -254,7 +254,7 @@ if (Jojo::getPost('btn_addchild', false)) {
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn();');
     $frajax->assign("h1", "innerHTML", 'New Child');
-    $frajax->script('parent.$(".control-group").removeClass("error");');
+    $frajax->script('parent.$(".form-group").removeClass("has-error");');
 
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();

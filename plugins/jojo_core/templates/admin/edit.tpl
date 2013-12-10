@@ -20,7 +20,7 @@
 <!-- [Fields] -->
 <div id="fields-wrap" class="col-md-8">
     <div id="message" class="alert alert-block alert-info"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
-    <div id="error" style="display:none;" class="alert alert-block alert-error">{if $error}{$error}{/if}</div>
+    <div id="error" style="display:none;" class="alert alert-block alert-danger">{if $error}{$error}{/if}</div>
     <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe" class="form-horizontal">
         <!-- [Hidden field with ID here] -->
         <input type="hidden" name="id" id="id" value="{$currentrecord|replace:" ":"-"}" />
@@ -50,16 +50,17 @@
           
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
-                <div id="row_{$fieldname}" class="form-group{if $field.error} error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
-                
-                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="col-md-2">{$field.name}:</label>{/if}
-                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}"{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="col-md-10"{/if}>
+                <div id="row_{$fieldname}" class="form-group{if $field.error} has-error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
+                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="col-md-2">{if $field.required=="yes"}<i class="input-append glyphicon glyphicon-exclamation-sign"></i> {/if}{$field.name}:</label>{/if}
+                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}"{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="col-md-8"{/if}>
                         {$field.html}
-                        {if $field.error}<img src="images/cms/icons/error.png" border="0" alt="Error: {$field.error}"  title="Error: {$field.error}" />{/if}
-                        {if $field.required=="yes"}<i class="input-append icon-exclamation-sign"></i>{/if}
-                        {if $field.flags.PRIVACY}&nbsp;&nbsp;<input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label class="checkbox inline note"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>{/if}
                     </div>
-
+                    {if $field.flags.PRIVACY}<div class="col-md-2">
+                        <div class="checkbox">
+                            <input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label for="privacy_{$fieldname}"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>
+                        </div>
+                    </div>
+                    {/if}
                 </div>
             {/if}
             {/foreach}

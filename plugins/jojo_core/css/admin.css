@@ -524,3 +524,8 @@ span.input-group-addon.order {
     padding: 4px 12px;
 }
 
+.AnyTime-win, .AnyTime-win * {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}

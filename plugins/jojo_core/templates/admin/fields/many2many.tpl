@@ -1,3 +1,4 @@
+<div class="col-md-12">
 {if $readonly}
     <p>{count($selections)} linked</p>
     <ul class="unstyled">
@@ -12,3 +13,4 @@
             {include file="admin/fields/many2many.tpl" parent=$r.id indent="$indent&nbsp;&nbsp;&nbsp;&nbsp;"}
     {/if}{/foreach}
 {/if}
+</div>
