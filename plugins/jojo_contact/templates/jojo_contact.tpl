@@ -7,11 +7,11 @@
 <script type="text/javascript">
 		<!--
 		function triggerAnalyticsEventTracking(){literal}{{/literal}
-			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{if $pg_url}{$pg_url}{/if}']);
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{$pg_url}']);
 		{literal}}{/literal}
 		
 		function fieldsettriggeranalyticstracking($fieldsettitle){literal}{{/literal}
-			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{if $pg_url}{$pg_url}{/if}']);
+			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{$pg_url}']);
 		{literal}}{/literal} 
 		-->
 	</script>
@@ -47,7 +47,7 @@
             {/foreach}
         </select>
     {elseif $f.type =='heading'}<h{if in_array($f.size, array(1,2,3,4,5,6))}{$f.size}{else}3{/if}{if $f.class} class="{$f.class}"{/if}>{if $f.value}{$f.value}{else}{$f.display}{/if}</h{if in_array($f.size, array(1,2,3,4,5,6))}{$f.size}{else}3{/if}>
-    {elseif $f.type=='note'}<p class="{if $f.class} {$f.class}{/if}">{if $f.value}{$f.value}{else}{$f.display}{/if}</p>
+    {elseif $f.type=='note'}<p class="{if $f.class}{$f.class}{/if}">{if $f.value}{$f.value}{else}{$f.display}{/if}</p>
     {elseif $f.type=='upload' || $f.type=='privateupload'}<input type="file" class="form-control input fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />
     {elseif $f.type=='emailwithconfirmation'}<input type="text" class="form-control input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value=""{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />
     {elseif $f.type=='date'}<input type="{if $anytime}text{else}date{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} /><a class="cleardata" title="clear field" onclick="$('#{$f.field}').val('');return false;">x</a>
@@ -78,7 +78,7 @@
         </div>
     {/if}
         <div class="form-group submit">
-            {if $form.form_submit_label}<label class="control-label">&nbsp;</label>{/if}<input type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="button btn" data-normalval="{$form.form_submit}" onmouseover="this.className='button btn buttonrollover';" onmouseout="this.className='button btn'" /><br />
+            {if $form.form_submit_label}<label class="control-label"></label>{/if}<input type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="btn btn-primary" data-normalval="{$form.form_submit}" /><br />
        </div>
         <div class="progress" style="display: none;">
             <div class="bar"></div >

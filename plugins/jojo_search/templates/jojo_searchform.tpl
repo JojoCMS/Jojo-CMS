@@ -1,6 +1,8 @@
-    <form class="search" method="post" action="{$SITEURL}/search/">
-    <label for="q"{if !$searchformlabel} style="display:none">Search{else}>{$searchformlabel}{/if}</label>
-    <input type="text" class="q" name="q" value="{if $keywords}{$keywords}{elseif $searchformdefault}Search{/if}" />
-    <input type="hidden" class="l" name="l" value="en" style="display:none" />
-    <a href='#' onclick="$(this).parents('.search').submit();return false;">{$searchformsubmit}</a><input type="submit" name="submitbutton" value="submit" style="display:none" />
+    <form class="search form-inline" method="post" action="{$SITEURL}/search/">
+        <input type="hidden" class="l" name="l" value="en" />
+        <div class="form-group">
+            <label for="q" class="control-label{if !$searchformlabel} sr-only{/if}">{$searchformlabel}</label>
+            <input type="text" class="form-control input-sm" name="q" value="{if $keywords}{$keywords}{elseif $searchformdefault}Search{/if}" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm" name="submitbutton">{$searchformsubmit}</button>
     </form>

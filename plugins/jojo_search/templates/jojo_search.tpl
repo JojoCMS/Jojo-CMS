@@ -1,22 +1,28 @@
 <div id="searchresults">
-<form name="search1" action="{$searchurl}" method="post">
-    <input name="q" type="text" value="{if $keywords}{$keywords}{/if}" size="29" />
-    <select name="type" style="font-size: 90%">
-        <option value="" {if $searchtype == ''}selected="selected"{/if}>any</option>
-        <option value="all" {if $searchtype == 'all'}selected="selected"{/if}>all</option>
-        <option value="phrase" {if $searchtype == 'phrase'}selected="selected"{/if}>exact</option>
-    </select>
+<form name="search1" action="{$searchurl}" method="post" role="form" class="form-inline">
+    <div class="form-group">
+        <label class="sr-only" for="q">Search Query</label>
+        <input class="form-control" name="q" type="text" value="{if $keywords}{$keywords}{/if}" size="29" />
+    </div>
+    <div class="form-group">
+        <select class="form-control" name="type" style="font-size: 90%">
+            <option value="" {if $searchtype == ''}selected="selected"{/if}>any</option>
+            <option value="all" {if $searchtype == 'all'}selected="selected"{/if}>all</option>
+            <option value="phrase" {if $searchtype == 'phrase'}selected="selected"{/if}>exact</option>
+        </select>
+    </div>
 {if $MULTILANGUAGE && (count($languages)>1)}
-    <select name="l" style="font-size: 90%">
-        <option value=""{if $language == ''} selected="selected"{/if}>All Languages</option>
-{foreach from=$languages key=code item=name}
-        <option value="{$code}"{if $language == $code} selected="selected"{/if}>{$name|escape:"html":$charset}</option>
-{/foreach}
-    </select>
+    <div class="form-group">
+        <select class="form-control" name="l" style="font-size: 90%">
+            <option value=""{if $language == ''} selected="selected"{/if}>All Languages</option>
+    {foreach from=$languages key=code item=name}
+            <option value="{$code}"{if $language == $code} selected="selected"{/if}>{$name|escape:"html":$charset}</option>
+    {/foreach}
+        </select>
+    </div>
 {/if}
-    <input class="btn btn-default" type="submit" value="Search" />
+    <button class="btn btn-primary" type="submit" />Search</button>
 </form>
-<br/>
 
 {if $results}
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance">Relevance</div>{/if}
@@ -37,21 +43,29 @@
     </div>
   </div>
 {/foreach}
-<form name="search2" action="{$searchurl}" method="post">
-    <input type="text" name="q" value="{if $keywords}{$keywords}{/if}" size="29" />
-    <select name="type" style="font-size: 90%">
-        <option value=""{if $searchtype == ''} selected="selected"{/if}>any</option>
-        <option value="all"{if $searchtype == 'all'} selected="selected"{/if}>all</option>
-        <option value="phrase"{if $searchtype == 'phrase'} selected="selected"{/if}>exact</option>
-    </select>
+<form name="search2" action="{$searchurl}" method="post" role="form" class="form-inline">
+    <div class="form-group">
+        <label class="sr-only" for="q">Search Query</label>
+        <input class="form-control" name="q" type="text" value="{if $keywords}{$keywords}{/if}" size="29" />
+    </div>
+    <div class="form-group">
+        <select class="form-control" name="type" style="font-size: 90%">
+            <option value="" {if $searchtype == ''}selected="selected"{/if}>any</option>
+            <option value="all" {if $searchtype == 'all'}selected="selected"{/if}>all</option>
+            <option value="phrase" {if $searchtype == 'phrase'}selected="selected"{/if}>exact</option>
+        </select>
+    </div>
 {if $MULTILANGUAGE && (count($languages)>1)}
-    <select name="l">
-        <option value=""{if $language == ''} selected="selected"{/if}>All Languages</option>
-        {foreach from=$languages key=code item=name}<option value="{$code}"{if $language == $code} selected="selected"{/if}>{$name|escape:"html":$charset}</option>
-        {/foreach}
-    </select>
+    <div class="form-group">
+        <select class="form-control" name="l" style="font-size: 90%">
+            <option value=""{if $language == ''} selected="selected"{/if}>All Languages</option>
+    {foreach from=$languages key=code item=name}
+            <option value="{$code}"{if $language == $code} selected="selected"{/if}>{$name|escape:"html":$charset}</option>
+    {/foreach}
+        </select>
+    </div>
 {/if}
-    <input class="btn btn-default" type="submit" value="Search" />
+    <button class="btn btn-primary" type="submit" />Search</button>
 </form>
 
 <script type="text/javascript">

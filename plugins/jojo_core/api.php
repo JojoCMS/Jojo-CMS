@@ -491,9 +491,9 @@ $_options[] = array(
     'id'          => 'breadcrumbs_sep',
     'category'    => 'Navigation',
     'label'       => 'Breadcrumb separation character',
-    'description' => '',
+    'description' => 'Default is to use Bootstrap styling which includes its own separator. Include a custom separator here if needed',
     'type'        => 'text',
-    'default'     => '>',
+    'default'     => '',
     'options'     => ''
 );
 
