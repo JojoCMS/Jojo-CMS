@@ -119,6 +119,10 @@ div.clear {
   clear: both;
 }
 
+.note {
+    font-size: 80%;
+}
+
 /* Buttons */
 
 .hide {
