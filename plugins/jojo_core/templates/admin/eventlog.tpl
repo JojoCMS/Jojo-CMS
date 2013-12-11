@@ -1,6 +1,6 @@
 {include file="admin/header.tpl"}
 <div id="event-log">
-<p><a href="#" class="btn" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</a><a href="#" class="btn" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</a></p>
+<p><button class="btn btn-default btn-sm" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</button><button class="btn btn-default btn-sm" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</button></p>
 <table class="table">
     <thead>
         <tr>

@@ -44,8 +44,8 @@
   </div>
 {/foreach}
 <form name="search2" action="{$searchurl}" method="post" role="form" class="form-inline">
+    <label class="sr-only" for="q">Search Query</label>
     <div class="form-group">
-        <label class="sr-only" for="q">Search Query</label>
         <input class="form-control" name="q" type="text" value="{if $keywords}{$keywords}{/if}" size="29" />
     </div>
     <div class="form-group">

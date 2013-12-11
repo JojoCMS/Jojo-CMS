@@ -4,9 +4,9 @@
 <div id="article"{if $jojo_article.ar_featured} class="featured"{/if}>
     <div id="article-toplinks">
         <ul class="pagination">
-            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">&laquo;</a></li>
-            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">##Previous##</a></li>{/if}
-            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">##Next##</a></li>{/if}
+            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">##Home##</a></li>
+            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo;</a></li>{/if}
+            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">&raquo;</a></li>{/if}
         </ul>
     </div>
     {if $jojo_article.showdate}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
@@ -39,9 +39,9 @@
 {if $commenthtml}{$commenthtml}{/if}
     <div id="article-bottomlinks">
         <ul class="pagination">
-            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">&laquo;</a></li>
-            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">##Previous##</a></li>{/if}
-            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">##Next##</a></li>{/if}
+            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">##Home##</a></li>
+            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo;</a></li>{/if}
+            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">&raquo;</a></li>{/if}
         </ul>
     </div>
 
