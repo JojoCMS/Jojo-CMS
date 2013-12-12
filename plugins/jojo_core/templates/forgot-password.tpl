@@ -22,10 +22,16 @@ We are able to email you a password reminder if we have one stored, or a link to
 {/if}
 Please enter your email address or username and select an option below.<br /><br />
 <form method="post" action="{$pg_url}/">
-<input type="radio" name="type" id="type_reminder" value="reminder" {if $type == "reminder"} checked="checked"{/if}/> <label for="type_reminder">Send Reminder</label>
-<input type="radio" name="type" id="type_reset" value="reset" {if $type == "reset"} checked="checked"{/if}/> <label for="type_reset">Send Reset Link</label>
-<br />
-Email Address or username: <input type="text" size="40" name="search" value="{$search}" />
-<input type="submit" class="button" name="btn_reset" value="Send" />
+    <div class="form-group">
+        <label for="type_reminder" class="radio-inline"><input type="radio" name="type" id="type_reminder" value="reminder" {if $type == "reminder"} checked="checked"{/if}/>Send Reminder</label>
+        <label for="type_reset" class="radio-inline"><input type="radio" name="type" id="type_reset" value="reset" {if $type == "reset"} checked="checked"{/if}/>Send Reset Link</label>
+    </div>
+    <div class="form-group">
+        <label for="search" class="control-label">Email Address or username</label>
+        <input class="form-control" type="text" size="40" name="search" value="{$search}" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" name="btn_reset">Send</button>
+    </div>
 </form>
 {/if}

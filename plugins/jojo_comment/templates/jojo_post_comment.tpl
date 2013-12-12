@@ -54,9 +54,8 @@
         <textarea name="comment" class="form-control textarea required" id="comment" rows="10" cols="40">{if $comment}{$comment}{/if}</textarea>
     </div>
     <div class="form-group">
-        <label for="submit" class="control-label"></label>
-        <input type="submit" name="submit" id="submit" value="Post Comment" class="btn btn-primary" />
-  </div>
+        <button type="submit" name="submit" id="submit" class="btn btn-primary">Post Comment</button>
+    </div>
   </fieldset>
   </form>
   <p class="note">We welcome comments provided they have something to contribute. Please note that all links will be created using the nofollow attribute. This is a spam free zone. HTML is stripped from comments, but BBCode is allowed.</p>
