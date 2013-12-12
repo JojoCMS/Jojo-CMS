@@ -6,7 +6,7 @@
 <h3>Guidelines for Passwords</h3>
 <ul>
   <li>Passwords are case sensitive</li>
-  <li>Must be betweeen {$minlength} and {$maxlength} characters</li>
+  <li>Must be between {$minlength} and {$maxlength} characters</li>
   <li>Must contain a number</li>
 </ul>
 

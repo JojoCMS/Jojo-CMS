@@ -8,9 +8,6 @@ This password reset link will remail valid until it is used, or your next login.
 
 If this reset link does not work for any reason, you should contact the webmaster ({$OPTIONS.fromaddress}) to have your password manually reset.
 
-You can login at {$SITEURL}/login/
-
 Regards,
-
 {$OPTIONS.sitetitle}
 {$OPTIONS.fromaddress}

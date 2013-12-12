@@ -59,9 +59,9 @@ $('textarea[name=fm_{$fd_field}_bb]').change(function(){ldelim}if($('#type_fm_{$
 $('textarea[name=fm_{$fd_field}_html]').change(function(){ldelim}if($('#type_fm_{$fd_field}_html').attr('checked')){ldelim}$('#fm_{$fd_field}').val($(this).val());{rdelim}{rdelim});
 
 $(document).ready(function() {ldelim}
-       {if $OPTIONS.wysiwyg_style=='popup'}$("#fm_{$fd_field}_html").markItUp(myHtmlSettings);{/if}
+       {if $OPTIONS.wysiwyg_style=='popup'}$("#fm_{$fd_field}_html").markItUp(myHtmlSettings);
        $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
-        setTextEditorContent("fm_{$fd_field}");
+        {/if}setTextEditorContent("fm_{$fd_field}");
         $('#editor_{$fd_field}_{$editortype}').show();
 //        $.get('{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html',  function(data) {ldelim}$('#editor_{$fd_field}_html').html(data);{rdelim});
     {rdelim}

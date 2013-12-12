@@ -51,13 +51,12 @@
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
                 <div id="row_{$fieldname}" class="form-fieldset control-group{if $field.error} error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
-                
-                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="control-label">{$field.name}:</label>{/if}
-                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}"{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="controls"{/if}>
-                        {$field.html}
-                        {if $field.error}<img src="images/cms/icons/error.png" border="0" alt="Error: {$field.error}"  title="Error: {$field.error}" />{/if}
-                        {if $field.required=="yes"}<i class="input-append icon-exclamation-sign"></i>{/if}
-                        {if $field.flags.PRIVACY}&nbsp;&nbsp;<input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label class="checkbox inline note"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>{/if}
+                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="control-label">{if $field.required=="yes"}<i class="input-append icon-exclamation-sign"></i> {/if}{$field.name}:</label>{/if}
+                    <div{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="controls"{/if}>
+                        <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}">
+                            {$field.html}
+                        </div>
+                        {if $field.flags.PRIVACY}<input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label for="privacy_{$fieldname}" class="checkbox"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>{/if}
                     </div>
 
                 </div>
