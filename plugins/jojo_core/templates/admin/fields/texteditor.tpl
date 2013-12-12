@@ -63,6 +63,5 @@ $(document).ready(function() {ldelim}
     $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
     {/if}setTextEditorContent("fm_{$fd_field}");
     $('#editor_{$fd_field}_{$editortype}').show();
-//  $.get('{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html',  function(data) {ldelim}$('#editor_{$fd_field}_html').html(data);{rdelim});
 {rdelim});
 </script>

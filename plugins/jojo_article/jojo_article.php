@@ -450,7 +450,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             } else {
                 $smarty->assign('numpages', $numpages);
                 $smarty->assign('pageurl', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']));
-                $pagination = $smarty->fetch('jojo_article_pagination.tpl');
+                $pagination = $smarty->fetch('pagination.tpl');
             }
 
             $smarty->assign('pagination', $pagination);

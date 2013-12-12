@@ -907,7 +907,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Alerts',
     'description' => 'Include Twitter Bootstap\'s alerts.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
