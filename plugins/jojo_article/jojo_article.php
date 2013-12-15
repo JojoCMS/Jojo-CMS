@@ -445,9 +445,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $numarticles = count($articles);
             $numpages = ceil($numarticles / $articlesperpage);
             /* calculate pagination */
-            if ($numpages == 1) {
-                $pagination = '';
-            } else {
+            $pagination = '';
+            if ($numpages > 1) {
                 $smarty->assign('numpages', $numpages);
                 $smarty->assign('pageurl', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']));
                 $pagination = $smarty->fetch('pagination.tpl');
