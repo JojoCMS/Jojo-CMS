@@ -1,14 +1,16 @@
 {if $openingparagraph}<p>{$openingparagraph}</p>{elseif $tag}<p>The following results and pages have been tagged as <strong>{$tag}</strong>.</p>{/if}
-{if $results}
-{foreach from=$results item=result}
-<h3 style="clear: both"><a href="{$result.url}">{$result.title}</a></h3>
-<div>
-  <p>{if $result.image}<a href="{$result.url}" title="{$result.title}"><img src="images/v12000/{$result.image}" class="float-right" alt="{$result.title}{if $tag} - {$tag}{/if}" /></a>{/if}
-  {$result.text|truncate:350}
-  <br /><a href="{if $result.absoluteurl}{$result.absoluteurl}{else}{$result.url}{/if}" title="Read more" class="links">&gt; {$result.displayurl}</a></p>
+{if $results}{foreach from=$results item=result}
+<div class="media search-result">
+    {if $result.image}<a class="pull-left" href="{$result.url}" title="{$result.title}"><img class="media-object"  src="images/{if $OPTIONS.tag_image_format}{$OPTIONS.tag_image_format}{else}s120{/if}/{$result.image}" class="pull-left" alt="{$result.title}" /></a>{/if}
+    <div class="media-body">
+        <h3 class="media-heading"><a href="{$result.url}" title="{$result.title}">{$result.title}</a></h3>
+        <p>{$result.text|truncate:350}</p>
+        {if $res.tags && $searchtags}<p class="links">Tagged with: {foreach from=$res.tags item=tag}<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag.url}/">{if $tag.cleanword==$keywords}<b>{$tag.cleanword}</b>{else}{$tag.cleanword}{/if}</a> | {/foreach}</p>
+        {/if}
+        <p class="links"><a href="{if $result.absoluteurl}{$result.absoluteurl}{else}{$result.url}{/if}" title="{$result.displayurl}" class="links" rel="nofollow" >{$result.displayurl}</a></p>
+    </div>
 </div>
-{/foreach}
-{/if}
+{/foreach}{/if}
 {if $tags}
 {if $article_tag_cloud_related != "no"}
 <h3 style='clear: both'>{if $tag}Tags related to {$tag}{else}Related Tags{/if}</h3>

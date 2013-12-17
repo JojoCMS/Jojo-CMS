@@ -33,7 +33,7 @@
         <p>{$res.body}</p>
         {if $res.tags && $searchtags}<p class="links">Tagged with: {foreach from=$res.tags item=tag}<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag.url}/">{if $tag.cleanword==$keywords}<b>{$tag.cleanword}</b>{else}{$tag.cleanword}{/if}</a> | {/foreach}</p>
         {/if}
-        <p class="links">{if $res.type!='none' && $OPTIONS.search_filtering =='yes'}{$res.type}: {/if}<a href="{$res.url}" title="{$res.title}" class="links" rel="nofollow" >&gt; {$res.displayurl}</a></p>
+        <p class="links">{if $res.type!='none' && $OPTIONS.search_filtering =='yes'}{$res.type}: {/if}<a href="{$res.url}" title="{$res.title}" class="links" rel="nofollow" >{$res.displayurl}</a></p>
     </div>
   </div>
 {/foreach}
