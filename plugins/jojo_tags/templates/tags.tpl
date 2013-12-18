@@ -5,19 +5,15 @@
     <div class="media-body">
         <h3 class="media-heading"><a href="{$result.url}" title="{$result.title}">{$result.title}</a></h3>
         <p>{$result.text|truncate:350}</p>
-        {if $res.tags && $searchtags}<p class="links">Tagged with: {foreach from=$res.tags item=tag}<a href="{if $MULTILANGUAGE}{$pg_language}/{/if}tags/{$tag.url}/">{if $tag.cleanword==$keywords}<b>{$tag.cleanword}</b>{else}{$tag.cleanword}{/if}</a> | {/foreach}</p>
-        {/if}
         <p class="links"><a href="{if $result.absoluteurl}{$result.absoluteurl}{else}{$result.url}{/if}" title="{$result.displayurl}" class="links" rel="nofollow" >{$result.displayurl}</a></p>
     </div>
 </div>
 {/foreach}{/if}
-{if $tags}
-{if $article_tag_cloud_related != "no"}
+{if $tags}{if $article_tag_cloud_related != "no"}
 <h3 style='clear: both'>{if $tag}Tags related to {$tag}{else}Related Tags{/if}</h3>
 [[tagcloud:{$tags}]]
 {/if}
-{else}
-{if $pg_body}{$pg_body}
+{else}{if $pg_body}{$pg_body}
 <h3>Tags</h3>
 {/if}
 [[tagcloud]]
