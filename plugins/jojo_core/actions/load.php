@@ -88,7 +88,6 @@ foreach ($allfields as $fieldname => $f) {
         $frajax->script("parent.$('#type_fm_".$fieldname."_html').prop('checked','');");
         $frajax->script("parent.$('#type_fm_".$fieldname."_bb').prop('checked','');");
         $frajax->script("parent.$('#type_fm_".$fieldname."_".$editortype."').prop('checked','checked');");
-        $frajax->script("parent.alert('#type_fm_".$fieldname."_".$editortype."');");
         $frajax->assign("fm_" . $fieldname, "value", $f['value']);
         if ($editortype=='bb') {
             $frajax->script("parent.$('#editor_".$fieldname."_html').hide(); parent.$('#editor_".$fieldname."_bb').show();");
