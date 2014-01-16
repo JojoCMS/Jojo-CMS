@@ -53,3 +53,14 @@ $_options[] = array(
     'options'     => 'yes,no',
     'plugin'      => 'jojo_tags'
 );
+
+$_options[] = array(
+    'id'          => 'tag_image_format',
+    'category'    => 'Tags',
+    'label'       => 'Result Image Format',
+    'description' => 'Size / format of the result image - eg 100, w50, s80 etc. See docs on image resizing.',
+    'type'        => 'text',
+    'default'     => 's120',
+    'options'     => '',
+    'plugin'      => 'jojo_tags'
+);

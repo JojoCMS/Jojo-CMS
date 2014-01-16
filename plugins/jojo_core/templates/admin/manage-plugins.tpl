@@ -94,48 +94,45 @@
     $('ul.plugins li button').click(function() {
         $(this).parent().addClass('installing');
         $(this).replaceWith('<p style="float:right">installing...</p>');
-        $('button.reinstall').attr('disabled', 'disabled');
-        $('button.uninstall').attr('disabled', 'disabled');
+        $('button.reinstall, button.uninstall, .plugins .btn').prop('disabled', 'disabled');
         $('ul.plugins li img').fadeOut();
         $.get(siteurl + '/json/admin-install-plugin.php', {plugin: $(this).attr('rel')}, function(data) {
-                if (data.result) {
-                    $('.installing p').html('installed');
-                    location.reload();
-                } else {
-                    alert('Error Installing plguin: ' + data.message);
-                }
+            if (data.result) {
+                $('.installing p').html('installed');
+                location.reload();
+            } else {
+                alert('Error Installing plguin: ' + data.message);
+            }
         }, 'json');
         return false;
     });
 
     $('button.reinstall').click(function() {
         $(this).html('Re-installing...').addClass('installing');
-        $('button.reinstall').attr('disabled', 'disabled');
-        $('button.uninstall').attr('disabled', 'disabled');
+        $('button.reinstall, button.uninstall, .plugins .btn').prop('disabled', 'disabled');
         $('ul.plugins li img').fadeOut();
         $.get(siteurl + '/json/admin-install-plugin.php', {plugin: $(this).attr('rel')}, function(data) {
-                if (data.result) {
-                    $('button.installing').html('Re-installed');
-                    location.reload();
-                } else {
-                    alert('Error Installing plguin: ' + data.message);
-                }
+            if (data.result) {
+                $('button.installing').html('Re-installed');
+                location.reload();
+            } else {
+                alert('Error Installing plguin: ' + data.message);
+            }
         }, 'json');
         return false;
     });
 
     $('button.uninstall').click(function() {
         $(this).html('uninstalling...').addClass('unstalling');
-        $('button.reinstall').attr('disabled', 'disabled');
-        $('button.uninstall').attr('disabled', 'disabled');
+        $('button.reinstall, button.uninstall, .plugins .btn').prop('disabled', 'disabled');
         $('ul.plugins li img').fadeOut();
         $.get(siteurl + '/json/admin-uninstall-plugin.php', {plugin: $(this).attr('rel')}, function(data) {
-                if (data.result) {
-                    $('button.installing').html('Uninstalled');
-                    location.reload();
-                } else {
-                    alert('Error Unstalling plguin: ' + data.message);
-                }
+            if (data.result) {
+                $('button.installing').html('Uninstalled');
+                location.reload();
+            } else {
+                alert('Error Unstalling plugin: ' + data.message);
+            }
         }, 'json');
         return false;
     });

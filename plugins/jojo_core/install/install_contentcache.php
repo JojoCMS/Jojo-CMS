@@ -33,7 +33,7 @@ $query = "
 $result = Jojo::checkTable($table, $query);
 
 /* Change collation of cc_content field to UTF-8 to avoid ? characters appearing in cached output*/
-Jojo::structureQuery("ALTER TABLE {contentcache} CHANGE `cc_content` `cc_content` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ");
+Jojo::structureQuery("ALTER TABLE {contentcache} CHANGE `cc_content` `cc_content` LONGTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ");
 
 /* Output result */
 if (isset($result['created'])) {
