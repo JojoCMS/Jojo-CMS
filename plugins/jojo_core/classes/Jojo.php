@@ -350,7 +350,7 @@ class Jojo {
             include(_BASEPLUGINDIR . '/jojo_core/external/adodb/adodb.inc.php');
             $ADODB_COUNTRECS = false;
             $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-            $_db = ADONewConnection('mysql');
+            $_db = ADONewConnection('mysqli');
             $_db->Connect(_DBHOST, _DBUSER, _DBPASS, _DBNAME);
             $_db->query("SET CHARACTER SET 'utf8'");
             $_db->query("SET NAMES 'utf8'");
