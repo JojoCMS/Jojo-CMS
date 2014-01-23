@@ -2645,8 +2645,7 @@ class Jojo {
                      '@&(iexcl|#161);@i',
                      '@&(cent|#162);@i',
                      '@&(pound|#163);@i',
-                     '@&(copy|#169);@i',
-                     '@&#(\d+);@e');                          // evaluate as php
+                     '@&(copy|#169);@i');
 
         $replace = array ('',
                      '',
@@ -2659,10 +2658,16 @@ class Jojo {
                      chr(161),
                      chr(162),
                      chr(163),
-                     chr(169),
-                     'chr(\1)');
+                     chr(169));
 
         $content = preg_replace($search, $replace, $content);
+        $content = preg_replace_callback(
+            '@&#(\d+);@',
+            function($matches){
+                return chr($matches[1]);
+            },
+            $content
+        );
 
         /* Remove newline characters */
         $remove = array("\r", "\n", ' ');
