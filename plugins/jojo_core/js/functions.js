@@ -52,37 +52,6 @@ function validateEmail(str) {
   return true
 }
 
-/*-- [showhide - will be discontinued soon, please use jQuery instead] --*/
-function showhide(region) {
-    if (document.getElementById) {
-        if (document.getElementById(region).style.display == 'none') {
-          document.getElementById(region).style.display = 'block';
-        } else {
-          document.getElementById(region).style.display = 'none';
-        }
-    } else {
-      alert('Sorry, your browser doesn\'t support this');
-    }
-}
-
-/*-- [showregion - will be discontinued soon, please use jQuery instead] --*/
-function showregion(region) {
-  if (document.getElementById) {
-    document.getElementById(region).style.display = 'block';
-  } else {
-    alert('Sorry, your browser doesn\'t support this');
-  }
-}
-
-/*-- [hideregion - will be discontinued soon, please use jQuery instead] --*/
-function hideregion(region) {
-  if (document.getElementById) {
-    document.getElementById(region).style.display = 'none';
-  } else {
-    alert('Sorry, your browser doesn\'t support this');
-  }
-}
-
 /**
  * Sets a Cookie with the given name and value.
  *

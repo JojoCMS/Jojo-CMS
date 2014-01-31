@@ -127,5 +127,4 @@ if ($id == '') {
     $frajax->show('btn_delete', 'Appear', 1);
     $frajax->show('btn_addchild', 'Appear', 1);
 }
-$frajax->script('parent.addFocusEvents();');
 $frajax->sendFooter();
