@@ -316,7 +316,7 @@ input.jojo-admin-edit-cancel {
 .form-group .inline {
   display: inline-block;
   float: none;
-  vertical-align: -12px;
+  vertical-align: middle;
 }
 
 #event-log table tr.critical {
