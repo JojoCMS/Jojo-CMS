@@ -303,8 +303,6 @@ if (Jojo::getPost('btn_addchild', false)) {
     $frajax->script('parent.$("#btn_addchild").fadeOut("fast");');
 }
 
-$frajax->script('parent.addFocusEvents();');
-
 $frajax->sendFooter();
 
 
