@@ -49,6 +49,10 @@ textarea {
     background-image: url("../external/bootstrap/img/glyphicons-halflings.png");
 }
 
+i.icon-white {
+    background-image: url("../external/bootstrap/img/glyphicons-halflings-white.png");
+}
+
 input, textarea, .uneditable-input {
     width: auto;
 }
