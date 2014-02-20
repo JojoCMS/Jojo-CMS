@@ -1961,7 +1961,7 @@ class Jojo {
 
         /* handle subfolder installs */
         $f = ltrim(_SITEFOLDER, 'https://');
-        $f = ltrim(_SITEFOLDER, 'http://');
+        $f = ltrim($f, 'http://');
         $temp = explode('/', $f);
         if (count($temp) > 1) {
             array_shift($temp);
