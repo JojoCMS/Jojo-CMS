@@ -273,6 +273,8 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             case 'admin':
                 /* Include Boilerplate css reset */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/normalize/normalize.css');
+                /* start with the variable files */
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
                 /* Include Anytime datepicker css */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.css');
                 if (Jojo::getOption('wysiwyg_style')=='popup') {
@@ -281,8 +283,6 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/style.css');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/style.css');
                 }
-                /* start with the variable files */
-                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
                 /* mixins and utilities files */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/mixins.less');
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');

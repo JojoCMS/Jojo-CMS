@@ -1,4 +1,3 @@
-  <div class="clear"></div>
   </div><!-- [end container] -->
 
 </div><!-- [end wrap] -->

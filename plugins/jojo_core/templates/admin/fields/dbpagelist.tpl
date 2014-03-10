@@ -1,4 +1,3 @@
-<div class="col-md-12">
 {if $readonly}
     <input type="hidden" name="fm_{$fd_field}" id="fm_{$fd_field}" value="{$value}" />
     {if $readonlydisplay}{$readonlydisplay}{/if}
@@ -7,4 +6,3 @@
     {$hktree}
     </select>
 {/if}
-</div>

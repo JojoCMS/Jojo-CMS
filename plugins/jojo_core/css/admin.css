@@ -29,7 +29,7 @@
 
 @font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
 @font-size-base:          13px;
-
+@baseFontSize: @font-size-base;
 @line-height-base:        1.428571429; // 20/14
 
 @headings-font-family:    @font-family-base;
@@ -123,8 +123,6 @@ div.clear {
     font-size: 80%;
 }
 
-/* Buttons */
-
 .hide {
   background: #f00 !important;
   display: none;
@@ -154,22 +152,6 @@ td.cell2 {
   background-color: #A5C1F4;
 }
 
-
-div.message {
-  border: 3px solid #077A12;
-  background: #068912 url('../images/cms/bg-message.gif') left top repeat;
-  color: #fff;
-  padding: 5px;
-  margin: 5px;
-  font-weight: bold;
-}
-
-div.message div {
-  padding-left: 25px;
-  background-image: url('../images/cms/message.png');
-  background-position: left top;
-  background-repeat: no-repeat;
-}
 
 .non-selected {
   background: none;
