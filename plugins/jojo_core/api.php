@@ -1597,6 +1597,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'instagram_link',
+    'category'    => 'Social Networking',
+    'label'       => 'Instagram link',
+    'description' => 'the full url of your Instagram channel',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
     'id'          => 'allow_email_login',
     'category'    => 'Security',
     'label'       => 'Allow login with email',
