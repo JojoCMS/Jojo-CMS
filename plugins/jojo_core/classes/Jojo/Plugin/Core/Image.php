@@ -526,7 +526,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         return array($crop_x, $crop_y);
     }
 
-    static function applyFilter($file, $filter) {
+    /* apply http://www.php.net/manual/en/function.imagefilter.php with optional rgb arguments as an array */
+    static function applyFilter($file, $filter, $filterargs=array()) {
         $filetype = Jojo::getFileExtension($file);
         if ($filetype == 'gif') {
             $im = imagecreatefromgif($file);
@@ -535,7 +536,13 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         } elseif ($filetype == 'jpg' ||  $filetype == 'jpeg') {
             $im = imagecreatefromjpeg($file);
         }
-        if ($im && imagefilter($im, constant($filter))) {
+        if ($im) {
+            var_dump($filterargs);
+            if ($filterargs) {
+                imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2]);
+            } else {
+                imagefilter($im, constant($filter));
+            }
            if ($filetype == "gif") {
                 Imagegif($im, $file);
             } else if ($filetype == "png") {

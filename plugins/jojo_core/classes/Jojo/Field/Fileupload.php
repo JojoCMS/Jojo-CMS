@@ -214,6 +214,12 @@ class Jojo_Field_fileupload extends Jojo_Field
         $filename = str_replace(' ', '_', str_replace(array('?','&',"'",',','[',']'), '', stripslashes($_FILES["fm_FILE_".$this->fd_field]['name'])));
         $tmpfilename = $_FILES["fm_FILE_".$this->fd_field]['tmp_name'];
         $filter = $this->fd_options;
+        $filterargs = array();
+        if ($filter && strpos($filter, ':')!=false) {
+            $filter = explode(':', $filter);
+            $filterargs = explode(',', $filter[1]);
+            $filter = $filter[0];
+        }
 
         $this->value = $newvalue;
 
@@ -269,7 +275,7 @@ class Jojo_Field_fileupload extends Jojo_Field
                 /* move to final location */
                 if (file_exists($destination) || move_uploaded_file($tmpfilename, $destination)) {
                     $message = "Upload successful";
-                    if ($filter && Jojo_Plugin_Core_Image::applyFilter($destination, $filter)) {
+                    if ($filter && Jojo_Plugin_Core_Image::applyFilter($destination, $filter, $filterargs)) {
                         $message .= ". Transform successful";
                     }
                     $this->value =  !empty($newname) ? $newname : $filename;
