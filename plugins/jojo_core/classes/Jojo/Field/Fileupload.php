@@ -213,14 +213,6 @@ class Jojo_Field_fileupload extends Jojo_Field
         /* set some variables for convenience */
         $filename = str_replace(' ', '_', str_replace(array('?','&',"'",',','[',']'), '', stripslashes($_FILES["fm_FILE_".$this->fd_field]['name'])));
         $tmpfilename = $_FILES["fm_FILE_".$this->fd_field]['tmp_name'];
-        $filter = $this->fd_options;
-        $filterargs = array();
-        if ($filter && strpos($filter, ':')!=false) {
-            $filter = explode(':', $filter);
-            $filterargs = explode(',', $filter[1]);
-            $filter = $filter[0];
-        }
-
         $this->value = $newvalue;
 
         /* Check error codes */
@@ -275,8 +267,16 @@ class Jojo_Field_fileupload extends Jojo_Field
                 /* move to final location */
                 if (file_exists($destination) || move_uploaded_file($tmpfilename, $destination)) {
                     $message = "Upload successful";
-                    if ($filter && Jojo_Plugin_Core_Image::applyFilter($destination, $filter, $filterargs)) {
-                        $message .= ". Transform successful";
+                    $filters = $this->fd_options ? Jojo::ta2array($this->fd_options) : '';
+                    if ($filters) {
+                        foreach ($filters as &$f) {
+                            if (strpos($f, ':')!=false) {
+                                $filter = explode(':', $f);
+                                Jojo_Plugin_Core_Image::applyFilter($destination, $filter[0], (strpos($filter[1], ',')!=false ? explode(',', $filter[1]) : $filter[1]));
+                            } else {
+                                Jojo_Plugin_Core_Image::applyFilter($destination, $f);
+                            }
+                        }
                     }
                     $this->value =  !empty($newname) ? $newname : $filename;
                 } else {

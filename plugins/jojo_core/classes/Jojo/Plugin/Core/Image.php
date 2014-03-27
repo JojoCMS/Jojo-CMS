@@ -537,10 +537,23 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $im = imagecreatefromjpeg($file);
         }
         if ($im) {
-            if ($filterargs) {
-                imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2]);
-            } else {
-                imagefilter($im, constant($filter));
+            $args = count($filterargs);
+            switch ($args) {
+                case 0:
+                    imagefilter($im, constant($filter));
+                    break;
+                case 1:
+                    imagefilter($im, constant($filter), $filterargs[0]);
+                    break;
+                case 2:
+                    imagefilter($im, constant($filter), $filterargs[0], $filterargs[1]);
+                    break;
+                case 3:
+                    imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2]);
+                    break;
+                case 4:
+                    imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2], $filterargs[3]);
+                    break;
             }
            if ($filetype == "gif") {
                 Imagegif($im, $file);
