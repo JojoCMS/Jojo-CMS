@@ -537,7 +537,6 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $im = imagecreatefromjpeg($file);
         }
         if ($im) {
-            var_dump($filterargs);
             if ($filterargs) {
                 imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2]);
             } else {
