@@ -538,6 +538,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         }
         if ($im) {
             if ($filter=='IMG_FILTER_DUOTONE') {
+            /* custom filter for preserving luminosity while colorizing an image to create a duotone effect, from http://www.exorithm.com/algorithm/view/duotone_image */
               $imagex = imagesx($im);
               $imagey = imagesy($im);
               for ($x = 0; $x <$imagex; ++$x) {
