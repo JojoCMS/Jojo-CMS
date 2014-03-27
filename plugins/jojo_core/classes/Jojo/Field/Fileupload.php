@@ -258,7 +258,7 @@ class Jojo_Field_fileupload extends Jojo_Field
                 /* Ensure file does not already exist on server, rename if it does */
                 $newname = '';
                 $i = 1;
-                while (file_exists($destination){
+                while (file_exists($destination)) {
                     $newname = ++$i . "_" . $filename;
                     $destination = _DOWNLOADDIR . "/" . $this->fd_table . "s/" . $newname;
                 }
