@@ -537,23 +537,48 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $im = imagecreatefromjpeg($file);
         }
         if ($im) {
-            $args = count($filterargs);
-            switch ($args) {
-                case 0:
-                    imagefilter($im, constant($filter));
-                    break;
-                case 1:
-                    imagefilter($im, constant($filter), $filterargs[0]);
-                    break;
-                case 2:
-                    imagefilter($im, constant($filter), $filterargs[0], $filterargs[1]);
-                    break;
-                case 3:
-                    imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2]);
-                    break;
-                case 4:
-                    imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2], $filterargs[3]);
-                    break;
+            if ($filter=='IMG_FILTER_DUOTONE') {
+              $imagex = imagesx($im);
+              $imagey = imagesy($im);
+              for ($x = 0; $x <$imagex; ++$x) {
+                for ($y = 0; $y <$imagey; ++$y) {
+                    $rgb = imagecolorat($im, $x, $y);
+                    $color = imagecolorsforindex($im, $rgb);
+                    $grey = floor(($color['red']+$color['green']+$color['blue'])/3);
+                    $red = $grey + $grey*($filterargs[0]/150);
+                    $green = $grey + $grey*($filterargs[1]/150);
+                    $blue = $grey + $grey*($filterargs[2]/150);
+      
+                  if ($red > 255) $red = 255;
+                  if ($green > 255) $green = 255;
+                  if ($blue > 255) $blue = 255;
+                  if ($red < 0) $red = 0;
+                  if ($green < 0) $green = 0;
+                  if ($blue < 0) $blue = 0;
+                  $newcol = imagecolorallocatealpha($im, $red,$green,$blue,$color['alpha']);
+                  imagesetpixel ($im, $x, $y, $newcol);
+                }
+              }
+
+            } else {
+                $args = count($filterargs);
+                switch ($args) {
+                    case 0:
+                        imagefilter($im, constant($filter));
+                        break;
+                    case 1:
+                        imagefilter($im, constant($filter), $filterargs[0]);
+                        break;
+                    case 2:
+                        imagefilter($im, constant($filter), $filterargs[0], $filterargs[1]);
+                        break;
+                    case 3:
+                        imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2]);
+                        break;
+                    case 4:
+                        imagefilter($im, constant($filter), $filterargs[0], $filterargs[1], $filterargs[2], $filterargs[3]);
+                        break;
+                }
             }
            if ($filetype == "gif") {
                 Imagegif($im, $file);
