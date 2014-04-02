@@ -459,7 +459,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             ImageCopyResampled($new_im, $im, $dst_x, $dst_y, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
             $nochange = false;
             
-            if (Jojo::getOption('image_sharpen', 18)) {
+            if (($filetype == 'jpg' || $filetype == 'jpeg') && Jojo::getOption('image_sharpen', 18)) {
                 // sharpen the image
                 $sharpenMatrix = array( array(-1, -1, -1), array(-1, Jojo::getOption('image_sharpen', 18), -1), array(-1, -1, -1) ); 
                 $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
