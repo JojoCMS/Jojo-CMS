@@ -450,14 +450,23 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 imagealphablending($new_im, false);
             }
             if ($pad) {
-                $background = imagecolorallocate($new_im, 0xFF, 0xFF, 0xFF);//todo: allow this to be something other than white
+                $padbg = explode(',', Jojo::getOption('image_padbackground', '0xFF, 0xFF, 0xFF'));
+                $background = imagecolorallocate($new_im, $padbg[0], $padbg[1], $padbg[2]);
                 imagefill($new_im, 0, 0, $background);
             }
             $dst_x = ($pad) ? round(($fitmaxw / 2) - ($new_width / 2)) : 0;
             $dst_y = ($pad) ? round(($fitmaxh / 2) - ($new_height / 2)) : 0;
             ImageCopyResampled($new_im, $im, $dst_x, $dst_y, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
-            //ImageCopy($new_im, $im, 0, 0, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
             $nochange = false;
+            
+            if (Jojo::getOption('image_sharpen', 18)) {
+                // sharpen the image
+                $sharpenMatrix = array( array(-1, -1, -1), array(-1, Jojo::getOption('image_sharpen', 18), -1), array(-1, -1, -1) ); 
+                $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
+                $offset = 0; 
+                imageconvolution($new_im, $sharpenMatrix, $divisor, $offset);
+            }
+
         } else {
             /* No change */
             $new_im = $im;
