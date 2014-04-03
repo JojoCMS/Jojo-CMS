@@ -463,9 +463,18 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             
            /* apply filter */
             if ($filters && isset($_GET['filter']) && $_GET['filter'] && isset($filters[$_GET['filter']])) {
-                $if = explode(',', $filters[$_GET['filter']]);
-                $filter = array_shift($if);
-                $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
+                if (strpos($filters[$_GET['filter']], ';')) {
+                    $ifs = explode(';', $filters[$_GET['filter']]);
+                    foreach ($ifs as $if) {
+                        $if = explode(',', $if);
+                        $filter = array_shift($if);
+                        $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
+                    }
+                } else {
+                    $if = explode(',', $filters[$_GET['filter']]);
+                    $filter = array_shift($if);
+                    $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
+                }
             }
             
             if (($filetype == 'jpg' || $filetype == 'jpeg') && Jojo::getOption('image_sharpen', 18)) {
