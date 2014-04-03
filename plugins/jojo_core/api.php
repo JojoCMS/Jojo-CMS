@@ -578,6 +578,16 @@ $_options[] = array(
     'options'     => ''
 );
 
+$_options[] = array(
+    'id'          => 'image_filters',
+    'category'    => 'Images',
+    'label'       => 'Image Filters',
+    'description' => 'A newline separated list of image filters in the format [name(a-z)]:[image_filter name],[arg1],[arg2].. e.g. blueduo:IMG_FILTER_DUOTONE,0,121,193',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => ''
+);
+
 /* HTML Editor */
 
 $_options[] = array(
