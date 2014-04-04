@@ -481,15 +481,17 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 }
             }
             
-            if (($filetype == 'jpg' || $filetype == 'jpeg') && Jojo::getOption('image_sharpen', 18)) {
-                // sharpen the image
-                $sharpenMatrix = array( array(-1, -1, -1), array(-1, Jojo::getOption('image_sharpen', 18), -1), array(-1, -1, -1) ); 
-                $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
-                $offset = 0; 
-                imageconvolution($new_im, $sharpenMatrix, $divisor, $offset);
+            if ($filetype == 'jpg' || $filetype == 'jpeg') {
+                if ($sharpness = Jojo::getOption('image_sharpen', 18)) {
+                    // sharpen the image
+                    $sharpenMatrix = array( array(-1, -1, -1), array(-1, $sharpness, -1), array(-1, -1, -1) ); 
+                    $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
+                    $offset = 0; 
+                    imageconvolution($new_im, $sharpenMatrix, $divisor, $offset);
+                }
+                // Enable interlacing (progressive JPG, smaller size file)
+                ImageInterlace($new_im, true);
             }
-
-
 
         } else {
             /* No change */

@@ -542,9 +542,9 @@ $_options[] = array(
     'id'          => 'image_cachetime',
     'category'    => 'Images',
     'label'       => 'Image cache time',
-    'description' => 'The maximum amount of time in seconds images will be cached for. Default 24 hours.',
+    'description' => 'The maximum amount of time in seconds images will be cached for. Default 7 days.',
     'type'        => 'integer',
-    'default'     => 86400,
+    'default'     => 604800,
     'options'     => '',
 );
 
