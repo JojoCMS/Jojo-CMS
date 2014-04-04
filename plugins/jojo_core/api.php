@@ -539,6 +539,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'image_cachetime',
+    'category'    => 'Images',
+    'label'       => 'Image cache time',
+    'description' => 'The maximum amount of time in seconds images will be cached for. Default 24 hours.',
+    'type'        => 'integer',
+    'default'     => 86400,
+    'options'     => '',
+);
+
+$_options[] = array(
     'id'          => 'image_sharpen',
     'category'    => 'Images',
     'label'       => 'Sharpen',
@@ -582,7 +592,7 @@ $_options[] = array(
     'id'          => 'image_filters',
     'category'    => 'Images',
     'label'       => 'Image Filters',
-    'description' => 'A newline separated list of image filters in the format [name(a-z)]:[image_filter name],[arg1],[arg2].. e.g. blueduo:IMG_FILTER_DUOTONE,0,121,193',
+    'description' => 'A newline separated list of php imagefilters in the format [name(a-z)]:[image_filter name],[arg1],[arg2].. e.g. blueduo:IMG_FILTER_DUOTONE,0,121,193 images can then be called by url including the filter name images/[resize][filtername]/[filepath] e.g. images/w220blueduo/logo.png',
     'type'        => 'textarea',
     'default'     => '',
     'options'     => ''

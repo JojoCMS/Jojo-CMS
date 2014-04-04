@@ -37,8 +37,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             exit;
         }
 
+        $cachetime = Jojo::getOption('image_cachetime', 86400);
         $pad = false;
-        $filters = Jojo::getOption('image_filters', '') ? Jojo::ta2kv(Jojo::getOption('image_filters'), ':') : '';
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {
             /* Max size */
@@ -116,7 +116,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         } elseif (isset($_GET['fitmaxw']) && isset($_GET['fitmaxh'])) {
             $fitmaxw = $_GET['fitmaxw'];
             $fitmaxh = $_GET['fitmaxh'];
-            $s = 'fit' . $fitmaxw.'x'.$fitmaxh;
+            $s = ( $pad ? 'pad' : 'fit' ) . $fitmaxw.'x'.$fitmaxh;
         } elseif (isset($_GET['maxw']) && isset($_GET['maxh'])) {
             $maxw = $_GET['maxw'];
             $maxh = $_GET['maxh'];
@@ -139,10 +139,14 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $s = '';
         }
 
-        if ($s && self::isRemoteFile($filename)) {
-            $cachefile = _CACHEDIR . '/images/remote/' . $s . '/' . md5($filename) . '.' . Jojo::getFileExtension($filename);
+        /* Filter */
+        $filters = Jojo::getOption('image_filters', '') ? Jojo::ta2kv(Jojo::getOption('image_filters'), ':') : '';
+        $f = ($filters && isset($_GET['filter']) && $_GET['filter'] && isset($filters[$_GET['filter']])) ? $_GET['filter'] : '';
+
+       if ($s && self::isRemoteFile($filename)) {
+            $cachefile = _CACHEDIR . '/images/remote/' . $s . $f . '/' . md5($filename) . '.' . Jojo::getFileExtension($filename);
         } elseif ($s) {
-            $cachefile = _CACHEDIR . '/images/' . $s . '/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
+            $cachefile = _CACHEDIR . '/images/' . $s . $f . '/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
         } elseif (self::isRemoteFile($filename)) {
             $cachefile = _CACHEDIR . '/images/remote/' . md5($filename) . '.' . $filetype;
         } else {
@@ -160,8 +164,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             /* output image data */
             $data = file_get_contents($cachefile);
             header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            header('Cache-Control: public, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+            header('Cache-Control: public, max-age=' . $cachetime );
+            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
             header('Pragma: ');
             header('Content-type: ' . $mimetype);
             header('Content-Length: ' . strlen($data));
@@ -186,8 +190,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 if (!self::isRemoteFile($filename)) {
                     header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($filename)));
                 }
-                header('Cache-Control: public, max-age=28800');
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+                header('Cache-Control: public, max-age=' . $cachetime);
+                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
@@ -210,8 +214,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* output image data */
                 $data = file_get_contents($pluginfile);
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: public, max-age=28800');
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+                header('Cache-Control: public, max-age=' . $cachetime);
+                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
@@ -234,8 +238,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* output image data */
                 $data = file_get_contents($pluginfile);
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: public, max-age=28800');
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+                header('Cache-Control: public, max-age=' . $cachetime);
+                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
@@ -462,16 +466,16 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $nochange = false;
             
            /* apply filter */
-            if ($filters && isset($_GET['filter']) && $_GET['filter'] && isset($filters[$_GET['filter']])) {
-                if (strpos($filters[$_GET['filter']], ';')) {
-                    $ifs = explode(';', $filters[$_GET['filter']]);
+            if ($filters[$f]) {
+                if (strpos($filters[$f], ';')) {
+                    $ifs = explode(';', $filters[$f]);
                     foreach ($ifs as $if) {
                         $if = explode(',', $if);
                         $filter = array_shift($if);
                         $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
                     }
                 } else {
-                    $if = explode(',', $filters[$_GET['filter']]);
+                    $if = explode(',', $filters[$f]);
                     $filter = array_shift($if);
                     $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
                 }
@@ -509,8 +513,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         header('Content-Description: PHP Generated Image');
         header('Content-Transfer-Encoding: binary');
 
-        header('Cache-Control: public, max-age=28800');
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+        header('Cache-Control: public, max-age=' . $cachetime);
+        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
         header('Pragma: ');
 
         // output
