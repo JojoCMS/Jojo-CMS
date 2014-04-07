@@ -466,7 +466,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $nochange = false;
             
            /* apply filter */
-            if ($filters[$f]) {
+            if (isset($filters[$f])) {
                 if (strpos($filters[$f], ';')) {
                     $ifs = explode(';', $filters[$f]);
                     foreach ($ifs as $if) {
