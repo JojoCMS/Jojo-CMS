@@ -100,7 +100,7 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                 $body = preg_replace('/\[\[.*?\]\]/', '', $body);
 
                  /* Add result type if not added already */
-                if (!in_array($results[$k]['type'], $resulttypes)) $resulttypes[] = $results[$k]['type'];
+                if (isset($results[$k]['type']) && !in_array($results[$k]['type'], $resulttypes)) $resulttypes[] = $results[$k]['type'];
 
                 /* Make keywords bold */
                 $results[$k]['body'] = Jojo_Plugin_Jojo_search::search_format_content($body, $keywords_str, $booleanphrase );
@@ -109,8 +109,10 @@ class Jojo_Plugin_Jojo_search extends Jojo_Plugin
                 $results[$k]['displayurl'] = !isset($results[$k]['displayurl']) ? urldecode($results[$k]['url']) : $results[$k]['displayurl'];
                 $results[$k]['url'] = isset($results[$k]['absoluteurl']) ? $results[$k]['absoluteurl'] : $results[$k]['url'];
 
+                 /* Set relevance 0 for any results not including it */
+                $results[$k]['relevance'] = isset($results[$k]['relevance']) ? $results[$k]['relevance'] : 0;
                 /* Use relevance figure (x10) as a pixel width for displaying the relevance graphically */
-                $results[$k]['displayrelevance'] = !empty($results[$k]['relevance']) ? ($results[$k]['relevance'] * 10 ) : '0';
+                $results[$k]['displayrelevance'] = !empty($results[$k]['relevance']) ? ($results[$k]['relevance'] * 10 ) : 0;
             }
 
             /* Sort the results by relevance */
