@@ -108,6 +108,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* Quality */
         $quality = (isset($_GET['ql'])) ? $_GET['ql'] : Jojo::getOption('jpeg_quality', 85);
+        $sharpness = Jojo::getOption('image_sharpen', 18);
 
         /* size */
         if (isset($_GET['sz'])) {
@@ -184,7 +185,14 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 parent::sendCacheHeaders(filemtime($filename));
 
                 /* output image data */
-                $data = file_get_contents($filename);
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = self::createIm($filename, $filetype);
+                    $im = self::applySharpening($im, $sharpness);
+                    $data = Imagejpeg($im,null,$quality);
+                } else {
+                    $data = file_get_contents($filename);
+                }
 
                 //header('Cache-Control: public');
                 if (!self::isRemoteFile($filename)) {
@@ -212,7 +220,14 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 parent::sendCacheHeaders(filemtime($pluginfile));
 
                 /* output image data */
-                $data = file_get_contents($pluginfile);
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = self::createIm($pluginfile, $filetype);
+                    $im = self::applySharpening($im, $sharpness);
+                    $data = Imagejpeg($im,null,$quality);
+                } else {
+                    $data = file_get_contents($pluginfile);
+                }
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
                 header('Cache-Control: public, max-age=' . $cachetime);
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
@@ -236,7 +251,14 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 parent::sendCacheHeaders(filemtime($pluginfile));
 
                 /* output image data */
-                $data = file_get_contents($pluginfile);
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = self::createIm($pluginfile, $filetype);
+                    $im = self::applySharpening($im, $sharpness);
+                    $data = Imagejpeg($im,null,$quality);
+                } else {
+                    $data = file_get_contents($pluginfile);
+                }
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
                 header('Cache-Control: public, max-age=' . $cachetime);
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
@@ -258,44 +280,20 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         if (self::isRemoteFile($filename) || Jojo::fileExists($filename)) {
             /* the file exists - open it & create image handle*/
-            if ($filetype == 'gif') {
-                $im = imagecreatefromgif($filename);
-            } elseif ($filetype == 'png') {
-                $im = imagecreatefrompng($filename);
-            } else {
-                $im = imagecreatefromjpeg($filename);
-            }
+            $im = self::createIm($filename, $filetype);
         } else {
             /* Search for matching files in the themes */
             $im = false;
             foreach (Jojo::listThemes('images/' . $filename) as $pluginfile) {
                 $size = 'default';
-                if ($filetype == 'gif') {
-                    $im = imagecreatefromgif($pluginfile);
-                    break;
-                } elseif ($filetype == 'png') {
-                    $im = imagecreatefrompng($pluginfile);
-                    break;
-                } else {
-                    $im = imagecreatefromjpeg($pluginfile);
-                    break;
-                }
+                $im = self::createIm($pluginfile, $filetype);
             }
 
             if (!$im) {
                 /* Search for matching files in the plugins */
                 foreach (Jojo::listPlugins('images/' . $filename, true) as $pluginfile) {
                     $size = 'default';
-                    if ($filetype == 'gif') {
-                        $im = imagecreatefromgif($pluginfile);
-                        break;
-                    } elseif ($filetype == 'png') {
-                        $im = imagecreatefrompng($pluginfile);
-                        break;
-                    } else {
-                        $im = imagecreatefromjpeg($pluginfile);
-                        break;
-                    }
+                    $im = self::createIm($pluginfile, $filetype);
                 }
             }
 
@@ -472,22 +470,19 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     foreach ($ifs as $if) {
                         $if = explode(',', $if);
                         $filter = array_shift($if);
-                        $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
+                        $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
                     }
                 } else {
                     $if = explode(',', $filters[$f]);
                     $filter = array_shift($if);
-                    $new_im = Jojo_Plugin_Core_Image::applyFilter($new_im, $filter, $if, $isfile=false);
+                    $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
                 }
             }
             
             if ($filetype == 'jpg' || $filetype == 'jpeg') {
-                if ($sharpness = Jojo::getOption('image_sharpen', 18)) {
+                if ($sharpness) {
                     // sharpen the image
-                    $sharpenMatrix = array( array(-1, -1, -1), array(-1, $sharpness, -1), array(-1, -1, -1) ); 
-                    $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
-                    $offset = 0; 
-                    imageconvolution($new_im, $sharpenMatrix, $divisor, $offset);
+                    $new_im = self::applySharpening($new_im, $sharpness);
                 }
                 // Enable interlacing (progressive JPG, smaller size file)
                 ImageInterlace($new_im, true);
@@ -545,8 +540,22 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
     //added by tim
     // TODO needs some more love
-    static function isRemoteFile($filename) {
+    static function isRemoteFile($filename) 
+    {
         return (preg_match('|^https?\://|i', $filename));
+    }
+
+    /* create an image resource from a file */
+    static function createIm($filepath, $filetype='jpg')
+    {
+        if ($filetype == 'gif') {
+            $im = imagecreatefromgif($filepath);
+        } elseif ($filetype == 'png') {
+            $im = imagecreatefrompng($filepath);
+        } else {
+            $im = imagecreatefromjpeg($filepath);
+        }
+        return $im;
     }
 
     /* retrieves crop data, returning false or array(x,y) with the center point of an image. Todo, cache to a file to avoid DB query */
@@ -561,8 +570,23 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         return array($crop_x, $crop_y);
     }
 
-    /* apply http://www.php.net/manual/en/function.imagefilter.php with optional rgb arguments as an array */
-    static function applyFilter($file, $filter, $filterargs=array(), $isfile=true) {
+    /* Sharpen image. Takes a php image resource.
+    Recommended for photographic images only - graphics tend to go a bit strange. 
+    Can also be used for blurring, with negative sharpness values.  
+    10 = strong, 20 = mild */
+    static function applySharpening($im, $sharpness=18) 
+    {
+        $sharpenMatrix = array( array(-1, -1, -1), array(-1, $sharpness, -1), array(-1, -1, -1) ); 
+        $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
+        $offset = 0; 
+        imageconvolution($im, $sharpenMatrix, $divisor, $offset);
+        return $im;
+    }
+
+    /* apply http://www.php.net/manual/en/function.imagefilter.php with optional rgb arguments as an array. 
+    Accepts either a filepath or a php image resource ($isfile=false) */
+    static function applyFilter($file, $filter, $filterargs=array(), $isfile=true) 
+    {
         if ($isfile) {
             $filetype = Jojo::getFileExtension($file);
             if ($filetype == 'gif') {
@@ -577,29 +601,27 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         }
         if ($im) {
             if ($filter=='IMG_FILTER_DUOTONE') {
-            /* custom filter for preserving luminosity while colorizing an image to create a duotone effect, from http://www.exorithm.com/algorithm/view/duotone_image */
-              $imagex = imagesx($im);
-              $imagey = imagesy($im);
-              for ($x = 0; $x <$imagex; ++$x) {
-                for ($y = 0; $y <$imagey; ++$y) {
-                    $rgb = imagecolorat($im, $x, $y);
-                    $color = imagecolorsforindex($im, $rgb);
-                    $grey = floor(($color['red']+$color['green']+$color['blue'])/3);
-                    $red = $grey + $grey*($filterargs[0]/150);
-                    $green = $grey + $grey*($filterargs[1]/150);
-                    $blue = $grey + $grey*($filterargs[2]/150);
-      
-                  if ($red > 255) $red = 255;
-                  if ($green > 255) $green = 255;
-                  if ($blue > 255) $blue = 255;
-                  if ($red < 0) $red = 0;
-                  if ($green < 0) $green = 0;
-                  if ($blue < 0) $blue = 0;
-                  $newcol = imagecolorallocatealpha($im, $red,$green,$blue,$color['alpha']);
-                  imagesetpixel ($im, $x, $y, $newcol);
+                /* custom filter for preserving luminosity while colorizing an image to create a duotone effect, from http://www.exorithm.com/algorithm/view/duotone_image */
+                $imagex = imagesx($im);
+                $imagey = imagesy($im);
+                for ($x = 0; $x <$imagex; ++$x) {
+                    for ($y = 0; $y <$imagey; ++$y) {
+                        $rgb = imagecolorat($im, $x, $y);
+                        $color = imagecolorsforindex($im, $rgb);
+                        $grey = floor(($color['red']+$color['green']+$color['blue'])/3);
+                        $red = $grey + $grey*($filterargs[0]/150);
+                        $green = $grey + $grey*($filterargs[1]/150);
+                        $blue = $grey + $grey*($filterargs[2]/150);
+                        if ($red > 255) $red = 255;
+                        if ($green > 255) $green = 255;
+                        if ($blue > 255) $blue = 255;
+                        if ($red < 0) $red = 0;
+                        if ($green < 0) $green = 0;
+                        if ($blue < 0) $blue = 0;
+                        $newcol = imagecolorallocatealpha($im, $red,$green,$blue,$color['alpha']);
+                        imagesetpixel ($im, $x, $y, $newcol);
+                    }
                 }
-              }
-
             } else {
                 $args = count($filterargs);
                 switch ($args) {
