@@ -22,6 +22,10 @@
 $lastmonth = date('Y-m-d H:i:s', strtotime('-1 month'));
 Jojo::deleteQuery("DELETE FROM {eventlog} WHERE (el_importance='very low' OR el_importance='low') AND el_datetime<'$lastmonth'");
 
+/* delete sessiondata older than 1 day */
+$limit = Jojo::getOption('cart_lifetime', 0) ? Jojo::getOption('cart_lifetime', 0) : 1;
+Jojo_SessionHandler::gc($limit * 60*60*24);
+
 /* delete old ADODB SQL log entries */
 if (Jojo::tableExists('adodb_logsql')) {
     $lastmonth = date('Y-m-d H:i:s', strtotime('-1 month'));

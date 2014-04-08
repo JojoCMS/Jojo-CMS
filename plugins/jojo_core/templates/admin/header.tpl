@@ -3,7 +3,7 @@
 <div id="wysiwyg-editor-overlay" onclick="hideWysiwygEditor();" style="display:none"></div>
 <div id="wrap">
     <div id="header" class="clearfix">
-        <div id="admintitle"><a href="{$ADMIN}/"><img id="adminlogo" src="images/h50/logo.png" alt="" title="{$OPTIONS.sitetitle} Admin" /></a></div>
+        <div id="admintitle"><a href="{$ADMIN}/"><img id="adminlogo" src="{$SITEURL}/images/h50/logo.png" alt="" title="{$OPTIONS.sitetitle} Admin" /></a></div>
         <div id="menu">
             <div id="admin-nav">
                 <ul class="nav nav-pills">

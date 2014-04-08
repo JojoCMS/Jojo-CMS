@@ -596,6 +596,7 @@ if (_CONTENTCACHE && !Jojo::noCache() && ($page->page['pg_contentcache'] != 'no'
 header('Content-Length: ' . strlen($html));
 echo $html;
 
+
 /* run any auto-maintenance tasks */
 Jojo::runHook('jojo_maintenance', array());
 $lastmaintenence = Jojo::getOption('last_maintenance');
