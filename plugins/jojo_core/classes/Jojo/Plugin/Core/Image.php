@@ -37,48 +37,52 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             exit;
         }
 
+        $cachetime = Jojo::getOption('image_cachetime', 86400);
         $pad = false;
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {
             /* Max size */
             $_GET['sz'] = $matches[1];
             $filename = $matches[2];
-        } elseif (preg_match('/^fit([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
+        } elseif (preg_match('/^fit([0-9]+)x([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* Fit to Max width + max height (no crop)*/
             $_GET['fitmaxw'] = $matches[1];
             $_GET['fitmaxh'] = $matches[2];
-            $filename = $matches[3];
-        } elseif (preg_match('/^pad([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
+            $_GET['filter'] = $matches[3];
+            $filename = $matches[4];
+        } elseif (preg_match('/^pad([0-9]+)x([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* same as "fit" but will pad out the image with whitespace */
             $_GET['fitmaxw'] = $matches[1];
             $_GET['fitmaxh'] = $matches[2];
-            $filename = $matches[3];
+            $_GET['filter'] = $matches[3];
+            $filename = $matches[4];
             $pad = true;
-        } elseif (preg_match('/^([0-9]+)x([0-9]+)\/(.+)/', $file, $matches)) {
+        } elseif (preg_match('/^([0-9]+)x([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* Max width + max height*/
             $_GET['maxw'] = $matches[1];
             $_GET['maxh'] = $matches[2];
-            $filename = $matches[3];
-        } elseif (preg_match('/^w([0-9]+)\/(.+)/', $file, $matches)) {
+            $_GET['filter'] = $matches[3];
+            $filename = $matches[4];
+        } elseif (preg_match('/^w([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* Max width */
             $_GET['maxw'] = $matches[1];
-            $filename = $matches[2];
-        } elseif (preg_match('/^h([0-9]+)\/(.+)/', $file, $matches)) {
+            $_GET['filter'] = $matches[2];
+            $filename = $matches[3];
+        } elseif (preg_match('/^h([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* Max height */
             $_GET['maxh'] = $matches[1];
-            $filename = $matches[2];
-        } elseif (preg_match('/^v([0-9]+)\/(.+)/', $file, $matches)) {
+            $_GET['filter'] = $matches[2];
+            $filename = $matches[3];
+        } elseif (preg_match('/^v([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* Max volume */
             $_GET['maxv'] = $matches[1];
-            $filename = $matches[2];
-        } elseif (preg_match('/^s([0-9]+)\/(.+)/', $file, $matches)) {
+            $_GET['filter'] = $matches[2];
+            $filename = $matches[3];
+        } elseif (preg_match('/^s([0-9]+)([a-z]*)\/(.+)/', $file, $matches)) {
             /* Square */
             $_GET['sq'] = $matches[1];
-            $filename = $matches[2];
-        } elseif (preg_match('/^mh([0-9]+)\/(.+)/', $file, $matches)) {
-            /* ?? */
-            $_GET['sz'] = $matches[1];
-            $filename = $matches[2];
+            $_GET['filter'] = $matches[2];
+            $filename = $matches[3];
         }
 
         if (isset($filename) && file_exists(_DOWNLOADDIR . '/' . $filename)) {
@@ -104,6 +108,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* Quality */
         $quality = (isset($_GET['ql'])) ? $_GET['ql'] : Jojo::getOption('jpeg_quality', 85);
+        $sharpness = Jojo::getOption('image_sharpen', 18);
 
         /* size */
         if (isset($_GET['sz'])) {
@@ -112,7 +117,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         } elseif (isset($_GET['fitmaxw']) && isset($_GET['fitmaxh'])) {
             $fitmaxw = $_GET['fitmaxw'];
             $fitmaxh = $_GET['fitmaxh'];
-            $s = 'fit' . $fitmaxw.'x'.$fitmaxh;
+            $s = ( $pad ? 'pad' : 'fit' ) . $fitmaxw.'x'.$fitmaxh;
         } elseif (isset($_GET['maxw']) && isset($_GET['maxh'])) {
             $maxw = $_GET['maxw'];
             $maxh = $_GET['maxh'];
@@ -135,17 +140,19 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $s = '';
         }
 
-        if ($s && self::isRemoteFile($filename)) {
-            $cachefile = _CACHEDIR . '/images/remote/' . $s . '/' . md5($filename) . '.' . Jojo::getFileExtension($filename);
+        /* Filter */
+        $filters = Jojo::getOption('image_filters', '') ? Jojo::ta2kv(Jojo::getOption('image_filters'), ':') : '';
+        $f = ($filters && isset($_GET['filter']) && $_GET['filter'] && isset($filters[$_GET['filter']])) ? $_GET['filter'] : '';
+
+       if ($s && self::isRemoteFile($filename)) {
+            $cachefile = _CACHEDIR . '/images/remote/' . $s . $f . '/' . md5($filename) . '.' . Jojo::getFileExtension($filename);
         } elseif ($s) {
-            $cachefile = _CACHEDIR . '/images/' . $s . '/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
+            $cachefile = _CACHEDIR . '/images/' . $s . $f . '/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
         } elseif (self::isRemoteFile($filename)) {
             $cachefile = _CACHEDIR . '/images/remote/' . md5($filename) . '.' . $filetype;
         } else {
             $cachefile = _CACHEDIR . '/images/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
         }
-
-
 
         Jojo::runHook('jojo_core:imageCheckAccess', array('filename' => $filename));
 
@@ -158,8 +165,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             /* output image data */
             $data = file_get_contents($cachefile);
             header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            header('Cache-Control: public, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+            header('Cache-Control: public, max-age=' . $cachetime );
+            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
             header('Pragma: ');
             header('Content-type: ' . $mimetype);
             header('Content-Length: ' . strlen($data));
@@ -178,14 +185,21 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 parent::sendCacheHeaders(filemtime($filename));
 
                 /* output image data */
-                $data = file_get_contents($filename);
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = self::createIm($filename, $filetype);
+                    $im = self::applySharpening($im, $sharpness);
+                    $data = Imagejpeg($im,null,$quality);
+                } else {
+                    $data = file_get_contents($filename);
+                }
 
                 //header('Cache-Control: public');
                 if (!self::isRemoteFile($filename)) {
                     header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($filename)));
                 }
-                header('Cache-Control: public, max-age=28800');
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+                header('Cache-Control: public, max-age=' . $cachetime);
+                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
@@ -206,10 +220,17 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 parent::sendCacheHeaders(filemtime($pluginfile));
 
                 /* output image data */
-                $data = file_get_contents($pluginfile);
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = self::createIm($pluginfile, $filetype);
+                    $im = self::applySharpening($im, $sharpness);
+                    $data = Imagejpeg($im,null,$quality);
+                } else {
+                    $data = file_get_contents($pluginfile);
+                }
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: public, max-age=28800');
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+                header('Cache-Control: public, max-age=' . $cachetime);
+                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
@@ -230,10 +251,17 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 parent::sendCacheHeaders(filemtime($pluginfile));
 
                 /* output image data */
-                $data = file_get_contents($pluginfile);
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = self::createIm($pluginfile, $filetype);
+                    $im = self::applySharpening($im, $sharpness);
+                    $data = Imagejpeg($im,null,$quality);
+                } else {
+                    $data = file_get_contents($pluginfile);
+                }
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: public, max-age=28800');
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+                header('Cache-Control: public, max-age=' . $cachetime);
+                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
                 header('Pragma: ');
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
@@ -252,44 +280,20 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         if (self::isRemoteFile($filename) || Jojo::fileExists($filename)) {
             /* the file exists - open it & create image handle*/
-            if ($filetype == 'gif') {
-                $im = imagecreatefromgif($filename);
-            } elseif ($filetype == 'png') {
-                $im = imagecreatefrompng($filename);
-            } else {
-                $im = imagecreatefromjpeg($filename);
-            }
+            $im = self::createIm($filename, $filetype);
         } else {
             /* Search for matching files in the themes */
             $im = false;
             foreach (Jojo::listThemes('images/' . $filename) as $pluginfile) {
                 $size = 'default';
-                if ($filetype == 'gif') {
-                    $im = imagecreatefromgif($pluginfile);
-                    break;
-                } elseif ($filetype == 'png') {
-                    $im = imagecreatefrompng($pluginfile);
-                    break;
-                } else {
-                    $im = imagecreatefromjpeg($pluginfile);
-                    break;
-                }
+                $im = self::createIm($pluginfile, $filetype);
             }
 
             if (!$im) {
                 /* Search for matching files in the plugins */
                 foreach (Jojo::listPlugins('images/' . $filename, true) as $pluginfile) {
                     $size = 'default';
-                    if ($filetype == 'gif') {
-                        $im = imagecreatefromgif($pluginfile);
-                        break;
-                    } elseif ($filetype == 'png') {
-                        $im = imagecreatefrompng($pluginfile);
-                        break;
-                    } else {
-                        $im = imagecreatefromjpeg($pluginfile);
-                        break;
-                    }
+                    $im = self::createIm($pluginfile, $filetype);
                 }
             }
 
@@ -450,14 +454,40 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 imagealphablending($new_im, false);
             }
             if ($pad) {
-                $background = imagecolorallocate($new_im, 0xFF, 0xFF, 0xFF);//todo: allow this to be something other than white
+                $padbg = explode(',', Jojo::getOption('image_padbackground', '0xFF, 0xFF, 0xFF'));
+                $background = imagecolorallocate($new_im, $padbg[0], $padbg[1], $padbg[2]);
                 imagefill($new_im, 0, 0, $background);
             }
             $dst_x = ($pad) ? round(($fitmaxw / 2) - ($new_width / 2)) : 0;
             $dst_y = ($pad) ? round(($fitmaxh / 2) - ($new_height / 2)) : 0;
             ImageCopyResampled($new_im, $im, $dst_x, $dst_y, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
-            //ImageCopy($new_im, $im, 0, 0, $startx, $starty, $new_width, $new_height, $im_width, $im_height);
             $nochange = false;
+            
+           /* apply filter */
+            if (isset($filters[$f])) {
+                if (strpos($filters[$f], ';')) {
+                    $ifs = explode(';', $filters[$f]);
+                    foreach ($ifs as $if) {
+                        $if = explode(',', $if);
+                        $filter = array_shift($if);
+                        $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
+                    }
+                } else {
+                    $if = explode(',', $filters[$f]);
+                    $filter = array_shift($if);
+                    $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
+                }
+            }
+            
+            if ($filetype == 'jpg' || $filetype == 'jpeg') {
+                if ($sharpness) {
+                    // sharpen the image
+                    $new_im = self::applySharpening($new_im, $sharpness);
+                }
+                // Enable interlacing (progressive JPG, smaller size file)
+                ImageInterlace($new_im, true);
+            }
+
         } else {
             /* No change */
             $new_im = $im;
@@ -480,8 +510,8 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         header('Content-Description: PHP Generated Image');
         header('Content-Transfer-Encoding: binary');
 
-        header('Cache-Control: public, max-age=28800');
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+        header('Cache-Control: public, max-age=' . $cachetime);
+        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
         header('Pragma: ');
 
         // output
@@ -510,8 +540,22 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
     //added by tim
     // TODO needs some more love
-    static function isRemoteFile($filename) {
+    static function isRemoteFile($filename) 
+    {
         return (preg_match('|^https?\://|i', $filename));
+    }
+
+    /* create an image resource from a file */
+    static function createIm($filepath, $filetype='jpg')
+    {
+        if ($filetype == 'gif') {
+            $im = imagecreatefromgif($filepath);
+        } elseif ($filetype == 'png') {
+            $im = imagecreatefrompng($filepath);
+        } else {
+            $im = imagecreatefromjpeg($filepath);
+        }
+        return $im;
     }
 
     /* retrieves crop data, returning false or array(x,y) with the center point of an image. Todo, cache to a file to avoid DB query */
@@ -526,41 +570,58 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         return array($crop_x, $crop_y);
     }
 
-    /* apply http://www.php.net/manual/en/function.imagefilter.php with optional rgb arguments as an array */
-    static function applyFilter($file, $filter, $filterargs=array()) {
-        $filetype = Jojo::getFileExtension($file);
-        if ($filetype == 'gif') {
-            $im = imagecreatefromgif($file);
-        } elseif ($filetype == 'png') {
-            $im = imagecreatefrompng($file);
-        } elseif ($filetype == 'jpg' ||  $filetype == 'jpeg') {
-            $im = imagecreatefromjpeg($file);
+    /* Sharpen image. Takes a php image resource.
+    Recommended for photographic images only - graphics tend to go a bit strange. 
+    Can also be used for blurring, with negative sharpness values.  
+    10 = strong, 20 = mild */
+    static function applySharpening($im, $sharpness=18) 
+    {
+        $sharpenMatrix = array( array(-1, -1, -1), array(-1, $sharpness, -1), array(-1, -1, -1) ); 
+        $divisor = array_sum(array_map('array_sum', $sharpenMatrix));            
+        $offset = 0; 
+        imageconvolution($im, $sharpenMatrix, $divisor, $offset);
+        return $im;
+    }
+
+    /* apply http://www.php.net/manual/en/function.imagefilter.php with optional rgb arguments as an array. 
+    Accepts either a filepath or a php image resource ($isfile=false) */
+    static function applyFilter($file, $filter, $filterargs=array(), $isfile=true) 
+    {
+        if ($isfile) {
+            $filetype = Jojo::getFileExtension($file);
+            if ($filetype == 'gif') {
+                $im = imagecreatefromgif($file);
+            } elseif ($filetype == 'png') {
+                $im = imagecreatefrompng($file);
+            } elseif ($filetype == 'jpg' ||  $filetype == 'jpeg') {
+                $im = imagecreatefromjpeg($file);
+            }
+        } else {
+            $im = $file;
         }
         if ($im) {
             if ($filter=='IMG_FILTER_DUOTONE') {
-            /* custom filter for preserving luminosity while colorizing an image to create a duotone effect, from http://www.exorithm.com/algorithm/view/duotone_image */
-              $imagex = imagesx($im);
-              $imagey = imagesy($im);
-              for ($x = 0; $x <$imagex; ++$x) {
-                for ($y = 0; $y <$imagey; ++$y) {
-                    $rgb = imagecolorat($im, $x, $y);
-                    $color = imagecolorsforindex($im, $rgb);
-                    $grey = floor(($color['red']+$color['green']+$color['blue'])/3);
-                    $red = $grey + $grey*($filterargs[0]/150);
-                    $green = $grey + $grey*($filterargs[1]/150);
-                    $blue = $grey + $grey*($filterargs[2]/150);
-      
-                  if ($red > 255) $red = 255;
-                  if ($green > 255) $green = 255;
-                  if ($blue > 255) $blue = 255;
-                  if ($red < 0) $red = 0;
-                  if ($green < 0) $green = 0;
-                  if ($blue < 0) $blue = 0;
-                  $newcol = imagecolorallocatealpha($im, $red,$green,$blue,$color['alpha']);
-                  imagesetpixel ($im, $x, $y, $newcol);
+                /* custom filter for preserving luminosity while colorizing an image to create a duotone effect, from http://www.exorithm.com/algorithm/view/duotone_image */
+                $imagex = imagesx($im);
+                $imagey = imagesy($im);
+                for ($x = 0; $x <$imagex; ++$x) {
+                    for ($y = 0; $y <$imagey; ++$y) {
+                        $rgb = imagecolorat($im, $x, $y);
+                        $color = imagecolorsforindex($im, $rgb);
+                        $grey = floor(($color['red']+$color['green']+$color['blue'])/3);
+                        $red = $grey + $grey*($filterargs[0]/150);
+                        $green = $grey + $grey*($filterargs[1]/150);
+                        $blue = $grey + $grey*($filterargs[2]/150);
+                        if ($red > 255) $red = 255;
+                        if ($green > 255) $green = 255;
+                        if ($blue > 255) $blue = 255;
+                        if ($red < 0) $red = 0;
+                        if ($green < 0) $green = 0;
+                        if ($blue < 0) $blue = 0;
+                        $newcol = imagecolorallocatealpha($im, $red,$green,$blue,$color['alpha']);
+                        imagesetpixel ($im, $x, $y, $newcol);
+                    }
                 }
-              }
-
             } else {
                 $args = count($filterargs);
                 switch ($args) {
@@ -581,16 +642,20 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                         break;
                 }
             }
-           if ($filetype == "gif") {
-                Imagegif($im, $file);
-            } else if ($filetype == "png") {
-                imagesavealpha($new_im, true);
-                Imagepng($im, $file);
+            if ($isfile) {
+               if ($filetype == "gif") {
+                    Imagegif($im, $file);
+                } else if ($filetype == "png") {
+                    imagesavealpha($new_im, true);
+                    Imagepng($im, $file);
+                } else {
+                    $quality = Jojo::getOption('jpeg_quality', 85);
+                    Imagejpeg($im, $file, $quality);
+                }
+                return true;
             } else {
-                $quality = Jojo::getOption('jpeg_quality', 85);
-                Imagejpeg($im, $file, $quality);
+                return $im;
             }
-            return true;
         }
         return false;
     }

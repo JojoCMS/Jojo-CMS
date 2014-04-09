@@ -271,12 +271,9 @@ class Jojo_Field_fileupload extends Jojo_Field
                     $filters = $this->fd_options ? Jojo::ta2array($this->fd_options) : '';
                     if ($filters) {
                         foreach ($filters as &$f) {
-                            if (strpos($f, ':')!=false) {
-                                $filter = explode(':', $f);
-                                Jojo_Plugin_Core_Image::applyFilter($destination, $filter[0], (strpos($filter[1], ',')!=false ? explode(',', $filter[1]) : $filter[1]));
-                            } else {
-                                Jojo_Plugin_Core_Image::applyFilter($destination, $f);
-                            }
+                            $if = explode(',', $f);
+                            $filter = array_shift($if);
+                            Jojo_Plugin_Core_Image::applyFilter($destination, $filter, $if);
                         }
                     }
                     $this->value =  !empty($newname) ? $newname : $filename;

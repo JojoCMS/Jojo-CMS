@@ -52,8 +52,8 @@ class Jojo_Auth_Local {
                     /* Set remember password cookie */
                     $code = Jojo::randomstring(16);
                     setcookie("jojoR", base64_encode($logindata['userid'] . ':' . $code), time() + (60 * 60 * 24 * 365), '/' . _SITEFOLDER);
-                    $values = array((int)$logindata['userid'], $code, time());
-                    $res = Jojo::insertQuery("INSERT INTO {auth_token} SET userid = ?, token = ?, lastused = ?", array($values));
+                    $values = array((int)($logindata['userid']), $code, time());
+                    $res = Jojo::insertQuery("INSERT INTO {auth_token} SET userid = ?, token = ?, lastused = ?", $values);
                 }
 
                 /* After login hook */

@@ -308,17 +308,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'jpeg_quality',
-    'category'    => 'Config',
-    'label'       => 'JPEG Quality',
-    'description' => 'This is the quality percentage used when jpeg images are resized (1-100). Higher quality images are larger and slower to download.',
-    'type'        => 'integer',
-    'default'     => '85',
-    'options'     => '',
-);
-
-
-$_options[] = array(
     'id'          => 'captcha_num_chars',
     'category'    => 'Config',
     'label'       => 'CAPTCHA numer of characters',
@@ -534,7 +523,79 @@ $_options[] = array(
     'description' => 'Enables / disables the Secondary Nav field on Edit pages. It is recommended this is set to NO unless it is specifically used by the site. Please run SETUP after changing this option.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
+);
+
+/* Images */
+
+$_options[] = array(
+    'id'          => 'jpeg_quality',
+    'category'    => 'Images',
+    'label'       => 'JPEG Quality',
+    'description' => 'This is the quality percentage used when jpeg images are resized (1-100). Higher quality images are larger and slower to download.',
+    'type'        => 'integer',
+    'default'     => '85',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'image_cachetime',
+    'category'    => 'Images',
+    'label'       => 'Image cache time',
+    'description' => 'The maximum amount of time in seconds images will be cached for. Default 7 days.',
+    'type'        => 'integer',
+    'default'     => 604800,
+    'options'     => '',
+);
+
+$_options[] = array(
+    'id'          => 'image_sharpen',
+    'category'    => 'Images',
+    'label'       => 'Sharpen',
+    'description' => 'Sharpen images after auto-resizing. 20=light, 10=aggressive, 0=none',
+    'type'        => 'integer',
+    'default'     => '18',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'image_padbackground',
+    'category'    => 'Images',
+    'label'       => 'Pad Background',
+    'description' => 'Background colour for padded images as r,g,b -  integers between 0 and 255 or hexadecimals between 0x00 and 0xFF',
+    'type'        => 'text',
+    'default'     => '0xFF,0xFF,0xFF',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'max_imageupload_size',
+    'category'    => 'Images',
+    'label'       => 'Maximum Image Upload Size',
+    'description' => 'sets the maximum image upload size',
+    'type'        => 'text',
+    'default'     => '3000',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'allowed_imageupload_extensions',
+    'category'    => 'Images',
+    'label'       => 'Image Upload Types',
+    'description' => 'sets the allowed image upload file types - comma separated list of file extensions',
+    'type'        => 'text',
+    'default'     => 'jpg,gif,png,jpeg',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'image_filters',
+    'category'    => 'Images',
+    'label'       => 'Image Filters',
+    'description' => 'A newline separated list of php imagefilters in the format [name(a-z)]:[image_filter name],[arg1],[arg2].. e.g. blueduo:IMG_FILTER_DUOTONE,0,121,193 images can then be called by url including the filter name images/[resize][filtername]/[filepath] e.g. images/w220blueduo/logo.png',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => ''
 );
 
 /* HTML Editor */
@@ -546,7 +607,7 @@ $_options[] = array(
     'description' => 'The default content editor for new pages.',
     'type'        => 'radio',
     'default'     => 'wysiwyg',
-    'options'     => 'bbcode,wysiwyg',
+    'options'     => 'bbcode,wysiwyg'
 );
 
 $_options[] = array(
@@ -556,7 +617,7 @@ $_options[] = array(
     'description' => 'if yes headings will be checked for //, converted for inline use and stripped for SEO titles',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -566,7 +627,7 @@ $_options[] = array(
     'description' => 'If there are several WYSIWYG editors available, this option sets the preference for the site. Currently, only XINHA is available.',
     'type'        => 'radio',
     'default'     => 'xinha',
-    'options'     => 'xinha',
+    'options'     => 'xinha'
 );
 
 $_options[] = array(
@@ -629,25 +690,6 @@ $_options[] = array(
     'options'     => '',
 );
 
-$_options[] = array(
-    'id'          => 'max_imageupload_size',
-    'category'    => 'HTML Editor',
-    'label'       => 'Maximum Image Upload Size',
-    'description' => 'sets the maximum image upload size',
-    'type'        => 'text',
-    'default'     => '2000',
-    'options'     => '',
-);
-
-$_options[] = array(
-    'id'          => 'allowed_imageupload_extensions',
-    'category'    => 'HTML Editor',
-    'label'       => 'Image Upload Types',
-    'description' => 'sets the allowed image upload file types - comma separated list of file extensions',
-    'type'        => 'text',
-    'default'     => 'jpg,gif,png',
-    'options'     => '',
-);
 
 /* CSS */
 
