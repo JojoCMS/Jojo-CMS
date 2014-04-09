@@ -114,8 +114,8 @@ if (Jojo::usingSslConnection()) {
     $issecure = false;
 }
 
-define('_SITEFOLDER',       ltrim(str_replace(_PROTOCOL . $_SERVER['HTTP_HOST'] , '' , _SITEURL), '/')); //the folder in which the website resides, if not the root (eg http://www.foo.com/FOLDER/index.php will return "FOLDER")
-define('_SECURESITEFOLDER', ltrim(str_replace(_PROTOCOL . $_SERVER['HTTP_HOST'] , '' , _SECUREURL), '/')); //the folder in which the website resides, if not the root (eg https://www.foo.com/FOLDER/index.php will return "FOLDER")
+define('_SITEFOLDER',       ltrim(str_replace(_PROTOCOL . ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '' ) , '' , _SITEURL), '/')); //the folder in which the website resides, if not the root (eg http://www.foo.com/FOLDER/index.php will return "FOLDER")
+define('_SECURESITEFOLDER', ltrim(str_replace(_PROTOCOL . ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '' ) , '' , _SECUREURL), '/')); //the folder in which the website resides, if not the root (eg https://www.foo.com/FOLDER/index.php will return "FOLDER")
 
 /* Work out the Site URI with respect to the Site URL */
 if (preg_match('%^/?' . _SITEFOLDER . '/?(.*)%', $_SERVER['REQUEST_URI'], $regs)) {
