@@ -16,3 +16,6 @@
 [submodule "less.php"]
 	path = less.php
 	url = https://github.com/oyejorge/less.php.git
+[submodule "plugins/jojo_core/external/jstree"]
+	path = plugins/jojo_core/external/jstree
+	url = git://github.com/vakata/jstree.git

@@ -18,6 +18,7 @@
  * @package jojo_core
  */
 
+header('Content-Type: application/json');
 header("Cache-Control: must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
@@ -57,9 +58,11 @@ if ($table->getOption('parentfield')) {
     $nodes = array();
     foreach ($res as $r) {
         $nodes[$r['id']] = array(
-                            'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
-                            'data'     => $r['title'],
-                            'state'    => 'closed',
+                            'id'        => $r['id'],
+                            'text'     => $r['title'],
+                            'parent'     => $node,
+                            'state'    => array( 'opened' => false, 'selected' => false ),
+                            'li_attr'     => array ('class' => 'page', 'pos' => $pos++)
                            );
     }
 
@@ -75,7 +78,8 @@ if ($table->getOption('parentfield')) {
 
     $res = Jojo::selectQuery($query, array($node));
     foreach ($res as $r) {
-        $nodes[$r['parent']]['attr'    ]['class'] = "folder";
+        $nodes[$r['parent']]['li_attr']['class'] = "folder";
+        $nodes[$r['parent']]['children'] = true;
     }
     echo json_encode(array_values($nodes));
     exit;
@@ -290,7 +294,6 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
                                );
         }
     }
-
     echo json_encode(array_values($nodes));
     exit;
 }
@@ -394,7 +397,6 @@ if ($table->getOption('group1') && $node[0] == '|') {
                             'state'    => 'closed',
                             );
     }
-
     echo json_encode(array_values($nodes));
     exit;
 }
@@ -429,7 +431,6 @@ if ($table->getOption('group1') && $table->getOption('group2') && $node[0] == '~
                             'state'    => 'closed',
                            );
     }
-
     echo json_encode(array_values($nodes));
     exit;
 }
