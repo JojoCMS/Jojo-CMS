@@ -239,32 +239,6 @@ table.plugin-table img.icon {
   display: block;
 }
 
-div.buttonImageContainer {
-  background-color: #EAE8E5;
-  border: 1px solid #999;
-  text-align: center;
-  background-position: center 5px;
-  background-repeat: no-repeat;
-  font-weight: bold;
-  float: left;
-  margin: 1px;
-  cursor: pointer;
-  cursor: hand;
-}
-
-div.buttonDisabled {
-  background-color: #EAE8E5;
-  border: 1px solid #999;
-  text-align: center;
-  background-position: center 5px;
-  background-repeat: no-repeat;
-  font-weight: bold;
-  float: left;
-  margin: 1px;
-  cursor: pointer;
-  cursor: hand;
-}
-
 input.jojo-admin-edit-done {
   margin: 5px;
   margin-right: 20px;
@@ -428,16 +402,9 @@ select.jpop_select {
 
 .htmlarea {
     border: 1px solid #ccc;
-    .toolbar {
-        .buttonActive, .htmlarea .toolbar .buttonPressed {
-            padding: 0;
-        }
-        table {
-            background: none repeat scroll 0 0 transparent;
-        }
-        .buttonPressed {
-            background: none repeat scroll 0 0 black;
-        }    
+    .toolbar .button {
+        height: 19px;
+        width: 19px;
     }
     .dialog h1 {
         border-radius: 0;
