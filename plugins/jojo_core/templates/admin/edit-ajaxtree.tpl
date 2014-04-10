@@ -17,8 +17,14 @@
                         'dataType' : 'json'
                     }
                 },
-                'search' : { 'fuzzy' : false, 'show_only_matches' : false },
-                {/literal}'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow" ]{literal}
+                "types" : {
+                    "file" : {
+                      "icon" : "glyphicon glyphicon-file",
+                      "valid_children" : []
+                    }
+                },
+               'search' : { 'fuzzy' : false, 'show_only_matches' : false },
+                {/literal}'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
             });
              $("#treediv").bind('select_node.jstree', function (e, data) {
                 node = data.instance.get_node(data.selected[0], true);

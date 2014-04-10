@@ -62,6 +62,7 @@ if ($table->getOption('parentfield')) {
                             'text'     => $r['title'],
                             'parent'     => $node,
                             'state'    => array( 'opened' => false, 'selected' => false ),
+                            'type' => 'file',
                             'li_attr'     => array ('class' => 'page', 'pos' => $pos++)
                            );
     }
@@ -79,6 +80,7 @@ if ($table->getOption('parentfield')) {
     $res = Jojo::selectQuery($query, array($node));
     foreach ($res as $r) {
         $nodes[$r['parent']]['li_attr']['class'] = "folder";
+        $nodes[$r['parent']]['type'] = 'folder';
         $nodes[$r['parent']]['children'] = true;
     }
     echo json_encode(array_values($nodes));
@@ -136,10 +138,12 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes['c' . $r['id']] = array(
-                                'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => 'c'.$node),
-                                'data'     => $r['title'],
-                                'state'    => 'closed',
-                               );
+                    'id'        => 'c' . $r['id'],
+                    'text'     => $r['title'],
+                    'parent'     => 'c' . $node,
+                    'state'    => array( 'opened' => false, 'selected' => false ),
+                    'li_attr'     => array ('class' => 'locked', 'pos' => $pos++)
+                );
         }
         /* Find out which ones have child categories */
         $query = sprintf('SELECT DISTINCT %s as parent FROM {%s} WHERE %s IN (SELECT %s FROM {%s} WHERE %s = ?);',
@@ -154,6 +158,7 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
         $res = Jojo::selectQuery($query, array($node));
         foreach ($res as $r) {
             $nodes['c' . $r['parent']]['attr'    ]['class'] = "folder";
+            $nodes['c' . $r['parent']]['attr'    ]['children'] = true;
         }
 
         // Check for the category table since we won't always have it now
@@ -198,9 +203,11 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes[$r['id']] = array(
-                    'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => 'c'.$node),
-                    'data'     => $r['title'],
-                    'state'    => 'closed',
+                    'id'        => $r['id'],
+                    'text'     => $r['title'],
+                    'parent'     => 'c' . $node,
+                    'state'    => array( 'opened' => false, 'selected' => false ),
+                    'li_attr'     => array ('class' => 'page', 'pos' => $pos++)
                 );
             }
         }
@@ -219,9 +226,11 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes['c' . $r['id']] = array(
-                    'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
-                    'data'     => $r['title'],
-                    'state'    => 'closed',
+                    'id'        => $r['id'],
+                    'text'     => $r['title'],
+                    'parent'     => 'c' . $node,
+                    'state'    => array( 'opened' => false, 'selected' => false ),
+                    'li_attr'     => array ('class' => 'page', 'pos' => $pos++)
                 );
             }
         }
@@ -251,10 +260,14 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
                 $nodes['c' . $r['id']] = array(
-                                    'attr'     => array ('id' => 'c' . $r['id'], 'class' => 'locked', 'pos' => $pos++, 'parentid' => $node),
-                                    'data'     => $r['title'],
-                                    'state'    => 'closed',
-                                   );
+                    'id'        => 'c' . $r['id'],
+                    'text'     => $r['title'],
+                    'parent'     => $node,
+                    'state'    => array( 'opened' => false, 'selected' => false ),
+                    'type'   => 'folder',
+                    'li_attr'     => array ('class' => 'locked', 'pos' => $pos++),
+                    'children' => true
+                  );
             }
         }
 
@@ -288,10 +301,14 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
         /* Add the nodes to the array for output */
         foreach ($res as $r) {
             $nodes[$r['id']] = array(
-                                'attr'     => array ('id' => $r['id'], 'class' => 'page', 'pos' => $pos++, 'parentid' => $node),
-                                'data'     => $r['title'],
-                                'state'    => 'closed',
-                               );
+                    'id'        => $r['id'],
+                    'text'     => $r['title'],
+                    'parent'     => 'c' . $node,
+                    'state'    => array( 'opened' => false, 'selected' => false ),
+                    'type'   => 'file',
+                    'li_attr'     => array ('class' => 'page', 'pos' => $pos++)
+                );
+            
         }
     }
     echo json_encode(array_values($nodes));
