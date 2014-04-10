@@ -47,27 +47,6 @@
       [
         'myTextArea'
       ];
-    var xinha_editor_names = null;
-    Xinha.makeVisibleEditors = function(xinha_editors, xinha_config, xinha_plugins) {
-        var visible_editors = [];
-        for (var i in xinha_editors) {
-            var editor_id = xinha_editors[i];
-            if (typeof editor_id == "string") {
-                if ($('#' + xinha_editors[i]).is(':visible')) {
-                    visible_editors.push(editor_id);
-                }
-            }
-        }
-        return Xinha.makeEditors(visible_editors, xinha_config, xinha_plugins);
-    }
-
-    function startVisibleXinhaEditors() {
-        xinha_editors = Xinha.makeVisibleEditors(
-            xinha_editor_names, xinha_config, xinha_plugins
-        );
-        Xinha.startEditors(xinha_editors);
-    }
-    
     xinha_init = xinha_init ? xinha_init : function()
     {
          // THIS BIT OF JAVASCRIPT LOADS THE PLUGINS, NO TOUCHING  :)
@@ -144,12 +123,12 @@
                 }
         }
 
-    xinha_editor_names = xinha_editors;
+    xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
 
     xinha_editors.myTextArea.config.width = '805px';
     xinha_editors.myTextArea.config.height = '480px';
 
-    startVisibleXinhaEditors();
+    Xinha.startEditors(xinha_editors);
     window.onload = null;
 }
 window.onload = xinha_init;

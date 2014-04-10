@@ -63,5 +63,8 @@ $(document).ready(function() {ldelim}
     $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
     {/if}setTextEditorContent("fm_{$fd_field}");
     $('#editor_{$fd_field}_{$editortype}').show();
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {ldelim}
+        startVisibleXinhaEditors();
+    {rdelim})
 {rdelim});
 </script>

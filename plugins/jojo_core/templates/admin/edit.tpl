@@ -45,7 +45,7 @@
         <div id="fields" class="tab-content">
             {foreach from=$tabnames key=k item=tab}
             {if $numtabs > 1}
-            <div class="tab-pane{if $k==0} active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""|replace:".":""}{/if}">
+            <div class="tab-pane fade{if $k==0} in active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""|replace:".":""}{/if}">
             {/if}
           
             {foreach from=$fields key=fieldname item=field}
@@ -78,6 +78,7 @@
 <script type="text/javascript">{literal}/* <![CDATA[ */
 
 $('#btn_save').click(function(){$('.jTagEditor-editor:visible').change();});
-/* ]]> */{/literal}</script>
+/* ]]> */{/literal}
+</script>
 
 {include file="admin/footer.tpl"}

@@ -28,10 +28,34 @@
         {/foreach}
         {literal}
        ];
+
      xinha_editors = xinha_editors ? xinha_editors :
       [
         {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}'fm_{$editor}_xinha'{if !$smarty.foreach.wysiwyg.last}, {/if}{/foreach}{literal}
       ];
+
+    var xinha_editor_names = null;
+
+    Xinha.makeVisibleEditors = function(xinha_editors, xinha_config, xinha_plugins) {
+        var visible_editors = [];
+        for (var i in xinha_editors) {
+            var editor_id = xinha_editors[i];
+            if (typeof editor_id == "string") {
+                if ($('#' + xinha_editors[i]).is(':visible')) {
+                    visible_editors.push(editor_id);
+                }
+            }
+        }
+        return Xinha.makeEditors(visible_editors, xinha_config, xinha_plugins);
+    }
+
+    function startVisibleXinhaEditors() {
+        xinha_editors = Xinha.makeVisibleEditors(
+             xinha_editor_names, xinha_config, xinha_plugins
+        );
+        Xinha.startEditors(xinha_editors);
+    }
+    
     xinha_init = xinha_init ? xinha_init : function()
     {
          // THIS BIT OF JAVASCRIPT LOADS THE PLUGINS, NO TOUCHING  :)
@@ -70,7 +94,7 @@
         xinha_config.pageStyleSheets = ["{/literal}{$SITEURL}{literal}/css/styles.css", "{/literal}{$SITEURL}{literal}/css/xinha.css"];
         xinha_config.baseHref = "{/literal}{$SITEURL}{literal}/";
         xinha_config.sevenBitClean = false;
-
+        xinha_config.height = '350px';
         xinha_config.formatblock =
           {
             "&mdash; format &mdash;": "",
@@ -124,17 +148,14 @@
                 }
         }
 
-  xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
+    xinha_editor_names = xinha_editors;
 
-  {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}
-  xinha_editors['fm_{$editor}_xinha'].config.height = '460px';
-  {/foreach}{literal}
-
-  Xinha.startEditors(xinha_editors);
+  startVisibleXinhaEditors();
   window.onload = null;
 }
 //window.onload = xinha_init;
 Xinha._addEvent(window,'load', xinha_init)
+
 
 /*]]>*/
 </script>
