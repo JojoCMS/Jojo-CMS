@@ -258,12 +258,12 @@ if ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield'))
                 }
            }
             /* Add the nodes to the array for output */
-            foreach ($res as $r) {
+            foreach ($res as $k=>$r) {
                 $nodes['c' . $r['id']] = array(
                     'id'        => 'c' . $r['id'],
                     'text'     => $r['title'],
                     'parent'     => $node,
-                    'state'    => array( 'opened' => false, 'selected' => false ),
+                    'state'    => array( 'opened' => ( $k==0 && count($res)==1 ? true : false ), 'selected' => false ),
                     'type'   => 'folder',
                     'li_attr'     => array ('class' => 'locked', 'pos' => $pos++),
                     'children' => true
