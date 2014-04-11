@@ -1,6 +1,6 @@
 {include file="admin/header.tpl"}
 <div  class="row">
-    <div id="option-categories" class="col-md-4">
+    <div id="option-categories" class="col-md-4 col-lg-3">
       <h3>Categories</h3>
         <ul>
         {foreach item=c from=$categories}
@@ -8,9 +8,9 @@
         {/foreach}
         </ul>
     </div>
-    <div id="option-items" class="col-md-8">
+    <div id="option-items" class="col-md-8 col-lg-9">
         <div class="category">
-            <h3>Options</h3>
+            <h2>Options</h2>
             <p>Config options change the behaviour of the site, and any plugins that are installed. To edit options, please select a category from the list.<br />
             All options are saved automatically after they are changed.</p>
         </div>

@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-4">
         <div>
-            <h3>Available plugins</h3>
+            <h2>Available plugins</h2>
             <ul class="plugins">
         {foreach from=$plugins item=p}{if $p.status!='active'}
                 <li class="{$p.type}" title="{$p.description|escape:'htmlall':'utf-8'}">

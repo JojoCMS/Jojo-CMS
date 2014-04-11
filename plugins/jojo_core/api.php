@@ -859,7 +859,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Media',
     'description' => 'Include Twitter Bootstap\'s media.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 

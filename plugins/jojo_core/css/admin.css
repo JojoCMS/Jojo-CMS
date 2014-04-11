@@ -83,21 +83,21 @@ body {
 
 h1 {
   font-size: 24px;
-  margin: 12px 0;
+  margin: 23px 0 10px;
 }
 
 h2 {
-  font-size: 21px;
-  color: @secondary;
+  font-size: 22px;
+  color: @primary;
 }
 
 h3 {
-  font-size: 18px;
+  font-size: 17px;
   color: @secondary;
 }
 
 h4 {
-  font-size: 14px;
+  font-size: 13px;
   color: @tertiary;
   margin: 18px 0 5px;
 }
@@ -117,9 +117,10 @@ th, td {
     float: left;
 }
 
-#menu {
+#admin-nav {
     margin: 10px 0 0;
     display: inline-block;
+    font-family: @headings-font-family;
 }
 
 /* Body */
