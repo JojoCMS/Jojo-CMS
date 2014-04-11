@@ -10,11 +10,11 @@
         Open Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_html_outer">
-        <textarea class="markItUp" style="width:95%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
+        <textarea class="markItUp" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
 {else}
-<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:95%"></textarea>
+<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:100%"></textarea>
 
 {/if}
 

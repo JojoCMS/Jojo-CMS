@@ -40,7 +40,7 @@
 @icon-font-path: '../external/bootstrap/fonts/';
 
 body {
-    padding: 0 10px;
+    padding: 0 20px;
     color: @tertiary;
 }
 
@@ -188,18 +188,15 @@ div.plugin-box {
 
 table.plugin-table {
   width: 100%;
-}
-
-table.plugin-table th {
-  background: #eee;
-}
-
-table.plugin-table tr.active {
-  background: #efe;
-}
-
-table.plugin-table img.icon {
-  cursor: hand;
+    th {
+      background: #eee;
+    }
+    tr.active {
+      background: #efe;
+    }
+    img.icon {
+      cursor: hand;
+    }
 }
 
 #pluginTable {
@@ -298,32 +295,27 @@ input.jojo-admin-edit-cancel {
 
 #redirect-content {
   margin-left: 15px;
-}
-
-#redirect-content div {
-  clear: both;
-}
-
-#redirect-content span {
-  float: left;
-  padding: 5px;
-  background: #f8f8f8;
-}
-
-#redirect-content span.col_wide {
-  width: 225px;
-}
-
-#redirect-content span.col_narrow {
-  width: 35px;
-}
-
-#redirect-content span.col_med {
-  width: 100px;
+    div {
+      clear: both;
+    }
+    span {
+      float: left;
+      padding: 5px;
+      background: #f8f8f8;
+        &.col_wide {
+          width: 225px;
+        }
+        &.col_narrow {
+          width: 35px;
+        }
+        &.col_med {
+          width: 100px;
+        }
+    }
 }
 
 input.date {
-  background: url('../images/cms/icons/calendar_view_day.png') no-repeat right 4px;
+  background: url('../images/cms/icons/calendar_view_day.png') no-repeat right 6px;
 }
 
 #help-text {
@@ -385,19 +377,6 @@ option.expired {
 
 select.jpop_select {
   display: none;
-}
-.jstree > ul > li {
-    font-size: 12px;
-}
-
-#treediv li.page a ins, #treediv li ul li.page a ins {
-    background-image: url(../images/default/cms/icons/page.png);
-    background-position: top left;
-}
-
-#treediv li.folder a ins {
-    background-image: url(../images/default/cms/icons/folder.png);
-    background-position: top left;
 }
 
 .htmlarea {

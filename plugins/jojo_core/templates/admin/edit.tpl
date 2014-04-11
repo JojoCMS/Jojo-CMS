@@ -52,7 +52,7 @@
             {if $field.tabname == $tab.tabname}
                 <div id="row_{$fieldname}" class="form-group{if $field.error} has-error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
                     {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<p> {$field.name}:</p>{else}<label for="fm_{$fieldname}" class="col-md-2">{if $field.required=="yes"}<small><i class="glyphicon glyphicon-asterisk text-warning"></i></small> {/if}{$field.name}:</label>{/if}
-                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}" class="col-md-{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions')}8{else}12{/if}">
+                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}" class="col-md-{if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions'}12{elseif $field.flags.PRIVACY}8{else}10{/if}">
                         {$field.html}
                     </div>
                     {if $field.flags.PRIVACY}<div class="col-md-2">
