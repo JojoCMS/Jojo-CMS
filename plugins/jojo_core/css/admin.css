@@ -1,3 +1,40 @@
+@font-face {
+    font-family: 'OpenSansLight';
+    src: url('../external/fonts/OpenSans-Light-webfont.eot');
+    src: url('../external/fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Light-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Light-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Light-webfont.svg#OpenSansLight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-Regular-webfont.eot');
+    src: url('../external/fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Regular-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Regular-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-Italic-webfont.eot');
+    src: url('../external/fonts/OpenSans-Italic-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Italic-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Italic-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Italic-webfont.svg#OpenSansItalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-Bold-webfont.eot');
+    src: url('../external/fonts/OpenSans-Bold-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Bold-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Bold-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Bold-webfont.svg#OpenSansBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-BoldItalic-webfont.eot');
+    src: url('../external/fonts/OpenSans-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-BoldItalic-webfont.woff') format('woff'),url('../external/fonts/OpenSans-BoldItalic-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-BoldItalic-webfont.svg#OpenSansBoldItalic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+}
+
 @primary: #465CAA;
 @secondary: #5E7FBB;
 @tertiary: #666;
@@ -27,13 +64,13 @@
 // Typography
 // -------------------------
 
-@font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-sans-serif:  "OpenSans", Verdana, sans-serif;
 @font-size-base:          13px;
 @baseFontSize: @font-size-base;
 @line-height-base:        1.428571429; // 20/14
 
-@headings-font-family:    @font-family-base;
-@headings-font-weight:    500;
+@headings-font-family:    "OpenSansLight", @font-family-base;
+@headings-font-weight:    400;
 @headings-line-height:    1.1;
 
 
@@ -114,6 +151,17 @@ img.boxed {
   display: none;
 }
 
+#fields label {
+    text-align: right;
+    padding-top: 5px;
+}
+
+#treediv {
+    border-right:1px solid #eeeeee;
+    margin-bottom: 30px;
+    overflow: auto;
+    max-height: 800px;
+}
 /* General */
 div.clear {
   clear: both;

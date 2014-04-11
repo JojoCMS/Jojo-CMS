@@ -3,7 +3,7 @@
 
     {if $searchable}<input id="treediv_q" class="input" type="text" value="" />
     {/if}
-    <div id="treediv" class="treediv" style="min-height:400px; overflow-x:auto; border-right:1px solid #eeeeee;"></div>
+    <div id="treediv"></div>
     <script type="text/javascript">{literal}
         var canLoad = true;
         $(function() {

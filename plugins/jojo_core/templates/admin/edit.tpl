@@ -10,7 +10,7 @@
 
 {jojoHook hook="admin_edit_top"}
 <div class="row">
-<div id="records" class="col-md-4">
+<div id="records" class="col-md-4 col-lg-3">
     <div id="recordlist">
         {$recordlist}
     </div>
@@ -18,7 +18,7 @@
 </div><!-- [end records] -->
 
 <!-- [Fields] -->
-<div id="fields-wrap" class="col-md-8">
+<div id="fields-wrap" class="col-md-8 col-lg-9">
     <div id="message" class="alert alert-block alert-info"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
     <div id="error" style="display:none;" class="alert alert-block alert-danger">{if $error}{$error}{/if}</div>
     <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe" class="form-horizontal">
@@ -51,8 +51,8 @@
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
                 <div id="row_{$fieldname}" class="form-group{if $field.error} has-error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
-                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<p> {$field.name}:</p>{else}<label for="fm_{$fieldname}" class="col-md-2">{if $field.required=="yes"}<small><i class="glyphicon glyphicon-asterisk text-warning"></i></small> {/if}{$field.name}:</label>{/if}
-                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}" class="col-md-{if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions'}12{elseif $field.flags.PRIVACY}8{else}10{/if}">
+                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<p> {$field.name}:</p>{else}<label for="fm_{$fieldname}" class="col-md-3 col-lg-2">{if $field.required=="yes"}<small><i class="glyphicon glyphicon-asterisk text-warning"></i></small> {/if}{$field.name}:</label>{/if}
+                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}" class="{if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions'}col-md-12{elseif $field.flags.PRIVACY}col-md-7 col-lg-8{else}col-md-9 col-lg-10{/if}">
                         {$field.html}
                     </div>
                     {if $field.flags.PRIVACY}<div class="col-md-2">
