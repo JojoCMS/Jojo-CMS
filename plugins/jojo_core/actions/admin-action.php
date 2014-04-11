@@ -44,12 +44,12 @@ function refreshMenu($table, $t, $frajax) {
                     if ($parentid == $id) {
                         break;
                     }
-                    $script = str_replace("**callback**", "\n parent.jQuery.jstree._reference('treediv').open_node('#$parentid', function() {**callback**}, true);", $script);
+                    $script = str_replace("**callback**", "\n parent.jQuery.jstree.reference('#treediv').open_node('#$parentid', function() {**callback**}, true);", $script);
                 }
-                $script = str_replace("**callback**", "\n parent.jQuery.jstree._reference('treediv').open_node('#$id', function() {**callback**}, true);", $script);
-                $script = str_replace("**callback**", "\n parent.jQuery.jstree._reference('treediv').select_node('#$id');\n", $script);
+                $script = str_replace("**callback**", "\n parent.jQuery.jstree.reference('#treediv').open_node('#$id', function() {**callback**}, true);", $script);
+                $script = str_replace("**callback**", "\n parent.jQuery.jstree.reference('#treediv').select_node('#$id');\n", $script);
             }
-            $frajax->script(" parent.canLoad = false;\n parent.jQuery.jstree._reference('treediv').deselect_all(); parent.jQuery.jstree._reference('treediv').refresh(-1); \n $script\n parent.canLoad = true;");
+            $frajax->script(" parent.canLoad = false;\n parent.jQuery.jstree.reference('#treediv').deselect_all(); parent.jQuery.jstree.reference('#treediv').refresh(-1); \n $script\n parent.canLoad = true;");
             break;
 
         case 'list':

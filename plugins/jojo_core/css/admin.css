@@ -161,6 +161,9 @@ img.boxed {
     margin-bottom: 30px;
     overflow: auto;
     max-height: 800px;
+    &.jstree-default .jstree-wholerow-clicked {
+        background: #eee;
+    }
 }
 /* General */
 div.clear {
@@ -298,7 +301,7 @@ input.jojo-admin-edit-cancel {
 #message, #error {
     position: absolute;
     z-index: 100;
-    top: 90px;
+    top: -90px;
     right: 20px;
     margin: 0;
     padding: 10px;
@@ -320,26 +323,23 @@ input.jojo-admin-edit-cancel {
   vertical-align: middle;
 }
 
-#event-log table tr.critical {
-  background: #f00;
+#event-log table {
+    tr.critical {
+      background: #f00;
+    }
+    tr.critical td {
+      color: #fff;
+    }
+    tr.high td {
+      font-weight: bold;
+    }
+    tr.low td {
+      color: #555;
+    }
+    tr.very-low td {
+      color: #999;
+    }
 }
-
-#event-log table tr.critical td {
-  color: #fff;
-}
-
-#event-log table tr.high td {
-  font-weight: bold;
-}
-
-#event-log table tr.low td {
-  color: #555;
-}
-
-#event-log table tr.very-low td {
-  color: #999;
-}
-
 
 #redirect-content {
   margin-left: 15px;
@@ -363,7 +363,12 @@ input.jojo-admin-edit-cancel {
 }
 
 input.date {
-  background: url('../images/cms/icons/calendar_view_day.png') no-repeat right 6px;
+  background: url('../images/cms/icons/calendar_view_day.png') no-repeat 4px 6px;
+  padding-left: 26px;
+}
+
+.AnyTime-win {
+    z-index: 1000;
 }
 
 #help-text {
@@ -502,10 +507,4 @@ span.order img {
 }
 span.input-group-addon.order {
     padding: 4px 12px;
-}
-
-.AnyTime-win, .AnyTime-win * {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
 }
