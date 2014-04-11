@@ -24,8 +24,8 @@
                     }
                 },
                 {/literal}{if $searchable}{literal}'search' : { 'fuzzy' : false, 'show_only_matches' : false }, 
-                {/literal}{/if}{literal}
-                {/literal}'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
+                {/literal}{/if}
+                'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
             });
              $("#treediv").bind('select_node.jstree', function (e, data) {
                 node = data.instance.get_node(data.selected[0], true);
