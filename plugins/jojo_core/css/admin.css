@@ -126,7 +126,11 @@ th, td {
 /* Body */
 
 #buttons {
-  padding: 0 0 10px;
+  padding: 0 0 20px;
+}
+
+.btn {
+    font-family: @headings-font-family;
 }
 
 #footer {
