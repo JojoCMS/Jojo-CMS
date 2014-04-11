@@ -275,8 +275,10 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/normalize/normalize.css');
                 /* start with the variable files */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
-                /* Include Anytime datepicker css */
+                /* Anytime datepicker css */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.css');
+                /* jsTree css */
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/jstree/dist/themes/default/style.css');
                 if (Jojo::getOption('wysiwyg_style')=='popup') {
                 /* Include Markitup editor css if using popup editor*/
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/skins/markitup/style.css');

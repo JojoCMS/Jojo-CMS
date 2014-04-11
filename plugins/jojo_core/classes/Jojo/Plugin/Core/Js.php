@@ -166,6 +166,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/set.js');
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/set.js');
                 }
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jstree/dist/jstree.js');
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
 
                 /* Twitter Bootstrap options */

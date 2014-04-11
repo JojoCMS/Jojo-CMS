@@ -1,6 +1,3 @@
-    <link rel="stylesheet" type="text/css" href="external/jstree/dist/themes/default/style.min.css" />
-    <script type="text/javascript" src="external/jstree/dist/jstree.min.js"></script>
-
     {if $searchable}<input id="treediv_q" class="input" type="text" value="" />
     {/if}
     <div id="treediv" class="treediv"></div>
