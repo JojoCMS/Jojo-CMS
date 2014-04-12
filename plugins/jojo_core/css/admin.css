@@ -191,6 +191,7 @@ img.boxed {
             height: 22px;
         }
         .jstree-icon:empty {
+            color: #888;
             line-height: 22px;
             width: 19px;
         }

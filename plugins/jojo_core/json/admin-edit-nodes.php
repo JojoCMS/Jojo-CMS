@@ -79,8 +79,6 @@ if ($table->getOption('parentfield')) {
 
     $res = Jojo::selectQuery($query, array($node));
     foreach ($res as $r) {
-        $nodes[$r['parent']]['li_attr']['class'] = "folder";
-        $nodes[$r['parent']]['type'] = 'folder';
         $nodes[$r['parent']]['children'] = true;
     }
     echo json_encode(array_values($nodes));

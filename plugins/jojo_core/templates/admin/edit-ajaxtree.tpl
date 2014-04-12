@@ -11,21 +11,23 @@
                         'data' : function (node) {
                           return { 'id' : (node.id ? node.id : 0) };
                         },
-                        'dataType' : 'json'
-                    }
-                },
+                        'dataType' : 'json',
+                    },
+                    "check_callback" : true
+               },
                 "types" : {
-                    "folder" : {
+                     "default" : {
+                    },
+                     "#" : {
+                    },
+                   "folder" : {
                       "icon" : "glyphicon glyphicon-folder-open",
-                      "valid_children" : []
                     },
                    "file" : {
                       "icon" : "glyphicon glyphicon-file",
-                      "valid_children" : []
                     }
-                },
-                {/literal}{if $searchable}{literal}'search' : { 'fuzzy' : false, 'show_only_matches' : false }, 
-                {/literal}{/if}
+                },{/literal}{if $searchable} 
+                'search' : {ldelim} 'fuzzy' : false, 'show_only_matches' : false {rdelim}, {/if}
                 'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
             });
              $("#treediv").bind('select_node.jstree', function (e, data) {
@@ -37,18 +39,18 @@
             });
 
             $("#treediv").bind('move_node.jstree', function (e, data) {
-                if (data.args[0].p == "before") {
-                    /* Before an existing node */
-                    $.post('json/admin-edit-move.php',
-                           {table: '{/literal}{$table}{literal}', id: $(data.args[0].p).attr('id'), newParent: $(data.args[0].r).attr('parentid'), order: data.args[0].cp}
-                           );
-                } else if (data.args[0].p == "after") {
-                    /* After an existing node */
-                    $.post('json/admin-edit-move.php',
-                           {table: '{/literal}{$table}{literal}', id: $(data.args[0].p).attr('id'), newParent: $(data.args[0].r).attr('parentid'), order: data.args[0].cp}
-                           );
-                }
-                return false;
+                newparent = data.parent=='#' ? 0 : data.parent;
+                $.ajax({
+                    type: "POST",
+                    url : siteurl + '/json/admin-edit-move.php',
+                    data : {table: '{/literal}{$table}{literal}', id: data.node.id, newParent: data.parent, order: data.position},
+                    success : function () {
+                        frajax('load', '{/literal}{$table}{literal}', data.node.id);
+                    },
+                    dataType: 'text'
+                });
+
+               return false;
             });
 {/literal}{if $searchable}{literal}
             var to = false;
