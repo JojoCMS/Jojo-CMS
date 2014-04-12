@@ -1,4 +1,4 @@
-    {if $searchable}<input id="treediv_q" class="input" type="text" value="" />
+    {if $searchable}<div class="search form-group"><input id="treediv_q" class="input form-control" type="text" value="Search" onfocus="if ($(this).val()=='Search') $(this).val('');" /></div>
     {/if}
     <div id="treediv" class="treediv"></div>
     <script type="text/javascript">{literal}
@@ -27,7 +27,7 @@
                       "icon" : "glyphicon glyphicon-file",
                     }
                 },{/literal}{if $searchable} 
-                'search' : {ldelim} 'fuzzy' : false, 'show_only_matches' : false {rdelim}, {/if}
+                'search' : {ldelim} 'fuzzy' : false, 'show_only_matches' : true, 'case_sensitive' : false {rdelim}, {/if}
                 'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
             });
              $("#treediv").bind('select_node.jstree', function (e, data) {
@@ -64,4 +64,4 @@
 {/literal}{/if}{literal}
        });
     {/literal}</script>
-{if $draggable}<em style="color: #aaa; font-style: italic">Drag-drop to reorder</em>{/if}
+{if $draggable}<p><em style="color: #aaa;">Drag-drop to reorder</em></p>{/if}

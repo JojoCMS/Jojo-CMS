@@ -198,6 +198,10 @@ img.boxed {
         .jstree-wholerow-clicked {
             background: #eee;
         }
+        .jstree-search {
+            color: @primary;
+            font-style: normal;
+        }
     }
 }
 
