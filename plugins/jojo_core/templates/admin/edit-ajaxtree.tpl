@@ -15,7 +15,11 @@
                     }
                 },
                 "types" : {
-                    "file" : {
+                    "folder" : {
+                      "icon" : "glyphicon glyphicon-folder-open",
+                      "valid_children" : []
+                    },
+                   "file" : {
                       "icon" : "glyphicon glyphicon-file",
                       "valid_children" : []
                     }

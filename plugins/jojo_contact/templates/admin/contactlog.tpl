@@ -31,7 +31,7 @@
     <tbody>
 {foreach from=$log item=e}
         <tr>
-            <td>{if !$e.success}<img src="images/cms/icons/error.png" alt="Sending failed!" /> {/if}<a href="#" onclick="$.post('{$correcturl}', {ldelim} removeid: '{$e.formsubmissionid}' {rdelim}); window.location.reload();" title="Remove"><img src="images/cms/icons/delete.png" alt="Remove"  /></a><br />
+            <td>{if !$e.success}<span class="glyphicon glyphicon-exclaimation-sign text-danger" title="Sending failed!"></span>{/if}<a href="#" onclick="$.post('{$correcturl}', {ldelim} removeid: '{$e.formsubmissionid}' {rdelim}); window.location.reload();" title="Remove"><span class="glyphicon glyphicon-remove-circle text-danger"></span></a><br />
 </td>
             <td>{$e.formsubmissionid}</td>
             <td>{$e.friendlydate}</td>
@@ -39,8 +39,8 @@
             <td>{$e.subject}</td>
             <td>{$e.to_email}</td>
             <td id="desc_{$e.formsubmissionid}">
-            <span class="short">{$e.shortdesc}<a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').show();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><img src="images/cms/icons/add.png" alt="more..." /></a></span>
-            <span class="full" style="display:none;">{$e.desc}<br /><a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').toggle();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><img src="images/cms/icons/less.png" alt="less..." /></a></span>
+            <span class="short">{$e.shortdesc} <a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').show();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><span class="glyphicon glyphicon-plus-sign"></span></a></span>
+            <span class="full" style="display:none;">{$e.desc}<br /><a href="#" onclick="$('#desc_{$e.formsubmissionid} .full').toggle();$('#desc_{$e.formsubmissionid} .short').toggle();return false;"><span class="glyphicon glyphicon-minus-sign"></span></a></span>
             </td>
         </tr>
 {/foreach}

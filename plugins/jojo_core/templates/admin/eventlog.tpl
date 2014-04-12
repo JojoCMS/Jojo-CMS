@@ -15,8 +15,7 @@
             <td title="{$e.el_datetime}">{$e.friendlydate}</td>
             <td>{$e.el_code}</td>
             <td>
-                {if $e.el_desc}<a href="#" onclick="$('#desc_{$e.eventlogid}').show('fast');return false;"><img src="images/cms/icons/add.png" alt="more..." /></a>{/if}
-                {$e.el_shortdesc}
+                {$e.el_shortdesc} {if $e.el_desc}<a href="#" onclick="$('#desc_{$e.eventlogid}').show('fast');$(this).hide();return false;"><span class="glyphicon glyphicon-plus-sign"></span></a>{/if}
 {if $e.el_desc}
                 <div style="font-weight:400;display:none;" id="desc_{$e.eventlogid}">
                     {$e.el_desc|nl2br}<br />
