@@ -186,9 +186,13 @@ img.boxed {
             line-height: 22px;
             min-height: 22px;
             font-size: 12px;
+            background-image: url("../external/jstree/dist/themes/default/32px.png");
         }
         .jstree-anchor, .jstree-icon:empty, .jstree-wholerow {
             height: 22px;
+        }
+        .jstree-icon {
+            background-image: none;
         }
         .jstree-icon:empty {
             color: #888;
