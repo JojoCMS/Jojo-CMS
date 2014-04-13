@@ -84,22 +84,16 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* FRAJAX */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
 
-                if (Jojo::getOption('jquery_useanytime', 'no')=='yes') {
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
-                }
+                if (Jojo::getOption('jquery_useanytime', 'no')=='yes')
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
                 
-                /* Respond: media-query polyfill for IE if responsive used */
-                if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/respond/respond.src.js');
-                }
                 /* Twitter Bootstrap options */
                 /* Transitions */
                 if (Jojo::getOption('tbootstrap_js_transition', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/transition.js');
                 /* Modals */
                 if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
-                                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/modal.js');
-
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/modal.js');
                 /* Dropdowns */
                 if (Jojo::getOption('tbootstrap_js_dropdown', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/dropdown.js');
@@ -125,7 +119,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 if (Jojo::getOption('tbootstrap_js_button', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/button.js');
                 /* Collapse */
-                if (Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes' || (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes' && Jojo::getOption('tbootstrap_components_navbar', 'no') == 'yes'))
+                if (Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes' || Jojo::getOption('tbootstrap_components_navbar', 'no') == 'yes'))
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/collapse.js');
                 /* Carousel */
                 if (Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
