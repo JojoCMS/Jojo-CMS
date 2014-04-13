@@ -214,6 +214,10 @@ img.boxed {
 #fields label {
     text-align: right;
     padding-top: 5px;
+    span.glyphicon {
+        font-size: 8px;
+        vertical-align: 1px;
+    }
     &.checkbox {
         text-align: left;
         font-weight: 400;
@@ -501,6 +505,7 @@ ul.plugins {
             &.selected {
               color: @primary;
               text-decoration: none;
+                font-weight: 700;
             }
         }
         a:focus {

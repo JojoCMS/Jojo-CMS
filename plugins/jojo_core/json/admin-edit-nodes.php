@@ -30,7 +30,7 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 $t = Jojo::getFormData('table', false);
 $page = Jojo_Plugin::getPage(Jojo::parsepage('admin/edit/' . $t));
 if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
-    $nodes[] = array('data' => "Access Denied. Trying reloading the page", 'state' => array( 'opened' => false ));
+    $nodes[] = array('text' => "Access Denied. Trying reloading the page", 'state' => array( 'opened' => false ));
     echo json_encode(array_values($nodes));
     exit;
 }
