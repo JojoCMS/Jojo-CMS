@@ -2,12 +2,12 @@
 <body>
 <div id="wrap" class="container">
     <header class="row">
-        <div class="span6 offset1">
+        <div class="col-md-6">
             <a id="logo" href="{$SITEURL}/" title="Back to Homepage">{$sitetitle}</a>
         </div>
     </header>
     <nav class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <ul id="menu">
                 {foreach $mainnav k n}<li{if $n.selected} class="selected"{/if}><a href="{$n.url}" title="{$n.title}"{if $n.pg_followto=='no'} rel="nofollow"{/if}>{$n.label}</a></li>
                 {/foreach}
@@ -15,7 +15,7 @@
         </div>
     </nav>
     <div id="container" class="row">
-        <div class="span9">
+        <div class="col-md-9">
             <div id="main">
                 <a name="body"></a>
                 {if $numbreadcrumbs > 1}<div id="breadcrumbs">{foreach $breadcrumbs k bc bc}{if $.foreach.bc.last}{$bc.name}{else}<a href="{$bc.url}" title="{$bc.rollover}">{$bc.name}</a> &gt;{/if}{/foreach}</div>
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <div class="span3">
+        <div class="col-md-3">
             <div id="sidebar">
                 <h2>Sidebar</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non orci at lectus semper congue. Mauris dapibus gravida purus. Aenean molestie est tincidunt est. Nulla a metus. Duis eu quam. Vivamus mollis feugiat ipsum. Phasellus vel arcu. Nullam scelerisque velit quis sem. Duis porttitor. Phasellus porttitor massa pharetra ligula. In non erat. </p>
@@ -35,7 +35,7 @@
         </div>
     </div>
     <footer class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <p>&copy; {$currentyear} <strong>{$sitetitle}</strong> |
             {***********************************************************
             About the "Powered by Jojo CMS" link
