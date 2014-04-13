@@ -3,7 +3,6 @@
 .box {
     border-radius: 5px;
     border: 1px solid @primary;
-    background: @bg;
     padding: 5px;
 }
 

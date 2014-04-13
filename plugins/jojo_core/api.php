@@ -994,40 +994,10 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'tbootstrap_miscellaneous_utilities',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Utilities',
-    'description' => 'Include Twitter Bootstap\'s utilities.less file',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
     'id'          => 'tbootstrap_miscellaneous_componentanimations',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Component animations',
     'description' => 'Include Twitter Bootstap\'s component-animations.less file',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_responsive',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Responsive',
-    'description' => 'Include Twitter Bootstap\'s responsive.less file, which pulls all of the responsive files',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_responsive_1200',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Responsive 1200',
-    'description' => 'Include Twitter Bootstap\'s responsive.less files for super-wide 1200px version',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',

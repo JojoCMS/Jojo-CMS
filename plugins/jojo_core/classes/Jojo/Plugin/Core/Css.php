@@ -88,7 +88,6 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* start with the variable files */
                 if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/variables.less');
-                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                 foreach (Jojo::listThemes('css/variables.less') as $themefile) {
                     $variableFound = $css->addFile($themefile);
                 }
@@ -184,24 +183,20 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Close icon file */
                 if (Jojo::getOption('tbootstrap_miscellaneous_close', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/close.less');
-                /* Utilities file */
-                if (Jojo::getOption('tbootstrap_miscellaneous_utilities', 'no') == 'yes')
-                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                 /* Component animations file */
                 if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/panels.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
+                /* Utilities files */
+                if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
 
                 /* get a pre-responsive file from theme if exists */
                 foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
                     $css->addFile($themefile);
                 }
                     
-                /* Responsive files */
-                if (Jojo::getOption('tbootstrap_responsive', 'no') == 'yes') {
-                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
-                }
-
                 /* Include css from each plugin */
                 foreach (Jojo::listPlugins('css/style_default.css', 'all', true) as $pluginfile) {
                     $css->addFile($pluginfile);
