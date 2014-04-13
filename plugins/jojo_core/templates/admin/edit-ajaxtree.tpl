@@ -31,9 +31,15 @@
                 'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
             });
              $("#treediv").bind('select_node.jstree', function (e, data) {
-                node = data.instance.get_node(data.selected[0], true);
-                if (canLoad && !node.hasClass('locked') && node.attr('id')) {
-                    frajax('load', '{/literal}{$table}{literal}', node.attr('id'));
+                node = data.instance.get_node(data.selected[0]);
+                if (canLoad && node.type=='file' && node.id) {
+                    frajax('load', '{/literal}{$table}{literal}', node.id);
+                } else if (node.type=='folder') {
+                    if (node.state.opened) {
+                        $("#treediv").jstree("close_node", node.id);
+                    } else {
+                        $("#treediv").jstree("open_node", node.id);
+                    }
                 }
                 return false;
             });

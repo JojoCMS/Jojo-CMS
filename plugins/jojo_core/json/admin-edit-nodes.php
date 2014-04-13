@@ -13,6 +13,7 @@
  * @author  Harvey Kane <code@ragepank.com>
  * @author  Michael Cochrane <mikec@jojocms.org>
  * @author  Melanie Schulz <mel@gardyneholt.co.nz>
+ * @author  Tom Dale <tom@zero.co.nz>
  * @license http://www.fsf.org/copyleft/lgpl.html GNU Lesser General Public License
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core
@@ -35,7 +36,6 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
 }
 
 $node = Jojo::getFormData('id', 0);
-$pos = 0;
 $nodes = array();
 $nodes = getNodes($t, $node);
 
@@ -46,6 +46,7 @@ function getNodes($t, $node)
 {
     /* Get the table */
     $table = new Jojo_Table($t);
+    $pos = 0;
 
     /**
      * Real content under a parent
@@ -59,7 +60,6 @@ function getNodes($t, $node)
                         $t
                         );
         $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
-        $values = array($node);
         $res = Jojo::selectQuery($query);
 
         /* Add the nodes to the array for output - jstree will sort out the structure */
@@ -76,6 +76,7 @@ function getNodes($t, $node)
 
 
     } elseif ($table->getOption('categorytable') || $table->getOption('m2mcategoryfield')) {
+        $m2mfield = false;
         if ($table->getOption('m2mcategoryfield')) {
             $m2mfield = new Jojo_Field(
                 Jojo::selectRow(
@@ -220,7 +221,7 @@ function getNodes($t, $node)
                         'id'        => 'c' . $r['id'],
                         'text'     => $r['title'],
                         'parent'     => $node,
-                        'state'    => array( 'opened' => ( $k==0 && count($res)==1 ? true : false ), 'selected' => false ),
+                        'state'    => array( 'opened' => false, 'selected' => false ),
                         'type'   => 'folder',
                         'li_attr'     => array ('pos' => $pos++),
                       );
