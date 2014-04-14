@@ -909,7 +909,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Breadcrumbs',
     'description' => 'Include Twitter Bootstap\'s breadcrumbs.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -919,7 +919,7 @@ $_options[] = array(
     'label'       => 'Bootstrap Pagination',
     'description' => 'Include Twitter Bootstap\'s pagination.less file',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -968,6 +968,16 @@ $_options[] = array(
     'category'    => 'CSS',
     'label'       => 'Bootstrap Hero unit',
     'description' => 'Include Twitter Bootstap\'s hero-unit.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_panels',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Panels',
+    'description' => 'Include Twitter Bootstap\'s panels.less file',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -1041,7 +1051,7 @@ $_options[] = array(
     'label'       => 'jQuery version',
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
-    'default'     => '1.7.2',
+    'default'     => '1.9.1',
     'options'     => '1.7.2,1.9.1',
 );
 

@@ -176,16 +176,17 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Carousel file */
                 if (Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/carousel.less');
-
                 /* Wells file */
                 if (Jojo::getOption('tbootstrap_miscellaneous_wells', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/wells.less');
                 /* Close icon file */
                 if (Jojo::getOption('tbootstrap_miscellaneous_close', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/close.less');
-                /* Component animations file */
-                if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes')
+                 /* Panels */
+                if (Jojo::getOption('tbootstrap_miscellaneous_panels', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/panels.less');
+               /* Component animations file */
+                if (Jojo::getOption('tbootstrap_miscellaneous_componentanimations', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
                 /* Utilities files */
                 if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
