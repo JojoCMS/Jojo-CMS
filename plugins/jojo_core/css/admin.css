@@ -171,22 +171,33 @@ img.boxed {
 }
 
 .jstree-default-responsive {
+    > .jstree-container-ul .jstree-loading > .jstree-ocl {
+          background-image: url("../external/jstree/dist/themes/default/throbber.gif")
+    }
     .jstree-anchor, .jstree-icon, .jstree-wholerow {
         height: 40px;
     }
+    .jstree-icon {
+        background-image: url("../external/jstree/dist/themes/default/40px.png");
+    }
     .jstree-wholerow-clicked {
         background: #cdcdcd;
+    }
+    .jstree-node, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
+        background-image: url("../external/jstree/dist/themes/default/40px.png");
     }
 }
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: @screen-sm-min) {
-    .jstree-default {
+    .jstree-default-responsive {
+        .jstree-node, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
+            background-image: url("../external/jstree/dist/themes/default/32px.png");
+        }
         .jstree-node {
             line-height: 22px;
             min-height: 22px;
             font-size: 12px;
-            background-image: url("../external/jstree/dist/themes/default/32px.png");
         }
         .jstree-anchor, .jstree-icon:empty, .jstree-wholerow {
             height: 22px;
@@ -208,7 +219,6 @@ img.boxed {
         }
     }
 }
-
 #tabs {
     .nav-tabs > li.active > a {
         font-weight: 700;
