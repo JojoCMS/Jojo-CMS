@@ -974,6 +974,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_listgroups',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap List Groups',
+    'description' => 'Include Twitter Bootstap\'s list-group.less file',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
     'id'          => 'tbootstrap_miscellaneous_panels',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Panels',

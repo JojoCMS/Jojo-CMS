@@ -176,6 +176,9 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 /* Carousel file */
                 if (Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/carousel.less');
+                 /* List Groups */
+                if (Jojo::getOption('tbootstrap_miscellaneous_listgroups', 'no') == 'yes')
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/list-group.less');
                 /* Wells file */
                 if (Jojo::getOption('tbootstrap_miscellaneous_wells', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/wells.less');
