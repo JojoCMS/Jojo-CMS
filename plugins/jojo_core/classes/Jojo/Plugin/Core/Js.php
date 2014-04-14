@@ -89,7 +89,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 
                 /* Twitter Bootstrap options */
                 /* Transitions */
-                if (Jojo::getOption('tbootstrap_js_transition', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_dropdown', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_scrollspy', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_tab', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_tooltip', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_popover', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_affix', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_alert', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_button', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_collapse', 'no') == 'yes' || Jojo::getOption('tbootstrap_js_carousel', 'no') == 'yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/transition.js');
                 /* Modals */
                 if (Jojo::getOption('tbootstrap_js_modal', 'no') == 'yes')
