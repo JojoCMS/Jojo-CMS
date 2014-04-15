@@ -126,7 +126,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/carousel.js');
 
                  /* jQueryMobile */
-                if (Jojo::getOption('jquery_touch', 'no') == 'yes')
+                if (Jojo::getOption('jquery_touch', 'no') == 'yes' && Jojo::getOption('jquery_version', '') == '1.9.1')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jquery/jquery.mobile.touch.js');
 
                /* Javascript from Plugins */
