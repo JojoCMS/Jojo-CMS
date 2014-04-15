@@ -75,8 +75,8 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
         switch($file) {
             case 'common':
                 /* Dynamic Javascript */
-                $js->addText("var siteurl = '" . Jojo::getOption('siteurl') . "';");
-                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , Jojo::getOption('siteurl')) . "';");
+                $js->addText("var siteurl = '" . _SITEURL . "';");
+                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , _SITEURL) . "';");
 
                 /* Core functions */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
@@ -142,8 +142,8 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 
             case 'commonadmin':
                 /* Dynamic Javascript */
-                $js->addText("var siteurl = '" . Jojo::getOption('siteurl') . "';");
-                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , Jojo::getOption('siteurl')) . "';");
+                $js->addText("var siteurl = '" . _SITEURL . "';");
+                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , _SITEURL) . "';");
 
                 /* Core functions */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
