@@ -294,11 +294,11 @@ foreach($pages as $page) {
     if ($page['pg_link'] != '') {
         $classname = strtolower($page['pg_link']);
         if (!class_exists($classname)) {
-            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found <b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Dead Link page found (plugin missing or uninstalled)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
         }
     }
     if ($page['pg_parent'] != 0 && !isset($pages[$page['pg_parent']]) ) {
-        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing or moved)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
     }
 }
 if (!empty($html)) {
@@ -508,7 +508,7 @@ foreach ($tables as $tblname => $tbltype)  {
         }
         echo "Index on `" . implode((array)$i, '` and `') . '`';
         echo "<span style='color:orange'>missing</span><br />\n";
-        $sql = "ALTER TABLE  {$tblname} ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
+        $sql = "ALTER TABLE {".$tblname."} ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
         echo ".Executing Query: <span style='color:blue'>$sql</span><br />\n";
         $res = Jojo::structureQuery($sql);
         if ($res) echo "<span style='color:green'>Done</span><br />\n";
