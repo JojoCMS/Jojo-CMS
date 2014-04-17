@@ -41,7 +41,6 @@
 /* BS overrides */
 // Brand colors
 // -------------------------
-
 @brand-primary:         @primary;
 @brand-success:         #5cb85c;
 @brand-warning:         #f0ad4e;
@@ -50,19 +49,16 @@
 
 // Scaffolding
 // -------------------------
-
 @body-bg:               #fff;
 @text-color:            @tertiary;
 
 // Links
 // -------------------------
-
 @link-color:            @brand-primary;
 @link-hover-color:      darken(@link-color, 15%);
 
 // Typography
 // -------------------------
-
 @font-family-sans-serif:  "OpenSans", Verdana, sans-serif;
 @font-size-base:          13px;
 @baseFontSize: @font-size-base;
@@ -71,7 +67,6 @@
 @headings-font-family:    "OpenSansLight", @font-family-base;
 @headings-font-weight:    400;
 @headings-line-height:    1.1;
-
 
 @icon-font-path: '../external/bootstrap/fonts/';
 
@@ -106,21 +101,15 @@ th, td {
  font-size: @baseFontSize;
 }
 
-.paragraph {
-  line-height: 150%;
-}
-
 /* Header */
-
-#admintitle {
-    margin: 10px 30px 0 0;
-    float: left;
-}
-
 #admin-nav {
     margin: 10px 0 0;
     display: inline-block;
     font-family: @headings-font-family;
+    #admintitle a {
+        padding: 0;
+        margin-right: 20px;
+    }
 }
 
 /* Body */
@@ -133,23 +122,8 @@ th, td {
     font-family: @headings-font-family;
 }
 
-#footer {
-  background: #eee;
-}
-
 #help {
   display: none;
-}
-
-img {
-  border: 0;
-  vertical-align:top;
-}
-
-img.boxed {
-  border: 1px solid #eee;
-  padding: 3px;
-  background: #fff;
 }
 
 .field-page {
