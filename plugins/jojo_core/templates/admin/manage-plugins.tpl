@@ -6,7 +6,7 @@
             <ul class="plugins">
         {foreach from=$plugins item=p}{if $p.status!='active'}
                 <li class="{$p.type}" title="{$p.description|escape:'htmlall':'utf-8'}">
-                    <span>{$p.name|replace:'_':' '|ucwords}</span>
+                    <span>{$p.name|replace:'_':' '|ucwords}{if $p.version} <small>{$p.version}</small>{/if}</span>
                     <button class="btn btn-default" rel="{$p.name}"><i class="glyphicon glyphicon-upload"></i></button>
                 </li>
         {/if}{/foreach}
@@ -23,7 +23,7 @@
         <h2>Installed plugins</h2>
         {foreach from=$plugins item=p}
         {if $p.status=='active'}<div>
-          <h3>{$p.name|replace:'_':' '|ucwords}</h3>
+          <h3>{$p.name|replace:'_':' '|ucwords}{if $p.version} <small>{$p.version}</small>{/if}</h3>
           {if $p.description}<p>{$p.description}</p>{/if}
 
           <div class="options panel panel-default panel-body" id="options-{$p.name}">

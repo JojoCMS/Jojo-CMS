@@ -43,6 +43,9 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
             /* Get plugins from Jojo plugins dir */
             $pluginnames = Jojo::scanDirectory($loc);
             foreach ($pluginnames as $i => $name) {
+                $readme = '';
+                $version = '';
+
                 /* ignore files, only look at directories */
                 if (!is_dir($loc . '/' . $name) && !strpos($name, '.phar')) continue;
 
@@ -53,10 +56,22 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
 
                 /* Get plugin readme */
                 $filename = $path . '/readme.txt';
-                $readme = Jojo::fileExists($filename) ? file_get_contents($filename) : '';
-                $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
-                $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
-
+                $altfilename = $path . '/README.md';
+                if (Jojo::fileExists($filename)){
+                    $readme =  file_get_contents($filename);
+                } elseif (Jojo::fileExists($altfilename)){
+                    $readme =  file_get_contents($altfilename);
+                } 
+                if ($readme) {
+                    $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
+                    $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
+                }
+ 
+                /* Get plugin version */
+                if (file_exists($path . '/version.txt')) {
+                    $version = file_get_contents($path . '/version.txt');
+                }
+                
                 /* Get plugin status */
                 $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
                 $plugins[] = array(
@@ -64,6 +79,7 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
                     'description' => $description,
                     'readme' => $readme,
                     'status' => $status,
+                    'version' => $version,
                     'type' => $type
                 );
             }

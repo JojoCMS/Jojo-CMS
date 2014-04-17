@@ -19,3 +19,6 @@
 [submodule "plugins/jojo_core/external/jstree"]
 	path = plugins/jojo_core/external/jstree
 	url = git://github.com/vakata/jstree.git
+[submodule "plugins/jojo_core/external/parsedown"]
+	path = plugins/jojo_core/external/parsedown
+	url = https://github.com/erusev/parsedown.git
