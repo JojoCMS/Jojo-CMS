@@ -24,6 +24,8 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
     function _getContent()
     {
         global $smarty, $_USERGROUPS;
+        
+        include _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
 
         $content = array();
         $listnames = array();
@@ -63,8 +65,10 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
                     $readme =  file_get_contents($altfilename);
                 } 
                 if ($readme) {
-                    $readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
-                    $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
+                    //$readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
+                    //$readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
+                    $parsedown = new Parsedown();
+                    $readme = $parsedown->parse($readme);
                 }
  
                 /* Get plugin version */
@@ -74,6 +78,7 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
                 
                 /* Get plugin status */
                 $status = Jojo_Plugin_Admin_plugins::getPluginStatus($name);
+                
                 $plugins[] = array(
                     'name' => $name,
                     'description' => $description,
