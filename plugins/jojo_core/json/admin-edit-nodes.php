@@ -53,17 +53,22 @@ function getNodes($t, $node)
      */
     if ($table->getOption('parentfield')) {
         /* Get all children of the current node */
-        $query = sprintf("SELECT %s as id, %s as title, %s as parent FROM {%s}",
+        $query = sprintf("SELECT %s, %s as id, %s as title, %s as parent FROM {%s}",
+                        $table->getOption('primarykey'),
                         $table->getOption('primarykey'),
                         $table->getOption('displayfield'),
                         $table->getOption('parentfield'),
                         $t
                         );
         $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
-        $res = Jojo::selectQuery($query);
+        $res = Jojo::selectAssoc($query);
 
         /* Add the nodes to the array for output - jstree will sort out the structure */
         foreach ($res as $r) {
+            /* Check for orphaned items and don't include them because they will break the tree */
+            if ($r['parent'] && !isset($res[$r['parent']]) ) {
+                continue;
+            }
             $nodes[$r['id']] = array(
                                 'id'        => $r['id'],
                                 'text'     => $r['title'],
