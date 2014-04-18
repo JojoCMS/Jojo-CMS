@@ -488,30 +488,32 @@ foreach ($tables as $tblname => $tbltype)  {
         echo $k .' - <em>' . $v_str.'</em><br />'."\n";
     }
 
-    /* Check for any missing indexes */
-    foreach ($indexes[$tblname] as $i) {
-        if (in_array($i, $existingIndexes)) {
-            continue;
-        }
-        if (!is_array($i) && (!in_array($i, $fieldlist))) {
-            echo "<span style='color:red'>Field $i does not exist</span><br />\n";
-            continue;
-        } else if (is_array($i)) {
-            $continue = false;
-            foreach ($i as $index_field) {
-                if (!in_array($index_field, $fieldlist)) {
-                    echo "<span style='color:red'>Field $index_field does not exist</span><br />\n";
-                    $continue = true;
-                }
+    if (isset($indexes[$tblname])) {
+        /* Check for any missing indexes */
+        foreach ($indexes[$tblname] as $i) {
+            if (in_array($i, $existingIndexes)) {
+                continue;
             }
-            if ($continue) $continue;
+            if (!is_array($i) && (!in_array($i, $fieldlist))) {
+                echo "<span style='color:red'>Field $i does not exist</span><br />\n";
+                continue;
+            } else if (is_array($i)) {
+                $continue = false;
+                foreach ($i as $index_field) {
+                    if (!in_array($index_field, $fieldlist)) {
+                        echo "<span style='color:red'>Field $index_field does not exist</span><br />\n";
+                        $continue = true;
+                    }
+                }
+                if ($continue) $continue;
+            }
+            echo "Index on `" . implode((array)$i, '` and `') . '`';
+            echo "<span style='color:orange'>missing</span><br />\n";
+            $sql = "ALTER TABLE {".$tblname."} ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
+            echo ".Executing Query: <span style='color:blue'>$sql</span><br />\n";
+            $res = Jojo::structureQuery($sql);
+            if ($res) echo "<span style='color:green'>Done</span><br />\n";
         }
-        echo "Index on `" . implode((array)$i, '` and `') . '`';
-        echo "<span style='color:orange'>missing</span><br />\n";
-        $sql = "ALTER TABLE {".$tblname."} ADD INDEX (`" . implode((array)$i, '`, `') . '`);';
-        echo ".Executing Query: <span style='color:blue'>$sql</span><br />\n";
-        $res = Jojo::structureQuery($sql);
-        if ($res) echo "<span style='color:green'>Done</span><br />\n";
     }
 
 }
