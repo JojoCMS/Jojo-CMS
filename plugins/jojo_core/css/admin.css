@@ -478,6 +478,10 @@ ul.plugins {
     }
 }
 
+#plugins .panel :first-child {
+    margin-top: 7px;
+}
+
 #option-categories ul {
     padding: 0;
     li {

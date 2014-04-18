@@ -68,7 +68,6 @@
 
                 {if $p.readme}
                 <div class="readme panel panel-default panel-body" id="readme-{$p.name}">
-                    <h4 style="margin-top:0;">readme.txt</h4>
                     {$p.readme}
                 </div>
                 {/if}
