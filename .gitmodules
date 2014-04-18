@@ -19,3 +19,6 @@
 [submodule "plugins/jojo_core/external/parsedown"]
 	path = plugins/jojo_core/external/parsedown
 	url = https://github.com/erusev/parsedown.git
+[submodule "plugins/jojo_core/external/jshrink"]
+	path = plugins/jojo_core/external/jshrink
+	url = https://github.com/tedivm/JShrink.git
