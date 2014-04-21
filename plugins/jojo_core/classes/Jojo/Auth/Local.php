@@ -154,6 +154,6 @@ class Jojo_Auth_Local {
     /* Check if a password should be rehashed to match newer security settings */
     public static function checkPasswordNeedsRehash($password) {
         $segments = explode("$", $password);
-        return (int)$segments[2];
+        return isset($segments[2]);
     }
 }

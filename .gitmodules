@@ -1,15 +1,24 @@
 [submodule "plugins/jojo_core/external/csstidy"]
 	path = plugins/jojo_core/external/csstidy
-	url = git://github.com/Hambrook/CSSTidy.git
+	url = https://github.com/Hambrook/CSSTidy.git
 [submodule "plugins/jojo_core/external/lessphp"]
 	path = plugins/jojo_core/external/lessphp
-	url = git://github.com/leafo/lessphp.git
+	url = https://github.com/oyejorge/less.php.git
 [submodule "plugins/jojo_core/external/bootstrap"]
 	path = plugins/jojo_core/external/bootstrap
 	url = https://github.com/twbs/bootstrap.git
 [submodule "plugins/jojo_core/external/normalize"]
 	path = plugins/jojo_core/external/normalize
-	url = git://github.com/necolas/normalize.css.git
+	url = https://github.com/necolas/normalize.css.git
 [submodule "plugins/jojo_core/external/respond"]
 	path = plugins/jojo_core/external/respond
 	url = https://github.com/scottjehl/Respond.git
+[submodule "plugins/jojo_core/external/jstree"]
+	path = plugins/jojo_core/external/jstree
+	url = https://github.com/vakata/jstree.git
+[submodule "plugins/jojo_core/external/parsedown"]
+	path = plugins/jojo_core/external/parsedown
+	url = https://github.com/erusev/parsedown.git
+[submodule "plugins/jojo_core/external/jshrink"]
+	path = plugins/jojo_core/external/jshrink
+	url = https://github.com/tedivm/JShrink.git

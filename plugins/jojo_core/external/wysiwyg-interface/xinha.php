@@ -1,7 +1,5 @@
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Xinha WYSIWYG Editor</title>
@@ -111,12 +109,12 @@
                     $IMConfig['tmp_prefix'] = '_tmp';
                     $IMConfig['view_type'] =  Jojo::getOption('xinha_viewtype','thumbview');
                     $IMConfig['allow_upload'] = true;
-                    $IMConfig['max_filesize_kb_image'] = Jojo::getOption('max_imageupload_size','2000');
+                    $IMConfig['max_filesize_kb_image'] = Jojo::getOption('max_imageupload_size','3000');
                     $IMConfig['max_filesize_kb_link'] = Jojo::getOption('max_fileupload_size','5000');
 
                     // Maximum upload folder size in Megabytes. Use 0 to disable limit
                     $IMConfig['max_foldersize_mb'] = 0;
-                    $IMConfig['allowed_image_extensions'] = explode(',', Jojo::getOption('allowed_imageupload_extensions','jpg,gif,png'));
+                    $IMConfig['allowed_image_extensions'] = explode(',', Jojo::getOption('allowed_imageupload_extensions','jpg,gif,png,jpeg'));
                     $IMConfig['allowed_link_extensions'] = explode(',', Jojo::getOption('allowed_fileupload_extensions','jpg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls'));
 
                     require_once _BASEPLUGINDIR . '/jojo_core/external/xinha/contrib/php-xinha.php';
@@ -125,13 +123,13 @@
                 }
         }
 
-  xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
+    xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
 
-  xinha_editors.myTextArea.config.width = '805px';
-  xinha_editors.myTextArea.config.height = '480px';
+    xinha_editors.myTextArea.config.width = '805px';
+    xinha_editors.myTextArea.config.height = '480px';
 
-  Xinha.startEditors(xinha_editors);
-  window.onload = null;
+    Xinha.startEditors(xinha_editors);
+    window.onload = null;
 }
 window.onload = xinha_init;
 

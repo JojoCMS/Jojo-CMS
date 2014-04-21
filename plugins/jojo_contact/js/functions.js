@@ -36,10 +36,10 @@ $(document).ready(function() {
                         errorElement: 'span',
                         validClass: 'success',
                         success: function(label, element) {
-                            label.closest('.control-group').addClass("success").removeClass("error");
+                            label.closest('.form-group').addClass("has-success").removeClass("has-error");
                         },
                         highlight: function(element) {
-                            $(element).closest('.control-group').addClass("error").removeClass("success");
+                            $(element).closest('.form-group').addClass("has-error").removeClass("has-success");
                         },
                         submitHandler: function(form) {
                             $(form).ajaxSubmit(options);
@@ -52,10 +52,10 @@ $(document).ready(function() {
                         errorElement: 'span',
                         validClass: 'success',
                         success: function(label, element) {
-                            label.closest('.control-group').addClass("success").removeClass("error");
+                            label.closest('.form-group').addClass("has-success").removeClass("has-error");
                         },
                         highlight: function(element) {
-                            $(element).closest('.control-group').addClass("error").removeClass("success");
+                            $(element).closest('.form-group').addClass("has-error").removeClass("has-success");
                         }
                     });
                 } 
@@ -81,10 +81,10 @@ function preFlight(formData, jqForm, options) {
             errorElement: 'span',
             validClass: 'success',
             success: function(label, element) {
-                label.closest('.control-group').addClass("success").removeClass("error");
+                label.closest('.form-group').addClass("has-success").removeClass("has-error");
             },
             highlight: function(element) {
-                $(element).closest('.control-group').addClass("error").removeClass("success");
+                $(element).closest('.form-group').addClass("has-error").removeClass("has-success");
             }
         });
         return false;

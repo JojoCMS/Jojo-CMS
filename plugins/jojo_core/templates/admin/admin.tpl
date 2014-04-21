@@ -2,7 +2,7 @@
 
 <div class="admin-home row">
 
-<div class="span6">
+<div class="col-md-6">
 
     {if !($browser->getBrowser() == 'mozilla' ||
                            $browser->hasFeature('issafari') ||
@@ -28,23 +28,6 @@
 
     <div class="admin-home-item-left">
 
-        <h3>Quick Tasks</h3>
-        <ul>
-          <li><a href="{$ADMIN}/edit/page/">Add new page</a></li>
-          <li><a href="{$ADMIN}/edit/page/">Edit an existing page</a><ul>
-          {foreach item=t from=$toppages}
-          <li><a href="{$ADMIN}/edit/page/{$t.pageid}/" onclick="document.cookie='jstree_select=' + escape('#{$t.pageid}') + ';path={if strlen($SITEFOLDER) > 0}/{$SITEFOLDER}{/if}/{$ADMIN}/edit/page/;';return true;">{if $t.pg_menutitle}{$t.pg_menutitle}{else}{$t.pg_title}{/if}</a></li>
-          {/foreach}
-          </ul>
-                </li>
-                {if $articles}
-                <li><a href="{$ADMIN}/edit/article/">Add / Edit articles</a></li>
-                {/if}
-        </ul>
-    </div>
-
-    <div class="admin-home-item-left">
-
         <h3>Help!</h3>
         <p>Documentation for Jojo CMS is available <a href="http://www.jojocms.org/docs/" target="_BLANK">online</a>.
         Support is also available for Jojo CMS in several forms...</p>
@@ -60,10 +43,10 @@
 
 </div>
 
-<div class="span5 offset1">
+<div class="col-md-5 offset1">
 
     <div class="admin-home-item-right">
-        <h4>Edit Site Options</h4>
+        <h3>Edit Site Options</h3>
         <p>These options are for managing your website. Unless you know what these do, they are best left unchanged</p>
 
         <form action="" method="post" class="form-horizontal">

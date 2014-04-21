@@ -1,2 +1,1 @@
-Adds basic site search.
-include {jojoHook hook="SearchForm"} in your page template where you want the search form to appear
+Adds site search across all page headings and content, as well as content from supported plugins.

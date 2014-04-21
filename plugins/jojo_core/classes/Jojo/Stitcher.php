@@ -165,9 +165,9 @@ class Jojo_Stitcher {
         $original = $js;
 
         /* JSMin will only work on PHP5+ */
-        require_once(_BASEPLUGINDIR . '/jojo_core/external/jsmin/jsmin.php');
+        require_once(_BASEPLUGINDIR . '/jojo_core/external/jshrink/src/JShrink/Minifier.php');
         try {
-            $js = JSMin::minify($js);
+            $js = JShrink\Minifier::minify($js);
         } catch (Exception $e) { }
 
         $savings = strlen($original) - strlen($js);

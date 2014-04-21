@@ -10,11 +10,11 @@
         Open Editor
     </button>
     <div class="clear" id="fm_{$fd_field}_html_outer">
-        <textarea class="markItUp" style="width:95%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
+        <textarea class="markItUp" style="width:100%; margin: 0 auto; height:200px;" name="fm_{$fd_field}_html" id="fm_{$fd_field}_html" rows="{$rows}" cols="{$cols}" {if $readonly}readonly="readonly"{/if} ></textarea>
     </div>
 </div>
 {else}
-<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:95%"></textarea>
+<textarea class="xinha" id="fm_{$fd_field}_xinha" name="fm_{$fd_field}_html" style="width:100%"></textarea>
 
 {/if}
 
@@ -36,11 +36,11 @@
 {* Select an Editor *}
 <div class="editor-format" style="float:right;">
   <label class="control-label">Editor Format:</label>
-  <label for="type_fm_{$fd_field}_html" class="radio inline">
+  <label for="type_fm_{$fd_field}_html" class="radio-inline">
       {if $editortype != "bb"}{* this required for AJAX loading *}<!-- [editor:html] -->{/if}
       <input type="radio"{if $editortype != "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_html" onclick="$('#editor_{$fd_field}_bb').hide(); $('#editor_{$fd_field}_html').show(); setTextEditorContent('fm_{$fd_field}');" value="html" /> HTML
   </label>
-  <label for="type_fm_{$fd_field}_bb" class="radio inline">
+  <label for="type_fm_{$fd_field}_bb" class="radio-inline">
     {if $editortype == "bb"}{* this required for AJAX loading *}<!-- [editor:bb] -->{/if}
     <input type="radio"{if $editortype == "bb"} checked="checked"{/if} name="editor_{$fd_field}" id="type_fm_{$fd_field}_bb" onclick="$('#editor_{$fd_field}_bb').show(); $('#editor_{$fd_field}_html').hide(); setTextEditorContent('fm_{$fd_field}');" value="bb" /> BBCode
   </label>
@@ -59,11 +59,12 @@ $('textarea[name=fm_{$fd_field}_bb]').change(function(){ldelim}if($('#type_fm_{$
 $('textarea[name=fm_{$fd_field}_html]').change(function(){ldelim}if($('#type_fm_{$fd_field}_html').attr('checked')){ldelim}$('#fm_{$fd_field}').val($(this).val());{rdelim}{rdelim});
 
 $(document).ready(function() {ldelim}
-       {if $OPTIONS.wysiwyg_style=='popup'}$("#fm_{$fd_field}_html").markItUp(myHtmlSettings);
-       $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
-        {/if}setTextEditorContent("fm_{$fd_field}");
-        $('#editor_{$fd_field}_{$editortype}').show();
-//        $.get('{$SITEURL}/external/wysiwyg-interface/xinha.php?field=fm_{$fd_field}_html',  function(data) {ldelim}$('#editor_{$fd_field}_html').html(data);{rdelim});
-    {rdelim}
-);
+    {if $OPTIONS.wysiwyg_style=='popup'}$("#fm_{$fd_field}_html").markItUp(myHtmlSettings);
+    $("#fm_{$fd_field}_bb").markItUp(myBbSettings);
+    {/if}setTextEditorContent("fm_{$fd_field}");
+    $('#editor_{$fd_field}_{$editortype}').show();
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {ldelim}
+        startVisibleXinhaEditors();
+    {rdelim})
+{rdelim});
 </script>

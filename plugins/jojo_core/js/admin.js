@@ -83,36 +83,6 @@ function LimitTextSize(fieldid, countid, max) {
   count.value = max - field.value.length;
 }
 
-function jojotab(tabname) {
-   tabname = 'tab-' + tabname;
-   tabs = document.getElementsByClassName('jojo-tab');
-   iMax = tabs.length;
-   for(i = 0; i < iMax; i++) {
-       if (tabs[i].id == tabname) {
-           tabs[i].show();
-       } else {
-           tabs[i].hide();
-       }
-   }
-}
-
-function addFocusEvents() {
-  /* add nice borders on focusing on a field */
-  $("input, textarea, select").focus( function() {
-      $(this).addClass("focused");
-      if ($(this).attr('title') != '') {
-          $('#help-text').html($(this).attr('title'));
-          if ($('#help-text').css('display')=='none') {
-              $('#help-text').show();
-          }
-      }
-  }
-  ).blur( function() {
-      $(this).removeClass("focused");
-      $('#help-text').html('');
-      $('#help-text').hide();
-  } );
-}
 
 function setTextEditorContent(id) {
     $('.jTagEditor').val('');
@@ -186,15 +156,13 @@ function setTextEditorContent(id) {
 
 // function parameters are: field - the string field, count - the field for remaining characters number and max - the maximum number of characters
 function countDown(fieldid, countid, max) {
-  field = document.getElementById(fieldid);
-  count = document.getElementById(countid);
-  count.value = max - field.value.length;
+  var field = $('#' + fieldid);
+  var count = $('#' + countid);
+  count.html(max - field.val().length);
 }
 
 /* things to do after document has loaded */
 $(document).ready(function(){
-  addFocusEvents();
-  $('#menu li').click(function(){$('#menu li').removeClass('selected');$(this).addClass('selected');});
   $(".sortabletable").tablesorter({
       widgets: ['zebra'] 
     }); 

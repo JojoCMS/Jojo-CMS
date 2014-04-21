@@ -22,7 +22,7 @@
   eg $indexes['my_table'] = array('my_field'); //don't do this
  */
 
-$new_indexes = array(
+$indexes['page'] = array(
                     'pg_url',
                     'pg_link',
                     'pg_parent',
@@ -38,4 +38,3 @@ $new_indexes = array(
                     array('pg_mainnav', 'pg_mainnavalways'),
                     array('pg_livedate', 'pg_expirydate')
                 );
-$indexes['page'] = array_merge($indexes['page'], $new_indexes);

@@ -30,7 +30,6 @@ class Jojo_Field_decimal extends Jojo_Field
         $this->size     = 6;
         $this->minvalue = ''; //'' means no minimum
         $this->maxvalue = ''; //'' means no maximum
-        $this->units    = ''; //Define units where values are used
     }
 
     function displayedit()
@@ -41,12 +40,12 @@ class Jojo_Field_decimal extends Jojo_Field
         $smarty->assign('fd_field',    $this->fd_field);
         $smarty->assign('fd_type',     $this->fd_type);
         $smarty->assign('fd_field',    $this->fd_field);
+        $smarty->assign('fd_units',       $this->fd_units);
         $smarty->assign('size',        $this->size);
         $smarty->assign('fd_help',     htmlentities($this->fd_help));
         $smarty->assign('value',       $this->value);
         $smarty->assign('fd_help',     $this->fd_help);
         $smarty->assign('readonly',    $this->fd_readonly);
-        $smarty->assign('onlyIfUnits', Jojo::onlyIf($this->units, ' '.$this->units));
 
         return  $smarty->fetch('admin/fields/decimal.tpl');
     }

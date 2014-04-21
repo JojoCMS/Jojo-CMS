@@ -10,7 +10,7 @@
 
 {jojoHook hook="admin_edit_top"}
 <div class="row">
-<div id="records" class="span4">
+<div id="records" class="col-md-4 col-lg-3">
     <div id="recordlist">
         {$recordlist}
     </div>
@@ -18,20 +18,20 @@
 </div><!-- [end records] -->
 
 <!-- [Fields] -->
-<div id="fields-wrap" class="span8">
+<div id="fields-wrap" class="col-md-8 col-lg-9">
     <div id="message" class="alert alert-block alert-info"><h4>Jojo CMS</h4>{if $message}{$message}{/if}</div>
-    <div id="error" style="display:none;" class="alert alert-block alert-error">{if $error}{$error}{/if}</div>
+    <div id="error" style="display:none;" class="alert alert-block alert-danger">{if $error}{$error}{/if}</div>
     <form name="{$tablename}_form" id="{$tablename}_form" method="post" enctype="multipart/form-data" action="actions/admin-action.php?t={$tablename}" target="frajax-iframe" class="form-horizontal">
         <!-- [Hidden field with ID here] -->
         <input type="hidden" name="id" id="id" value="{$currentrecord|replace:" ":"-"}" />
         <input type="hidden" name="prefix" id="prefix" value="{$prefix}" />
 
         <div id="buttons" class="btn-group">
-            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn" title="Add new {$displayname}" />{/if}
-            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn" title="Save the changes to this {$displayname}" />
-            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
-            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
-            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn" title="Add a new {$displayname} underneath this one" />{/if}
+            {if $addbutton}<input type="submit" onclick="{if false}window.location='{$addnewlink}';{/if}frajax('load','{$tablename}',''); return false;" name="btn_add" value="New" class="btn btn-default" title="Add new {$displayname}" />{/if}
+            <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn btn-default" title="Save the changes to this {$displayname}" />
+            {if $deletebutton}<input type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn btn-default" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
+            {if $addsimilarbutton}<input type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
+            {if $addchildbutton}<input type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default" title="Add a new {$displayname} underneath this one" />{/if}
         </div><!-- [end buttons] -->
 
         {if $numtabs > 1}
@@ -45,20 +45,22 @@
         <div id="fields" class="tab-content">
             {foreach from=$tabnames key=k item=tab}
             {if $numtabs > 1}
-            <div class="tab-pane{if $k==0} active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""|replace:".":""}{/if}">
+            <div class="tab-pane fade{if $k==0} in active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""|replace:".":""}{/if}">
             {/if}
           
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
-                <div id="row_{$fieldname}" class="form-fieldset control-group{if $field.error} error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
-                    {if $field.showlabel=='no'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.type=='permissions'}{$field.name}:{else}<label for="fm_{$fieldname}" class="control-label">{if $field.required=="yes"}<i class="input-append icon-exclamation-sign"></i> {/if}{$field.name}:</label>{/if}
-                    <div{if !($field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no')} class="controls"{/if}>
-                        <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}">
-                            {$field.html}
-                        </div>
-                        {if $field.flags.PRIVACY}<input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label for="privacy_{$fieldname}" class="checkbox"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>{/if}
+                <div id="row_{$fieldname}" class="form-group{if $field.error} has-error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
+                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<p> {$field.name}:</p>{else}<label for="fm_{$fieldname}" class="col-md-3 col-lg-2">{if $field.required=="yes"}<span class="glyphicon glyphicon-asterisk text-warning"></span> {/if}{$field.name}:</label>{/if}
+                    <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}" class="{if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions'}col-md-12{elseif $field.flags.PRIVACY}col-md-7 col-lg-8{else}col-md-9 col-lg-10{/if}">
+                        {$field.html}
                     </div>
-
+                    {if $field.flags.PRIVACY}<div class="col-md-2">
+                        <div class="checkbox">
+                            <input type="hidden" name="hasprivacy[{$fieldname}]" value="1" /><label for="privacy_{$fieldname}"><input type="checkbox" name="privacy[{$fieldname}]" id="privacy_{$fieldname}" value="Y"{if $field.privacy=='y' || $field.privacy=='Y'} checked="checked"{/if} />Private</label>
+                        </div>
+                    </div>
+                    {/if}
                 </div>
             {/if}
             {/foreach}
@@ -76,8 +78,7 @@
 <script type="text/javascript">{literal}/* <![CDATA[ */
 
 $('#btn_save').click(function(){$('.jTagEditor-editor:visible').change();});
-  /* add mouseover effects to new, save, delete buttons */
-  $('#buttons input').hover(function(){$(this).addClass('jojo-admin-button-hover');},function(){$(this).removeClass('jojo-admin-button-hover');});
-/* ]]> */{/literal}</script>
+/* ]]> */{/literal}
+</script>
 
 {include file="admin/footer.tpl"}

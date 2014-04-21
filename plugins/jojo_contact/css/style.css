@@ -1,22 +1,5 @@
-.form-horizontal .control-label {
-    padding-right: 20px;
-}
-
-.input-prepend input {
-    width: 180px;
-}
-
-form.contact-form div.form-heading {
-    clear: both;
-
-}
 form.contact-form textarea {
-    height: auto;
     vertical-align: top;
-}
-
-form.contact-form input.button {
-  cursor: pointer;
 }
 
 form span.required, form span.error {

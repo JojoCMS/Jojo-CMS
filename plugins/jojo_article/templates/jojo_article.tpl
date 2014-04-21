@@ -3,9 +3,11 @@
 {if $jojo_article}
 <div id="article"{if $jojo_article.ar_featured} class="featured"{/if}>
     <div id="article-toplinks">
-    {if $prevarticle}<a href="{$prevarticle.url}" class="prev-article" title="Previous">&lt;&lt; {$prevarticle.title}</a>{/if}
-    {if $nextarticle}<a href="{$nextarticle.url}" class="next-article" title="Next">{$nextarticle.title} &gt;&gt;</a>{/if}
-    {if $nextarticle || $prevarticle}<div class="clear"></div>{/if}
+        <ul class="pagination">
+            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">##Home##</a></li>
+            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo;</a></li>{/if}
+            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">&raquo;</a></li>{/if}
+        </ul>
     </div>
     {if $jojo_article.showdate}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
     {jojoHook hook="articleBeforeBody"}
@@ -36,7 +38,11 @@
 
 {if $commenthtml}{$commenthtml}{/if}
     <div id="article-bottomlinks">
-        <p class="links">&lt;&lt; <a href="{if $multilangstring}{$multilangstring}{/if}{if $pg_url}{$pg_url}/{else}{$pageid}/{$pg_title|strtolower}{/if}" title="{$pg_title}">{$pg_title}</a>&nbsp; {if $prevarticle}&lt; <a href="{$prevarticle.url}" title="Previous">{$prevarticle.title}</a>{/if}{if $nextarticle} | <a href="{$nextarticle.url}" title="Next">{$nextarticle.title}</a> &gt;{/if}</p>
+        <ul class="pagination">
+            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">##Home##</a></li>
+            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo;</a></li>{/if}
+            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">&raquo;</a></li>{/if}
+        </ul>
     </div>
 
 </div>

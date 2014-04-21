@@ -480,9 +480,9 @@ $_options[] = array(
     'id'          => 'breadcrumbs_sep',
     'category'    => 'Navigation',
     'label'       => 'Breadcrumb separation character',
-    'description' => '',
+    'description' => 'Default is to use Bootstrap styling which includes its own separator. Include a custom separator here if needed',
     'type'        => 'text',
-    'default'     => '>',
+    'default'     => '',
     'options'     => ''
 );
 
@@ -746,28 +746,8 @@ $_options[] = array(
 $_options[] = array(
     'id'          => 'tbootstrap_variables',
     'category'    => 'CSS',
-    'label'       => 'Bootstrap Variables',
-    'description' => 'Include Twitter Bootstap\'s default variables.less file',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_mixins',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Mixins',
-    'description' => 'Include Twitter Bootstap\'s default mixins.less file',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_scaffolding_typelinks',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Body type and links',
-    'description' => 'Include Twitter Bootstap\'s scaffolding.less file',
+    'label'       => 'Bootstrap Base',
+    'description' => 'Bootstap\'s base files: variables, mixins, scaffolding and utilities.',
     'type'        => 'radio',
     'default'     => 'yes',
     'options'     => 'yes,no',
@@ -777,17 +757,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_scaffolding_grid',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Grid System',
-    'description' => 'Include Twitter Bootstap\'s grid.less file',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_scaffolding_layout',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Layouts',
-    'description' => 'Include Twitter Bootstap\'s layouts.less file',
+    'description' => 'A responsive mobile-first grid system.',
     'type'        => 'radio',
     'default'     => 'yes',
     'options'     => 'yes,no',
@@ -797,17 +767,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_bass_type',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Headings, body, etc',
-    'description' => 'Include Twitter Bootstap\'s type.less file',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_bass_code',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Code and pre',
-    'description' => 'Include Twitter Bootstap\'s code.less file',
+    'description' => 'Typography formatting for headings, lists, code etc',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -817,7 +777,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_bass_labels',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Labels and badges',
-    'description' => 'Include Twitter Bootstap\'s labels-badges.less file',
+    'description' => 'Highlight items by adding a badge or label to links, navs, and more',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -827,7 +787,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_bass_tables',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Tables',
-    'description' => 'Include Twitter Bootstap\'s tables.less file',
+    'description' => 'Table formatting - used by Cart etc. Can be combined with Panels',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -836,30 +796,21 @@ $_options[] = array(
 $_options[] = array(
     'id'          => 'tbootstrap_bass_forms',
     'category'    => 'CSS',
-    'label'       => 'Bootstrap Forms',
-    'description' => 'Include Twitter Bootstap\'s forms.less file',
+    'label'       => 'Bootstrap Forms & Buttons',
+    'description' => 'Form element and button formatting - used by Contact, Cart etc',
     'type'        => 'radio',
     'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
-$_options[] = array(
-    'id'          => 'tbootstrap_bass_buttons',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Buttons',
-    'description' => 'Include Twitter Bootstap\'s buttons.less file',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
 
 $_options[] = array(
     'id'          => 'tbootstrap_bass_media',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Media',
-    'description' => 'Include Twitter Bootstap\'s media.less file',
+    'description' => 'A layout contruct for snippets - used by Article indexes, Search results etc',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -867,7 +818,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_bass_sprites',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Icons',
-    'description' => 'Include Twitter Bootstap\'s sprites.less file',
+    'description' => 'Glyphicons icon set',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -876,8 +827,8 @@ $_options[] = array(
 $_options[] = array(
     'id'          => 'tbootstrap_components_buttongroups',
     'category'    => 'CSS',
-    'label'       => 'Bootstrap Button groups and dropdowns',
-    'description' => 'Include Twitter Bootstap\'s button-groups.less file',
+    'label'       => 'Bootstrap Button groups',
+    'description' => 'Group a series of buttons together on a single line with the button group. Add on optional radio and checkbox style behavior with the Buttons JS option.',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -907,9 +858,9 @@ $_options[] = array(
     'id'          => 'tbootstrap_components_breadcrumbs',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Breadcrumbs',
-    'description' => 'Include Twitter Bootstap\'s breadcrumbs.less file',
+    'description' => 'Breadcrumb formatting, with CSS separators',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -917,19 +868,9 @@ $_options[] = array(
     'id'          => 'tbootstrap_components_pagination',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Pagination',
-    'description' => 'Include Twitter Bootstap\'s pagination.less file',
+    'description' => 'Pagination styling for Articles etc. Includes standard and "Pager" formats',
     'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_components_pager',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Pager',
-    'description' => 'Include Twitter Bootstap\'s pager.less file',
-    'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no',
 );
 
@@ -937,7 +878,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_components_thumbnails',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Thumbnails',
-    'description' => 'Include Twitter Bootstap\'s thumbnails.less file',
+    'description' => 'Display grids of images, videos, text, and more.',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -967,7 +908,27 @@ $_options[] = array(
     'id'          => 'tbootstrap_components_herounit',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Hero unit',
-    'description' => 'Include Twitter Bootstap\'s hero-unit.less file',
+    'description' => 'Now called a Jumbotron.. A lightweight, flexible component that can optionally extend the entire viewport to showcase key content on your site.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_listgroups',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap List Groups',
+    'description' => 'Advanced list styling - can be combined with Panels',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
+$_options[] = array(
+    'id'          => 'tbootstrap_miscellaneous_panels',
+    'category'    => 'CSS',
+    'label'       => 'Bootstrap Panels',
+    'description' => 'Block content formatting - also used for accordians (with Collapse)',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -977,7 +938,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_miscellaneous_wells',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Wells',
-    'description' => 'Include Twitter Bootstap\'s wells.less file',
+    'description' => 'A simple content block style.',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -987,47 +948,7 @@ $_options[] = array(
     'id'          => 'tbootstrap_miscellaneous_close',
     'category'    => 'CSS',
     'label'       => 'Bootstrap Close icon',
-    'description' => 'Include Twitter Bootstap\'s close.less file',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_miscellaneous_utilities',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Utilities',
-    'description' => 'Include Twitter Bootstap\'s utilities.less file',
-    'type'        => 'radio',
-    'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_miscellaneous_componentanimations',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Component animations',
-    'description' => 'Include Twitter Bootstap\'s component-animations.less file',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_responsive',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Responsive',
-    'description' => 'Include Twitter Bootstap\'s responsive.less file, which pulls all of the responsive files',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_responsive_1200',
-    'category'    => 'CSS',
-    'label'       => 'Bootstrap Responsive 1200',
-    'description' => 'Include Twitter Bootstap\'s responsive.less files for super-wide 1200px version',
+    'description' => 'Close X icon for use with Modals, Alerts etc',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -1051,7 +972,7 @@ $_options[] = array(
     'label'       => 'Use Modernizr',
     'description' => 'Add modernizr script classes to html tag. Yes uses v2.6.2 minimal included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
-    'default'     => 'yes',
+    'default'     => 'no',
     'options'     => 'yes,no,custom',
 );
 
@@ -1071,7 +992,7 @@ $_options[] = array(
     'label'       => 'jQuery version',
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
-    'default'     => '1.7.2',
+    'default'     => '1.9.1',
     'options'     => '1.7.2,1.9.1',
 );
 
@@ -1079,7 +1000,7 @@ $_options[] = array(
     'id'          => 'jquery_touch',
     'category'    => 'JS',
     'label'       => 'jQuery Mobile Touch',
-    'description' => 'Load jQuery Mobile touch event code (for triggering swipe and tap events etc).',
+    'description' => 'Load jQuery Mobile touch event code (for triggering swipe and tap events etc). Requires jQuery 1.8+',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no',
@@ -1112,16 +1033,6 @@ $_options[] = array(
     'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'tbootstrap_js_transition',
-    'category'    => 'JS',
-    'label'       => 'Bootstrap Transitions (required for any animation)',
-    'description' => 'Include Twitter Bootstap\'s bootstrap-transition.js file into common.js',
-    'type'        => 'radio',
-    'default'     => 'no',
     'options'     => 'yes,no',
 );
 
@@ -1333,9 +1244,9 @@ $_options[] = array(
     'id'          => 'analyticscodetype',
     'category'    => 'Google Analytics',
     'label'       => 'Analytics Code Type',
-    'description' => 'The type of Google analytics code - universal, asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored. Google will move all properties to Universal eventually. Universal should not be used until the account has been switched.',
+    'description' => 'The type of Google analytics code - universal, asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored.',
     'type'        => 'radio',
-    'default'     => 'ga',
+    'default'     => 'universal',
     'options'     => 'universal,async,ga',
 );
 
@@ -1672,9 +1583,9 @@ $_options[] = array(
     'id'          => 'initialscale',
     'category'    => 'Config',
     'label'       => 'Initial Scale',
-    'description' => 'Initial Scale = 1 is included in the head by default. Set to no to remove (for sites you want zoomed to fit on mobile)',
+    'description' => 'Include "Initial Scale = 1" in the head. Set to yes for sites you don\'t want scaled to fit on smaller screens.',
     'type'        => 'radio',
-    'default'     => 'yes',
+    'default'     => 'no',
     'options'     => 'yes,no',
 );
 

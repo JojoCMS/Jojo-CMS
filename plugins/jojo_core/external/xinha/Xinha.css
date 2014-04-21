@@ -52,8 +52,6 @@
 }
 
 .htmlarea .toolbar .buttonDisabled img {
-  filter: gray() alpha(opacity = 25);
-  -moz-opacity: 0.25;
   opacity: 0.25;
 }
 
@@ -125,54 +123,28 @@
 div.dialog {
   padding-bottom:10px;
   border-radius: 8px 8px 0 0;
-  -moz-border-radius: 8px 8px 0 0;
-  -webkit-border-top-left-radius: 8px;
-  -webkit-border-top-right-radius: 8px;
-
   box-shadow: 9px 9px 10px #444;
-  -moz-box-shadow: 9px 9px 10px #444;
-  -webkit-box-shadow: 9px 9px 10px #444;
 }
 div.dialog.modeless {
   box-shadow: 4px 4px 5px #888;
-  -moz-box-shadow: 4px 4px 5px #888;
-  -webkit-box-shadow: 4px 4px 5px #888;
-}
-div.dialog.chrome {
-  -webkit-box-shadow: none !IMPORTANT;
 }
 .panels div.dialog.panel {
   border-radius:0;
-  -moz-border-radius: 0;
-  -webkit-border-radius:0;
-
   box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
 }
 .xinha_dialog_background {
-  filter: alpha(opacity=0);
-  -moz-opacity: 0;
   opacity: 0;
   border:none;
 }
 .xinha_dialog_background_modal_greyout {
   background-color:#666;
-  filter: alpha(opacity=70) !IMPORTANT;
   -moz-opacity: 0.7;
   opacity: 0.7;
 }
 .xinha_dialog_background_modal {
-  filter: alpha(opacity=0) !IMPORTANT;
   -moz-opacity: 0;
   opacity: 0;
   border:none;
-}
-body.xinha_dialog_background_modal_greyout {
-  filter: alpha(opacity=100) !IMPORTANT;
-}
-body.xinha_dialog_background_modal {
-  filter: alpha(opacity=0);
 }
 .dialog .content { padding: 2px; }
 
@@ -336,8 +308,8 @@ form { margin: 0; border: none; }
 .htmlarea .panel {
   overflow:hidden;
   background-color:white;
-  padding-bottom:0 !IMPORTANT;
-  border: none !IMPORTANT;
+  padding-bottom:0;
+  border: none
 }
 .htmlarea .panels_left  .panel { border-right:none; border-left:none; }
 .htmlarea .panels_left  h1     { border-right:none;  }
@@ -355,7 +327,7 @@ form { margin: 0; border: none; }
   padding: 55px 0 5px 0;
   border:2px solid #ccc;
   /* border-color: ButtonHighlight ButtonShadow ButtonShadow ButtonHighlight;*/
-  background: url(images/xinha_logo.gif) no-repeat #fff center 5px;
+  background: url('images/xinha_logo.gif') no-repeat #fff center 5px;
 }
 .loading_main
 {

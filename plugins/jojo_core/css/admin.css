@@ -1,105 +1,215 @@
-@primary: #465CAA;
-@secondary: #5E7FBB;
-@tertiary: #666;
+@font-face {
+    font-family: 'OpenSansLight';
+    src: url('../external/fonts/OpenSans-Light-webfont.eot');
+    src: url('../external/fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Light-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Light-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Light-webfont.svg#OpenSansLight') format('svg');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-Regular-webfont.eot');
+    src: url('../external/fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Regular-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Regular-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-Italic-webfont.eot');
+    src: url('../external/fonts/OpenSans-Italic-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Italic-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Italic-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Italic-webfont.svg#OpenSansItalic') format('svg');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-Bold-webfont.eot');
+    src: url('../external/fonts/OpenSans-Bold-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-Bold-webfont.woff') format('woff'),url('../external/fonts/OpenSans-Bold-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-Bold-webfont.svg#OpenSansBold') format('svg');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../external/fonts/OpenSans-BoldItalic-webfont.eot');
+    src: url('../external/fonts/OpenSans-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),url('../external/fonts/OpenSans-BoldItalic-webfont.woff') format('woff'),url('../external/fonts/OpenSans-BoldItalic-webfont.ttf') format('truetype'),url('../external/fonts/OpenSans-BoldItalic-webfont.svg#OpenSansBoldItalic') format('svg');
+    font-weight: 700;
+    font-style: italic;
+}
+
+@primary: #2D69B3;
+@secondary: darken(@primary, 15%);
+@tertiary: #444;
 
 /* BS overrides */
-@linkColor: @primary;
-@baseLineHeight: 16px;
-@baseFontSize: 13px;
+// Brand colors
+// -------------------------
+@brand-primary:         @primary;
+@brand-success:         #5cb85c;
+@brand-warning:         #f0ad4e;
+@brand-danger:          #d9534f;
+@brand-info:            #5bc0de;
+
+// Scaffolding
+// -------------------------
+@body-bg:               #fff;
+@text-color:            @tertiary;
+
+// Links
+// -------------------------
+@link-color:            @brand-primary;
+@link-hover-color:      darken(@link-color, 15%);
+
+// Typography
+// -------------------------
+@font-family-sans-serif:  "OpenSans", Verdana, sans-serif;
+@font-size-base:          13px;
+@baseFontSize: @font-size-base;
+@line-height-base:        1.5;
+
+@headings-font-family:    "OpenSansLight", @font-family-base;
+@headings-font-weight:    400;
+@headings-line-height:    1.1;
+
+@icon-font-path: '../external/bootstrap/fonts/';
 
 body {
-    padding: 0 10px;
-    color: @tertiary;
+    padding: 0 20px;
 }
 
 h1 {
-  font-size: 24px;
-  margin: 12px 0;
+  font-size: 23px;
+  margin: 23px 0 12px;
 }
 
 h2 {
-  font-size: 21px;
-  color: @secondary;
+  font-size: 20px;
+  margin: 24px 0 12px;
+  color: @primary;
 }
 
 h3 {
-  font-size: 18px;
-  color: @secondary;
+  font-size: 17px;
+  color: @primary;
 }
 
 h4 {
+  font-family: @font-family-base;
+  color: @primary;
   font-size: 14px;
-  color: @tertiary;
-  margin: 18px 0 5px;
+  margin: 18px 0 7px;
 }
 
 th, td {
  font-size: @baseFontSize;
 }
 
-.paragraph {
-  line-height: 150%;
-}
-
-textarea {
-    height: auto;
-}
-
-[class^="icon-"], [class*=" icon-"] {
-    background-image: url("../external/bootstrap/img/glyphicons-halflings.png");
-}
-
-i.icon-white {
-    background-image: url("../external/bootstrap/img/glyphicons-halflings-white.png");
-}
-
-input, textarea, .uneditable-input {
-    width: auto;
-}
-
-input[type="radio"], input[type="checkbox"] {
-    margin: 2px 0 0;
-}
-
 /* Header */
-
-#admintitle {
-    margin: 10px 30px 0 0;
-    float: left;
-}
-
-#menu {
-    margin: 20px 0 0;
-    float: left;
+#admin-nav {
+    margin: 10px 0 0;
+    display: inline-block;
+    font-family: @headings-font-family;
+    #admintitle a {
+        padding: 0;
+        margin-right: 20px;
+    }
 }
 
 /* Body */
 
 #buttons {
-  padding: 0 0 10px;
+  padding: 0 0 20px;
 }
 
-#footer {
-  background: #eee;
+.btn {
+    font-family: @headings-font-family;
 }
 
 #help {
   display: none;
 }
 
-img {
-  border: 0;
-  vertical-align:top;
-}
-
-img.boxed {
-  border: 1px solid #eee;
-  padding: 3px;
-  background: #fff;
-}
-
 .field-page {
   display: none;
+}
+
+/* Edit */
+
+#recordlist select {
+    border: none;
+}
+
+#treediv {
+    border-right:1px solid #eeeeee;
+    margin-bottom: 30px;
+    overflow: auto;
+    min-height: 400px;
+    max-height: 800px;
+}
+
+.jstree-default-responsive {
+    > .jstree-container-ul .jstree-loading > .jstree-ocl {
+          background-image: url("../external/jstree/dist/themes/default/throbber.gif")
+    }
+    .jstree-anchor, .jstree-icon, .jstree-wholerow {
+        height: 40px;
+    }
+    .jstree-icon {
+        background-image: url("../external/jstree/dist/themes/default/40px.png");
+    }
+    .jstree-wholerow-clicked {
+        background: #cdcdcd;
+    }
+    .jstree-node, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
+        background-image: url("../external/jstree/dist/themes/default/40px.png");
+    }
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: @screen-sm-min) {
+    .jstree-default-responsive {
+        .jstree-node, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
+            background-image: url("../external/jstree/dist/themes/default/32px.png");
+        }
+        .jstree-node {
+            line-height: 22px;
+            min-height: 22px;
+            font-size: 12px;
+        }
+        .jstree-anchor, .jstree-icon:empty, .jstree-wholerow {
+            height: 22px;
+        }
+        .jstree-icon {
+            background-image: none;
+        }
+        .jstree-icon:empty {
+            color: #888;
+            line-height: 22px;
+            width: 19px;
+        }
+        .jstree-wholerow-clicked {
+            background: #eee;
+        }
+        .jstree-search {
+            color: @primary;
+            font-style: normal;
+        }
+    }
+}
+#tabs {
+    .nav-tabs > li.active > a {
+        font-weight: 700;
+    }
+}
+
+#fields label {
+    text-align: right;
+    padding-top: 5px;
+    span.glyphicon {
+        font-size: 8px;
+        vertical-align: 1px;
+    }
+    &.checkbox {
+        text-align: left;
+        font-weight: 400;
+    }
 }
 
 /* General */
@@ -107,20 +217,13 @@ div.clear {
   clear: both;
 }
 
-/* Buttons */
+.note {
+    font-size: 80%;
+}
 
 .hide {
   background: #f00 !important;
   display: none;
-}
-
-tr.rowfooter {
-  background: #f8f8f8;
-  text-align: center;
-}
-
-td.cell2 {
-  color: #666;
 }
 
 /* BB Code Editor */
@@ -136,23 +239,6 @@ td.cell2 {
 .bb-button:hover {
   border: 1px solid #5C77A8;
   background-color: #A5C1F4;
-}
-
-
-div.message {
-  border: 3px solid #077A12;
-  background: #068912 url('../images/cms/bg-message.gif') left top repeat;
-  color: #fff;
-  padding: 5px;
-  margin: 5px;
-  font-weight: bold;
-}
-
-div.message div {
-  padding-left: 25px;
-  background-image: url('../images/cms/message.png');
-  background-position: left top;
-  background-repeat: no-repeat;
 }
 
 .non-selected {
@@ -180,39 +266,6 @@ iframe.hidden {
   display: none;
 }
 
-/*B8C5F8*/
-div.plugin-box {
-  border: 1px solid #555;
-  background: #fafafa;
-  margin: 2px;
-  padding: 2px;
-}
-
-table.plugin-table {
-  width: 100%;
-}
-
-table.plugin-table th {
-  background: #eee;
-}
-
-table.plugin-table tr.active {
-  background: #efe;
-}
-
-table.plugin-table img.icon {
-  cursor: hand;
-}
-
-#pluginTable {
-  width: 100%;
-}
-
-.plugin-desc {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
-}
-
 #messageDEBUG, #uploadmessage{
   color: white;
   margin-bottom: 5px;
@@ -222,6 +275,7 @@ table.plugin-table img.icon {
   font-weight: bold;
 }
 
+/* Pop up editor */
 
 #bb-editor-overlay, #wysiwyg-editor-overlay, #preview-overlay{
   background-image: url('../images/cms/overlay.png');
@@ -241,32 +295,6 @@ table.plugin-table img.icon {
   display: block;
 }
 
-div.buttonImageContainer {
-  background-color: #EAE8E5;
-  border: 1px solid #999;
-  text-align: center;
-  background-position: center 5px;
-  background-repeat: no-repeat;
-  font-weight: bold;
-  float: left;
-  margin: 1px;
-  cursor: pointer;
-  cursor: hand;
-}
-
-div.buttonDisabled {
-  background-color: #EAE8E5;
-  border: 1px solid #999;
-  text-align: center;
-  background-position: center 5px;
-  background-repeat: no-repeat;
-  font-weight: bold;
-  float: left;
-  margin: 1px;
-  cursor: pointer;
-  cursor: hand;
-}
-
 input.jojo-admin-edit-done {
   margin: 5px;
   margin-right: 20px;
@@ -281,7 +309,7 @@ input.jojo-admin-edit-cancel {
 #message, #error {
     position: absolute;
     z-index: 100;
-    top: 90px;
+    top: -90px;
     right: 20px;
     margin: 0;
     padding: 10px;
@@ -293,56 +321,62 @@ input.jojo-admin-edit-cancel {
     }
 }
 
-
-#event-log table tr.critical {
-  background: #f00;
+.counter.form-control {
+    padding: 0;
 }
 
-#event-log table tr.critical td {
-  color: #fff;
+.form-group .inline {
+  display: inline-block;
+  float: none;
+  vertical-align: middle;
 }
 
-#event-log table tr.high td {
-  font-weight: bold;
+#event-log table {
+    tr.critical {
+      background: #f00;
+    }
+    tr.critical td {
+      color: #fff;
+    }
+    tr.high td {
+      font-weight: bold;
+    }
+    tr.low td {
+      color: #555;
+    }
+    tr.very-low td {
+      color: #999;
+    }
 }
-
-#event-log table tr.low td {
-  color: #555;
-}
-
-#event-log table tr.very-low td {
-  color: #999;
-}
-
 
 #redirect-content {
   margin-left: 15px;
-}
-
-#redirect-content div {
-  clear: both;
-}
-
-#redirect-content span {
-  float: left;
-  padding: 5px;
-  background: #f8f8f8;
-}
-
-#redirect-content span.col_wide {
-  width: 225px;
-}
-
-#redirect-content span.col_narrow {
-  width: 35px;
-}
-
-#redirect-content span.col_med {
-  width: 100px;
+    div {
+      clear: both;
+    }
+    span {
+      float: left;
+      padding: 5px;
+      background: #f8f8f8;
+        &.col_wide {
+          width: 225px;
+        }
+        &.col_narrow {
+          width: 35px;
+        }
+        &.col_med {
+          width: 100px;
+        }
+    }
 }
 
 input.date {
-  background: url('../images/cms/icons/calendar_view_day.png') no-repeat top right;
+  background: url('../images/cms/icons/calendar_view_day.png') no-repeat 4px 6px;
+  padding-left: 26px;
+}
+
+.AnyTime-win {
+    z-index: 1000;
 }
 
 #help-text {
@@ -405,39 +439,18 @@ option.expired {
 select.jpop_select {
   display: none;
 }
-.jstree > ul > li {
-    font-size: 12px;
-}
-
-#treediv li.page a ins, #treediv li ul li.page a ins {
-    background-image: url(../images/default/cms/icons/page.png);
-    background-position: top left;
-}
-
-#treediv li.folder a ins {
-    background-image: url(../images/default/cms/icons/folder.png);
-    background-position: top left;
-}
 
 .htmlarea {
     border: 1px solid #ccc;
-    .toolbar {
-        .buttonActive, .htmlarea .toolbar .buttonPressed {
-            padding: 0;
-        }
-        table {
-            background: none repeat scroll 0 0 transparent;
-        }
-        .buttonPressed {
-            background: none repeat scroll 0 0 black;
-        }    
+    .toolbar .button {
+        height: 19px;
+        width: 19px;
     }
     .dialog h1 {
         border-radius: 0;
         border: none;
     }
 }
-
 
 .crop_canvas {
   position: absolute;
@@ -451,19 +464,53 @@ select.jpop_select {
   height: 50px;
 }
 
-ul.plugins li {
-  border-top: 1px solid #ccc;
-  list-style: none;
-  padding: 8px;
-}
-
-ul.plugins li button {
-  float: right;
-  margin-top: -5px;
-}
-
 ul.plugins {
   margin: 0 30px 0 0;
+  padding: 0;
+    li {
+      border-top: 1px solid #ccc;
+      list-style: none;
+      padding: 10px 8px;
+        button {
+          float: right;
+          margin-top: -7px;
+        }
+    }
+}
+
+#plugins .panel :first-child {
+    margin-top: 7px;
+}
+
+#option-categories ul {
+    padding: 0;
+    li {
+      list-style: none;
+        span.glyphicon {
+            font-size: 7px;
+            padding-right: 5px;
+            vertical-align: 2px;
+            color: @primary;
+        }
+        a {
+            color: @text-color;
+            &.selected {
+              color: @primary;
+              text-decoration: none;
+                font-weight: 700;
+            }
+        }
+        a:focus {
+          -moz-outline-style: none;
+        }
+    }
+}
+
+#option-items .saving {
+  float: right;
+  clear: none;
+  color: red;
+  width: 30%;
 }
 
 div.options, div.readme {
@@ -475,19 +522,29 @@ li.core {
 }
 
 /* tables */
-table.sortabletable thead tr .header {
-	background: url('../images/cms/bg.gif') center right no-repeat;
-	cursor: pointer;
+table.sortabletable thead tr {
+    .header {
+        background: url('../images/cms/bg.gif') center right no-repeat;
+        cursor: pointer;
+    }
+    .headerSortUp {
+        background-image: url('../images/cms/incrementup.gif');
+    }
+    .headerSortDown {
+        background-image: url('../images/cms/incrementdown.gif');
+    }
+    .headerSortDown, table.sortabletable thead tr .headerSortUp {
+    background-color: lighten(@primary, 50%);
+    }
 }
 
-table.sortabletable thead tr .headerSortUp {
-	background-image: url('../images/cms/incrementup.gif');
+.tab-content {
+    padding: 20px 5px;
 }
 
-table.sortabletable thead tr .headerSortDown {
-	background-image: url('../images/cms/incrementdown.gif');
+span.order img {
+    display: block;
 }
-
-table.sortabletable thead tr .headerSortDown, table.sortabletable thead tr .headerSortUp {
-background-color: lighten(@primary, 50%);
+span.input-group-addon.order {
+    padding: 4px 12px;
 }

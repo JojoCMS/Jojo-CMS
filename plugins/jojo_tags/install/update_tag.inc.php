@@ -108,6 +108,7 @@ $default_fd['page']['pg_tags'] = array(
         'fd_name' => "Tags",
         'fd_type' => "tag",
         'fd_options' => "Core",
+        'fd_showlabel' => "no",
         'fd_help' => "A list of words describing the page",
         'fd_order' => "1",
         'fd_tabname' => "Tags",

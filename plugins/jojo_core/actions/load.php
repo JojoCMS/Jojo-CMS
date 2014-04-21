@@ -74,7 +74,7 @@ foreach ($allfields as $fieldname => $f) {
         $frajax->assign("h1", "innerHTML", 'Loading '.$percent.'%...');
         $start = Jojo::timer();
     }
-
+    $frajax->script('parent.$(".form-group").removeClass("has-error");');
     if ($f['type'] == 'unixdate') {
         $frajax->script("parent.$('#fm_".$fieldname."').AnyTime_noPicker();");
     }
@@ -127,5 +127,4 @@ if ($id == '') {
     $frajax->show('btn_delete', 'Appear', 1);
     $frajax->show('btn_addchild', 'Appear', 1);
 }
-$frajax->script('parent.addFocusEvents();');
 $frajax->sendFooter();

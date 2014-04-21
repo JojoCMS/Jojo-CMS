@@ -441,9 +441,10 @@ class Jojo_Table {
             $menutype = 'list';
         }
 
-        if ($menutype == 'tree') {
+        if ($menutype == 'tree' || $menutype == 'searchabletree') {
             global $smarty;
             $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield')) && $this->getFieldByType('Jojo_Field_Order'));
+            $smarty->assign('searchable', (boolean)($menutype == 'searchabletree'));
             $smarty->assign('table', $this->table);
             $smarty->assign('displayname', $this->getOption('displayname'));
             return $smarty->fetch('admin/edit-ajaxtree.tpl');
