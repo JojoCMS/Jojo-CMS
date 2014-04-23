@@ -46,7 +46,7 @@ class Jojo_Plugin_Admin_options extends Jojo_Plugin
             /* Set usable values if anything is missing */
             $opt['op_displayname'] = (empty($opt['op_displayname'])) ? $opt['op_name'] : $opt['op_displayname'];
             $opt['op_category']    = (empty($opt['op_category'])) ? 'Misc' : $opt['op_category'];
-            $opt['op_value']       = (empty($opt['op_value']))    ? $opt['op_default'] : $opt['op_value'];
+            $opt['op_value']       = ($opt['op_value']==='')    ? $opt['op_default'] : $opt['op_value'];
 
             /* Expand values for radio buttons */
             if ($opt['op_type'] == 'radio' || $opt['op_type'] == 'select' || $opt['op_type'] == 'checkbox') {
