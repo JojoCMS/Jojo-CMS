@@ -188,5 +188,5 @@ $default_fd['articlecategory']['comments'] = array(
         'fd_readonly' => "0",
         'fd_default' => "1",
         'fd_order' => $o++,
-        'fd_tabname' => "Content",
+        'fd_tabname' => "Content"
     );

@@ -28,7 +28,7 @@ $query = "
       `op_options` varchar(255) NOT NULL default '',
       `op_default` varchar(255) NOT NULL default '',
       `op_plugin` varchar(255) NOT NULL default '',
-      `op_description` varchar(255) NOT NULL default '',
+      `op_description` text NOT NULL,
       `op_displayname` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`op_name`),
       KEY `category` (`op_category`)

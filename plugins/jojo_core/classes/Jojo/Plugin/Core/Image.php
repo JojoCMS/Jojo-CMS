@@ -577,7 +577,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
     /* Sharpen image. Takes a php image resource.
     Recommended for photographic images only - graphics tend to go a bit strange. 
-    Can also be used for blurring, with negative sharpness values.  
+    Can also be used for mild blurring, with negative sharpness values.  
     10 = strong, 20 = mild */
     static function applySharpening($im, $sharpness=18) 
     {

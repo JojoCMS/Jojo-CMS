@@ -4,7 +4,6 @@ form.contact-form textarea {
 
 form span.required, form span.error {
   color: red;
-  padding-left: 5px;
 }
 
 form.contact-form  input.date {

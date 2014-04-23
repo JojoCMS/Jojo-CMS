@@ -29,22 +29,3 @@ img.icon-image {
     display: inline;
     background-image: none;
 }
-
-form.post_redirect_form {
-  display: inline;
-}
-
-button.post_redirect_submit {
-  border: 0;
-  background: transparent;
-  text-decoration: underline;
-}
-
-button.post_redirect_submit span {
-  text-decoration: underline;
-}
-
-button.post_redirect_submit span:hover {
-  text-decoration: underline;
-}
-

@@ -1,14 +1,6 @@
 {if $error}<div class="error">{$error}</div>{/if}
-
 {if $jojo_article}
 <div id="article"{if $jojo_article.ar_featured} class="featured"{/if}>
-    <div id="article-toplinks">
-        <ul class="pagination">
-            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">##Home##</a></li>
-            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo;</a></li>{/if}
-            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">&raquo;</a></li>{/if}
-        </ul>
-    </div>
     {if $jojo_article.showdate}<p class="article-date">{$jojo_article.ar_date|date_format}</p>{/if}
     {jojoHook hook="articleBeforeBody"}
     {if $jojo_article.image}<img src="images/{$jojo_article.mainimage}/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}
@@ -37,13 +29,10 @@
 {/if}
 
 {if $commenthtml}{$commenthtml}{/if}
-    <div id="article-bottomlinks">
-        <ul class="pagination">
-            <li><a href="{$jojo_article.pageurl}" title="{$jojo_article.pagetitle}">##Home##</a></li>
-            {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo;</a></li>{/if}
-            {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">&raquo;</a></li>{/if}
-        </ul>
-    </div>
+    <ul class="pager">
+        {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo; ##Previous##</a></li>{/if}
+        {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">##Next## &raquo;</a></li>{/if}
+    </ul>
 
 </div>
 {/if}
