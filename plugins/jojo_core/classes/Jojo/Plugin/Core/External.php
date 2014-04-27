@@ -110,13 +110,12 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
 
                     if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
                         set_time_limit(180);
-                        require_once(_BASEPLUGINDIR . '/jojo_core/external/jsmin/jsmin.php');
+                        require_once(_BASEPLUGINDIR . '/jojo_core/external/jshrink/src/JShrink/Minifier.php');
                         try {
-                            $newContent = JSMin::minify($content);
-                        } catch (Exception $e) {
+                            $newContent = JShrink\Minifier::minify($content);
+                        } catch (Exception $e) { 
                             $newContent = $content;
                         }
-
                         if (strlen($newContent) <= strlen($content)) {
                             $content = $newContent;
                         } else {
