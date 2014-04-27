@@ -187,6 +187,19 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* Cache for quicker response next time */
                 Jojo::RecursiveMkdir(dirname($cachefile));
 
+                /* output image data */
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = imagecreatefromjpeg($filename);
+                    $im = self::applySharpening($im, $sharpness);
+                    Imagejpeg($im,null,$quality);
+                    Imagejpeg($im,$cachefile,$quality);
+                    $data = file_get_contents($cachefile);
+                } else {
+                    $data = file_get_contents($filename);
+                    file_put_contents($cachefile, $data);
+                }
+
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($filename)));
                 header('Cache-Control: public, max-age=' . $cachetime);
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
@@ -196,19 +209,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 header('Content-Disposition: inline; filename=' . basename($filename) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
-
-                /* output image data */
-                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
-                    // sharpen the image
-                    $im = imagecreatefromjpeg($filename);
-                    $im = self::applySharpening($im, $sharpness);
-                    Imagejpeg($im,null,$quality);
-                    Imagejpeg($im,$cachefile,$quality);
-                } else {
-                    $data = file_get_contents($filename);
-                    echo $data;
-                    file_put_contents($cachefile, $data);
-                }
+                echo $data;
 
                 Jojo::publicCache($file, $data);
                 exit();
@@ -221,6 +222,19 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* Cache for quicker response next time */
                 Jojo::RecursiveMkdir(dirname($cachefile));
 
+                /* output image data */
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = imagecreatefromjpeg($pluginfile);
+                    $im = self::applySharpening($im, $sharpness);
+                    Imagejpeg($im,null,$quality);
+                    Imagejpeg($im,$cachefile,$quality);
+                    $data = file_get_contents($cachefile);
+                } else {
+                    $data = file_get_contents($pluginfile);
+                    file_put_contents($cachefile, $data);
+                }
+
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
                 header('Cache-Control: public, max-age=' . $cachetime);
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
@@ -230,19 +244,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 header('Content-Disposition: inline; filename=' . basename($filename) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
-
-                /* output image data */
-                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
-                    // sharpen the image
-                    $im = imagecreatefromjpeg($pluginfile);
-                    $im = self::applySharpening($im, $sharpness);
-                    Imagejpeg($im,null,$quality);
-                    Imagejpeg($im,$cachefile,$quality);
-                } else {
-                    $data = file_get_contents($pluginfile);
-                    echo $data;
-                    file_put_contents($cachefile, $data);
-                }
+                echo $data;
 
                 Jojo::publicCache($file, $data);
                 exit();
@@ -255,6 +257,19 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 /* Cache for quicker response next time */
                 Jojo::RecursiveMkdir(dirname($cachefile));
 
+                /* output image data */
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = imagecreatefromjpeg($pluginfile);
+                    $im = self::applySharpening($im, $sharpness);
+                    Imagejpeg($im,null,$quality);
+                    Imagejpeg($im,$cachefile,$quality);
+                    $data = file_get_contents($cachefile);
+                } else {
+                    $data = file_get_contents($pluginfile);
+                    file_put_contents($cachefile, $data);
+                }
+
                 header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
                 header('Cache-Control: public, max-age=' . $cachetime);
                 header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
@@ -264,19 +279,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 header('Content-Disposition: inline; filename=' . basename($filename) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
-
-                /* output image data */
-                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
-                    // sharpen the image
-                    $im = imagecreatefromjpeg($pluginfile);
-                    $im = self::applySharpening($im, $sharpness);
-                    Imagejpeg($im,null,$quality);
-                    Imagejpeg($im,$cachefile,$quality);
-                } else {
-                    $data = file_get_contents($pluginfile);
-                    echo $data;
-                    file_put_contents($cachefile, $data);
-                }
+                echo $data;
 
                 Jojo::publicCache($file, $data);
                 exit();
