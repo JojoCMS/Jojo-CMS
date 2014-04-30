@@ -1,6 +1,6 @@
-{if $message}<div class="message">{$message}</div>{/if}
-{if $error}<div class="error">{$error}</div>{/if}
-
+{if $messages}<div class="message alert alert-success">{$messages}</div>{/if}
+{if $error}<div class="error alert alert-danger">{$error}</div>{/if}
+{if !$success}
 <p>Please confirm your existing password, and enter a new password.</p>
 
 <h3>Guidelines for Passwords</h3>
@@ -29,7 +29,7 @@
         <div style="border: 1px solid #888; background: #fff; width: 80px; padding: 1px;vertical-align: middle; display: inline-block;"><div id="progressBar" style=" height: 20px; width: 0;"></div></div><br />
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary" name="reset">Change</button>
+        <button type="submit" class="btn btn-primary" name="reset" value="reset">Change</button>
     </div>
-
 </form>
+{/if}

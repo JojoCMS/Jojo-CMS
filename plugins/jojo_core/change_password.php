@@ -71,26 +71,27 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
                 $user = Jojo::selectRow("SELECT us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ? LIMIT 1", $_USERID);
 
                 // TODO: Make this optional, not every site wants to send their users passwords to them
-                error_reporting(0);
-                $mail = new htmlMimeMail();
-
                 $smarty->assign('name',  Jojo::either($user['us_firstname'],$user['us_login']));
                 $smarty->assign('login', $user['us_login']);
                 $smarty->assign('new',   $new);
                 $text = $smarty->fetch('change_password_confirmation.tpl');
 
-                $mail->setText($text);
-                $mail->setFrom(_SITETITLE.' <'._FROMADDRESS.'>');
-                $mail->setSubject('Password Change Confirmation');
-                $result = $mail->send(array($user['us_email']));
+                require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
+                $parsedown = new Parsedown();
+                $htmltext = $parsedown->parse($text);
 
-                $content['content'] = 'Your password has been changed. You have been emailed a confirmation of the new password. You do not need to login again.';
-                return $content;
+                 if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Change Confirmation', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
+                    $messages[] = 'Your password has been changed. You have been emailed a confirmation of the new password. You do not need to login again.';
+                    $smarty->assign('success',   true);
+                } else {
+                    $errors[] = 'There was a problem changing the password. Please contact the webmaster for further help ' . _FROMADDRESS;
+                }
             }
 
         }
 
         $smarty->assign('error',     implode("<br />\n", $errors));
+        if (!count($errors)) $smarty->assign('messages', implode("<br />\n", $messages));
         $smarty->assign('minlength', $minlength);
         $smarty->assign('maxlength', $maxlength);
 
