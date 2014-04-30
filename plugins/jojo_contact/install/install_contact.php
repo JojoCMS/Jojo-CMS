@@ -43,7 +43,6 @@ $query = "
         `form_autoreply_bodycode` text NULL,
         `form_action_url` varchar(255) NULL,
         `form_redirect_url` varchar(255) NULL,
-        `form_autoreply_css` varchar(255) NOT NULL,
         `form_hideonsuccess` tinyint(1) NOT NULL default '0',
         `form_thank_you_uri` varchar(255) NOT NULL,
         `form_multipage` tinyint(1) NOT NULL default '0',

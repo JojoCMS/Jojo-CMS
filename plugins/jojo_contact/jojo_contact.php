@@ -230,19 +230,19 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $replymessage = $conditionstate ? str_replace($matches[0], '', $replymessage[0]) : $replymessage[1];
             }
         }
-        $htmlcss = isset($form['form_autoreply_css']) ? $form['form_autoreply_css'] : '';
+        $css = Jojo::getOption('css-email', '');
         $autoreply =  0;
         if (isset($form['form_autoreply']) && $form['form_autoreply'] ) {
             $autoreply = 1;
             $replymessage .=  $messagefields;
             $replymessage =  self::personaliseMessage($replymessage, $fields);
-            $replymessage = self::cleanHTML($replymessage, $htmlcss);
+            $replymessage = $css ? Jojo::inlineStyle($replymessage, $css) : $replymessage;
             $smarty->assign('htmlmessage', $replymessage);
             $replymessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
         }
 
         $htmlmessage =  $messagefields . '<p>' . nl2br(Jojo::emailFooter()) . '</p>';
-        $htmlmessage = self::cleanHTML($htmlmessage, $htmlcss);
+        $htmlmessage = $css ? Jojo::inlineStyle($htmlmessage, $css) : $htmlmessage;
         $smarty->assign('htmlmessage', $htmlmessage);
         $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
         $res = false;
@@ -450,17 +450,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         return $_toAddresses;
-    }
-
-    static function cleanHTML($html, $css='')
-    {
-        // basic inline styling for supplied content
-        $html = str_replace('<p>', '<p style="font-size:13px;' . $css . '">', $html);
-        $html = str_replace('<td>', '<td style="font-size:13px;' . $css . '">', $html);
-        $html= str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $css . '">', $html);
-        $html = str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $css . '">', $html);
-        $html = str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $html);
-        return $html;
     }
 
     static function personaliseMessage($html, $fields)
