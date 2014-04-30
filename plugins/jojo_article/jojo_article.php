@@ -29,7 +29,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function getArticles($num=false, $start = 0, $categoryid='all', $sortby='ar_date desc', $exclude=false, $include=false, $minimal=false, $featuredfirst=false) {
         global $page;
         $now = time();
-        if ($categoryid == 'all' && $include != 'alllanguages') {
+        if ($categoryid == 'all') {
             $categoryid = array();
             $sectionpages = self::getPluginPages('', $page->page['root']);
             foreach ($sectionpages as $s) {
@@ -45,7 +45,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $exclude = ($exclude && Jojo::getOption('article_sidebar_exclude_current', 'no')=='yes' && $page->page['pg_link']=='jojo_plugin_jojo_article' && (Jojo::getFormData('id') || Jojo::getFormData('url'))) ? (Jojo::getFormData('url') ? Jojo::getFormData('url') : Jojo::getFormData('id')) : '';
         if ($num && $exclude) $num++;
         $shownumcomments = (boolean)(!$minimal && class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
-        $query  = "SELECT " . ($minimal ? "ar.articleid, ar_date, ar_title, ar_author, ar_livedate, ar_expirydate, ar_url," : "ar.*,  ac.*,");
+        $query  = "SELECT " . ($minimal ? "ar.articleid, ar_date, ar_title, ar_author, ar_livedate, ar_expirydate, ar_url, ar_category," : "ar.*,  ac.*,");
         $query  .= " p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
@@ -58,7 +58,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $articles = Jojo::selectQuery($query);
         $articles = self::cleanItems($articles, $exclude, $include);
         $articles = $minimal ? $articles : self::formatItems($articles, $exclude, $include);
-        if (!$num)  $articles = self::sortItems($articles, $sortby);
+        if (!$num && $sortby)  $articles = self::sortItems($articles, $sortby);
         if ($featuredfirst) {
          	$numfeatured = count($articles);
         	$query = str_replace('ar_featured=1', 'ar_featured=0', $query);
@@ -536,13 +536,15 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                $parent = 'index';
             }
 
-            $articles = self::getArticles('', '', $categoryid, $sortby);
+            $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include=false, $minimal=true);
             $n = count($articles);
 
             /* Trim items down to first page and add to tree*/
             $articles = array_slice($articles, 0, $articlesperpage);
             foreach ($articles as $a) {
-                $articletree->addNode($a['id'], $parent, $a['title'], $a['url']);
+                $title = Jojo::htmlspecialchars($a['ar_title']);
+                $url = _SITEURL . '/'. self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['pageid'], $a['ar_category']);
+                $articletree->addNode($a['articleid'], $parent, $title, $url);
             }
 
             /* Get number of pages for pagination */
@@ -626,22 +628,19 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     static function xmlsitemap($sitemap)
     {
         /* Get articles from database */
-        $articles = self::getArticles('', '', 'all', '', '', 'alllanguages');
         $now = time();
+        $allarticles = array();
         $indexes =  self::getPluginPages('xmlsitemap');
         $ids=array();
         foreach ($indexes as $i) {
             $ids[$i['articlecategoryid']] = true;
+            $articles = self::getArticles('', '', $i['articlecategoryid'], $sortby=false, $exclude=false, $include=false, $minimal=true);
+            $allarticles = array_merge($articles, $allarticles);
         }
         /* Add articles to sitemap */
-        foreach($articles as $k => $a) {
-            // strip out articles from expired pages
-            if (!isset($ids[$a['ar_category']])) {
-                unset($articles[$k]);
-                continue;
-            }
-            $url = _SITEURL . '/'. $a['url'];
-            $lastmod = $a['date'];
+        foreach($allarticles as $k => $a) {
+            $url = _SITEURL . '/'. self::getArticleUrl($a['articleid'], $a['ar_url'], $a['ar_title'], $a['pageid'], $a['ar_category']);
+            $lastmod = $a['ar_date'];
             $priority = 0.6;
             $changefreq = '';
             $sitemap[$url] = array($url, $lastmod, $changefreq, $priority);
