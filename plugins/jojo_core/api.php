@@ -724,6 +724,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'css-email',
+    'category'    => 'CSS',
+    'label'       => 'Inline CSS for email',
+    'description' => 'CSS styles to be applied to emails',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => '',
+);
+
+$_options[] = array(
     'id'          => 'css_imports',
     'category'    => 'CSS',
     'label'       => 'Server side CSS Imports',

@@ -22,3 +22,6 @@
 [submodule "plugins/jojo_core/external/jshrink"]
 	path = plugins/jojo_core/external/jshrink
 	url = https://github.com/tedivm/JShrink.git
+[submodule "plugins/jojo_core/external/csstoinline"]
+	path = plugins/jojo_core/external/csstoinline
+	url = https://github.com/tijsverkoyen/CssToInlineStyles.git
