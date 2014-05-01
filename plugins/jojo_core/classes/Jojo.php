@@ -2722,6 +2722,9 @@ class Jojo {
         return true;
     }
 
+    /**
+     * DEPRECATED
+     */
     static function html2text($html)
     {
         return Text_Filter::filter($html, 'html2text');
@@ -3007,9 +3010,9 @@ class Jojo {
 
         $custom = array(
             'text_filter' => _BASEPLUGINDIR . '/jojo_core/external/Horde/Filter.php',
-            'browser'     => _BASEPLUGINDIR . '/jojo_core/external/Horde/Browser.php',
-            'string'      => _BASEPLUGINDIR . '/jojo_core/external/Horde/String.php',
-            'util'        => _BASEPLUGINDIR . '/jojo_core/external/Horde/Util.php',
+            'horde_browser'     => _BASEPLUGINDIR . '/jojo_core/external/Horde/Browser.php',
+            'horde_string'      => _BASEPLUGINDIR . '/jojo_core/external/Horde/String.php',
+            'horde_util'        => _BASEPLUGINDIR . '/jojo_core/external/Horde/Util.php',
             'phpcaptcha'  => _BASEPLUGINDIR . '/jojo_core/external/php-captcha/php-captcha.inc.php',
             'htmlmimemail'=> _BASEPLUGINDIR . '/jojo_core/external/mimemail/htmlMimeMail.php',
             'hktree'      => _BASEPLUGINDIR . '/jojo_core/external/hktree/hktree.class.php',
@@ -3131,17 +3134,22 @@ class Jojo {
 
     public static function getFormData($var, $default = null)
     {
-        return Util::getFormData($var, $default);
+        return Horde_Util::getFormData($var, $default);
     }
 
     public static function getGet($var, $default = null)
     {
-        return Util::getGet($var, $default);
+        return Horde_Util::getGet($var, $default);
     }
 
     public static function getPost($var, $default = null)
     {
-        return Util::getPost($var, $default);
+        return Horde_Util::getPost($var, $default);
+    }
+
+    public static function Browser()
+    {
+        return new Horde_Browser();
     }
 
     public static function bb2Html($bbcode, $options=array())
