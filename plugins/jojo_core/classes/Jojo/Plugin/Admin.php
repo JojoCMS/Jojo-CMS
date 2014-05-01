@@ -32,7 +32,7 @@ class Jojo_Plugin_Admin extends Jojo_Plugin
         }
 
         /* Browser detection */
-        $smarty->assign('browser', Browser::singleton());
+        $smarty->assign('browser', Jojo::Browser());
 
         Jojo_Plugin_Admin::adminMenu();
         $content['content'] = $smarty->fetch('admin/admin.tpl');

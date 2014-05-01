@@ -4,17 +4,15 @@
 
 <div class="col-md-6">
 
-    {if !($browser->getBrowser() == 'mozilla' ||
-                           $browser->hasFeature('issafari') ||
-                           $browser->hasFeature('ischome'))}
+    {if !($browser->getBrowser() == 'mozilla' || $browser->getBrowser() == 'webkit' ) }
     <div class="admin-home-item-left">
 
         <h3>Browser Warning!</h3>
-        <p>Jojo CMS is currently in a beta release, and this version has only been tested in the <a href="http://www.getfirefox.com" target="_BLANK">Firefox</a> and <a href="www.apple.com/safari/" target="_BLANK">Safari</a> browsers. There are several known issues with Internet Explorer in particular which will prevent some features of the admin area from working.</p>
+        <p>Jojo CMS Admin has only been tested in the <a href="http://www.getfirefox.com" target="_BLANK">Firefox</a>, <a href="http://www.google.com/chrome" target="_BLANK">Chrome</a> and <a href="www.apple.com/safari/" target="_BLANK">Safari</a> browsers. There are several known issues with Internet Explorer in particular which will prevent some features of the admin area from working.</p>
 
         <p>You are currently using the <strong>{$browser->getBrowser()}</strong> browser</p>
 
-        <p>We recommend you download the latest version of <a href="http://www.getfirefox.com">Firefox</a> or <a href="www.apple.com/safari/" target="_BLANK">Safari</a>, both free.</p>
+        <p>We recommend you download the latest version of <a href="http://www.getfirefox.com">Firefox</a>, <a href="http://www.google.com/chrome" target="_BLANK">Chrome</a> or <a href="www.apple.com/safari/" target="_BLANK">Safari</a>, all free, all good.</p>
 
     </div>
     {/if}
