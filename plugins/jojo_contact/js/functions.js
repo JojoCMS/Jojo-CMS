@@ -108,8 +108,8 @@ function preFlight(formData, jqForm, options) {
 // post-submit callback
 function showResponse(response)  {
     var formid = response.id;
-    $('#' + formid + 'message').show().html(response.responsemessage);
     if (response.sent==true) {
+        $('#' + formid + 'message').removeClass('alert-info').addClass('alert-success').show().html(response.responsemessage);
         $('#' + formid).clearForm();
         if (response.hideonsuccess==true) {
             $('#' + formid).hide();
@@ -117,6 +117,8 @@ function showResponse(response)  {
         if ($('#' + formid + ' #form_redirect').length > 0 && $('#' + formid + ' #form_redirect').val() !== '') {
             window.location.href = $('#' + formid + ' #form_redirect').val();
         }
+    } else {
+        $('#' + formid + 'message').removeClass('alert-info').addClass('alert-danger').show().html(response.responsemessage);
     }
 
     // Revert the button back to a usable state

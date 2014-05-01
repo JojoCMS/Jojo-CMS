@@ -2826,7 +2826,6 @@ class Jojo {
                 $body.= '--mixed-x' . $hash . "\n"; # <-- Notice trailing --, required to close email body for mime's
                 $message = $body;
             }
-
             return mail($to, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers, $additional);
         }
     }

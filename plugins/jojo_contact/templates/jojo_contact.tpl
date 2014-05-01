@@ -48,7 +48,7 @@
         </select>
     {elseif $f.type =='heading'}<h{if in_array($f.size, array(1,2,3,4,5,6))}{$f.size}{else}3{/if}{if $f.class} class="{$f.class}"{/if}>{if $f.value}{$f.value}{else}{$f.display}{/if}</h{if in_array($f.size, array(1,2,3,4,5,6))}{$f.size}{else}3{/if}>
     {elseif $f.type=='note'}<p class="{if $f.class}{$f.class}{/if}">{if $f.value}{$f.value}{else}{$f.display}{/if}</p>
-    {elseif $f.type=='upload' || $f.type=='privateupload'}<input type="file" class="form-control input fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />
+    {elseif $f.type=='upload' || $f.type=='privateupload' || $f.type=='attachment'}<input type="file" class="fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  size="{$f.size}" value="" />
     {elseif $f.type=='emailwithconfirmation'}<input type="text" class="form-control input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value=""{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />
     {elseif $f.type=='date'}<input type="{if $anytime}text{else}date{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} /><a class="cleardata" title="clear field" onclick="$('#{$f.field}').val('');return false;">x</a>
     {else}{if $f.prependvalue || $f.appendvalue}
@@ -88,7 +88,7 @@
 </div>
 </form>
 </div>
-<div id="form{$form.form_id}message" class="message alert alert-{if $sent}success{else}danger{/if}" {if !$message}style="display:none;"{/if}>{$message}</div>
+<div id="form{$form.form_id}message" class="message alert alert-info" {if !$message}style="display:none;"{/if}>{$message}</div>
 {if $sent && $form.form_tracking_code}{$form.form_tracking_code}
 {/if}
 {if $anytime}<script type="text/javascript">

@@ -136,7 +136,8 @@ hidden:Hidden
 heading:Heading
 note:Note
 upload:File Upload
-privateupload:Private File Upload",
+privateupload:Private File Upload
+attachment:Attachment",
         'fd_required' => "yes",
         'fd_size' => "60",
         'fd_help' => "The type of input - use text (single line), textarea (multiple lines), checkboxes (multiple selections), radio buttons (single selection), select (drop down menu), list (multiple selects), emailwithconfirmation is an email field with a confirmation field below it, heading or note.",
@@ -260,7 +261,7 @@ $default_fd['formfield']['ff_showlabel'] = array(
         'fd_name' => "Show Label?",
         'fd_type' => "yesno",
         'fd_required' => "no",
-        'fd_default' => "0",
+        'fd_default' => "1",
         'fd_help' => "Show the label name for this field (or just the input)",
         'fd_order' => $o++
     );

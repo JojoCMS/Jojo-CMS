@@ -28,6 +28,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         Jojo::noFormInjection();
 
         $fields = array();
+        $attachments = array();
         $errors = array();
         $from_email = '';
         $from_name = '';
@@ -159,13 +160,18 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
             }
             /* if field is file upload field then need to check for a file and transfer it to the folder */
-            if ($field['type'] == 'upload' || $field['type'] == 'privateupload') {
+            if ($field['type'] == 'upload' || $field['type'] == 'privateupload' || $field['type'] == 'attachment') {
                 $field['filelink'] = '';
                 if (!isset($_FILES["FILE_".$field['field']])) continue;
                 $file = $_FILES["FILE_".$field['field']];
                 $uploadresponse = self::upload($file, $field, $form);
                 if ($uploadresponse['errors']) $errors[] = $uploadresponse['errors'];
-                $field['filelink'] = $uploadresponse['filepath'];
+                if ($field['type'] == 'attachment') {
+                    $field['value'] = $uploadresponse['filename'];
+                    $attachments[] = $uploadresponse['filepath'];
+               } else {
+                    $field['filelink'] = $uploadresponse['filelink'];
+                }
             }
        }
 
@@ -248,7 +254,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $res = false;
 
         if (!count($errors)) {
-            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
+            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments)) || !$formSend) {
 
                 /* success */
                 $responsemessage = $formSuccessMessage;
@@ -261,12 +267,12 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
                 /* send a copy to the main email as well the multi-choice one (if option is set) */
                if ($form['form_choice'] && $form['form_choice_list'] && isset($_POST['form_sendto']) && isset($form['form_choice_cc']) && $form['form_choice_cc'] && $form['form_to'] && $to_email != $form['form_to']) {
-                    Jojo::simpleMail(Jojo::either(_FROMNAME, _WEBMASTERNAME), $form['form_to'], $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
+                    Jojo::simpleMail(Jojo::either(_FROMNAME, _WEBMASTERNAME), $form['form_to'], $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments);
                 }
 
                 /* send a copy to the webmaster */
                if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
-                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
+                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments);
                 }
 
                 /* store a copy of the message in the database*/
@@ -512,7 +518,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                     die($error);
                 }
 
-                $folder = $field['type'] == 'privateupload' ? 'private/' : '';
+                $folder = $field['type'] == 'privateupload' || $field['type'] == 'attachment' ? 'private/' : '';
                 $folder .= $form['form_uploadfolder'] ? $form['form_uploadfolder'] : $form['form_id'];
                 /* All appears good, so prepare to move file to final resting place */
                 $destination = _DOWNLOADDIR . '/uploads/' . $folder . '/' . basename($filename);
@@ -540,7 +546,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $error = 'An unknown error occurred - please contact the webmaster ('._WEBMASTERADDRESS.')';
         }
         $reponse['errors'] = $error;
-        $reponse['filepath'] = str_replace(_DOWNLOADDIR, '', $destination);
+        $reponse['filepath'] = $destination;
+        $reponse['filelink'] = str_replace(_DOWNLOADDIR, '', $destination);
+        $reponse['filename'] = $newname ? basename($newname) : basename($filename);
         return $reponse;
     }
 
