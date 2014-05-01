@@ -14,15 +14,15 @@
 <form method="post" action="{$REQUEST_URI}" class="contact-form no-ajax no-validate" role="form" onsubmit="return checkme_changepass()">
     <div class="form-group">
         <label for="oldp" class="control-label">Current Password: <span class="required">*</span></label>
-        <input class="form-control" type="password" name="oldp" id="oldp" value="{$oldp}" size="25" />
+        <input class="form-control" type="password" name="oldp" id="oldp" value="{if $oldp}{$oldp}{/if}" size="25" />
     </div>
     <div class="form-group">
         <label for="newp" class="control-label">New Password: <span class="required">*</span></label>
-        <input class="form-control" type="password" name="newp" id="newp" value="{$newp}" size="25" onkeyup="checkPassword(this.value)" />
+        <input class="form-control" type="password" name="newp" id="newp" value="{if $newp}{$newp}{/if}" size="25" onkeyup="checkPassword(this.value)" />
     </div>
     <div class="form-group">
         <label for="newp2" class="control-label">Confirm New Password: <span class="required">*</span></label>
-        <input class="form-control" type="password" name="newp2" id="newp2" value="{$newp2}" size="25" />
+        <input class="form-control" type="password" name="newp2" id="newp2" value="{if $newp2}{$newp2}{/if}" size="25" />
     </div>
     <div class="form-group">
         <label class="control-label">Password Strength:</label>
