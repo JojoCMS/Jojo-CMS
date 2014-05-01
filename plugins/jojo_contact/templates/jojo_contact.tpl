@@ -78,7 +78,7 @@
         </div>
     {/if}
         <div class="form-group submit">
-            {if $form.form_submit_label}<label class="control-label"></label>{/if}<input type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="btn btn-primary" data-normalval="{$form.form_submit}" /><br />
+            {if $form.form_submit_label}<label class="control-label"></label>{/if}<button type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="btn btn-primary" data-normalval="{$form.form_submit}" >{$form.form_submit}</button>
        </div>
         <div class="progress" style="display: none;">
             <div class="bar"></div >
@@ -88,7 +88,7 @@
 </div>
 </form>
 </div>
-<div id="form{$form.form_id}message" class="message alert alert-{if $sent}success{else}error{/if}" {if !$message}style="display:none;"{/if}>{$message}</div>
+<div id="form{$form.form_id}message" class="message alert alert-{if $sent}success{else}danger{/if}" {if !$message}style="display:none;"{/if}>{$message}</div>
 {if $sent && $form.form_tracking_code}{$form.form_tracking_code}
 {/if}
 {if $anytime}<script type="text/javascript">
