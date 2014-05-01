@@ -1,117 +1,66 @@
 <?php
-
 /**
- * Error code for a missing driver configuration.
- */
-define('HORDE_ERROR_DRIVER_CONFIG_MISSING', 1);
-
-/**
- * Error code for an incomplete driver configuration.
- */
-define('HORDE_ERROR_DRIVER_CONFIG', 2);
-
-/**
- * The Util:: class provides generally useful methods of different kinds.
+ * The Horde_Util:: class provides generally useful methods.
  *
- * $Horde: framework/Util/Util.php,v 1.424 2008/01/02 11:12:23 jan Exp $
- *
- * Copyright 1999-2008 The Horde Project (http://www.horde.org/)
+ * Copyright 1999-2013 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
- * did not receive this file, see http://www.fsf.org/copyleft/lgpl.html.
+ * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
- * @author  Chuck Hagenbuch <chuck@horde.org>
- * @author  Jon Parise <jon@horde.org>
- * @since   Horde 3.0
- * @package Horde_Util
+ * @author   Chuck Hagenbuch <chuck@horde.org>
+ * @author   Jon Parise <jon@horde.org>
+ * @category Horde
+ * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package  Util
  */
-class Util {
+class Horde_Util
+{
+    /**
+     * A list of random patterns to use for overwriting purposes.
+     * See http://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html.
+     * We save the random overwrites for efficiency reasons.
+     *
+     * @var array
+     */
+    static public $patterns = array(
+        "\x55", "\xaa", "\x92\x49\x24", "\x49\x24\x92", "\x24\x92\x49",
+        "\x00", "\x11", "\x22", "\x33", "\x44", "\x55", "\x66", "\x77",
+        "\x88", "\x99", "\xaa", "\xbb", "\xcc", "\xdd", "\xee", "\xff",
+        "\x92\x49\x24", "\x49\x24\x92", "\x24\x92\x49", "\x6d\xb6\xdb",
+        "\xb6\xdb\x6d", "\xdb\x6d\xb6"
+    );
 
     /**
-     * Returns an object's clone.
+     * Are magic quotes in use?
      *
-     * @param object &$obj  The object to clone.
-     *
-     * @return object  The cloned object.
+     * @var boolean
      */
-    static function &cloneObject(&$obj)
-    {
-        /* Cloning does *not* currently work if using PHP 5.
-         * This is a known PHP issue: http://bugs.php.net/bug.php?id=27268
-         * Therefore, work around this issue by using the PHP 4
-         * serialize/unserialize clone hack. */
-        /*
-        if (version_compare(zend_version(), '2', '>')) {
-            return clone($obj);
-        } else {
-            $newObj = $obj;
-            return $newObj;
-        }
-        */
-        $ret = unserialize(serialize($obj));
-        return $ret;
-    }
+    static protected $_magicquotes = null;
 
     /**
-     * Buffers the output from a function call, like readfile() or
-     * highlight_string(), that prints the output directly, so that instead it
-     * can be returned as a string and used.
+     * TODO
      *
-     * @param string $function  The function to run.
-     * @param mixed $arg1       First argument to $function().
-     * @param mixed $arg2       Second argument to $function().
-     * @param mixed $arg...     ...
-     * @param mixed $argN       Nth argument to $function().
-     *
-     * @return string  The output of the function.
+     * @var array
      */
-    static function bufferOutput()
-    {
-        if (func_num_args() == 0) {
-            return false;
-        }
-        $include = false;
-        $args = func_get_args();
-        $function = array_shift($args);
-        if (is_array($function)) {
-            if (!is_callable($function)) {
-                return false;
-            }
-        } elseif (($function == 'include') ||
-                  ($function == 'include_once') ||
-                  ($function == 'require') ||
-                  ($function == 'require_once')) {
-            $include = true;
-        } elseif (!function_exists($function)) {
-            return false;
-        }
+    static protected $_shutdowndata = array(
+        'dirs' => array(),
+        'files' => array(),
+        'secure' => array()
+    );
 
-        ob_start();
-        if ($include) {
-            $file = implode(',', $args);
-            switch ($function) {
-            case 'include':
-                include $file;
-                break;
+    /**
+     * Has the shutdown method been registered?
+     *
+     * @var boolean
+     */
+    static protected $_shutdownreg = false;
 
-            case 'include_once':
-                include_once $file;
-                break;
-
-            case 'require':
-                require $file;
-                break;
-
-            case 'require_once':
-                require_once $file;
-                break;
-            }
-        } else {
-            call_user_func_array($function, $args);
-        }
-
-        return ob_get_clean();
-    }
+    /**
+     * Cache for extensionExists().
+     *
+     * @var array
+     */
+    static protected $_cache = array();
 
     /**
      * Checks to see if a value has been set by the script and not by GET,
@@ -121,192 +70,15 @@ class Util {
      * @param string $varname  The variable name to check.
      * @param mixed $default   Default value if the variable isn't present
      *                         or was specified by the user. Defaults to null.
-     *                         @since Horde 3.1
      *
      * @return mixed  $default if the var is in user input or not present,
      *                the variable value otherwise.
      */
-    static function nonInputVar($varname, $default = null)
+    static public function nonInputVar($varname, $default = null)
     {
-        if (isset($_GET[$varname]) ||
-            isset($_POST[$varname]) ||
-            isset($_COOKIE[$varname])) {
-            return $default;
-        } else {
-            return isset($GLOBALS[$varname]) ? $GLOBALS[$varname] : $default;
-        }
-    }
-
-    /**
-     * Adds a name=value pair to the end of an URL, taking care of whether
-     * there are existing parameters and whether to use ?, & or &amp; as the
-     * glue.  All data will be urlencoded.
-     *
-     * @param string $url       The URL to modify
-     * @param mixed $parameter  Either the name=value pair to add
-     *                          (DEPRECATED) -or-
-     *                          the name value -or-
-     *                          an array of name/value pairs.
-     * @param string $value     If specified, the value part ($parameter is
-     *                          then assumed to just be the parameter name).
-     * @param boolean $encode   Encode the argument separator?
-     *
-     * @return string  The modified URL.
-     */
-    static function addParameter($url, $parameter, $value = null, $encode = true)
-    {
-        if (empty($parameter)) {
-            return $url;
-        }
-
-        $add = array();
-        $arg = $encode ? '&amp;' : '&';
-
-        if (strpos($url, '?') !== false) {
-            list($url, $query) = explode('?', $url);
-
-            /* Check if the argument separator has been already
-             * htmlentities-ized in the URL. */
-            if (preg_match('/=.*?&amp;.*?=/', $query)) {
-                $query = html_entity_decode($query);
-                $arg = '&amp;';
-            } elseif (preg_match('/=.*?&.*?=/', $query)) {
-                $arg = '&';
-            }
-            $pairs = explode('&', $query);
-            foreach ($pairs as $pair) {
-                $pair = explode('=', urldecode($pair), 2);
-                $pair_val = (count($pair) == 2) ? $pair[1] : '';
-                if (substr($pair[0], -2) == '[]') {
-                    $name = substr($pair[0], 0, -2);
-                    if (!isset($add[$name])) {
-                        $add[$name] = array();
-                    }
-                    $add[$name][] = $pair_val;
-                } else {
-                    $add[$pair[0]] = $pair_val;
-                }
-            }
-        }
-        if (is_array($parameter)) {
-            $add = array_merge($add, $parameter);
-        } else {
-            $add[$parameter] = $value;
-        }
-
-        $url_params = array();
-        foreach ($add as $parameter => $value) {
-            if (is_array($value)) {
-                foreach ($value as $val) {
-                    $url_params[] = urlencode($parameter) . '[]=' . urlencode($val);
-                }
-            } else {
-                $url_params[] = urlencode($parameter) . '=' . urlencode($value);
-            }
-        }
-
-        if (count($url_params)) {
-            return $url . '?' . implode($arg, $url_params);
-        } else {
-            return $url;
-        }
-    }
-
-    /**
-     * Removes name=value pairs from a URL.
-     *
-     * @param string $url    The URL to modify.
-     * @param mixed $remove  Either a single parameter to remove or an array
-     *                       of parameters to remove.
-     *
-     * @return string  The modified URL.
-     */
-    static function removeParameter($url, $remove)
-    {
-        if (!is_array($remove)) {
-            $remove = array($remove);
-        }
-
-        /* Return immediately if there are no parameters to remove. */
-        if (($pos = strpos($url, '?')) === false) {
-            return $url;
-        }
-
-        $entities = false;
-        list($url, $query) = explode('?', $url, 2);
-
-        /* Check if the argument separator has been already
-         * htmlentities-ized in the URL. */
-        if (preg_match('/=.*?&amp;.*?=/', $query)) {
-            $entities = true;
-            $query = html_entity_decode($query);
-        }
-
-        /* Get the list of parameters. */
-        $pairs = explode('&', $query);
-        $params = array();
-        foreach ($pairs as $pair) {
-            $pair = explode('=', $pair, 2);
-            $params[$pair[0]] = count($pair) == 2 ? $pair[1] : '';
-        }
-
-        /* Remove the parameters. */
-        foreach ($remove as $param) {
-            unset($params[$param]);
-        }
-
-        if (!count($params)) {
-            return $url;
-        }
-
-        /* Flatten arrays.
-         * FIXME: should handle more than one array level somehow. */
-        $add = array();
-        foreach ($params as $key => $val) {
-            if (is_array($val)) {
-                foreach ($val as $v) {
-                    $add[] = $key . '[]=' . $v;
-                }
-            } else {
-                $add[] = $key . '=' . $val;
-            }
-        }
-
-        $query = implode('&', $add);
-        if ($entities) {
-            $query = htmlentities($query);
-        }
-
-        return $url . '?' . $query;
-    }
-
-    /**
-     * Returns a url with the 'nocache' parameter added, if the browser is
-     * buggy and caches old URLs.
-     *
-     * @param string $url       The URL to modify.
-     * @param boolean $encode   Encode the argument separator? (since
-     *                          Horde 3.2)
-     *
-     * @return string  The requested URI.
-     */
-    static function nocacheUrl($url, $encode = true)
-    {
-        static $rand_num;
-
-        require_once 'Horde/Browser.php';
-        $browser = &Browser::singleton();
-
-        /* We may need to set a dummy parameter 'nocache' since some
-         * browsers do not always honor the 'no-cache' header. */
-        if ($browser->hasQuirk('cache_same_url')) {
-            if (!isset($rand_num)) {
-                $rand_num = base_convert(microtime(), 10, 36);
-            }
-            return Util::addParameter($url, 'nocache', $rand_num, $encode);
-        } else {
-            return $url;
-        }
+        return (isset($_GET[$varname]) || isset($_POST[$varname]) || isset($_COOKIE[$varname]))
+            ? $default
+            : (isset($GLOBALS[$varname]) ? $GLOBALS[$varname] : $default);
     }
 
     /**
@@ -316,14 +88,11 @@ class Util {
      *
      * @return string  The hidden form input, if needed/requested.
      */
-    static function formInput($append_session = 0)
+    static public function formInput($append_session = 0)
     {
-        if ($append_session == 1 ||
-            !isset($_COOKIE[session_name()])) {
-            return '<input type="hidden" name="' . htmlspecialchars(session_name()) . '" value="' . htmlspecialchars(session_id()) . "\" />\n";
-        } else {
-            return '';
-        }
+        return (($append_session == 1) || !isset($_COOKIE[session_name()]))
+            ? '<input type="hidden" name="' . htmlspecialchars(session_name()) . '" value="' . htmlspecialchars(session_id()) . "\" />\n"
+            : '';
     }
 
     /**
@@ -331,32 +100,28 @@ class Util {
      *
      * @param boolean $append_session  0 = only if needed, 1 = always.
      */
-    static function pformInput($append_session = 0)
+    static public function pformInput($append_session = 0)
     {
-        echo Util::formInput($append_session);
+        echo self::formInput($append_session);
     }
 
     /**
      * If magic_quotes_gpc is in use, run stripslashes() on $var.
      *
-     * @param string &$var  The string to un-quote, if necessary.
+     * @param mixed $var  The string, or an array of strings, to un-quote.
      *
-     * @return string  $var, minus any magic quotes.
+     * @return mixed  $var, minus any magic quotes.
      */
-    static function dispelMagicQuotes(&$var)
+    static public function dispelMagicQuotes($var)
     {
-        static $magic_quotes;
-
-        if (!isset($magic_quotes)) {
-            $magic_quotes = get_magic_quotes_gpc();
+        if (is_null(self::$_magicquotes)) {
+            self::$_magicquotes = get_magic_quotes_gpc();
         }
 
-        if ($magic_quotes) {
-            if (!is_array($var)) {
-                $var = stripslashes($var);
-            } else {
-                array_walk($var, array('Util', 'dispelMagicQuotes'));
-            }
+        if (self::$_magicquotes) {
+            $var = is_array($var)
+                ? array_map(array(__CLASS__, 'dispelMagicQuotes'), $var)
+                : stripslashes($var);
         }
 
         return $var;
@@ -374,10 +139,11 @@ class Util {
      *
      * @return string  The cleaned form variable, or $default.
      */
-    static function getFormData($var, $default = null)
+    static public function getFormData($var, $default = null)
     {
-        return (($val = Util::getPost($var)) !== null)
-            ? $val : Util::getGet($var, $default);
+        return (($val = self::getPost($var)) !== null)
+            ? $val
+            : self::getGet($var, $default);
     }
 
     /**
@@ -390,10 +156,10 @@ class Util {
      *
      * @return string  The cleaned form variable, or $default.
      */
-    static function getGet($var, $default = null)
+    static public function getGet($var, $default = null)
     {
         return (isset($_GET[$var]))
-            ? Util::dispelMagicQuotes($_GET[$var])
+            ? self::dispelMagicQuotes($_GET[$var])
             : $default;
     }
 
@@ -407,83 +173,112 @@ class Util {
      *
      * @return string  The cleaned form variable, or $default.
      */
-    static function getPost($var, $default = null)
+    static public function getPost($var, $default = null)
     {
         return (isset($_POST[$var]))
-            ? Util::dispelMagicQuotes($_POST[$var])
+            ? self::dispelMagicQuotes($_POST[$var])
             : $default;
     }
 
     /**
-     * Determines the location of the system temporary directory.
-     *
-     * @return string  A directory name which can be used for temp files.
-     *                 Returns false if one could not be found.
-     */
-    static function getTempDir()
-    {
-        /* First, try PHP's upload_tmp_dir directive. */
-        $tmp = ini_get('upload_tmp_dir');
-
-        /* Otherwise, try to determine the TMPDIR environment
-         * variable. */
-        if (empty($tmp)) {
-            $tmp = getenv('TMPDIR');
-        }
-
-        /* If we still cannot determine a value, then cycle through a
-         * list of preset possibilities. */
-        $tmp_locations = array('/tmp', '/var/tmp', 'c:\WUTemp', 'c:\temp',
-                               'c:\windows\temp', 'c:\winnt\temp');
-        while (empty($tmp) && count($tmp_locations)) {
-            $tmp_check = array_shift($tmp_locations);
-            if (@is_dir($tmp_check)) {
-                $tmp = $tmp_check;
-            }
-        }
-
-        /* If it is still empty, we have failed, so return false;
-         * otherwise return the directory determined. */
-        return empty($tmp) ? false : $tmp;
-    }
-
-    /**
      * Creates a temporary filename for the lifetime of the script, and
-     * (optionally) register it to be deleted at request shutdown.
+     * (optionally) registers it to be deleted at request shutdown.
      *
      * @param string $prefix   Prefix to make the temporary name more
      *                         recognizable.
      * @param boolean $delete  Delete the file at the end of the request?
      * @param string $dir      Directory to create the temporary file in.
-     * @param boolean $secure  If deleting file, should we securely delete the
-     *                         file?
+     * @param boolean $secure  If deleting the file, should we securely delete
+     *                         the file by overwriting it with random data?
      *
      * @return string   Returns the full path-name to the temporary file.
      *                  Returns false if a temp file could not be created.
      */
-    static function getTempFile($prefix = '', $delete = true, $dir = '', $secure = false)
+    static public function getTempFile($prefix = '', $delete = true, $dir = '',
+                                       $secure = false)
     {
-        if (empty($dir) || !is_dir($dir)) {
-            $tmp_dir = Util::getTempDir();
-        } else {
-            $tmp_dir = $dir;
-        }
+        $tempDir = (empty($dir) || !is_dir($dir))
+            ? sys_get_temp_dir()
+            : $dir;
 
-        if (empty($tmp_dir)) {
-            return false;
-        }
+        $tempFile = tempnam($tempDir, $prefix);
 
-        $tmp_file = tempnam($tmp_dir, $prefix);
-
-        /* If the file was created, then register it for deletion and return. */
-        if (empty($tmp_file)) {
+        // If the file was created, then register it for deletion and return.
+        if (empty($tempFile)) {
             return false;
         }
 
         if ($delete) {
-            Util::deleteAtShutdown($tmp_file, true, $secure);
+            self::deleteAtShutdown($tempFile, true, $secure);
         }
-        return $tmp_file;
+
+        return $tempFile;
+    }
+
+    /**
+     * Creates a temporary filename with a specific extension for the lifetime
+     * of the script, and (optionally) registers it to be deleted at request
+     * shutdown.
+     *
+     * @param string $extension  The file extension to use.
+     * @param string $prefix     Prefix to make the temporary name more
+     *                           recognizable.
+     * @param boolean $delete    Delete the file at the end of the request?
+     * @param string $dir        Directory to create the temporary file in.
+     * @param boolean $secure    If deleting file, should we securely delete
+     *                           the file by overwriting it with random data?
+     *
+     * @return string   Returns the full path-name to the temporary file.
+     *                  Returns false if a temporary file could not be created.
+     */
+    static public function getTempFileWithExtension($extension = '.tmp',
+                                                    $prefix = '',
+                                                    $delete = true, $dir = '',
+                                                    $secure = false)
+    {
+        $tempDir = (empty($dir) || !is_dir($dir))
+            ? sys_get_temp_dir()
+            : $dir;
+
+        if (empty($tempDir)) {
+            return false;
+        }
+
+        $windows = substr(PHP_OS, 0, 3) == 'WIN';
+        $tries = 1;
+        do {
+            // Get a known, unique temporary file name.
+            $sysFileName = tempnam($tempDir, $prefix);
+            if ($sysFileName === false) {
+                return false;
+            }
+
+            // tack on the extension
+            $tmpFileName = $sysFileName . $extension;
+            if ($sysFileName == $tmpFileName) {
+                return $sysFileName;
+            }
+
+            // Move or point the created temporary file to the full filename
+            // with extension. These calls fail if the new name already
+            // exists.
+            $fileCreated = ($windows ? @rename($sysFileName, $tmpFileName) : @link($sysFileName, $tmpFileName));
+            if ($fileCreated) {
+                if (!$windows) {
+                    unlink($sysFileName);
+                }
+
+                if ($delete) {
+                    self::deleteAtShutdown($tmpFileName, true, $secure);
+                }
+
+                return $tmpFileName;
+            }
+
+            unlink($sysFileName);
+        } while (++$tries <= 5);
+
+        return false;
     }
 
     /**
@@ -497,10 +292,10 @@ class Util {
      * @return string  The pathname to the new temporary directory.
      *                 Returns false if directory not created.
      */
-    static function createTempDir($delete = true, $temp_dir = null)
+    static public function createTempDir($delete = true, $temp_dir = null)
     {
         if (is_null($temp_dir)) {
-            $temp_dir = Util::getTempDir();
+            $temp_dir = sys_get_temp_dir();
         }
 
         if (empty($temp_dir)) {
@@ -510,14 +305,14 @@ class Util {
         /* Get the first 8 characters of a random string to use as a temporary
            directory name. */
         do {
-            $new_dir = $temp_dir . '/' . substr(base_convert(mt_rand() . microtime(), 10, 36), 0, 8);
+            $new_dir = $temp_dir . '/' . substr(base_convert(uniqid(mt_rand()), 10, 36), 0, 8);
         } while (file_exists($new_dir));
 
         $old_umask = umask(0000);
         if (!mkdir($new_dir, 0700)) {
             $new_dir = false;
         } elseif ($delete) {
-            Util::deleteAtShutdown($new_dir);
+            self::deleteAtShutdown($new_dir);
         }
         umask($old_umask);
 
@@ -531,13 +326,11 @@ class Util {
      * Algorithim loosely based on code from the Perl File::Spec::Unix module
      * (version 1.5).
      *
-     * @since Horde 3.0.5
-     *
      * @param string $path  A file path.
      *
      * @return string  The canonicalized file path.
      */
-    static function realPath($path)
+    static public function realPath($path)
     {
         /* Standardize on UNIX directory separators. */
         if (!strncasecmp(PHP_OS, 'WIN', 3)) {
@@ -577,11 +370,11 @@ class Util {
      * directory at request shutdown.
      *
      * If called with no arguments, return all elements to be deleted (this
-     * should only be done by Util::_deleteAtShutdown).
+     * should only be done by Horde_Util::_deleteAtShutdown()).
      *
      * The first time it is called, it initializes the array and registers
-     * Util::_deleteAtShutdown() as a shutdown function - no need to do so
-     * manually.
+     * Horde_Util::_deleteAtShutdown() as a shutdown function - no need to do
+     * so manually.
      *
      * The second parameter allows the unregistering of previously registered
      * elements.
@@ -593,36 +386,28 @@ class Util {
      * @param boolean $secure    If deleting file, should we securely delete
      *                           the file?
      */
-    static function deleteAtShutdown($filename = false, $register = true,
-                              $secure = false)
+    static public function deleteAtShutdown($filename, $register = true,
+                                            $secure = false)
     {
-        static $dirs, $files, $securedel;
-
         /* Initialization of variables and shutdown functions. */
-        if (is_null($dirs)) {
-            $dirs = array();
-            $files = array();
-            $securedel = array();
-            register_shutdown_function(array('Util', '_deleteAtShutdown'));
+        if (!self::$_shutdownreg) {
+            register_shutdown_function(array(__CLASS__, 'shutdown'));
+            self::$_shutdownreg = true;
         }
 
-        if ($filename) {
-            if ($register) {
-                if (@is_dir($filename)) {
-                    $dirs[$filename] = true;
-                } else {
-                    $files[$filename] = true;
-                }
-                if ($secure) {
-                    $securedel[$filename] = true;
-                }
+        $ptr = &self::$_shutdowndata;
+        if ($register) {
+            if (@is_dir($filename)) {
+                $ptr['dirs'][$filename] = true;
             } else {
-                unset($dirs[$filename]);
-                unset($files[$filename]);
-                unset($securedel[$filename]);
+                $ptr['files'][$filename] = true;
+            }
+
+            if ($secure) {
+                $ptr['secure'][$filename] = true;
             }
         } else {
-            return array($dirs, $files, $securedel);
+            unset($ptr['dirs'][$filename], $ptr['files'][$filename], $ptr['secure'][$filename]);
         }
     }
 
@@ -630,35 +415,25 @@ class Util {
      * Deletes registered files at request shutdown.
      *
      * This function should never be called manually; it is registered as a
-     * shutdown function by Util::deleteAtShutdown() and called automatically
-     * at the end of the request. It will retrieve the list of folders and
-     * files to delete from Util::deleteAtShutdown()'s static array, and then
-     * iterate through, deleting folders recursively.
+     * shutdown function by Horde_Util::deleteAtShutdown() and called
+     * automatically at the end of the request.
      *
      * Contains code from gpg_functions.php.
-     * Copyright (c) 2002-2003 Braverock Ventures
-     *
-     * @access private
+     * Copyright 2002-2003 Braverock Ventures
      */
-    static function _deleteAtShutdown()
+    static public function shutdown()
     {
-        $registered = Util::deleteAtShutdown();
-        $dirs = $registered[0];
-        $files = $registered[1];
-        $secure = $registered[2];
+        $ptr = &self::$_shutdowndata;
 
-        foreach ($files as $file => $val) {
+        foreach ($ptr['files'] as $file => $val) {
             /* Delete files */
             if ($val && file_exists($file)) {
                 /* Should we securely delete the file by overwriting the data
                    with a random string? */
-                if (isset($secure[$file])) {
+                if (isset($ptr['secure'][$file])) {
                     $filesize = filesize($file);
-                    /* See http://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html.
-                     * We save the random overwrites for efficiency reasons. */
-                    $patterns = array("\x55", "\xaa", "\x92\x49\x24", "\x49\x24\x92", "\x24\x92\x49", "\x00", "\x11", "\x22", "\x33", "\x44", "\x55", "\x66", "\x77", "\x88", "\x99", "\xaa", "\xbb", "\xcc", "\xdd", "\xee", "\xff", "\x92\x49\x24", "\x49\x24\x92", "\x24\x92\x49", "\x6d\xb6\xdb", "\xb6\xdb\x6d", "\xdb\x6d\xb6");
                     $fp = fopen($file, 'r+');
-                    foreach ($patterns as $pattern) {
+                    foreach (self::$patterns as $pattern) {
                         $pattern = substr(str_repeat($pattern, floor($filesize / strlen($pattern)) + 1), 0, $filesize);
                         fwrite($fp, $pattern);
                         fseek($fp, 0);
@@ -669,7 +444,7 @@ class Util {
             }
         }
 
-        foreach ($dirs as $dir => $val) {
+        foreach ($ptr['dirs'] as $dir => $val) {
             /* Delete directories */
             if ($val && file_exists($dir)) {
                 /* Make sure directory is empty. */
@@ -686,35 +461,19 @@ class Util {
     }
 
     /**
-     * Outputs javascript code to close the current window.
-     *
-     * @param string $code  Any additional javascript code to run before
-     *                      closing the window.
-     */
-    static function closeWindowJS($code = '')
-    {
-        echo '<script type="text/javascript">//<![CDATA[' . "\n"
-            . $code . 'window.close();' . "\n//]]></script>\n";
-    }
-
-    /**
      * Caches the result of extension_loaded() calls.
-     *
-     * @access private
      *
      * @param string $ext  The extension name.
      *
      * @return boolean  Is the extension loaded?
      */
-    static function extensionExists($ext)
+    static public function extensionExists($ext)
     {
-        static $cache = array();
-
-        if (!isset($cache[$ext])) {
-            $cache[$ext] = extension_loaded($ext);
+        if (!isset(self::$_cache[$ext])) {
+            self::$_cache[$ext] = extension_loaded($ext);
         }
 
-        return $cache[$ext];
+        return self::$_cache[$ext];
     }
 
     /**
@@ -727,15 +486,18 @@ class Util {
      *                  True can mean that the extension was already loaded,
      *                  OR was loaded dynamically.
      */
-    static function loadExtension($ext)
+    static public function loadExtension($ext)
     {
         /* If $ext is already loaded, our work is done. */
-        if (Util::extensionExists($ext)) {
+        if (self::extensionExists($ext)) {
             return true;
         }
 
-        /* See if we can call dl() at all, by the current ini settings. */
-        if ((ini_get('enable_dl') != 1) || (ini_get('safe_mode') == 1)) {
+        /* See if we can call dl() at all, by the current ini settings.
+         * dl() has been removed in some PHP 5.3 SAPIs. */
+        if ((ini_get('enable_dl') != 1) ||
+            (ini_get('safe_mode') == 1) ||
+            !function_exists('dl')) {
             return false;
         }
 
@@ -760,103 +522,43 @@ class Util {
             }
         }
 
-        return @dl($ext . '.' . $suffix) || @dl('php_' . $ext . '.' . $suffix);
+        return dl($ext . '.' . $suffix) || dl('php_' . $ext . '.' . $suffix);
     }
 
     /**
-     * Checks if all necessary parameters for a driver's configuration are set
-     * and returns a PEAR_Error if something is missing.
+     * Utility function to obtain PATH_INFO information.
      *
-     * @param array $params   The configuration array with all parameters.
-     * @param array $fields   An array with mandatory parameter names for this
-     *                        driver.
-     * @param string $name    The clear text name of the driver. If not
-     *                        specified, the application name will be used.
-     * @param array $info     A hash containing detailed information about the
-     *                        driver. Will be passed as the userInfo to the
-     *                        PEAR_Error.
+     * @return string  The PATH_INFO string.
      */
-    static function assertDriverConfig($params, $fields, $name, $info = array())
+    static public function getPathInfo()
     {
-        $info = array_merge($info,
-                            array('params' => $params,
-                                  'fields' => $fields,
-                                  'name' => $name));
-
-        if (!is_array($params) || !count($params)) {
-            require_once 'PEAR.php';
-            return PEAR::throwError(sprintf(_("No configuration information specified for %s."), $name),
-                                    HORDE_ERROR_DRIVER_CONFIG_MISSING,
-                                    $info);
-        }
-
-        foreach ($fields as $field) {
-            if (!isset($params[$field])) {
-                require_once 'PEAR.php';
-                return PEAR::throwError(sprintf(_("Required \"%s\" not specified in configuration."), $field, $name),
-                                        HORDE_ERROR_DRIVER_CONFIG,
-                                        $info);
+        if (isset($_SERVER['PATH_INFO']) &&
+            (strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') === false)) {
+            return $_SERVER['PATH_INFO'];
+        } elseif (isset($_SERVER['REQUEST_URI']) &&
+                  isset($_SERVER['SCRIPT_NAME'])) {
+            $search = Horde_String::common($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']);
+            if (substr($search, -1) == '/') {
+                $search = substr($search, 0, -1);
             }
-        }
-    }
-
-    /**
-     * Returns a format string to be used by strftime().
-     *
-     * @param string $format  A format string as used by date().
-     *
-     * @return string  A format string as similar as possible to $format.
-     */
-    static function date2strftime($format)
-    {
-        $dateSymbols = array('a', 'A', 'd', 'D', 'F', 'g', 'G', 'h', 'H', 'i', 'j', 'l', 'm', 'M', 'n', 'r', 's', 'T', 'w', 'W', 'y', 'Y', 'z', 'm/d/Y', 'M', "\n", 'g:i a', 'G:i', "\t", 'H:i:s', '%');
-        $strftimeSymbols = array('%p', '%p', '%d', '%a', '%B', '%I', '%H', '%I', '%H', '%M', '%e', '%A', '%m', '%b', '%m', '%a, %e %b %Y %T %Z', '%S', '%Z', '%w', '%V', '%y', '%Y', '%j', '%D', '%h', '%n', '%r', '%R', '%t', '%T', '%%');
-
-        $result = '';
-        for ($pos = 0; $pos < strlen($format);) {
-            for ($symbol = 0; $symbol < count($dateSymbols); $symbol++) {
-                if (strpos($format, $dateSymbols[$symbol], $pos) === $pos) {
-                    $result .= $strftimeSymbols[$symbol];
-                    $pos += strlen($dateSymbols[$symbol]);
-                    continue 2;
+            $search = array($search);
+            if (!empty($_SERVER['QUERY_STRING'])) {
+                // We can't use QUERY_STRING directly because URL rewriting
+                // might add more parameters to the query string than those
+                // from the request URI.
+                $url = parse_url($_SERVER['REQUEST_URI']);
+                if (!empty($url['query'])) {
+                    $search[] = '?' . $url['query'];
                 }
             }
-            $result .= substr($format, $pos, 1);
-            $pos++;
+            $path = str_replace($search, '', $_SERVER['REQUEST_URI']);
+            if ($path == '/') {
+                $path = '';
+            }
+            return $path;
         }
 
-        return $result;
-    }
-
-    /**
-     * Returns a format string to be used by date().
-     *
-     * @param string $format  A format string as used by strftime().
-     *
-     * @return string  A format string as similar as possible to $format.
-     */
-    static function strftime2date($format)
-    {
-        $dateSymbols = array('a', 'A', 'd', 'D', 'F', 'g', 'G', 'h', 'H', 'i', 'j', 'l', 'm', 'M', 'n', 'r', 's', 'T', 'w', 'W', 'y', 'Y', 'z', 'm/d/Y', 'M', "\n", 'g:i a', 'G:i', "\t", 'H:i:s', '%');
-        $strftimeSymbols = array('%p', '%p', '%d', '%a', '%B', '%I', '%H', '%I', '%H', '%M', '%e', '%A', '%m', '%b', '%m', '%a, %e %b %Y %T %Z', '%S', '%Z', '%w', '%V', '%y', '%Y', '%j', '%D', '%h', '%n', '%r', '%R', '%t', '%T', '%%');
-
-        return str_replace($strftimeSymbols, $dateSymbols, $format);
-    }
-
-}
-
-if (!function_exists('_')) {
-    function _($string)
-    {
-        return $string;
-    }
-
-    function bindtextdomain()
-    {
-    }
-
-    function textdomain()
-    {
+        return '';
     }
 
 }

@@ -1,111 +1,88 @@
 <?php
-
-$GLOBALS['_HORDE_STRING_CHARSET'] = 'UTF-8';
-
 /**
- * The String:: class provides static methods for charset and locale safe
- * string manipulation.
+ * Provides static methods for charset and locale safe string manipulation.
  *
- * $Horde: framework/Util/String.php,v 1.79 2008/02/19 09:28:01 jan Exp $
- *
- * Copyright 2003-2008 The Horde Project (http://www.horde.org/)
+ * Copyright 2003-2013 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
- * did not receive this file, see http://www.fsf.org/copyleft/lgpl.html.
+ * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
- * @author  Jan Schneider <jan@horde.org>
- * @since   Horde 3.0
- * @package Horde_Util
+ * @author   Jan Schneider <jan@horde.org>
+ * @category Horde
+ * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package  Util
  */
-class String {
+class Horde_String
+{
+    /**
+     * lower() cache.
+     *
+     * @var array
+     */
+    static protected $_lowers = array();
 
     /**
-     * Caches the result of extension_loaded() calls.
+     * upper() cache.
      *
-     * @param string $ext  The extension name.
-     *
-     * @return boolean  Is the extension loaded?
-     *
-     * @see Util::extensionExists()
+     * @var array
      */
-    static function extensionExists($ext)
-    {
-        static $cache = array();
-
-        if (!isset($cache[$ext])) {
-            $cache[$ext] = extension_loaded($ext);
-        }
-
-        return $cache[$ext];
-    }
-
-    /**
-     * Sets a default charset that the String:: methods will use if none is
-     * explicitly specified.
-     *
-     * @param string $charset  The charset to use as the default one.
-     */
-    static function setDefaultCharset($charset)
-    {
-        $GLOBALS['_HORDE_STRING_CHARSET'] = $charset;
-        if (String::extensionExists('mbstring') &&
-            function_exists('mb_regex_encoding')) {
-            $old_error = error_reporting(0);
-            mb_regex_encoding(String::_mbstringCharset($charset));
-            error_reporting($old_error);
-        }
-    }
+    static protected $_uppers = array();
 
     /**
      * Converts a string from one charset to another.
      *
-     * Works only if either the iconv or the mbstring extension
-     * are present and best if both are available.
+     * Uses the iconv or the mbstring extensions.
      * The original string is returned if conversion failed or none
      * of the extensions were available.
      *
-     * @param mixed $input  The data to be converted. If $input is an an array,
-     *                      the array's values get converted recursively.
-     * @param string $from  The string's current charset.
-     * @param string $to    The charset to convert the string to. If not
-     *                      specified, the global variable
-     *                      $_HORDE_STRING_CHARSET will be used.
+     * @param mixed $input    The data to be converted. If $input is an an
+     *                        array, the array's values get converted
+     *                        recursively.
+     * @param string $from    The string's current charset.
+     * @param string $to      The charset to convert the string to.
+     * @param boolean $force  Force conversion?
      *
      * @return mixed  The converted input data.
      */
-    static function convertCharset($input, $from, $to = null)
+    static public function convertCharset($input, $from, $to, $force = false)
     {
-        /* Get the user's default character set if none passed in. */
-        if (is_null($to)) {
-            $to = $GLOBALS['_HORDE_STRING_CHARSET'];
+        /* Don't bother converting numbers. */
+        if (is_numeric($input)) {
+            return $input;
         }
 
         /* If the from and to character sets are identical, return now. */
-        $from = String::lower($from);
-        $to = String::lower($to);
-        if ($from == $to) {
+        if (!$force && $from == $to) {
+            return $input;
+        }
+        $from = self::lower($from);
+        $to = self::lower($to);
+        if (!$force && $from == $to) {
             return $input;
         }
 
         if (is_array($input)) {
             $tmp = array();
-            foreach ($input as $key => $val) {
-                $tmp[String::_convertCharset($key, $from, $to)] = String::convertCharset($val, $from, $to);
+            reset($input);
+            while (list($key, $val) = each($input)) {
+                $tmp[self::_convertCharset($key, $from, $to)] = self::convertCharset($val, $from, $to, $force);
             }
             return $tmp;
         }
+
         if (is_object($input)) {
-            // PEAR_Error objects are almost guaranteed to contain recursion,
-            // which will cause a segfault in PHP.  We should never reach
-            // this line, but add a check and a log message to help the devs
-            // track down and fix this issue.
-            if (is_a($input, 'PEAR_Error')) {
-                Horde::logMessage('Called convertCharset() on a PEAR_Error object. ' . print_r($input, true), __FILE__, __LINE__, PEAR_LOG_DEBUG);
+            // PEAR_Error/Exception objects are almost guaranteed to contain
+            // recursion, which will cause a segfault in PHP. We should never
+            // reach this line, but add a check.
+            if (($input instanceof Exception) ||
+                ($input instanceof PEAR_Error)) {
                 return '';
             }
+
+            $input = clone $input;
             $vars = get_object_vars($input);
-            foreach ($vars as $key => $val) {
-                $input->$key = String::convertCharset($val, $from, $to);
+            while (list($key, $val) = each($vars)) {
+                $input->$key = self::convertCharset($val, $from, $to, $force);
             }
             return $input;
         }
@@ -114,94 +91,98 @@ class String {
             return $input;
         }
 
-        return String::_convertCharset($input, $from, $to);
+        return self::_convertCharset($input, $from, $to);
     }
 
     /**
      * Internal function used to do charset conversion.
      *
-     * @access private
-     *
-     * @param string $input  See String::convertCharset().
-     * @param string $from   See String::convertCharset().
-     * @param string $to     See String::convertCharset().
+     * @param string $input  See self::convertCharset().
+     * @param string $from   See self::convertCharset().
+     * @param string $to     See self::convertCharset().
      *
      * @return string  The converted string.
      */
-    static function _convertCharset($input, $from, $to)
+    static protected function _convertCharset($input, $from, $to)
     {
-        $output = '';
+        /* Use utf8_[en|de]code() if possible and if the string isn't too
+         * large (less than 16 MB = 16 * 1024 * 1024 = 16777216 bytes) - these
+         * functions use more memory. */
+        if (Horde_Util::extensionExists('xml') &&
+            ((strlen($input) < 16777216) ||
+             !Horde_Util::extensionExists('iconv') ||
+             !Horde_Util::extensionExists('mbstring'))) {
+            if (($to == 'utf-8') &&
+                in_array($from, array('iso-8859-1', 'us-ascii', 'utf-8'))) {
+                return utf8_encode($input);
+            }
 
-        /* Use utf8_[en|de]code() if possible. */
-        $from_check = (($from == 'iso-8859-1') || ($from == 'us-ascii'));
-        if ($from_check && ($to == 'utf-8')) {
-            return utf8_encode($input);
+            if (($from == 'utf-8') &&
+                in_array($to, array('iso-8859-1', 'us-ascii', 'utf-8'))) {
+                return utf8_decode($input);
+            }
         }
 
-        $to_check = (($to == 'iso-8859-1') || ($to == 'us-ascii'));
-        if (($from == 'utf-8') && $to_check) {
-            return utf8_decode($input);
+        /* Try UTF7-IMAP conversions. */
+        if (($from == 'utf7-imap') || ($to == 'utf7-imap')) {
+            try {
+                if ($from == 'utf7-imap') {
+                    return self::convertCharset(Horde_Imap_Client_Utf7imap::Utf7ImapToUtf8($input), 'UTF-8', $to);
+                } else {
+                    if ($from == 'utf-8') {
+                        $conv = $input;
+                    } else {
+                        $conv = self::convertCharset($input, $from, 'UTF-8');
+                    }
+                    return Horde_Imap_Client_Utf7imap::Utf8ToUtf7Imap($conv);
+                }
+            } catch (Horde_Imap_Client_Exception $e) {
+                return $input;
+            }
         }
 
-        /* First try iconv with transliteration. */
-        if (($from != 'utf7-imap') &&
-            ($to != 'utf7-imap') &&
-            String::extensionExists('iconv')) {
-            /* We need to tack an extra character temporarily because of a bug
-             * in iconv() if the last character is not a 7 bit ASCII
-             * character. */
-            $oldTrackErrors = ini_set('track_errors', 1);
+        /* Try iconv with transliteration. */
+        if (Horde_Util::extensionExists('iconv')) {
             unset($php_errormsg);
-            $output = @iconv($from, $to . '//TRANSLIT', $input . 'x');
-            $output = (isset($php_errormsg)) ? false : String::substr($output, 0, -1, $to);
-            ini_set('track_errors', $oldTrackErrors);
-        }
-
-        /* Next try mbstring. */
-        if (!$output && String::extensionExists('mbstring')) {
-            $old_error = error_reporting(0);
-            $output = mb_convert_encoding($input, $to, String::_mbstringCharset($from));
-            error_reporting($old_error);
-        }
-
-        /* At last try imap_utf7_[en|de]code if appropriate. */
-        if (!$output && String::extensionExists('imap')) {
-            if ($from_check && ($to == 'utf7-imap')) {
-                return @imap_utf7_encode($input);
-            }
-            if (($from == 'utf7-imap') && $to_check) {
-                return @imap_utf7_decode($input);
+            ini_set('track_errors', 1);
+            $out = @iconv($from, $to . '//TRANSLIT', $input);
+            $errmsg = isset($php_errormsg);
+            ini_restore('track_errors');
+            if (!$errmsg) {
+                return $out;
             }
         }
 
-        return (!$output) ? $input : $output;
+        /* Try mbstring. */
+        if (Horde_Util::extensionExists('mbstring')) {
+            $out = @mb_convert_encoding($input, $to, self::_mbstringCharset($from));
+            if (!empty($out)) {
+                return $out;
+            }
+        }
+
+        return $input;
     }
 
     /**
      * Makes a string lowercase.
      *
-     * @param string  $string   The string to be converted.
-     * @param boolean $locale   If true the string will be converted based on a
-     *                          given charset, locale independent else.
-     * @param string  $charset  If $locale is true, the charset to use when
-     *                          converting. If not provided the current charset.
+     * @param string $string   The string to be converted.
+     * @param boolean $locale  If true the string will be converted based on
+     *                         a given charset, locale independent else.
+     * @param string $charset  If $locale is true, the charset to use when
+     *                         converting.
      *
-     * @return string  The string with lowercase characters
+     * @return string  The string with lowercase characters.
      */
-    static function lower($string, $locale = false, $charset = null)
+    static public function lower($string, $locale = false, $charset = null)
     {
-        static $lowers;
-
         if ($locale) {
-            /* The existence of mb_strtolower() depends on the platform. */
-            if (String::extensionExists('mbstring') &&
-                function_exists('mb_strtolower')) {
+            if (Horde_Util::extensionExists('mbstring')) {
                 if (is_null($charset)) {
-                    $charset = $GLOBALS['_HORDE_STRING_CHARSET'];
+                    throw new InvalidArgumentException('$charset argument must not be null');
                 }
-                $old_error = error_reporting(0);
-                $ret = mb_strtolower($string, String::_mbstringCharset($charset));
-                error_reporting($old_error);
+                $ret = @mb_strtolower($string, self::_mbstringCharset($charset));
                 if (!empty($ret)) {
                     return $ret;
                 }
@@ -209,44 +190,35 @@ class String {
             return strtolower($string);
         }
 
-        if (!isset($lowers)) {
-            $lowers = array();
-        }
-        if (!isset($lowers[$string])) {
+        if (!isset(self::$_lowers[$string])) {
             $language = setlocale(LC_CTYPE, 0);
             setlocale(LC_CTYPE, 'C');
-            $lowers[$string] = strtolower($string);
+            self::$_lowers[$string] = strtolower($string);
             setlocale(LC_CTYPE, $language);
         }
 
-        return $lowers[$string];
+        return self::$_lowers[$string];
     }
 
     /**
      * Makes a string uppercase.
      *
-     * @param string  $string   The string to be converted.
-     * @param boolean $locale   If true the string will be converted based on a
-     *                          given charset, locale independent else.
-     * @param string  $charset  If $locale is true, the charset to use when
-     *                          converting. If not provided the current charset.
+     * @param string $string   The string to be converted.
+     * @param boolean $locale  If true the string will be converted based on a
+     *                         given charset, locale independent else.
+     * @param string $charset  If $locale is true, the charset to use when
+     *                         converting. If not provided the current charset.
      *
-     * @return string  The string with uppercase characters
+     * @return string  The string with uppercase characters.
      */
-    static function upper($string, $locale = false, $charset = null)
+    static public function upper($string, $locale = false, $charset = null)
     {
-        static $uppers;
-
         if ($locale) {
-            /* The existence of mb_strtoupper() depends on the
-             * platform. */
-            if (function_exists('mb_strtoupper')) {
+            if (Horde_Util::extensionExists('mbstring')) {
                 if (is_null($charset)) {
-                    $charset = $GLOBALS['_HORDE_STRING_CHARSET'];
+                    throw new InvalidArgumentException('$charset argument must not be null');
                 }
-                $old_error = error_reporting(0);
-                $ret = mb_strtoupper($string, String::_mbstringCharset($charset));
-                error_reporting($old_error);
+                $ret = @mb_strtoupper($string, self::_mbstringCharset($charset));
                 if (!empty($ret)) {
                     return $ret;
                 }
@@ -254,41 +226,64 @@ class String {
             return strtoupper($string);
         }
 
-        if (!isset($uppers)) {
-            $uppers = array();
-        }
-        if (!isset($uppers[$string])) {
+        if (!isset(self::$_uppers[$string])) {
             $language = setlocale(LC_CTYPE, 0);
             setlocale(LC_CTYPE, 'C');
-            $uppers[$string] = strtoupper($string);
+            self::$_uppers[$string] = strtoupper($string);
             setlocale(LC_CTYPE, $language);
         }
 
-        return $uppers[$string];
+        return self::$_uppers[$string];
     }
 
     /**
      * Returns a string with the first letter capitalized if it is
      * alphabetic.
      *
-     * @param string  $string   The string to be capitalized.
-     * @param boolean $locale   If true the string will be converted based on a
-     *                          given charset, locale independent else.
-     * @param string  $charset  The charset to use, defaults to current charset.
+     * @param string $string   The string to be capitalized.
+     * @param boolean $locale  If true the string will be converted based on a
+     *                         given charset, locale independent else.
+     * @param string $charset  The charset to use, defaults to current charset.
      *
      * @return string  The capitalized string.
      */
-    static function ucfirst($string, $locale = false, $charset = null)
+    static public function ucfirst($string, $locale = false, $charset = null)
     {
         if ($locale) {
-            $first = String::substr($string, 0, 1, $charset);
-            if (String::isAlpha($first, $charset)) {
-                $string = String::upper($first, true, $charset) . String::substr($string, 1, null, $charset);
+            if (is_null($charset)) {
+                throw new InvalidArgumentException('$charset argument must not be null');
+            }
+            $first = self::substr($string, 0, 1, $charset);
+            if (self::isAlpha($first, $charset)) {
+                $string = self::upper($first, true, $charset) . self::substr($string, 1, null, $charset);
             }
         } else {
-            $string = String::upper(substr($string, 0, 1), false) . substr($string, 1);
+            $string = self::upper(substr($string, 0, 1), false) . substr($string, 1);
         }
+
         return $string;
+    }
+
+    /**
+     * Returns a string with the first letter of each word capitalized if it is
+     * alphabetic.
+     *
+     * Sentences are splitted into words at whitestrings.
+     *
+     * @param string $string   The string to be capitalized.
+     * @param boolean $locale  If true the string will be converted based on a
+     *                         given charset, locale independent else.
+     * @param string $charset  The charset to use, defaults to current charset.
+     *
+     * @return string  The capitalized string.
+     */
+    static public function ucwords($string, $locale = false, $charset = null)
+    {
+        $words = preg_split('/(\s+)/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+        for ($i = 0, $c = count($words); $i < $c; $i += 2) {
+            $words[$i] = self::ucfirst($words[$i], $locale, $charset);
+        }
+        return implode('', $words);
     }
 
     /**
@@ -303,25 +298,37 @@ class String {
      *
      * @return string  The string's part.
      */
-    static function substr($string, $start, $length = null, $charset = null)
+    static public function substr($string, $start, $length = null,
+                                  $charset = 'UTF-8')
     {
         if (is_null($length)) {
-            $length = String::length($string, $charset) - $start;
+            $length = self::length($string, $charset) - $start;
         }
+
         if ($length == 0) {
             return '';
         }
-        if (String::extensionExists('mbstring')) {
-            if (is_null($charset) || empty($charset)) {
-                $charset = $GLOBALS['_HORDE_STRING_CHARSET'];
-            }
-            $old_error = error_reporting(0);
-            $ret = mb_substr($string, $start, $length, String::_mbstringCharset($charset));
-            error_reporting($old_error);
-            if (!empty($ret)) {
+
+        /* Try mbstring. */
+        if (Horde_Util::extensionExists('mbstring')) {
+            $ret = @mb_substr($string, $start, $length, self::_mbstringCharset($charset));
+
+            /* mb_substr() returns empty string on failure. */
+            if (strlen($ret)) {
                 return $ret;
             }
         }
+
+        /* Try iconv. */
+        if (Horde_Util::extensionExists('iconv')) {
+            $ret = @iconv_substr($string, $start, $length, $charset);
+
+            /* iconv_substr() returns false on failure. */
+            if ($ret !== false) {
+                return $ret;
+            }
+        }
+
         return substr($string, $start, $length);
     }
 
@@ -332,25 +339,23 @@ class String {
      * @param string $charset The charset to use when calculating the string's
      *                        length.
      *
-     * @return string  The string's part.
+     * @return integer  The string's length.
      */
-    static function length($string, $charset = null)
+    static public function length($string, $charset = 'UTF-8')
     {
-        if (is_null($charset)) {
-            $charset = $GLOBALS['_HORDE_STRING_CHARSET'];
-        }
-        $charset = String::lower($charset);
+        $charset = self::lower($charset);
+
         if ($charset == 'utf-8' || $charset == 'utf8') {
             return strlen(utf8_decode($string));
         }
-        if (String::extensionExists('mbstring')) {
-            $old_error = error_reporting(0);
-            $ret = mb_strlen($string, String::_mbstringCharset($charset));
-            error_reporting($old_error);
+
+        if (Horde_Util::extensionExists('mbstring')) {
+            $ret = @mb_strlen($string, self::_mbstringCharset($charset));
             if (!empty($ret)) {
                 return $ret;
             }
         }
+
         return strlen($string);
     }
 
@@ -367,28 +372,52 @@ class String {
      *
      * @return integer  The position of first occurrence.
      */
-    static function pos($haystack, $needle, $offset = 0, $charset = null)
+    static public function pos($haystack, $needle, $offset = 0,
+                               $charset = 'UTF-8')
     {
-        if (String::extensionExists('mbstring')) {
-            if (is_null($charset)) {
-                $charset = $GLOBALS['_HORDE_STRING_CHARSET'];
-            }
+        if (Horde_Util::extensionExists('mbstring')) {
             $track_errors = ini_set('track_errors', 1);
-            $old_error = error_reporting(0);
-            $ret = mb_strpos($haystack, $needle, $offset, String::_mbstringCharset($charset));
-            error_reporting($old_error);
+            $ret = @mb_strpos($haystack, $needle, $offset, self::_mbstringCharset($charset));
             ini_set('track_errors', $track_errors);
             if (!isset($php_errormsg)) {
                 return $ret;
             }
         }
+
         return strpos($haystack, $needle, $offset);
     }
 
     /**
-     * Returns a string padded to a certain length with another string.
+     * Returns the numeric position of the last occurrence of $needle
+     * in the $haystack string.
      *
-     * This method behaves exactly like str_pad but is multibyte safe.
+     * @param string $haystack  The string to search through.
+     * @param string $needle    The string to search for.
+     * @param integer $offset   Allows to specify which character in haystack
+     *                          to start searching.
+     * @param string $charset   The charset to use when searching for the
+     *                          $needle string.
+     *
+     * @return integer  The position of first occurrence.
+     */
+    static public function rpos($haystack, $needle, $offset = 0,
+                                $charset = 'UTF-8')
+    {
+        if (Horde_Util::extensionExists('mbstring')) {
+            $track_errors = ini_set('track_errors', 1);
+            $ret = @mb_strrpos($haystack, $needle, $offset, self::_mbstringCharset($charset));
+            ini_set('track_errors', $track_errors);
+            if (!isset($php_errormsg)) {
+                return $ret;
+            }
+        }
+
+        return strrpos($haystack, $needle, $offset);
+    }
+
+    /**
+     * Returns a string padded to a certain length with another string.
+     * This method behaves exactly like str_pad() but is multibyte safe.
      *
      * @param string $input    The string to be padded.
      * @param integer $length  The length of the resulting string.
@@ -401,12 +430,12 @@ class String {
      *
      * @return string  The padded string.
      */
-    static function pad($input, $length, $pad = ' ', $type = STR_PAD_RIGHT,
-                 $charset = null)
+    static public function pad($input, $length, $pad = ' ',
+                               $type = STR_PAD_RIGHT, $charset = 'UTF-8')
     {
-        $mb_length = String::length($input, $charset);
+        $mb_length = self::length($input, $charset);
         $sb_length = strlen($input);
-        $pad_length = String::length($pad, $charset);
+        $pad_length = self::length($pad, $charset);
 
         /* Return if we already have the length. */
         if ($mb_length >= $length) {
@@ -421,18 +450,20 @@ class String {
         switch ($type) {
         case STR_PAD_LEFT:
             $left = $length - $mb_length;
-            $output = String::substr(str_repeat($pad, ceil($left / $pad_length)), 0, $left, $charset) . $input;
+            $output = self::substr(str_repeat($pad, ceil($left / $pad_length)), 0, $left, $charset) . $input;
             break;
+
         case STR_PAD_BOTH:
             $left = floor(($length - $mb_length) / 2);
             $right = ceil(($length - $mb_length) / 2);
-            $output = String::substr(str_repeat($pad, ceil($left / $pad_length)), 0, $left, $charset) .
+            $output = self::substr(str_repeat($pad, ceil($left / $pad_length)), 0, $left, $charset) .
                 $input .
-                String::substr(str_repeat($pad, ceil($right / $pad_length)), 0, $right, $charset);
+                self::substr(str_repeat($pad, ceil($right / $pad_length)), 0, $right, $charset);
             break;
+
         case STR_PAD_RIGHT:
             $right = $length - $mb_length;
-            $output = $input . String::substr(str_repeat($pad, ceil($right / $pad_length)), 0, $right, $charset);
+            $output = $input . self::substr(str_repeat($pad, ceil($right / $pad_length)), 0, $right, $charset);
             break;
         }
 
@@ -442,15 +473,12 @@ class String {
     /**
      * Wraps the text of a message.
      *
-     * @since Horde 3.2
-     *
      * @param string $string         String containing the text to wrap.
      * @param integer $width         Wrap the string at this number of
      *                               characters.
      * @param string $break          Character(s) to use when breaking lines.
      * @param boolean $cut           Whether to cut inside words if a line
      *                               can't be wrapped.
-     * @param string $charset        Character set to use when breaking lines.
      * @param boolean $line_folding  Whether to apply line folding rules per
      *                               RFC 822 or similar. The correct break
      *                               characters including leading whitespace
@@ -458,31 +486,29 @@ class String {
      *
      * @return string  String containing the wrapped text.
      */
-    static function wordwrap($string, $width = 75, $break = "\n", $cut = false,
-                      $charset = null, $line_folding = false)
+    static public function wordwrap($string, $width = 75, $break = "\n",
+                                    $cut = false, $line_folding = false)
     {
-        /* Get the user's default character set if none passed in. */
-        if (is_null($charset)) {
-            $charset = $GLOBALS['_HORDE_STRING_CHARSET'];
-        }
-        $charset = String::_mbstringCharset($charset);
-        $string = String::convertCharset($string, $charset, 'utf-8');
         $wrapped = '';
 
-        while (String::length($string, 'utf-8') > $width) {
-            $line = String::substr($string, 0, $width, 'utf-8');
-            $string = String::substr($string, String::length($line, 'utf-8'), null, 'utf-8');
-            // Make sure didn't cut a word, unless we want hard breaks anyway.
-            if (!$cut && preg_match('/^(.+?)(\s|\r?\n)/u', $string, $match)) {
+        while (self::length($string, 'UTF-8') > $width) {
+            $line = self::substr($string, 0, $width, 'UTF-8');
+            $string = self::substr($string, self::length($line, 'UTF-8'), null, 'UTF-8');
+
+            // Make sure we didn't cut a word, unless we want hard breaks
+            // anyway.
+            if (!$cut && preg_match('/^(.+?)((\s|\r?\n).*)/us', $string, $match)) {
                 $line .= $match[1];
-                $string = String::substr($string, String::length($match[1], 'utf-8'), null, 'utf-8');
+                $string = $match[2];
             }
+
             // Wrap at existing line breaks.
-            if (preg_match('/^(.*?)(\r?\n)(.*)$/u', $line, $match)) {
+            if (preg_match('/^(.*?)(\r?\n)(.*)$/su', $line, $match)) {
                 $wrapped .= $match[1] . $match[2];
                 $string = $match[3] . $string;
                 continue;
             }
+
             // Wrap at the last colon or semicolon followed by a whitespace if
             // doing line folding.
             if ($line_folding &&
@@ -491,27 +517,28 @@ class String {
                 $string = $match[3] . $string;
                 continue;
             }
+
             // Wrap at the last whitespace of $line.
-            if ($line_folding) {
-                $sub = '(.+[^\s])';
-            } else {
-                $sub = '(.*)';
-            }
+            $sub = $line_folding
+                ? '(.+[^\s])'
+                : '(.*)';
+
             if (preg_match('/^' . $sub . '(\s+)(.*)$/u', $line, $match)) {
                 $wrapped .= $match[1] . $break;
                 $string = ($line_folding ? $match[2] : '') . $match[3] . $string;
                 continue;
             }
+
             // Hard wrap if necessary.
             if ($cut) {
-                $wrapped .= String::substr($line, 0, $width, 'utf-8') . $break;
-                $string = String::substr($line, $width, null, 'utf-8') . $string;
+                $wrapped .= $line . $break;
                 continue;
             }
+
             $wrapped .= $line;
         }
 
-        return String::convertCharset($wrapped . $string, 'utf-8', $charset);
+        return $wrapped . $string;
     }
 
     /**
@@ -520,7 +547,6 @@ class String {
      * @param string $text        String containing the text to wrap.
      * @param integer $length     Wrap $text at this number of characters.
      * @param string $break_char  Character(s) to use when breaking lines.
-     * @param string $charset     Character set to use when breaking lines.
      * @param boolean $quote      Ignore lines that are wrapped with the '>'
      *                            character (RFC 2646)? If true, we don't
      *                            remove any padding whitespace at the end of
@@ -528,8 +554,8 @@ class String {
      *
      * @return string  String containing the wrapped text.
      */
-    static function wrap($text, $length = 80, $break_char = "\n", $charset = null,
-                  $quote = false)
+    static public function wrap($text, $length = 80, $break_char = "\n",
+                                $quote = false)
     {
         $paragraphs = array();
 
@@ -543,7 +569,7 @@ class String {
                 if ($input != '-- ') {
                     $input = rtrim($input);
                 }
-                $line = String::wordwrap($input, $length, $break_char, false, $charset);
+                $line = self::wordwrap($input, $length, $break_char);
             }
 
             $paragraphs[] = $line;
@@ -553,33 +579,79 @@ class String {
     }
 
     /**
+     * Return a truncated string, suitable for notifications.
+     *
+     * @param string $text     The original string.
+     * @param integer $length  The maximum length.
+     *
+     * @return string  The truncated string, if longer than $length.
+     */
+    static public function truncate($text, $length = 100)
+    {
+        return (self::length($text) > $length)
+            ? rtrim(self::substr($text, 0, $length - 3)) . '...'
+            : $text;
+    }
+
+    /**
+     * Return an abbreviated string, with characters in the middle of the
+     * excessively long string replaced by '...'.
+     *
+     * @param string $text     The original string.
+     * @param integer $length  The length at which to abbreviate.
+     *
+     * @return string  The abbreviated string, if longer than $length.
+     */
+    static public function abbreviate($text, $length = 20)
+    {
+        return (self::length($text) > $length)
+            ? rtrim(self::substr($text, 0, round(($length - 3) / 2))) . '...' . ltrim(self::substr($text, (($length - 3) / 2) * -1))
+            : $text;
+    }
+
+    /**
+     * Returns the common leading part of two strings.
+     *
+     * @param string $str1  A string.
+     * @param string $str2  Another string.
+     *
+     * @return string  The start of $str1 and $str2 that is identical in both.
+     */
+    static public function common($str1, $str2)
+    {
+        for ($result = '', $i = 0;
+             isset($str1[$i]) && isset($str2[$i]) && $str1[$i] == $str2[$i];
+             $i++) {
+            $result .= $str1[$i];
+        }
+        return $result;
+    }
+
+    /**
      * Returns true if the every character in the parameter is an alphabetic
      * character.
      *
-     * @param $string   The string to test.
-     * @param $charset  The charset to use when testing the string.
+     * @param string $string   The string to test.
+     * @param string $charset  The charset to use when testing the string.
      *
      * @return boolean  True if the parameter was alphabetic only.
      */
-    static function isAlpha($string, $charset = null)
+    static public function isAlpha($string, $charset)
     {
-        if (!String::extensionExists('mbstring')) {
+        if (!Horde_Util::extensionExists('mbstring')) {
             return ctype_alpha($string);
         }
 
-        $charset = String::_mbstringCharset($charset);
+        $charset = self::_mbstringCharset($charset);
         $old_charset = mb_regex_encoding();
-        $old_error = error_reporting(0);
 
         if ($charset != $old_charset) {
-            mb_regex_encoding($charset);
+            @mb_regex_encoding($charset);
         }
-        $alpha = !mb_ereg_match('[^[:alpha:]]', $string);
+        $alpha = !@mb_ereg_match('[^[:alpha:]]', $string);
         if ($charset != $old_charset) {
-            mb_regex_encoding($old_charset);
+            @mb_regex_encoding($old_charset);
         }
-
-        error_reporting($old_error);
 
         return $alpha;
     }
@@ -588,15 +660,15 @@ class String {
      * Returns true if ever character in the parameter is a lowercase letter in
      * the current locale.
      *
-     * @param $string   The string to test.
-     * @param $charset  The charset to use when testing the string.
+     * @param string $string   The string to test.
+     * @param string $charset  The charset to use when testing the string.
      *
      * @return boolean  True if the parameter was lowercase.
      */
-    static function isLower($string, $charset = null)
+    static public function isLower($string, $charset)
     {
-        return ((String::lower($string, true, $charset) === $string) &&
-                String::isAlpha($string, $charset));
+        return ((self::lower($string, true, $charset) === $string) &&
+                self::isAlpha($string, $charset));
     }
 
     /**
@@ -608,16 +680,14 @@ class String {
      *
      * @return boolean  True if the parameter was uppercase.
      */
-    static function isUpper($string, $charset = null)
+    static public function isUpper($string, $charset)
     {
-        return ((String::upper($string, true, $charset) === $string) &&
-                String::isAlpha($string, $charset));
+        return ((self::upper($string, true, $charset) === $string) &&
+                self::isAlpha($string, $charset));
     }
 
     /**
      * Performs a multibyte safe regex match search on the text provided.
-     *
-     * @since Horde 3.1
      *
      * @param string $text     The text to search.
      * @param array $regex     The regular expressions to use, without perl
@@ -626,11 +696,11 @@ class String {
      *
      * @return array  The matches array from the first regex that matches.
      */
-    static function regexMatch($text, $regex, $charset = null)
+    static public function regexMatch($text, $regex, $charset = null)
     {
         if (!empty($charset)) {
-            $regex = String::convertCharset($regex, $charset, 'utf-8');
-            $text = String::convertCharset($text, $charset, 'utf-8');
+            $regex = self::convertCharset($regex, $charset, 'utf-8');
+            $text = self::convertCharset($text, $charset, 'utf-8');
         }
 
         $matches = array();
@@ -641,33 +711,87 @@ class String {
         }
 
         if (!empty($charset)) {
-            $matches = String::convertCharset($matches, 'utf-8', $charset);
+            $matches = self::convertCharset($matches, 'utf-8', $charset);
         }
 
         return $matches;
     }
 
     /**
-     * Workaround charsets that don't work with mbstring functions.
+     * Check to see if a string is valid UTF-8.
      *
-     * @access private
+     * @param string $text  The text to check.
+     *
+     * @return boolean  True if valid UTF-8.
+     */
+    static public function validUtf8($text)
+    {
+        $text = strval($text);
+
+        for ($i = 0, $len = strlen($text); $i < $len; ++$i) {
+            $c = ord($text[$i]);
+
+            if ($c > 128) {
+                if ($c > 247) {
+                    // STD 63 (RFC 3629) eliminates 5 & 6-byte characters.
+                    return false;
+                } elseif ($c > 239) {
+                    $j = 3;
+                } elseif ($c > 223) {
+                    $j = 2;
+                } elseif ($c > 191) {
+                    $j = 1;
+                } else {
+                    return false;
+                }
+
+                if (($i + $j) > $len) {
+                    return false;
+                }
+
+                do {
+                    $c = ord($text[++$i]);
+                    if (($c < 128) || ($c > 191)) {
+                        return false;
+                    }
+                } while (--$j);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Workaround charsets that don't work with mbstring functions.
      *
      * @param string $charset  The original charset.
      *
      * @return string  The charset to use with mbstring functions.
      */
-    static function _mbstringCharset($charset)
+    static protected function _mbstringCharset($charset)
     {
         /* mbstring functions do not handle the 'ks_c_5601-1987' &
          * 'ks_c_5601-1989' charsets. However, these charsets are used, for
          * example, by various versions of Outlook to send Korean characters.
          * Use UHC (CP949) encoding instead. See, e.g.,
          * http://lists.w3.org/Archives/Public/ietf-charsets/2001AprJun/0030.html */
-        if (in_array(String::lower($charset), array('ks_c_5601-1987', 'ks_c_5601-1989'))) {
-            $charset = 'UHC';
-        }
+        return in_array(self::lower($charset), array('ks_c_5601-1987', 'ks_c_5601-1989'))
+            ? 'UHC'
+            : $charset;
+    }
 
-        return $charset;
+    /**
+     * Strip UTF-8 byte order mark (BOM) from string data.
+     *
+     * @param string $str  Input string (UTF-8).
+     *
+     * @return string  Stripped string (UTF-8).
+     */
+    static public function trimUtf8Bom($str)
+    {
+        return (substr($str, 0, 3) == pack('CCC', 239, 187, 191))
+            ? substr($str, 3)
+            : $str;
     }
 
 }
