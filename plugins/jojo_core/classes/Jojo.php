@@ -2490,44 +2490,6 @@ class Jojo {
         return false;
     }
 
-    /* reads the user agent string and gives the browser type - quick and simple detection */
-    static function getBrowser()
-    {
-        static $_browser;
-
-        if (isset($_browser)) return $_browser;
-
-        $version = '';
-        $nav = '';
-        $browsers = 'mozilla msie gecko firefox konqueror safari netscape navigator opera mosaic lynx amaya omniweb snoopy chrome';
-        $browsers = explode(' ', $browsers);
-
-        $nua = isset($_SERVER['HTTP_USER_AGENT']) ? strToLower( $_SERVER['HTTP_USER_AGENT']) : '';
-
-        $l = strlen($nua);
-        $x = count($browsers);
-        for ($i=0; $i<$x; $i++) {
-            $browser = $browsers[$i];
-            $n = stristr($nua, $browser);
-            if (strlen($n) > 0) {
-                $version = '';
-                $nav = $browser;
-                $j = strpos($nua, $nav) + $n + strlen($nav) + 1;
-                for (; $j<=$l; $j++){
-                    $s = substr($nua, $j, 1);
-                    if (is_numeric($version.$s)) {
-                        $version .= $s;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-        if ($nav == 'msie') $nav = 'internet explorer';
-        $_browser = ucwords($nav . ' ' . $version);
-        return $_browser;
-    }
-
     /* Given a string of page content, this script will return a short list of words to use in the
      * META KEYWORDS tag on your page. It does this by removing known "noisewords" from your content,
      * and returns a list of the first "content" words from your page, ensuring there are no duplicates.
@@ -3150,7 +3112,10 @@ class Jojo {
     public static function getBrowser()
     {
         $browser = new Horde_Browser();
-        return $browser->getBrowser();
+        $name = $browser->getBrowser();
+        if ($name == 'msie') $name = 'Internet Explorer';
+        return $name;
+
     }
 
     public static function bb2Html($bbcode, $options=array())

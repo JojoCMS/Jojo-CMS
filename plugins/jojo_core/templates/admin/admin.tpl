@@ -20,7 +20,7 @@
     <div class="admin-home-item-left">
 
         <h2>Welcome</h2>
-        Welcome to the admin section of your website.{if $jojoversion} Currently running Jojo CMS {$jojoversion}{/if}
+        Welcome to the admin section of your website.{if $jojoversion} Currently running Jojo CMS {$jojoversion}{/if}.
 
     </div>
 
