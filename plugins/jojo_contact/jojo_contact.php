@@ -111,10 +111,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 foreach($_POST[$field['field']] as $f) {
                     $field['valuearr'][$f] = $f;
                 }
-            } elseif (Util::getFormData('form_' . $field['field'], '')) {
-                $field['value'] = ($field['type']!='heading') ? Util::getFormData('form_' . $field['field'], '') : $field['value'];
+            } elseif (Jojo::getFormData('form_' . $field['field'], '')) {
+                $field['value'] = ($field['type']!='heading') ? Jojo::getFormData('form_' . $field['field'], '') : $field['value'];
             } else {
-                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['display'];
+                $field['value'] = ($field['type']!='heading') ? Jojo::getFormData($field['field'], '') : $field['display'];
             }
             /* set the fromemail value if appropriate */
 
