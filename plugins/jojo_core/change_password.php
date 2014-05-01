@@ -67,24 +67,30 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
                 $newpass = Jojo_Auth_Local::hashPassword($new);
                 Jojo::updateQuery("UPDATE {user} SET us_password=? WHERE userid=? LIMIT 1", array($newpass, $_USERID));
 
-                /* get user details for the email */
-                $user = Jojo::selectRow("SELECT us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ? LIMIT 1", $_USERID);
+                if (Jojo::getOption('password_email', 'no')=='yes') {
+                    /* Email the username and new password to the user for reference
 
-                // TODO: Make this optional, not every site wants to send their users passwords to them
-                $smarty->assign('name',  Jojo::either($user['us_firstname'],$user['us_login']));
-                $smarty->assign('login', $user['us_login']);
-                $smarty->assign('new',   $new);
-                $text = $smarty->fetch('change_password_confirmation.tpl');
+                    /* get user details for the email */
+                    $user = Jojo::selectRow("SELECT us_login, us_firstname, us_lastname, us_email FROM {user} WHERE userid = ? LIMIT 1", $_USERID);
 
-                require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
-                $parsedown = new Parsedown();
-                $htmltext = $parsedown->parse($text);
+                    $smarty->assign('name',  Jojo::either($user['us_firstname'],$user['us_login']));
+                    $smarty->assign('login', $user['us_login']);
+                    $smarty->assign('new',   $new);
+                    $text = $smarty->fetch('change_password_confirmation.tpl');
 
-                 if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Change Confirmation', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
-                    $messages[] = 'Your password has been changed. You have been emailed a confirmation of the new password. You do not need to login again.';
-                    $smarty->assign('success',   true);
+                    require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
+                    $parsedown = new Parsedown();
+                    $htmltext = $parsedown->parse($text);
+
+                     if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Change Confirmation', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
+                        $messages[] = 'Your password has been changed. You have been emailed a confirmation of the new password. You do not need to login again.';
+                        $smarty->assign('success',   true);
+                    } else {
+                        $errors[] = 'There was a problem changing the password. Please contact the webmaster for further help ' . _FROMADDRESS;
+                    }
                 } else {
-                    $errors[] = 'There was a problem changing the password. Please contact the webmaster for further help ' . _FROMADDRESS;
+                    $messages[] = 'Your password has been changed. You do not need to login again.';
+                    $smarty->assign('success',   true);
                 }
             }
 

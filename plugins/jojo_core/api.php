@@ -1363,6 +1363,16 @@ $_options[] = array(
     'options'     => '',
 );
 
+$_options[] = array(
+    'id'          => 'password_email',
+    'category'    => 'Security',
+    'label'       => 'Email Passwords',
+    'description' => 'If enabled, new passwords set using the Change Password form will be emailed to the user.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no',
+);
+
 /* SEO */
 
 $_options[] = array(
