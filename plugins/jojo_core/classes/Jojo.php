@@ -2771,6 +2771,17 @@ class Jojo {
             $mail->setSubject('=?UTF-8?B?'.base64_encode($subject).'?=');
             $mail->setTextCharset('UTF-8');
 
+            # Add encoded attachments
+            if ($attachments) {
+                foreach ($attachments as $a) {
+                    if (is_file($a)) {
+                        $name = basename($a);
+                        $file = file_get_contents($a);
+                        $mail->addAttachment($file, $name);
+                   }
+                }
+            }
+
             $result = $mail->send(array($toaddress), 'smtp');
             return $result;
         } else {
