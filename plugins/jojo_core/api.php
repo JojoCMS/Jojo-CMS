@@ -268,6 +268,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'contentcachetime_resources',
+    'category'    => 'Config',
+    'label'       => 'Resources cache time',
+    'description' => 'The maximum amount of time in seconds images, js and css will be cached for. Default 7 days.',
+    'type'        => 'integer',
+    'default'     => 604800,
+    'options'     => '',
+);
+
+$_options[] = array(
     'id'          => 'servertimezone',
     'category'    => 'Config',
     'label'       => 'Server timezone',
@@ -536,16 +546,6 @@ $_options[] = array(
     'type'        => 'integer',
     'default'     => '85',
     'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'image_cachetime',
-    'category'    => 'Images',
-    'label'       => 'Image cache time',
-    'description' => 'The maximum amount of time in seconds images will be cached for. Default 7 days.',
-    'type'        => 'integer',
-    'default'     => 604800,
-    'options'     => '',
 );
 
 $_options[] = array(

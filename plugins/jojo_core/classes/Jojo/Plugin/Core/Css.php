@@ -46,28 +46,18 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         if (preg_match('%^([a-zA-Z]+)$%', $file)) {
             $cachefile = _CACHEDIR . '/css/' . $file . '.css';
         }
+        
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
 
-        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
+        /* Check for existence of cached copy if user has not pressed CTRL-F5 */
         if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
             Jojo::runHook('jojo_core:cssCachedFile', array('filename' => $cachefile));
-            parent::sendCacheHeaders(filemtime($cachefile));
+            parent::sendCacheHeaders(filemtime($cachefile), $cachetime);
             $content = file_get_contents($cachefile);
             if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
             header('Content-type: text/css');
-            //header('Cache-Control: ');
-            //header('Pragma:');
-            header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            //header('Expires: ');
-            header('Cache-Control: private, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-            header('Pragma: ');
             echo $content;
             exit;
-        }
-
-        if (!defined('_CONTENTCACHE')) {
-            define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-            define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
         }
 
         $start = Jojo::timer();
@@ -378,7 +368,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             Jojo::RecursiveMkdir(dirname($cachefile));
             file_put_contents($cachefile, $content);
             touch($cachefile, $css->modified);
-            Jojo::publicCache($f, $content, $css->modified);
+            Jojo::publicCache('css/'. $f, $content, $css->modified);
         }
 
         if (_DEBUG) {

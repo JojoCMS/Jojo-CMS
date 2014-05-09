@@ -27,7 +27,6 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* Get requested filename */
         $file = urldecode(Jojo::getFormData('file', 'default.jpg'));
-        $timestamp = strtotime('+1 day');
 
         /* Check file name has correct extension */
         $validExtensions = array('jpg', 'gif', 'jpeg', 'png');
@@ -37,7 +36,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             exit;
         }
 
-        $cachetime = Jojo::getOption('image_cachetime', 604800);
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
         $pad = false;
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {

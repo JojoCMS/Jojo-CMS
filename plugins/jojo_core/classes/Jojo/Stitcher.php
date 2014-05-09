@@ -139,10 +139,6 @@ class Jojo_Stitcher {
             Jojo::gzip();
         }
 
-        header('Cache-Control: ');
-        header('Pragma: ');
-        header('Expires: ');
-
         if (_DEBUG) {
             echo $this->header . $this->data;
             return;
@@ -210,32 +206,33 @@ class Jojo_Stitcher {
 
     function sendCacheHeaders($timestamp)
     {
-        /* Send last modified headers */
-        $timestamp = $timestamp ? $timestamp : strtotime('00:00');
-        $last_modified = gmdate('D, d M Y H:i:s', $timestamp) . ' GMT';
-        $etag = '"' . md5($last_modified) . '"';
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
+        $last_modified = substr(date('r', $timestamp), 0, -5) . 'GMT';
+        $etag = md5($last_modified);
+        // Send the headers
         header("Last-Modified: $last_modified");
         header("ETag: $etag");
-        header('X-Jojo-Plugin: Jojo_Stitcher');
-
-        if (!isset($_SERVER['HTTP_IF_NONE_MATCH']) && !isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-            /* Client doesn't indicate it has a chached copy */
+        header('Cache-Control: private, max-age=' . $cachetime);
+        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
+        header('Pragma: ');
+        // See if the client has provided the required headers
+        $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ?
+            stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE']) :
+            false;
+        $if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ?
+            stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) :
+            false;
+        if (!$if_modified_since && !$if_none_match) {
             return;
         }
-
-        if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] != $etag) {
-            /* Client sent and etag but different to the current one */
-            return;
+        // At least one of the headers is there - check them
+        if ($if_none_match && $if_none_match != $etag) {
+            return; // etag is there but doesn't match
         }
-
-        if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] != $last_modified) {
-            /* Client sent a date but it's different to our current one */
-            return;
+        if ($if_modified_since && $if_modified_since != $last_modified) {
+            return; // if-modified-since is there but doesn't match
         }
-
-        /* Nothing has changed since their last request - serve a 304 and exit */
-        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + _CONTENTCACHETIME));
-        header('Cache-Control: private, max-age=' . _CONTENTCACHETIME);
+        // Nothing has changed since their last request - serve a 304 and exit
         header('HTTP/1.0 304 Not Modified');
         exit;
     }

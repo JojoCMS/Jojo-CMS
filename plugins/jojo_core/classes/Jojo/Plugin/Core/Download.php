@@ -39,8 +39,9 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
         $file = _DOWNLOADDIR . '/' . Jojo::relative2absolute(urldecode($file), '/');
         if (file_exists($file)) {
             Jojo::runHook('jojo_core:downloadFile', array('filename' => $file));
-
+            $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
             /* Send header */
+            parent::sendCacheHeaders(filemtime($file), $cachetime);
             header('Content-Type: ' . Jojo::getMimeType($file));
             header('Content-Length: ' . filesize($file));
             if (in_array(Jojo::getFileExtension($file), $this->inlineExtensions)) {
@@ -49,9 +50,6 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
                 header('Content-disposition: attachment; filename="' . basename($file) . '"');
             }
             header('Content-Transfer-Encoding: binary');
-            header('Pragma: public');
-            header('Cache-Control: public, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
 
             /* Send Conent */
             readfile($file, 'rb');

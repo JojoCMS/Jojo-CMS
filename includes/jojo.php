@@ -46,14 +46,11 @@ if (strtolower(trim($_REQUEST['uri'], '/')) == 'setup') {
 /* check public cache */
 $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css');
 if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Jojo::ctrlF5()) {
-    $cachefile = _CACHEDIR.'/public/'.md5($_GET['uri']).'.'.Jojo::getFileExtension($_GET['uri']);
+    $cachefile = _CACHEDIR.'/public/'.md5($_GET['uri'] ).'.'.Jojo::getFileExtension($_GET['uri']);
     if (Jojo::fileExists($cachefile)) {
-        /* output image data */
+        /* output data */
         $data = file_get_contents($cachefile);
-        header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-        header('Cache-Control: private, max-age=28800');
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-        header('Pragma: ');
+        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cachefile), Jojo::getOption('contentcachetime_resources', 604800));
         header('Content-type: ' . Jojo::getMimeType($cachefile));
         header('Content-Length: ' . strlen($data));
         header('Content-Disposition: inline; filename=' . basename($cachefile) . ';');

@@ -45,27 +45,17 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             $cachefile = _CACHEDIR . '/js/' . $file . '.js';
         }
 
-        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
+
+        /* Check for existence of cached copy if user has not pressed CTRL-F5 */
         if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
             Jojo::runHook('jojo_core:jsCachedFile', array('filename' => $cachefile));
-            parent::sendCacheHeaders(filemtime($cachefile));
+            parent::sendCacheHeaders(filemtime($cachefile), $cachetime);
             $content = file_get_contents($cachefile);
             if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
             header('Content-type: text/javascript');
-            //header('Cache-Control: ');
-            //header('Pragma:');
-            header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            //header('Expires: ');
-            header('Cache-Control: private, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-            header('Pragma: ');
             echo $content;
             exit;
-        }
-
-        if (!defined('_CONTENTCACHE')) {
-            define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-            define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
         }
 
         $js = new Jojo_Stitcher();
@@ -203,7 +193,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             Jojo::RecursiveMkdir(dirname($cachefile));
             file_put_contents($cachefile, $content);
             touch($cachefile, $js->modified);
-            Jojo::publicCache($f, $content, $js->modified);
+            Jojo::publicCache('js/' . $f, $content, $js->modified);
         }
         exit;
     }

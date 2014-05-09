@@ -32,13 +32,14 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             exit;
         }
 
-        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
+        /* Check for existence of cached copy if user has not pressed CTRL-F5 */
         $cachefile = _CACHEDIR . '/external/' . $file;
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
         $fromcache = false;
         if (Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
             Jojo::runHook('jojo_core:externalCachedFile', array('filename' => $cachefile));
 
-            parent::sendCacheHeaders(filemtime($cachefile));
+            parent::sendCacheHeaders(filemtime($cachefile), $cachetime);
             $file = $cachefile;
             $fromcache = true;
         } else {
@@ -157,12 +158,10 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
         /* Send Content */
         if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
 
+        parent::sendCacheHeaders(time(), $cachetime);
         header('Content-Length: ' . strlen($content));
-        header('Cache-Control: private, max-age=28800');
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-        header('Pragma: ');
         echo $content;
-        Jojo::publicCache($f, $content);
+        Jojo::publicCache($file, $content);
         exit;
     }
 }
