@@ -3816,6 +3816,7 @@ class Jojo {
         }
         
         require_once _BASEPLUGINDIR . '/jojo_core/external/csstoinline/CssToInlineStyles.php';
+        require_once _BASEPLUGINDIR . '/jojo_core/external/csstoinline/Exception.php';
         // create instance
         $cssToInlineStyles = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles($html, $css);
         // process HTML
