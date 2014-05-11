@@ -21,27 +21,21 @@ function xyz(c,a,b,s) {
 function validate(val,type) {
     if (type=='email'){
         return val.match(/^(?:^[A-Z0-9._%-]+@[A-Z0-9.-]+\.(?:[A-Z]{2}|com|org|net|biz|info|name|aero|biz|info|jobs|museum|name)$)$/i);
-        //return (val.indexOf(".") > 2) && (val.indexOf("@") > 0);
     }else if(type=='url'){
         return val.match(/^(?:\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])$/i);
     }else if(type=='integer'){
-        //var regex = new RegExp ('[^0-9\.]','gi');
         return val.match(/^-?[0-9]+$/i);
-        //var newval=parseFloat(val.replace(regex, ""));
-        //if (newval != val) {alert('Only numeric input is allowed in this field');}
-        //if (isNaN(newval)) {field.value = '';} else {field.value = newval;}
-        //document.forms[theform].elements['fm_cost_'+i].value
     }
 }
 
 /*-- [validateEmail] --*/
 /*-- Returns true or false based on whether an email address is a valid format --*/
 function validateEmail(str) {
-  var at="@"
-  var dot="."
-  var lat=str.indexOf(at)
-  var lstr=str.length
-  var ldot=str.indexOf(dot)
+  var at="@";
+  var dot=".";
+  var lat=str.indexOf(at);
+  var lstr=str.length;
+  var ldot=str.indexOf(dot);
   if (str.indexOf(at)==-1){return false}
   if (str.indexOf(at)==-1 || str.indexOf(at)==0 || str.indexOf(at)==lstr){return false}
   if (str.indexOf(dot)==-1 || str.indexOf(dot)==0 || str.indexOf(dot)==lstr){return false}
@@ -49,7 +43,7 @@ function validateEmail(str) {
   if (str.substring(lat-1,lat)==dot || str.substring(lat+1,lat+2)==dot){return false}
   if (str.indexOf(dot,(lat+2))==-1){return false}
   if (str.indexOf(" ")!=-1){return false}
-  return true
+  return true;
 }
 
 /**
@@ -65,11 +59,7 @@ function validateEmail(str) {
  *              secure transmission
  */
 function setCookie(name, value, expires, path, domain, secure) {
-    document.cookie= name + "=" + escape(value) +
-        ((expires) ? "; expires=" + expires.toGMTString() : "") +
-        ((path) ? "; path=" + path : "") +
-        ((domain) ? "; domain=" + domain : "") +
-        ((secure) ? "; secure" : "");
+    document.cookie= name + "=" + escape(value) + ((expires) ? "; expires=" + expires.toGMTString() : "") +((path) ? "; path=" + path : "") +((domain) ? "; domain=" + domain : "") +((secure) ? "; secure" : "");
 }
 
 /**
@@ -106,10 +96,7 @@ function getCookie(name) {
  */
 function deleteCookie(name, path, domain) {
   if (getCookie(name)) {
-    document.cookie = name + "=" +
-    ((path) ? "; path=" + path : "") +
-    ((domain) ? "; domain=" + domain : "") +
-    "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+    document.cookie = name + "=" + ((path) ? "; path=" + path : "") + ((domain) ? "; domain=" + domain : "") +"; expires=Thu, 01-Jan-70 00:00:01 GMT";
   }
 }
 

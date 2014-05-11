@@ -218,6 +218,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'customfoot',
+    'category'    => 'Config',
+    'label'       => 'Global customfoot',
+    'description' => 'Anything added here will be added to the end of the document foot on all pages',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => '',
+);
+
+$_options[] = array(
     'id'          => 'multilanguage',
     'category'    => 'Config',
     'label'       => 'Multilanguage',
