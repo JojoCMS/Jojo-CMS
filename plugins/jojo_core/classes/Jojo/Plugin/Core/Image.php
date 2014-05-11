@@ -27,6 +27,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* Get requested filename */
         $file = urldecode(Jojo::getFormData('file', 'default.jpg'));
+        $im = false;
 
         /* Check file name has correct extension */
         $validExtensions = array('jpg', 'gif', 'jpeg', 'png');

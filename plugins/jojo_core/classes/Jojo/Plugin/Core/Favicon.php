@@ -24,6 +24,7 @@ class Jojo_Plugin_core_favicon extends Jojo_Plugin_Core {
     {
         /* Read only session */
         define('_READONLYSESSION', true);
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
 
         /*
          * Locate and return the favicon
@@ -31,6 +32,7 @@ class Jojo_Plugin_core_favicon extends Jojo_Plugin_Core {
 
         /* Look for a png favicon in the theme */
         foreach (Jojo::listThemes('favicon.png') as $themefile) {
+            parent::sendCacheHeaders(filemtime($themefile), $cachetime);
             header('Content-Type: image/png');
             echo file_get_contents($themefile);
             exit;
@@ -38,6 +40,7 @@ class Jojo_Plugin_core_favicon extends Jojo_Plugin_Core {
 
         /* Look for bmp favicon in the theme */
         foreach (Jojo::listThemes('favicon.bmp') as $themefile) {
+            parent::sendCacheHeaders(filemtime($themefile), $cachetime);
             header('Content-Type: image/bmp');
             echo file_get_contents($themefile);
             exit;
@@ -45,12 +48,14 @@ class Jojo_Plugin_core_favicon extends Jojo_Plugin_Core {
 
         /* Look for ico favicon in the theme */
         foreach (Jojo::listThemes('favicon.ico') as $themefile) {
+            parent::sendCacheHeaders(filemtime($themefile), $cachetime);
             header('Content-Type: image/x-icon');
             echo file_get_contents($themefile);
             exit;
         }
         /* Look for png favicon in a plugin */
         foreach (Jojo::listPlugins('favicon.png', 'all', true) as $pluginfile) {
+            parent::sendCacheHeaders(filemtime($pluginfile), $cachetime);
             header('Content-Type: image/png');
             echo file_get_contents($pluginfile);
             exit;
@@ -58,6 +63,7 @@ class Jojo_Plugin_core_favicon extends Jojo_Plugin_Core {
 
         /* Look for favicon in a plugin */
         foreach (Jojo::listPlugins('favicon.ico', 'all', true) as $pluginfile) {
+            parent::sendCacheHeaders(filemtime($pluginfile), $cachetime);
             header('Content-Type: image/x-icon');
             echo file_get_contents($pluginfile);
             exit;
