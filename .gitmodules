@@ -25,3 +25,6 @@
 [submodule "plugins/jojo_core/external/csstoinline"]
 	path = plugins/jojo_core/external/csstoinline
 	url = https://github.com/tijsverkoyen/CssToInlineStyles.git
+[submodule "plugins/jojo_core/external/font-awesome"]
+	path = plugins/jojo_core/external/font-awesome
+	url = https://github.com/FortAwesome/Font-Awesome.git

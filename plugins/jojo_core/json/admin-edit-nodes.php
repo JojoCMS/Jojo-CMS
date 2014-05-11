@@ -70,10 +70,9 @@ function getNodes($t, $node)
                 continue;
             }
             $nodes[$r['id']] = array(
-                                'id'        => $r['id'],
+                                'id'        =>  $r['id'],
                                 'text'     => $r['title'],
                                 'parent'     => ( $r['parent'] ? $r['parent'] : '#' ),
-                                'state'    => array( 'opened' => false, 'selected' => false ),
                                 'type' => 'file',
                                 'li_attr'     => array ('pos' => $pos++)
                                );
@@ -135,7 +134,6 @@ function getNodes($t, $node)
                         'id'        => 'c' . $r['id'],
                         'text'     => $r['title'],
                         'parent'     => ($r['parent'] ? 'c' . $r['parent'] : '#'),
-                        'state'    => array( 'opened' => false, 'selected' => false ),
                         'type' => 'folder',
                         'li_attr'     => array ('pos' => $pos++)
                     );
@@ -166,11 +164,10 @@ function getNodes($t, $node)
                 /* Add the nodes to the array for output */
                 foreach ($res as $r) {
                     $nodes[$r['id']] = array(
-                        'id'        => $r['id'],
+                        'id'        =>  $r['id'],
                         'text'     => $r['title'],
                         'parent'     => 'c' . $node,
                         'type' => 'file',
-                        'state'    => array( 'opened' => false, 'selected' => false ),
                         'li_attr'     => array ('pos' => $pos++)
                     );
                 }
@@ -179,7 +176,7 @@ function getNodes($t, $node)
                 /* Add nodes from traditional categories */
                 $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pageid');
                 $query = "SELECT " . ($pagesort ? "p.pageid, p.pg_order, " : '');
-                $query .= sprintf("c.%s as id, c.%s as title, c.%s as parentcategory FROM {%s} c",
+                $query .= sprintf("c.%s as id, " . ($categoryTable->getOption('displayfield')=='pageid' ? 'c.' : '')  . "%s as title, c.%s as parentcategory FROM {%s} c",
                                  $table->getOption('primarykey'),
                                  $table->getOption('displayfield'),
                                  $table->getOption('categoryfield'),
@@ -194,11 +191,14 @@ function getNodes($t, $node)
 
                 /* Add the nodes to the array for output */
                 foreach ($res as $r) {
+                    /* Check for orphaned items and don't include them because they will break the tree */
+                    if ($r['parentcategory'] && !isset($nodes['c' . $r['parentcategory']]) ) {
+                        continue;
+                    }
                     $nodes['c' . $r['id']] = array(
-                        'id'        => $r['id'],
+                        'id'        =>  $r['id'],
                         'text'     => $r['title'],
-                        'parent'     => 'c' . $r['parentcategory'],
-                        'state'    => array( 'opened' => false, 'selected' => false ),
+                        'parent'     => ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
                         'li_attr'     => array ('pos' => $pos++),
                         'type' => 'file'
                     );
@@ -210,15 +210,15 @@ function getNodes($t, $node)
             if ($node == 0) {
                 $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pageid');
                 $query = "SELECT " . ($pagesort ? "p.pageid, p.pg_order, " : '');
-                $query .= sprintf("c.%s as id, c.%s as title FROM {%s} c",
+                $query .= sprintf("c.%s as id, " . ($categoryTable->getOption('displayfield')=='pageid' ? 'c.' : '')  . "%s as title FROM {%s} c ",
                                 $categoryTable->getOption('primarykey'),
                                 $categoryTable->getOption('displayfield'),
                                 $categoryTable->getTableName()
                                 );
                 if ($pagesort) {
-                    $query .= " LEFT JOIN {page} p ON (p.pageid=c.pageid) ORDER BY p.pg_order";
+                    $query .= "LEFT JOIN {page} p ON (p.pageid=c.pageid) ORDER BY p.pg_order";
                 } else {
-                    $query .= $categoryTable->getOption('orderbyfields') ? ' ORDER BY ' . $categoryTable->getOption('orderbyfields') : $categoryTable->getOption('displayfield');
+                    $query .= $categoryTable->getOption('orderbyfields') ? 'ORDER BY ' . $categoryTable->getOption('orderbyfields') : '';
                 }
                 $res = Jojo::selectQuery($query);
 
@@ -237,11 +237,10 @@ function getNodes($t, $node)
                 foreach ($res as $k=>$r) {
                     $nodes['c' . $r['id']] = array(
                         'id'        => 'c' . $r['id'],
-                        'text'     => $r['title'],
-                        'parent'     => $node,
-                        'state'    => array( 'opened' => false, 'selected' => false ),
+                        'text'     => str_replace('"', "'", $r['title']),
+                        'parent'     => '#',
                         'type'   => 'folder',
-                        'li_attr'     => array ('pos' => $pos++),
+                        'li_attr'     => array ('pos' => $pos++)
                       );
                 }
             }
@@ -270,15 +269,18 @@ function getNodes($t, $node)
                                 );
                 $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                 $res = Jojo::selectQuery($query);
-            }
+           }
 
             /* Add the nodes to the array for output */
             foreach ($res as $r) {
+                /* Check for orphaned items and don't include them because they will break the tree */
+                if ($r['parentcategory'] && !isset($nodes['c' . $r['parentcategory']]) ) {
+                    continue;
+                }
                 $nodes[$r['id']] = array(
-                        'id'        => $r['id'],
+                        'id'        =>  $r['id'],
                         'text'     => $r['title'],
-                        'parent'     => 'c' . $r['parentcategory'],
-                        'state'    => array( 'opened' => false, 'selected' => false ),
+                        'parent'     =>  ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
                         'type'   => 'file',
                         'li_attr' => array ('pos' => $pos++)
                     );
@@ -307,9 +309,8 @@ function getNodes($t, $node)
             $nodes[$r['id']] = array(
                                 'id' => '|' . $r['id'],
                                 'text'     => $r['id'],
-                                'parent' => '',
-                                'type' => 'file',
-                                'state' => array( 'opened' => false, 'selected' => false),
+                                'parent' => '#',
+                                'type' => 'file'
                                );
         }
  
@@ -339,7 +340,6 @@ function getNodes($t, $node)
                                 'text'     => $r['id'],
                                 'parent' => 'g' . $node,
                                 'type' => 'file',
-                                'state' => array( 'opened' => false, 'selected' => false),
                                 'li_attr' => array ('pos' => $pos++)
                                );
         }
@@ -370,7 +370,6 @@ function getNodes($t, $node)
                                 'text'     => $r['title'],
                                 'parent' => '|' . $node,
                                 'type' => 'file',
-                                'state' => array( 'opened' => false, 'selected' => false),
                                 'li_attr' => array ('pos' => $pos++)
                                 );
         }
@@ -404,8 +403,42 @@ function getNodes($t, $node)
                                 'id'     => $r['id'],
                                 'text'     => $r['title'],
                                 'parent' => $node,
+                                'type' => 'file'
+                               );
+        }
+
+    /**
+     * Real content (like a straight list)
+     */
+    } else {
+        /* Get all elements */
+        $query = "SELECT ";
+        if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
+            $query .= "p.pageid, p.pg_order, pg_title, pg_menutitle, ";
+        }
+        $query .= sprintf("i.%s, i.%s as thisid, " . ($table->getOption('displayfield')=='pageid' ? 'i.' : '')  . "%s as title FROM {%s} i ",
+                        $table->getOption('primarykey'),
+                        $table->getOption('primarykey'),
+                        $table->getOption('displayfield'),
+                        $t
+                        );
+        if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
+            $query .= " LEFT JOIN {page} p ON (p.pageid=i.pageid) ORDER BY p.pg_order";
+        } else {
+            $query .= $table->getOption('orderbyfields') ? 'ORDER BY ' . $table->getOption('orderbyfields') : '';
+        }
+        $res = Jojo::selectAssoc($query);
+        if (!$res) return array('id'=> '#');
+
+        /* Add the nodes to the array for output - jstree will sort out the structure */
+        $nodes = array();
+        foreach ($res as $r) {
+            $nodes[$r['thisid']] = array(
+                                'id'        => $r['thisid'],
+                                'text'     => $table->getOption('displayfield')=='pageid' ? $r['pg_title'] : substr(strip_tags($r['title']), 0, 100),
+                                'parent'     => '#',
                                 'type' => 'file',
-                                'state' => array( 'opened' => false, 'selected' => false)
+                                'li_attr'     => array ('pos' => $pos++)
                                );
         }
 

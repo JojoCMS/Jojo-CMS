@@ -435,20 +435,15 @@ class Jojo_Table {
     /* DTree with ajax needs to be treated carefully, because it returns script, not HTML */
     function createlist($menutype = "tree", $ajax = false, $prefix = 'edit', $selectednode=false)
     {
-        if ($menutype == "auto" && ($this->getOption('parentfield') || $this->getOption('group1'))) {
-            $menutype = "tree";
-        } elseif ($menutype == "auto") {
-            $menutype = 'list';
-        }
 
-        if ($menutype == 'tree' || $menutype == 'searchabletree') {
+        if ($menutype == 'tree' || $menutype == 'searchabletree' || $menutype == "auto" || $menutype == "list" || !$menutype ) {
             global $smarty;
             $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield')) && $this->getFieldByType('Jojo_Field_Order'));
             $smarty->assign('searchable', (boolean)($menutype == 'searchabletree'));
             $smarty->assign('table', $this->table);
             $smarty->assign('displayname', $this->getOption('displayname'));
             return $smarty->fetch('admin/edit-ajaxtree.tpl');
-        } elseif ($menutype == 'list' || $menutype == 'recursivePath' || $menutype == 'array') {
+        } elseif ($menutype == 'recursivePath' || $menutype == 'array') {
             global $_USERGROUPS;
             $idfield = $this->getOption('primarykey');
             $displayfield  =  Jojo::either($this->getOption('displayfield'), $this->getOption('primarykey'));

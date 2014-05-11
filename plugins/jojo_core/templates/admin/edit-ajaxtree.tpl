@@ -9,7 +9,7 @@
                     'data' : {
                         'url' : siteurl + "/json/admin-edit-nodes.php?table={/literal}{$table}{literal}",
                         'data' : function (node) {
-                          return { 'id' : (node.id ? node.id : 0) };
+                          return { 'id' : (node.id ? node.id : '#') };
                         },
                         'dataType' : 'json',
                     },

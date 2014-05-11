@@ -24,10 +24,8 @@ function refreshMenu($table, $t, $frajax) {
     $id = $table->getRecordID();
 
     $menutype = $table->getOption('menutype');
-    if ($menutype == "auto" && ($table->getOption('parentfield') || $table->getOption('group1'))) {
+    if ($menutype == "auto" || !$menutype || $menutype == "list" || $menutype = "searchabletree") {
         $menutype = "tree";
-    } elseif ($menutype == "auto") {
-        $menutype = 'list';
     }
 
     switch($menutype) {

@@ -17,6 +17,7 @@ $default_td['articlecategory'] = array(
         'td_name' => "articlecategory",
         'td_primarykey' => "articlecategoryid",
         'td_displayfield' => "pageid",
+        'td_orderbyfields' => "pageid",
         'td_filter' => "yes",
         'td_topsubmit' => "yes",
         'td_addsimilar' => "no",

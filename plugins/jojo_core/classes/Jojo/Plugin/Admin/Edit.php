@@ -162,12 +162,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
         $smarty->assign('displayvalue',  Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')));
         $smarty->assign('displayname', $table->getOption('displayname'));
 
-
-        if ($table->getOption('menutype') == 'none') {
-            $smarty->assign('recordlist', '');
-        } else {
-            $smarty->assign('recordlist', $table->createlist($table->getOption('menutype'), false, $prefix, $id));
-        }
+        $smarty->assign('recordlist', $table->createlist($table->getOption('menutype'), false, $prefix, $id));
 
         $smarty->assign('message', isset($message) ? $message : '');
 
