@@ -146,12 +146,12 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/tablesorter/jquery.tablesorter.min.js');
                 if (Jojo::getOption('wysiwyg_style')=='popup') {
                     /* Include Markitup editor css if using popup editor*/
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.pack.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.js');
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/set.js');
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/set.js');
                 }
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jstree/dist/jstree.js');
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jstree/dist/jstree.js');
 
                 /* Twitter Bootstrap options */
                 /* Transitions */
