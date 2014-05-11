@@ -20,5 +20,5 @@
 $data = Jojo::selectQuery("SELECT * FROM {page} WHERE pg_link='Jojo_Plugin_jojo_google_verification'");
 if (!count($data)) {
     echo "jojo_google_verification: Adding <b>Google verification</b> Page to menu<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Google verification', pg_link='Jojo_Plugin_jojo_google_verification', pg_url='', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body=''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title='Google verification', pg_link='Jojo_Plugin_jojo_google_verification', pg_url='', pg_parent = ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body='', pg_status='hidden'", array($_NOT_ON_MENU_ID));
 }
