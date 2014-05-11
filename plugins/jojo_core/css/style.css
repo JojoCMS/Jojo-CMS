@@ -1,9 +1,5 @@
 @icon-font-path: '../external/bootstrap/fonts/';
 
-i.icon-white {
-    background-image: url("../external/bootstrap/img/glyphicons-halflings-white.png");
-}
-
 .hidden {
   display: none;
   visibility: inherit;
@@ -28,4 +24,16 @@ img.icon-image {
     margin-right: 3px;
     display: inline;
     background-image: none;
+}
+
+.pagination > li.ellip {
+    background: none;
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+    color: #DBA070;
+    float: left;
+    line-height: 1.4;
+    margin-left: -1px;
+    padding: 6px 12px;
+    position: relative;
 }
