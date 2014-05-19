@@ -32,6 +32,7 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
         $old    = Jojo::getPost('oldp',  '');
         $new    = Jojo::getPost('newp',  '');
         $new2   = Jojo::getPost('newp2', '');
+        $messages = array();
         $errors = array();
 
         if (!empty($reset)) {
@@ -96,8 +97,11 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
 
         }
 
-        $smarty->assign('error',     implode("<br />\n", $errors));
-        if (!count($errors)) $smarty->assign('messages', implode("<br />\n", $messages));
+        if ($errors) {
+            $smarty->assign('error',     implode("<br />\n", $errors));
+        } elseif ($messages) {
+            $smarty->assign('messages', implode("<br />\n", $messages));
+        }
         $smarty->assign('minlength', $minlength);
         $smarty->assign('maxlength', $maxlength);
 
