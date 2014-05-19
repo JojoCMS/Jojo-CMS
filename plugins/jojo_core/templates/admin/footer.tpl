@@ -4,8 +4,10 @@
 
 <div id="help-text" style="display: none;"></div>
 <script type="text/javascript">
-/* <![CDATA[ */ {literal}
+/* <![CDATA[ */
 $('#message').hide();
 $('#error').hide();
-{/literal}/* ]]> */
+{if $javascript}{$javascript}
+{/if}
+/* ]]> */
 </script>

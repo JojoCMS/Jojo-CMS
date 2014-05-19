@@ -142,6 +142,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
             if (!empty($f['js'])) $content['javascript'] .= "\n".$f['js'];
         }
         $smarty->assign('wysiwyg_editors', $wysiwyg_editors);
+        $smarty->assign('javascript', $content['javascript']);
 
         // Create button text
         if ($table->getRecordID() > 0) {
