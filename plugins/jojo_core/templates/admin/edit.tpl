@@ -51,7 +51,7 @@
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
                 <div id="row_{$fieldname}" class="form-group{if $field.error} has-error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
-                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<p> {$field.name}:</p>{else}<label for="fm_{$fieldname}" class="col-md-3 col-lg-2">{if $field.required=="yes"}<span class="glyphicon glyphicon-asterisk text-warning"></span> {/if}{$field.name}:</label>{/if}
+                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<label style="padding-left: 15px;">{$field.name}</label>{else}<label for="fm_{$fieldname}" class="col-md-3 col-lg-2">{if $field.required=="yes"}<span class="glyphicon glyphicon-asterisk text-warning"></span> {/if}{$field.name}:</label>{/if}
                     <div title="{$field.help|replace:"\"":''}" id="wrap_{$fieldname}" class="{if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions'}col-md-12{elseif $field.flags.PRIVACY}col-md-7 col-lg-8{else}col-md-9 col-lg-10{/if}">
                         {$field.html}
                     </div>
