@@ -32,6 +32,4 @@
     </div>
 {/foreach}
 </div>
-<div class="article-pagination">
 {$pagination}
-</div>

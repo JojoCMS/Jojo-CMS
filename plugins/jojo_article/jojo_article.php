@@ -432,7 +432,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
         } else {
 
-            /* Article index section */
+            /* index section */
             $pagenum = Jojo::getFormData('pagenum', 1);
             if ($pagenum[0] == 'p') {
                 $pagenum = substr($pagenum, 1);
