@@ -399,6 +399,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $smarty->assign('pg_htmllang', $article['ar_htmllang']);
             }
             $content['title']            = $article['title'];
+            $smarty->assign('title', $article['title']);
             $content['seotitle']         = Jojo::either($article['seotitle'], $article['title']);
             $content['breadcrumbs']      = $breadcrumbs;
 

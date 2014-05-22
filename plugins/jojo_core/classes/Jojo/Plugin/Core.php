@@ -393,9 +393,9 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 $colspan=12;
             }
 
-            $colopen = '<div class="row"><div class="col-md-' . $colspan . ' first"><div class="columncontent">';
+            $colopen = '<div class="row"><div class="col-md-' . $colspan . ' col-sm-' . $colspan . ' first"><div class="columncontent">';
             $colclose = '</div></div></div>';
-            $colbreak = '</div></div><div class="col-md-' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
+            $colbreak = '</div></div><div class="col-md-' . ($uneven ? $uneven : $colspan) . ' col-sm-' . ($uneven ? $uneven : $colspan) . ' "><div class="columncontent">';
             $colbreak = Jojo::applyFilter("columns_breakformat", $colbreak);
 
             $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>','[[columns]]'), $colopen, $content) : $colopen . "\n" . $content;

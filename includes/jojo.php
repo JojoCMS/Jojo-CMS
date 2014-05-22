@@ -461,6 +461,7 @@ foreach($content as $k => $v) {
     if ($k != 'index') $smarty->assign($k, $v); //do not assign a variable called 'index' in case it is already used elsewhere
 }
 
+
 /* Make a nice title for the page including the branding, depending on the user options */
 $displaytitle = !empty($content['seotitle']) ? $content['seotitle'] : $content['title'];
 
