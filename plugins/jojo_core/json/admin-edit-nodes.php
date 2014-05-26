@@ -315,6 +315,7 @@ function getNodes($t, $node)
                                );
  
             /**
+             * Group 1 and Group 2
              * Second level groups under a first level group
              */
             if ($table->getOption('group2')) {
@@ -327,7 +328,6 @@ function getNodes($t, $node)
                                 );
                 $values = array(($node == 'noname') ? '' : $node);
                 $res = Jojo::selectQuery($query, $values);
-
                 if ($res) {
                     /* Add the nodes to the array for output */
                     $pos = 0;
@@ -370,11 +370,10 @@ function getNodes($t, $node)
                     }
                     
                 /**
-                 * check for real contents under a first level group
+                 * add real content under the first level group (if any)
                  */
                 } else {
                     $node = $r['id'];
-                    $node = ($node == 'noname') ? '' : $node;
                     $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ?",
                                     $table->getOption('primarykey'),
                                     $table->getOption('displayfield'),
@@ -382,9 +381,8 @@ function getNodes($t, $node)
                                     $table->getOption('group1')
                                     );
                     $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
-                    $values = array($node);
+                    $values = array(($node == 'noname' ? '' : $node));
                     $res = Jojo::selectQuery($query, $values);
-
                     /* Add the nodes to the array for output */
                     $pos = 0;
                     foreach ($res as $r) {
@@ -397,7 +395,34 @@ function getNodes($t, $node)
                                             );
                     }
                 }
+             /**
+             * Group 1 only
+             * add real content under the first level group
+             */
+            } else {
+                $node = $r['id'];
+                $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ?",
+                                $table->getOption('primarykey'),
+                                $table->getOption('displayfield'),
+                                $table->getTableName(),
+                                $table->getOption('group1')
+                                );
+                $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
+                $values = array(($node == 'noname' ? '' : $node));
+                $res = Jojo::selectQuery($query, $values);
+                /* Add the nodes to the array for output */
+                $pos = 0;
+                foreach ($res as $r) {
+                    $nodes[$r['id']] = array(
+                                        'id' => $r['id'],
+                                        'text'     => $r['title'],
+                                        'parent' => 'g1-' . $node,
+                                        'type' => 'file',
+                                        'li_attr' => array ('pos' => $pos++)
+                                        );
+                }
             }
+
         }
         
      /**
