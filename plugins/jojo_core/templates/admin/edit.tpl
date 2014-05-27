@@ -37,7 +37,7 @@
         {if $numtabs > 1}
         <div id="tabs">
             <ul class="nav nav-tabs">
-            {foreach from=$tabnames key=k item=t}<li{if $k==0} class="active"{/if}><a href="#tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""|replace:".":""|replace:"/":""}{/if}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
+            {foreach from=$tabnames key=k item=t}<li{if $k==0} class="active"{/if}><a href="#" data-target="#tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""|replace:".":""|replace:"/":""}{/if}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
             {/foreach}
             </ul>
         </div>
