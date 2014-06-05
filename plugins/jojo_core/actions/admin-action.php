@@ -214,9 +214,9 @@ if (Jojo::getPost('btn_addsimilar', false)) {
             if (preg_match('/<!-- \\[editor:([a-z]*?)\\] -->/', $f['html'], $result)) {
                 $editortype = $result[1];
             }
-            $frajax->script("parent.$('#type_fm_" . $fieldname . "_html').attr('checked','');");
-            $frajax->script("parent.$('#type_fm_" . $fieldname . "_bb').attr('checked','');");
-            $frajax->script("parent.$('#type_fm_" . $fieldname . "_" . $editortype . "').attr('checked','checked');");
+            $frajax->script("parent.$('#type_fm_" . $fieldname . "_html').prop('checked','');");
+            $frajax->script("parent.$('#type_fm_" . $fieldname . "_bb').prop('checked','');");
+            $frajax->script("parent.$('#type_fm_" . $fieldname . "_" . $editortype . "').prop('checked','checked');");
             $frajax->assign("fm_" . $fieldname, "value", $f['value']);
             if ($editortype=='bb') {
                 $frajax->script("parent.$('#editor_" . $fieldname . "_html').hide(); parent.$('#editor_" . $fieldname . "_bb').show();");
@@ -272,9 +272,9 @@ if (Jojo::getPost('btn_addchild', false)) {
             if (preg_match('/<!-- \\[editor:([a-z]*?)\\] -->/', $f['html'], $result)) {
             $editortype = $result[1];
             }
-            $frajax->script("parent.$('#type_fm_".$fieldname."_html').attr('checked','');");
-            $frajax->script("parent.$('#type_fm_".$fieldname."_bb').attr('checked','');");
-            $frajax->script("parent.$('#type_fm_".$fieldname."_".$editortype."').attr('checked','checked');");
+            $frajax->script("parent.$('#type_fm_".$fieldname."_html').prop('checked','');");
+            $frajax->script("parent.$('#type_fm_".$fieldname."_bb').prop('checked','');");
+            $frajax->script("parent.$('#type_fm_".$fieldname."_".$editortype."').prop('checked','checked');");
             $frajax->assign("fm_" . $fieldname, "value", $f['value']);
             if ($editortype=='bb') {
                 $frajax->script("parent.$('#editor_".$fieldname."_html').hide(); parent.$('#editor_".$fieldname."_bb').show();");

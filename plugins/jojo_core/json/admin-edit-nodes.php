@@ -361,7 +361,7 @@ function getNodes($t, $node)
                             $nodes[$r['id']] = array(
                                                 'li_attr'     => array ('pos' => $pos++),
                                                 'id'     => $r['id'],
-                                                'text'     => $r['title'],
+                                                'text'     => substr(strip_tags($r['title']), 0, 100),
                                                 'parent' => 'g2-' . $r2['id'] . '-g1-' . $node,
                                                 'type' => 'file'
                                                );
@@ -388,7 +388,7 @@ function getNodes($t, $node)
                     foreach ($res as $r) {
                         $nodes[$r['id']] = array(
                                             'id' => $r['id'],
-                                            'text'     => $r['title'],
+                                            'text'     => substr(strip_tags($r['title']), 0, 100),
                                             'parent' => 'g1-' . $node,
                                             'type' => 'file',
                                             'li_attr' => array ('pos' => $pos++)
@@ -415,7 +415,7 @@ function getNodes($t, $node)
                 foreach ($res as $r) {
                     $nodes[$r['id']] = array(
                                         'id' => $r['id'],
-                                        'text'     => $r['title'],
+                                        'text'     => substr(strip_tags($r['title']), 0, 100),
                                         'parent' => 'g1-' . $node,
                                         'type' => 'file',
                                         'li_attr' => array ('pos' => $pos++)

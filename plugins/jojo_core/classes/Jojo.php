@@ -1311,9 +1311,9 @@ class Jojo {
         return $url;
     }
     
-    static function htmlspecialchars($string)
+    static function htmlspecialchars($string, $notrim = false)
     {
-         return htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
+         return htmlspecialchars(( $notrim ? $string : trim($string) ), ENT_COMPAT, 'UTF-8', false);
     }
 
     /* The standard file_exists() function will return true if a directory exists of the same name, this won't */
