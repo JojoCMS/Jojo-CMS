@@ -36,7 +36,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
 
         /* A reset hash has been sent via GET - find the relevant user and generate random password */
         if ($reset != '') {
-            $user = Jojo::selectRow("SELECT userid, us_email, us_login, us_reminder FROM {user} WHERE us_reset= ?", array($reset));
+            $user = Jojo::selectRow("SELECT userid, us_email, us_login, us_firstname, us_reminder FROM {user} WHERE us_reset= ?", array($reset));
 
             if (!$user) {
                 $errors[] = 'This password reset code has expired. Please use the form below to generate another reset code.';

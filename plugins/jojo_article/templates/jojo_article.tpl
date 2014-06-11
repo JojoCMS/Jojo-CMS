@@ -1,6 +1,7 @@
 {if $error}<div class="error">{$error}</div>{/if}
 {if $jojo_article}
 <div id="article"{if $jojo_article.ar_featured} class="featured"{/if}>
+    {if $jojo_article.subtitle}<h2>{$jojo_article.subtitle}</h2>{/if}
     {if $jojo_article.showdate}<p class="date">{$jojo_article.ar_date|date_format}</p>{/if}
     {jojoHook hook="articleBeforeBody"}
     {if $jojo_article.image}<img src="images/{$jojo_article.mainimage}/{$jojo_article.image}" class="float-right" alt="{$jojo_article.title}" />{/if}

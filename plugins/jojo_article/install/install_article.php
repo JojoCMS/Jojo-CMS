@@ -23,6 +23,7 @@ $query = "
     CREATE TABLE {article} (
       `articleid` int(11) NOT NULL auto_increment,
       `ar_title` varchar(255) NOT NULL default '',
+      `ar_subtitle` varchar(255) NOT NULL default '',
       `ar_desc` varchar(255) NOT NULL default '',
       `ar_url` varchar(255) NOT NULL default '',
       `ar_body` text NULL,

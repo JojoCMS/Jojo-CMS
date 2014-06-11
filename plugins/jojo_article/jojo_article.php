@@ -130,6 +130,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         foreach ($items as $k=>&$i){
             $i['id']           = $i['articleid'];
             $i['title']        = Jojo::htmlspecialchars($i['ar_title']);
+            $i['subtitle']       = isset($i['ar_subtitle']) ? Jojo::htmlspecialchars($i['ar_subtitle']) : '';
             $i['seotitle']        = Jojo::htmlspecialchars($i['ar_seotitle']);
             $i['author']        = Jojo::htmlspecialchars($i['ar_author']);
             // Snip for the index description
@@ -400,7 +401,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
             $content['title']            = $article['title'];
             $smarty->assign('title', $article['title']);
-            $content['seotitle']         = Jojo::either($article['seotitle'], $article['title']);
+            $content['seotitle']         = Jojo::either($article['seotitle'], $article['title'] . ($article['subtitle'] ? ' - ' . $article['subtitle']: ''));
             $content['breadcrumbs']      = $breadcrumbs;
 
             if (!empty($article['ar_metadesc'])) {

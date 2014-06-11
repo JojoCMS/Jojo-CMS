@@ -77,13 +77,24 @@ $default_fd['article']['ar_title'] = array(
         'fd_tabname' => "Content",
     );
 
+// SubTitle Field
+$default_fd['article']['ar_subtitle'] = array(
+        'fd_name' => "Title",
+        'fd_type' => "text",
+        'fd_required' => "no",
+        'fd_size' => "60",
+        'fd_help' => "An optional subtitle for the article",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
 // SEO Title Field
 $default_fd['article']['ar_seotitle'] = array(
         'fd_name' => "SEO Title",
         'fd_type' => "text",
         'fd_options' => "seotitle",
         'fd_size' => "60",
-        'fd_help' => "Title of the Article - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
+        'fd_help' => "Version of the title used by search engines - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",
