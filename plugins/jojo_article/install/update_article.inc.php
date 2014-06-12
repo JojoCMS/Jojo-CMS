@@ -79,7 +79,7 @@ $default_fd['article']['ar_title'] = array(
 
 // SubTitle Field
 $default_fd['article']['ar_subtitle'] = array(
-        'fd_name' => "SubTitle",
+        'fd_name' => "Subtitle",
         'fd_type' => "text",
         'fd_required' => "no",
         'fd_size' => "60",
