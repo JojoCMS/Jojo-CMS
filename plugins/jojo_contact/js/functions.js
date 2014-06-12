@@ -63,6 +63,13 @@ $(document).ready(function() {
                     setFormTabs($(this).attr('id'));
                 }
             }
+            if ($("input.anytime", this).length>0) {
+                $("input.anytime", this).each(function(index) {
+                    var dateoption = $(this).attr('data-format') ? $(this).attr('data-format') : "%M %d, %Y";
+                    $(this).AnyTime_noPicker();
+                    $(this).AnyTime_picker({ format: dateoption} );
+                });
+            }
         });
     }
 });

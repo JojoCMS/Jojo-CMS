@@ -6,17 +6,6 @@ form span.required, form span.error {
   color: red;
 }
 
-form.contact-form  input.date {
-    background: url("../images/cms/icons/calendar_view_day.png") no-repeat scroll 2px 2px transparent;
-    padding-left: 20px;
-}
-
-form a.cleardata {
-  color: red;
-  margin-left: -20px;
-  cursor: pointer;
-}
-
 form.contact-form .progress { display: none; position:relative; width:400px; border: 1px solid #ddd; padding: 1px; border-radius: 3px; }
 form.contact-form .bar { background-color: #B4F5B4; width:0%; height:20px; border-radius: 3px; }
 form.contact-form .percent { position:absolute; display:inline-block; top:3px; left:48%; }
