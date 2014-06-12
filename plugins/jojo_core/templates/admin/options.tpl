@@ -22,7 +22,7 @@
                 {if $opt.op_type != 'hidden'}
                 <div class="form-group">
                       <div id="savemsg_{$opt.op_name|replace:".":"_"}" class="saving"></div>
-                      <h4>{$opt.op_displayname}</h4>
+                      <h4>{$opt.op_displayname} <span class="help-block note">({$opt.op_name})</span></h4>
                 {if $opt.op_type == 'radio'}
                   {foreach from=$opt.options item=radioOption}
                     <label class="radio-inline"><input type="radio" name="option-{$opt.op_name}" onclick="$('#savemsg_{$opt.op_name|replace:".":"_"}').hide().html('Saving...').show(); frajax('admin-set-options','{$opt.op_name}','{$radioOption}');"{if $radioOption == $opt.op_value} checked="checked"{/if}/>{$radioOption}</label>

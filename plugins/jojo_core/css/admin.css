@@ -506,13 +506,17 @@ ul.plugins {
     }
 }
 
-#option-items .saving {
-  float: right;
-  clear: none;
-  color: red;
-  width: 30%;
+#option-items {
+    h4 span {
+        float:right;
+    }
+    .saving {
+      float: right;
+      clear: none;
+      color: red;
+      width: 30%;
+    }
 }
-
 div.options, div.readme {
   display: none;
 }
