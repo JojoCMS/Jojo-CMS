@@ -250,7 +250,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage =  $messagefields . '<p>' . nl2br(Jojo::emailFooter()) . '</p>';
         $htmlmessage = $css ? Jojo::inlineStyle($htmlmessage, $css) : $htmlmessage;
         $smarty->assign('htmlmessage', $htmlmessage);
-        $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
+        $htmlmessage  = $smarty->fetch('email.tpl');
         $res = false;
 
         if (!count($errors)) {

@@ -2,15 +2,19 @@
 <div id="event-log">
 <div class="row">
     <div class="col-md-4">
-        <p>Export selected form's submissions as a CSV file<br />
         <form action='' method="post">
             <div class="input-group input-group-sm">
+                {if count($forms)==1}
+                <input type="hidden" name="form_id" id="form_id" value="{$forms[0].form_id}" />
+                <button type="submit" name="submit" class="btn btn-default btn-sm">Download as CSV</button>
+                {else}
                 <select class="form-control" name="form_id" id="form_id">
                         {foreach from=$forms item=f}
                         <option value="{$f.form_id}">{$f.form_name}</option>
                         {/foreach}
                 </select>
-                <span class="input-group-btn"><button type="submit" name="submit" class="btn btn-default btn-sm">Export</button></span>
+                <span class="input-group-btn"><button type="submit" name="submit" class="btn btn-default btn-sm">Download as CSV</button></span>
+                {/if}
             </div>
         </form>
         </p>

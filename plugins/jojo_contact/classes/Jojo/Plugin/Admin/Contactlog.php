@@ -50,7 +50,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
                     $message .= ($f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n" : $f['value'] . "\r\n" );
                 }
             }
-            $e['shortdesc'] = str_replace("\r\n", ', ', substr(trim(htmlspecialchars($message, ENT_COMPAT, 'UTF-8', false)), 0, 100));
+            $e['shortdesc'] = str_replace("\r\n", ' ', substr(trim(htmlspecialchars($message, ENT_COMPAT, 'UTF-8', false)), 0, 150));
             $e['desc'] = nl2br(trim(htmlspecialchars($message, ENT_COMPAT, 'UTF-8', false)));
         }
         if (isset($_POST['submit'])) {
