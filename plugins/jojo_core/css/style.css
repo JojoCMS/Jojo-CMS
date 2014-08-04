@@ -37,3 +37,7 @@ img.icon-image {
     padding: 6px 12px;
     position: relative;
 }
+
+.AnyTime-win {
+    z-index: 1000;
+}

@@ -1,4 +1,5 @@
-{include file="doctype.tpl"}<head>
+{include file="doctype.tpl"}<!--[if IE]><![endif]-->
+<head>
     <title>{if $displaytitle}{$displaytitle}{/if}</title>
     <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />
     <!-- [[CACHE INFORMATION]] --><!-- Page generation time: {$GENERATIONTIME|round:3}s{if $pageid}; PageID: *{$pageid}* {/if}-->
@@ -32,12 +33,11 @@
     {if $rssicon}{foreach from=$rssicon key=k item=v}<link rel="alternate" type="application/rss+xml" title="{$k}" href="{$v}" />
     {/foreach}{elseif $rss}<link rel="alternate" type="application/rss+xml" title="{$sitetitle} RSS Feed" href="{$rss}" />
     {elseif !$templateoptions || $templateoptions.rss}<link rel="alternate" type="application/rss+xml" title="{$sitetitle} RSS Feed" href="{$SITEURL}/articles/rss/" />
-    {/if}
-    <!--[if lt IE 9]>
+    {/if}{if $htmldoctype}<!--[if lt IE 9]>
         <script src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://html5shiv.googlecode.com/svn/trunk/html5.js{else}{cycle values=$NEXTASSET}external/html5shiv.min.js{/if}"></script>
-        <script src="{cycle values=$NEXTASSET}external/respond/respond.min.js"></script>
+        <script src="{cycle values=$NEXTASSET}external/respond/dest/respond.min.js"></script>
     <![endif]-->
-    {if $modernizr != 'no'}<script src="{$SITEURL}/external/modernizr.min.js"></script>
+    {/if}{if $modernizr != 'no'}<script src="{$SITEURL}/external/modernizr.min.js"></script>
     {/if}{if $jqueryhead || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js{else}{cycle values=$NEXTASSET}external/jquery/jquery-{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}.min.js{/if}"></script>
     {/if}{if $jqueryhead && $OPTIONS.jquery_ui=='yes'}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js{else}{cycle values=$NEXTASSET}external/jquery/jquery.ui.core.min.js{/if}"></script>
     {/if}{if $commonhead && !$isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}{jojoAsset file="js/common.js"}"></script>
