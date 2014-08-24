@@ -622,11 +622,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
     }
 
     /**
-    /**
      * XML Sitemap filter
      *
      * Receives existing sitemap and adds article pages
-     */
+    */
     static function xmlsitemap($sitemap)
     {
         /* Get articles from database */

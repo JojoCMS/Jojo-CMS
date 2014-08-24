@@ -4,6 +4,7 @@
     {if $subject}<title>{$subject}</title>{/if}
 {literal}
     <style type="text/css">
+        html {-webkit-text-size-adjust: 100%;}
         @media only screen and (max-width: 480px) {
             table.contenttable { width:320px !important; }
         }
