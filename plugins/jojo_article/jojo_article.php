@@ -271,6 +271,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $categoryid = $categorydata['articlecategoryid'];
         }
         $sortby = $categorydata ? $categorydata['sortby'] : '';
+        $smarty->assign('categorydata', $categorydata);
 
         /* handle unsubscribes */
         if ($action == 'unsubscribe') {
@@ -309,7 +310,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $article = array();
             $prevarticle = array();
             $nextarticle = array();
+            $nnextarticle = array();
             $next = false;
+            $nnext = false;
             foreach ($articles as $a) {
                 if (!empty($url) && $url==$a['ar_url']) {
                     $article = $a;
@@ -319,6 +322,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                     $next = true;
                 } elseif ($next==true) {
                     $nextarticle = $a;
+                    $next = false;
+                    $nnext = true;
+                } elseif ($nnext==true) {
+                    $nnextarticle = $a;
                      break;
                 } else {
                     $prevarticle = $a;
@@ -342,10 +349,13 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
             /* calculate the next and previous articles */
             if (Jojo::getOption('article_next_prev') == 'yes') {
-                if (!empty($nextarticle)) {
+                if (!$prevarticle && $nnextarticle) {
+                    $smarty->assign('nnextarticle', self::getItemsById($nnextarticle['articleid']));
+                }
+                if ($nextarticle) {
                     $smarty->assign('nextarticle', self::getItemsById($nextarticle['articleid']));
                 }
-                if (!empty($prevarticle)) {
+                if ($prevarticle) {
                     $smarty->assign('prevarticle', self::getItemsById($prevarticle['articleid']));
                 }
             }
