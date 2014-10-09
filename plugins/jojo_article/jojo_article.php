@@ -962,13 +962,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                     $ids[] = $i['articleid'];
                 }
                 $articles = self::getItemsById($ids, '', 'showhidden');
-                $css = Jojo::getOption('css-email', '');
                 $contentarray['articles'] = array();
                 foreach($articles as &$a) {
-                    $a['title'] = mb_convert_encoding($a['ar_title'], 'HTML-ENTITIES', 'UTF-8');
-                    $a['bodyplain'] = mb_convert_encoding($a['bodyplain'], 'HTML-ENTITIES', 'UTF-8');
-                    $a['body'] = Jojo::relative2absolute($a['ar_body'], _SITEURL);
-                    $a['body'] = mb_convert_encoding(Jojo::inlineStyle($a['body'], $css, $list2table=true), 'HTML-ENTITIES', 'UTF-8');
                     $a['imageurl'] = rawurlencode($a['image']);
                     foreach ($ids as $k => $i) {
                         if ($i==$a['articleid']) {

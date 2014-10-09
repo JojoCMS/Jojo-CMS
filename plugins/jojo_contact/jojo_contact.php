@@ -242,15 +242,15 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $autoreply = 1;
             $replymessage .=  $messagefields;
             $replymessage =  self::personaliseMessage($replymessage, $fields);
-            $replymessage = $css ? Jojo::inlineStyle($replymessage, $css) : $replymessage;
             $smarty->assign('htmlmessage', $replymessage);
             $replymessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
+            $replymessage = $css ? Jojo::inlineStyle($replymessage, $css) : $replymessage;
         }
 
         $htmlmessage =  $messagefields . '<p>' . nl2br(Jojo::emailFooter()) . '</p>';
-        $htmlmessage = $css ? Jojo::inlineStyle($htmlmessage, $css) : $htmlmessage;
         $smarty->assign('htmlmessage', $htmlmessage);
         $htmlmessage  = $smarty->fetch('email.tpl');
+        $htmlmessage = $css ? Jojo::inlineStyle($htmlmessage, $css) : $htmlmessage;
         $res = false;
 
         if (!count($errors)) {
