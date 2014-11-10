@@ -359,6 +359,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $message .= _SITEURL . '/' . self::_getPrefix() . '/' . $deletecode . "/\n";
         $message .= Jojo::emailFooter();
 
+        if (!$email) { $email = _WEBMASTERADDRESS; }
         /* Email comment to webmaster and site contact */
         if (Jojo::getOption('comment_webmaster', 'yes')=='yes') {
             Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Comment - ' . $title, $message, $name, $email);

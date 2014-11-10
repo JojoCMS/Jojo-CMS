@@ -1,9 +1,8 @@
-<a name="add-comment"></a>
 {if $OPTIONS.comment_show_form == 'no'}<p><a href="#" id="post-comment-link" onclick="$('#post-comment').show(); $('#post-comment-link').hide(); return false;" class="btn btn-default">post a comment</a></p>
 {/if}
 <div class="post-comment" id="post-comment" style="clear: both;{if $OPTIONS.comment_show_form == 'yes'}display:block;{else}display:none;{/if}">
   <h3>Post Comment</h3>
-  <form id="commentform-{$pageid}" method="post" action="" class="contact-form no-ajax">
+  <form id="commentform-{$pageid}" method="post" action="{$correcturl}" class="contact-form no-ajax">
   <fieldset>
 <p class="note"><span class="required">*</span> <em>required fields</em></p>
 {if !$user}<input type="hidden" name="userid" id="userid" value="{if $userid}{$userid}{/if}" />{/if}
