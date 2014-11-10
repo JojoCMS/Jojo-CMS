@@ -115,7 +115,7 @@ foreach ($allfields as $fieldname => $f) {
 
 //$table->getOption('displayvalue');
 $frajax->assign("id", "value", $id);
-$frajax->assign("h1", "innerHTML",  substr(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')),0,100));
+$frajax->assign("h1", "innerHTML",  Jojo::htmlspecialchars(substr(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')),0,100)));
 $frajax->hide("message", "Fade", 1);
 $frajax->hide("error", "Fade", 1);
 if ($id == '') {

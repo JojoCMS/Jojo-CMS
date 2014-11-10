@@ -155,7 +155,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
     $table->getRecord($table->getRecordID());
 
     /* Update display */
-    $frajax->assign("h1", "innerHTML",  Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')));
+    $frajax->assign("h1", "innerHTML",  Jojo::htmlspecialchars(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname'))));
 
     /* Update form values */
     foreach ($table->getHTML('edit') as $fieldname => $f) {

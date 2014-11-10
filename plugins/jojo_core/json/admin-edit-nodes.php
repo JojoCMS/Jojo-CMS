@@ -71,7 +71,7 @@ function getNodes($t, $node)
             }
             $nodes[$r['id']] = array(
                                 'id'        =>  $r['id'],
-                                'text'     => $r['title'],
+                                'text'     => Jojo::htmlspecialchars($r['title']),
                                 'parent'     => ( $r['parent'] ? $r['parent'] : '#' ),
                                 'type' => 'file',
                                 'li_attr'     => array ('pos' => $pos++)
@@ -132,7 +132,7 @@ function getNodes($t, $node)
             foreach ($res as $r) {
                 $nodes['c' . $r['id']] = array(
                         'id'        => 'c' . $r['id'],
-                        'text'     => $r['title'],
+                        'text'     => Jojo::htmlspecialchars($r['title']),
                         'parent'     => ($r['parent'] ? 'c' . $r['parent'] : '#'),
                         'type' => 'folder',
                         'li_attr'     => array ('pos' => $pos++)
@@ -165,7 +165,7 @@ function getNodes($t, $node)
                 foreach ($res as $r) {
                     $nodes[$r['id']] = array(
                         'id'        =>  $r['id'],
-                        'text'     => $r['title'],
+                        'text'     => Jojo::htmlspecialchars($r['title']),
                         'parent'     => 'c' . $node,
                         'type' => 'file',
                         'li_attr'     => array ('pos' => $pos++)
@@ -197,7 +197,7 @@ function getNodes($t, $node)
                     }
                     $nodes['c' . $r['id']] = array(
                         'id'        =>  $r['id'],
-                        'text'     => $r['title'],
+                        'text'     => Jojo::htmlspecialchars($r['title']),
                         'parent'     => ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
                         'li_attr'     => array ('pos' => $pos++),
                         'type' => 'file'
@@ -237,7 +237,7 @@ function getNodes($t, $node)
                 foreach ($res as $k=>$r) {
                     $nodes['c' . $r['id']] = array(
                         'id'        => 'c' . $r['id'],
-                        'text'     => str_replace('"', "'", $r['title']),
+                        'text'     => Jojo::htmlspecialchars(str_replace('"', "'", $r['title'])),
                         'parent'     => '#',
                         'type'   => 'folder',
                         'li_attr'     => array ('pos' => $pos++)
@@ -279,7 +279,7 @@ function getNodes($t, $node)
                 }
                 $nodes[$r['id']] = array(
                         'id'        =>  $r['id'],
-                        'text'     => $r['title'],
+                        'text'     => Jojo::htmlspecialchars($r['title']),
                         'parent'     =>  ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
                         'type'   => 'file',
                         'li_attr' => array ('pos' => $pos++)
@@ -308,7 +308,7 @@ function getNodes($t, $node)
             $r['id'] = ($r['id'] != '') ? $r['id'] : 'noname';
             $nodes['g1-' . $r['id']] = array(
                                 'id' => 'g1-' . $r['id'],
-                                'text'     => $r['id'],
+                                'text'     => Jojo::htmlspecialchars($r['id']),
                                 'parent' => '#',
                                 'type' => 'folder',
                                 'li_attr' => array ('pos' => $pos++)
@@ -335,7 +335,7 @@ function getNodes($t, $node)
                         $r2['id'] = $r2['id'] ? $r2['id'] : 'noname';
                         $nodes['g2-' . $r2['id']. '-g1-' . $node] = array(
                                             'id' => 'g2-' . $r2['id'] . '-g1-' . $node,
-                                            'text'     => $r2['id'],
+                                            'text'     => Jojo::htmlspecialchars($r2['id']),
                                             'parent' => 'g1-' . $node,
                                             'type' => 'folder',
                                             'li_attr' => array ('pos' => $pos++)
@@ -361,7 +361,7 @@ function getNodes($t, $node)
                             $nodes[$r['id']] = array(
                                                 'li_attr'     => array ('pos' => $pos++),
                                                 'id'     => $r['id'],
-                                                'text'     => substr(strip_tags($r['title']), 0, 100),
+                                                'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
                                                 'parent' => 'g2-' . $r2['id'] . '-g1-' . $node,
                                                 'type' => 'file'
                                                );
@@ -388,7 +388,7 @@ function getNodes($t, $node)
                     foreach ($res as $r) {
                         $nodes[$r['id']] = array(
                                             'id' => $r['id'],
-                                            'text'     => substr(strip_tags($r['title']), 0, 100),
+                                            'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
                                             'parent' => 'g1-' . $node,
                                             'type' => 'file',
                                             'li_attr' => array ('pos' => $pos++)
@@ -415,7 +415,7 @@ function getNodes($t, $node)
                 foreach ($res as $r) {
                     $nodes[$r['id']] = array(
                                         'id' => $r['id'],
-                                        'text'     => substr(strip_tags($r['title']), 0, 100),
+                                        'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
                                         'parent' => 'g1-' . $node,
                                         'type' => 'file',
                                         'li_attr' => array ('pos' => $pos++)
@@ -453,7 +453,7 @@ function getNodes($t, $node)
         foreach ($res as $r) {
             $nodes[$r['thisid']] = array(
                                 'id'        => $r['thisid'],
-                                'text'     => $table->getOption('displayfield')=='pageid' ? $r['pg_title'] : substr(strip_tags($r['title']), 0, 100),
+                                'text'     => Jojo::htmlspecialchars($table->getOption('displayfield')=='pageid' ? $r['pg_title'] : substr(strip_tags($r['title']), 0, 100)),
                                 'parent'     => '#',
                                 'type' => 'file',
                                 'li_attr'     => array ('pos' => $pos++)
