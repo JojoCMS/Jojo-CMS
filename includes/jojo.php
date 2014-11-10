@@ -543,7 +543,7 @@ if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes') && $content['ogtags']) {
     $smarty->assign('ogdata', $ogdata);
     $ogmetatags = $smarty->fetch('ogmetatags.tpl');
     $smarty->assign('ogmetatags', $ogmetatags);
-    $smarty->assign('ogxmlns', 'xmlns:og="http://ogp.me/ns#"' . ( isset($ogdata['fb_admins']) || isset($ogdata['fb_app_id']) ? ' xmlns:fb="https://www.facebook.com/2008/fbml"' : ''));
+    $smarty->assign('ogxmlns', (Jojo::getOption('doctype', 'xhtml')!='html5' ? 'xmlns:og="http://ogp.me/ns#"' . ( isset($ogdata['fb_admins']) || isset($ogdata['fb_app_id']) ? ' xmlns:fb="https://www.facebook.com/2008/fbml"' : '') : ' prefix="og: http://ogp.me/ns#' . ( isset($ogdata['fb_admins']) || isset($ogdata['fb_app_id']) ? ' fb: http://www.facebook.com/2008/fbml' : '') . '"' ));
 }
 
 /* Fetch custom head from all the plugins and themes */
