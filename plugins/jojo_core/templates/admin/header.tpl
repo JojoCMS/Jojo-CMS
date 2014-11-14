@@ -16,7 +16,7 @@
                         {/foreach}
                     </ul>
                 {/if}</li>
-                {/foreach}
+                {/if}{/foreach}
                 <li><a href="{$SITEURL}/" title="Homepage" target="_blank" class="btn btn-default">Open Site</a></li>
             </ul>
         </div>
