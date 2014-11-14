@@ -123,7 +123,7 @@ if (isset($_POST['delete_orphaned_options'])) {
 if (isset($_POST['delete_orphaned_pages'])) {
     foreach ($_POST['orphaned_pages'] as $p) {
         $data = Jojo::selectQuery("SELECT pg_title FROM {page} WHERE pageid = ?", array($p));
-        echo "Removing orphaned page <b>".$data[0]['pg_title']."</b> from database<br/>";
+        echo "Removing orphaned page <b>". Jojo::htmlspecialchars($data[0]['pg_title'])."</b> from database<br/>";
         Jojo::deleteQuery("DELETE FROM {page}  WHERE pageid = ? LIMIT 1", array($p));
     }
 }
@@ -294,11 +294,11 @@ foreach($pages as $page) {
     if ($page['pg_link'] != '') {
         $classname = strtolower($page['pg_link']);
         if (!class_exists($classname)) {
-            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Dead Link page found (plugin missing or uninstalled)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Dead Link page found (plugin missing or uninstalled)<b> ".Jojo::htmlspecialchars($page['pg_title'])."</b> (ID: ".$page['pageid'].")</label><br/>";
         }
     }
     if ($page['pg_parent'] != 0 && !isset($pages[$page['pg_parent']]) ) {
-        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing or moved)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing or moved)<b> ".Jojo::htmlspecialchars($page['pg_title'])."</b> (ID: ".$page['pageid'].")</label><br/>";
     }
 }
 if (!empty($html)) {
