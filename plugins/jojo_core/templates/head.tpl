@@ -1,11 +1,9 @@
 {include file="doctype.tpl"}<!--[if IE]><![endif]-->
 <head>
     <title>{if $displaytitle}{$displaytitle}{/if}</title>
-    <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />
-    <!-- [[CACHE INFORMATION]] --><!-- Page generation time: {$GENERATIONTIME|round:3}s{if $pageid}; PageID: *{$pageid}* {/if}-->
-    
+    <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />    
     {if $htmldoctype}<meta charset="{if $charset}{$charset}{else}utf-8{/if}" />{else}<meta http-equiv="content-Type" content="text/html; charset={if $charset}{$charset}{else}utf-8{/if}" /> 
-    {/if}{if $htmldoctype}<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    {/if}{if $htmldoctype}<meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width{if !$OPTIONS.initialscale || $OPTIONS.initialscale=='yes'}, initial-scale=1.0{/if}" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
@@ -34,8 +32,7 @@
     {/if}<!--[if lt IE 9]>{if $include_print_css} 
         <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/print.css"}" media="print" />{/if}{if $include_handheld_css} 
         <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/handheld.css"}" media="handheld" />{/if}{if $htmldoctype} 
-        <script src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://html5shiv.googlecode.com/svn/trunk/html5.js{else}{cycle values=$NEXTASSET}external/html5shiv.min.js{/if}"></script>
-        <script src="{cycle values=$NEXTASSET}external/respond/dest/respond.min.js"></script>
+        <script src="//cdn.jsdelivr.net/g/html5shiv,respond"></script>
     {/if}<![endif]-->
     {if $modernizr != 'no'}<script src="{$SITEURL}/external/modernizr.min.js"></script>
     {/if}{if $jqueryhead || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jquery/{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js{else}{cycle values=$NEXTASSET}external/jquery/jquery-{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}.min.js{/if}"></script>

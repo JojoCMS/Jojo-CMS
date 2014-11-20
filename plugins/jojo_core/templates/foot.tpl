@@ -21,3 +21,4 @@
 {$customfoot}{/if}{if $OPTIONS.customfoot}
 {$OPTIONS.customfoot}{/if}{jojoHook hook="customfoot"}{jojoHook hook="foot"}
 {/if}
+<!-- [[CACHE INFORMATION]] --><!-- Page generation time: {$GENERATIONTIME|round:3}s{if $pageid}; PageID: *{$pageid}* {/if}-->
