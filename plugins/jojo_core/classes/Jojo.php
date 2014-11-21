@@ -2817,14 +2817,14 @@ class Jojo {
                 $body.= $htmlmessage;
                 $body.= "\n\n";
                 
-                $body.= '--alt-x' . $hash . "\n\n";
+                $body.= '--alt-x' . $hash . "--\n\n";
 
                 # Add encoded attachments
                 if ($attachments) {
                     foreach ($attachments as $a) {
                         if (is_file($a)) {
                             $body.= '--mixed-x' . $hash . "\n";
-                            $body.= "Content-Type: " . Jojo::getMimeType($a) . "; name= \"" . basename($a) . "\" size=\"" . filesize($a) .  "\";\n";
+                            $body.= "Content-Type: " . Jojo::getMimeType($a) . "; name=\"" . basename($a) . "\" size=\"" . filesize($a) .  "\";\n";
                             $body.= "Content-Transfer-Encoding: base64\n";
                             $body.= "Content-Disposition: attachment\n\n";
                             $body.= chunk_split(base64_encode(file_get_contents($a)));
@@ -2834,7 +2834,7 @@ class Jojo {
                 }
 
                 # End email
-                $body.= '--mixed-x' . $hash . "\n"; # <-- Notice trailing --, required to close email body for mime's
+                $body.= '--mixed-x' . $hash . "--\n"; # <-- Notice trailing --, required to close email body for mime's
                 $message = $body;
             }
             return mail($to, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers, $additional);
