@@ -54,12 +54,12 @@ function getNodes($t, $node)
     if ($table->getOption('parentfield')) {
         /* Get all children of the current node */
         $query = sprintf("SELECT %s, %s as id, %s as title, %s as parent FROM {%s}",
-                        $table->getOption('primarykey'),
-                        $table->getOption('primarykey'),
-                        $table->getOption('displayfield'),
-                        $table->getOption('parentfield'),
-                        $t
-                        );
+            $table->getOption('primarykey'),
+            $table->getOption('primarykey'),
+            $table->getOption('displayfield'),
+            $table->getOption('parentfield'),
+            $t
+        );
         $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
         $res = Jojo::selectAssoc($query);
 
@@ -70,12 +70,12 @@ function getNodes($t, $node)
                 continue;
             }
             $nodes[$r['id']] = array(
-                                'id'        =>  $r['id'],
-                                'text'     => Jojo::htmlspecialchars($r['title']),
-                                'parent'     => ( $r['parent'] ? $r['parent'] : '#' ),
-                                'type' => 'file',
-                                'li_attr'     => array ('pos' => $pos++)
-                               );
+                'id'      =>  $r['id'],
+                'text'    => Jojo::htmlspecialchars($r['title']),
+                'parent'  => ( $r['parent'] ? $r['parent'] : '#' ),
+                'type'    => 'file',
+                'li_attr' => array ('pos' => $pos++)
+            );
         }
 
 
@@ -95,6 +95,7 @@ function getNodes($t, $node)
         } else {
             $categoryTable = new Jojo_Table($table->getOption('categorytable'));
         }
+
         if ($categoryTable->getOption('orderbyfields')=='pageid')
         $isItemNode = true;
         if ($node[0] == 'c') {
@@ -104,39 +105,44 @@ function getNodes($t, $node)
         if ($node == 0) {
             $isItemNode = false;
         }
+
         $pos = 0;
         $nodes = array();
         if (!$isItemNode && $categoryTable->getOption('parentfield')) {
-            /* Get categories */
-            $query = sprintf("SELECT %s as id, %s as title, %s as parent FROM {%s}",
-                            $categoryTable->getOption('primarykey'),
-                            $categoryTable->getOption('displayfield'),
-                            $categoryTable->getOption('parentfield'),
-                            $categoryTable->getTableName()
-                            );
-            $query .= $categoryTable->getOption('orderbyfields') ? ' ORDER BY ' . $categoryTable->getOption('orderbyfields') : '';
-            $res = Jojo::selectQuery($query);
-
-            if ($categoryTable->getOption('displayfield')) {
-                $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($categoryTable->getTableName(), $categoryTable->getOption('displayfield')));
-                $displayfieldtype = $displayfielddata['fd_type'];
-                $displayfieldoptions = $displayfielddata['fd_options'];
-                if ($displayfieldtype == 'dbpluginpagelist') {
-                    $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
-                    foreach ($res as &$r) {
-                        $r['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
+            if (!$m2mfield || !is_numeric($node)) {
+                /* Get categories */
+                $query = sprintf("SELECT %s as id, %s as title, %s as parent FROM {%s}",
+                    $categoryTable->getOption('primarykey'),
+                    $categoryTable->getOption('displayfield'),
+                    $categoryTable->getOption('parentfield'),
+                    $categoryTable->getTableName()
+                );
+                $query .= $categoryTable->getOption('orderbyfields') ? ' ORDER BY ' . $categoryTable->getOption('orderbyfields') : '';
+                $res = Jojo::selectQuery($query);
+    
+                if ($categoryTable->getOption('displayfield')) {
+                    $displayfielddata = Jojo::selectRow("SELECT fd_type, fd_options FROM {fielddata} WHERE fd_table = ? AND fd_field = ?", array($categoryTable->getTableName(), $categoryTable->getOption('displayfield')));
+                    $displayfieldtype = $displayfielddata['fd_type'];
+                    $displayfieldoptions = $displayfielddata['fd_options'];
+                    if ($displayfieldtype == 'dbpluginpagelist') {
+                        $displaytitles = Jojo::selectAssoc("SELECT pageid AS id, pageid, pg_title, pg_language FROM {page} WHERE pg_link = ? ", array($displayfielddata['fd_options']));
+                        foreach ($res as &$r) {
+                            $r['title'] = isset($displaytitles[$r['title']]['pg_title']) ? $displaytitles[$r['title']]['pg_title'] . (_MULTILANGUAGE ? ' (' . $displaytitles[$r['title']]['pg_language'] . ')' : '') : 'page missing';
+                        }
                     }
                 }
-            }
-            /* Add the nodes to the array for output */
-            foreach ($res as $r) {
-                $nodes['c' . $r['id']] = array(
-                        'id'        => 'c' . $r['id'],
+                /* Add the nodes to the array for output */
+                foreach ($res as $r) {
+                    $parent = ($r['parent'] ? 'c' . $r['parent'] : '#');
+                    $nodes['c' . $r['id']] = array(
+                        'id'       => 'c' . $r['id'],
                         'text'     => Jojo::htmlspecialchars($r['title']),
-                        'parent'     => ($r['parent'] ? 'c' . $r['parent'] : '#'),
-                        'type' => 'folder',
-                        'li_attr'     => array ('pos' => $pos++)
+                        'parent'   => ($r['parent'] ? 'c' . $r['parent'] : '#'),
+                        'type'     => 'folder',
+                        'li_attr'  => array ('pos' => $pos++),
+                        'children' => true
                     );
+                }
             }
 
             if ($m2mfield) {
@@ -149,26 +155,34 @@ function getNodes($t, $node)
                     $where = "= ?";
                     $values = $node;
                 }
-                $query = sprintf("SELECT t.%s as id, %s as title FROM {%s} t LEFT JOIN {%s} l ON t.%s = l.%s WHERE l.%s ".$where,
-                                 $table->getOption('primarykey'),
-                                 $table->getOption('displayfield'),
-                                 $t,
-                                 $m2mfield->linktable,
-                                 $table->getOption('primarykey'),
-                                 $m2mfield->linkitemid,
-                                 $m2mfield->linkcatid
-                                );
+
+                $query = sprintf(
+                    "SELECT t.%s as id, %s as title FROM {%s} t
+                     LEFT JOIN {%s} l ON t.%s = l.%s
+                     LEFT JOIN {%s} c ON l.%s = c.%s
+                     WHERE c.%s ".$where,
+                    $table->getOption('primarykey'),
+                    $table->getOption('displayfield'),
+                    $t,
+                    $m2mfield->linktable,
+                    $table->getOption('primarykey'),
+                    $m2mfield->linkitemid,
+                    $m2mfield->fd_options,
+                    $m2mfield->linkcatid,
+                    $m2mfield->linkcatid,
+                    $m2mfield->linkcatid
+                );
                 $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
-                $res = Jojo::selectQuery($query);
+                $res = Jojo::selectQuery($query, $values);
 
                 /* Add the nodes to the array for output */
                 foreach ($res as $r) {
                     $nodes[$r['id']] = array(
-                        'id'        =>  $r['id'],
-                        'text'     => Jojo::htmlspecialchars($r['title']),
-                        'parent'     => 'c' . $node,
-                        'type' => 'file',
-                        'li_attr'     => array ('pos' => $pos++)
+                        'id'      => $r['id'],
+                        'text'    => Jojo::htmlspecialchars($r['title']),
+                        'parent'  => ($node != "#" ? 'c' . $node : '#'),
+                        'type'    => 'file',
+                        'li_attr' => array ('pos' => $pos++)
                     );
                 }
             }
@@ -177,11 +191,11 @@ function getNodes($t, $node)
                 $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pageid');
                 $query = "SELECT " . ($pagesort ? "p.pageid, p.pg_order, " : '');
                 $query .= sprintf("c.%s as id, " . ($categoryTable->getOption('displayfield')=='pageid' ? 'c.' : '')  . "%s as title, c.%s as parentcategory FROM {%s} c",
-                                 $table->getOption('primarykey'),
-                                 $table->getOption('displayfield'),
-                                 $table->getOption('categoryfield'),
-                                 $t
-                                );
+                    $table->getOption('primarykey'),
+                    $table->getOption('displayfield'),
+                    $table->getOption('categoryfield'),
+                    $t
+                );
                 if ($pagesort) {
                     $query .= " LEFT JOIN {page} p ON (p.pageid=c.pageid) ORDER BY p.pg_order";
                 } else {
@@ -195,12 +209,12 @@ function getNodes($t, $node)
                     if ($r['parentcategory'] && !isset($nodes['c' . $r['parentcategory']]) ) {
                         continue;
                     }
-                    $nodes['c' . $r['id']] = array(
-                        'id'        =>  $r['id'],
-                        'text'     => Jojo::htmlspecialchars($r['title']),
-                        'parent'     => ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
-                        'li_attr'     => array ('pos' => $pos++),
-                        'type' => 'file'
+                    $nodes[$r['id']] = array(
+                        'id'      =>  $r['id'],
+                        'text'    => Jojo::htmlspecialchars($r['title']),
+                        'parent'  => ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
+                        'li_attr' => array ('pos' => $pos++),
+                        'type'    => 'file'
                     );
                 }
             }
@@ -211,10 +225,10 @@ function getNodes($t, $node)
                 $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pageid');
                 $query = "SELECT " . ($pagesort ? "p.pageid, p.pg_order, " : '');
                 $query .= sprintf("c.%s as id, " . ($categoryTable->getOption('displayfield')=='pageid' ? 'c.' : '')  . "%s as title FROM {%s} c ",
-                                $categoryTable->getOption('primarykey'),
-                                $categoryTable->getOption('displayfield'),
-                                $categoryTable->getTableName()
-                                );
+                    $categoryTable->getOption('primarykey'),
+                    $categoryTable->getOption('displayfield'),
+                    $categoryTable->getTableName()
+                );
                 if ($pagesort) {
                     $query .= "LEFT JOIN {page} p ON (p.pageid=c.pageid) ORDER BY p.pg_order";
                 } else {
@@ -236,11 +250,11 @@ function getNodes($t, $node)
                 /* Add the nodes to the array for output */
                 foreach ($res as $k=>$r) {
                     $nodes['c' . $r['id']] = array(
-                        'id'        => 'c' . $r['id'],
-                        'text'     => Jojo::htmlspecialchars(str_replace('"', "'", $r['title'])),
-                        'parent'     => '#',
-                        'type'   => 'folder',
-                        'li_attr'     => array ('pos' => $pos++)
+                        'id'      => 'c' . $r['id'],
+                        'text'    => Jojo::htmlspecialchars(str_replace('"', "'", $r['title'])),
+                        'parent'  => '#',
+                        'type'    => 'folder',
+                        'li_attr' => array ('pos' => $pos++)
                       );
                 }
             }
@@ -249,24 +263,24 @@ function getNodes($t, $node)
             $res = array();
             if ($table->getOption('categorytable')) {
                 $query = sprintf("SELECT %s as id, %s as title, %s as parentcategory FROM {%s}",
-                                 $table->getOption('primarykey'),
-                                 $table->getOption('displayfield'),
-                                 $table->getOption('categoryfield'),
-                                 $t
-                                );
+                    $table->getOption('primarykey'),
+                    $table->getOption('displayfield'),
+                    $table->getOption('categoryfield'),
+                    $t
+                );
                 $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                 $res = Jojo::selectQuery($query);
             }
             if (isset($m2mfield) && $m2mfield) {
                 $query = sprintf("SELECT n.%s as id, %s as title FROM {%s} n LEFT JOIN {%s} l ON n.%s = l.%s WHERE l.%s IS NULL",
-                                 $table->getOption('primarykey'),
-                                 $table->getOption('displayfield'),
-                                 $t,
-                                 $m2mfield->linktable,
-                                 $table->getOption('primarykey'),
-                                 $m2mfield->linkitemid,
-                                 $m2mfield->linkcatid
-                                );
+                    $table->getOption('primarykey'),
+                    $table->getOption('displayfield'),
+                    $t,
+                    $m2mfield->linktable,
+                    $table->getOption('primarykey'),
+                    $m2mfield->linkitemid,
+                    $m2mfield->linkcatid
+                );
                 $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                 $res = Jojo::selectQuery($query);
            }
@@ -278,10 +292,10 @@ function getNodes($t, $node)
                     continue;
                 }
                 $nodes[$r['id']] = array(
-                        'id'        =>  $r['id'],
-                        'text'     => Jojo::htmlspecialchars($r['title']),
-                        'parent'     =>  ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
-                        'type'   => 'file',
+                        'id'      =>  $r['id'],
+                        'text'    => Jojo::htmlspecialchars($r['title']),
+                        'parent'  =>  ($r['parentcategory'] ? 'c' . $r['parentcategory'] : '#'),
+                        'type'    => 'file',
                         'li_attr' => array ('pos' => $pos++)
                     );
             
@@ -294,10 +308,10 @@ function getNodes($t, $node)
     } elseif ($table->getOption('group1') && (!$node || $node=='#')) {
         /* Top Level groups */
         $query = sprintf("SELECT DISTINCT %s as id FROM {%s} ORDER BY %s",
-                        $table->getOption('group1'),
-                        $t,
-                        $table->getOption('group1')
-                        );
+            $table->getOption('group1'),
+            $t,
+            $table->getOption('group1')
+        );
         $values = array();
         $res = Jojo::selectQuery($query, $values);
 
@@ -307,12 +321,12 @@ function getNodes($t, $node)
         foreach ($res as $r) {
             $r['id'] = ($r['id'] != '') ? $r['id'] : 'noname';
             $nodes['g1-' . $r['id']] = array(
-                                'id' => 'g1-' . $r['id'],
-                                'text'     => Jojo::htmlspecialchars($r['id']),
-                                'parent' => '#',
-                                'type' => 'folder',
-                                'li_attr' => array ('pos' => $pos++)
-                               );
+                'id'      => 'g1-' . $r['id'],
+                'text'    => Jojo::htmlspecialchars($r['id']),
+                'parent'  => '#',
+                'type'    => 'folder',
+                'li_attr' => array ('pos' => $pos++)
+           );
  
             /**
              * Group 1 and Group 2
@@ -321,11 +335,11 @@ function getNodes($t, $node)
             if ($table->getOption('group2')) {
                 $node = $r['id'];
                 $query = sprintf("SELECT DISTINCT %s as id FROM {%s} WHERE %s = ? ORDER BY %s",
-                                $table->getOption('group2'),
-                                $t,
-                                $table->getOption('group1'),
-                                $table->getOption('group2')
-                                );
+                    $table->getOption('group2'),
+                    $t,
+                    $table->getOption('group1'),
+                    $table->getOption('group2')
+                );
                 $values = array(($node == 'noname') ? '' : $node);
                 $res = Jojo::selectQuery($query, $values);
                 if ($res) {
@@ -334,23 +348,23 @@ function getNodes($t, $node)
                     foreach ($res as $r2) {
                         $r2['id'] = $r2['id'] ? $r2['id'] : 'noname';
                         $nodes['g2-' . $r2['id']. '-g1-' . $node] = array(
-                                            'id' => 'g2-' . $r2['id'] . '-g1-' . $node,
-                                            'text'     => Jojo::htmlspecialchars($r2['id']),
-                                            'parent' => 'g1-' . $node,
-                                            'type' => 'folder',
-                                            'li_attr' => array ('pos' => $pos++)
-                                           );
-                     /**
-                     * Real content under a 2nd level group
-                     */
+                            'id'      => 'g2-' . $r2['id'] . '-g1-' . $node,
+                            'text'    => Jojo::htmlspecialchars($r2['id']),
+                            'parent'  => 'g1-' . $node,
+                            'type'    => 'folder',
+                            'li_attr' => array ('pos' => $pos++)
+                       );
+                        /**
+                         * Real content under a 2nd level group
+                         */
                         $subnode = $r2['id'];
                         $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ? AND %s = ?",
-                                        $table->getOption('primarykey'),
-                                        $table->getOption('displayfield'),
-                                        $table->getTableName(),
-                                        $table->getOption('group1'),
-                                        $table->getOption('group2')
-                                        );
+                            $table->getOption('primarykey'),
+                            $table->getOption('displayfield'),
+                            $table->getTableName(),
+                            $table->getOption('group1'),
+                            $table->getOption('group2')
+                        );
                         $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                         $values = array(($node == 'noname' ? '' : $node), ($subnode == 'noname' ? '' : $subnode));
                         $res = Jojo::selectQuery($query, $values);
@@ -359,12 +373,12 @@ function getNodes($t, $node)
                         $pos = 0;
                         foreach ($res as $r) {
                             $nodes[$r['id']] = array(
-                                                'li_attr'     => array ('pos' => $pos++),
-                                                'id'     => $r['id'],
-                                                'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
-                                                'parent' => 'g2-' . $r2['id'] . '-g1-' . $node,
-                                                'type' => 'file'
-                                               );
+                                'li_attr'     => array ('pos' => $pos++),
+                                'id'     => $r['id'],
+                                'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
+                                'parent' => 'g2-' . $r2['id'] . '-g1-' . $node,
+                                'type' => 'file'
+                               );
                         }
 
                     }
@@ -375,11 +389,11 @@ function getNodes($t, $node)
                 } else {
                     $node = $r['id'];
                     $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ?",
-                                    $table->getOption('primarykey'),
-                                    $table->getOption('displayfield'),
-                                    $table->getTableName(),
-                                    $table->getOption('group1')
-                                    );
+                        $table->getOption('primarykey'),
+                        $table->getOption('displayfield'),
+                        $table->getTableName(),
+                        $table->getOption('group1')
+                    );
                     $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                     $values = array(($node == 'noname' ? '' : $node));
                     $res = Jojo::selectQuery($query, $values);
@@ -387,12 +401,12 @@ function getNodes($t, $node)
                     $pos = 0;
                     foreach ($res as $r) {
                         $nodes[$r['id']] = array(
-                                            'id' => $r['id'],
-                                            'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
-                                            'parent' => 'g1-' . $node,
-                                            'type' => 'file',
-                                            'li_attr' => array ('pos' => $pos++)
-                                            );
+                            'id'      => $r['id'],
+                            'text'    => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
+                            'parent'  => 'g1-' . $node,
+                            'type'    => 'file',
+                            'li_attr' => array ('pos' => $pos++)
+                        );
                     }
                 }
              /**
@@ -402,11 +416,11 @@ function getNodes($t, $node)
             } else {
                 $node = $r['id'];
                 $query = sprintf("SELECT %s as id, %s as title FROM {%s} WHERE %s = ?",
-                                $table->getOption('primarykey'),
-                                $table->getOption('displayfield'),
-                                $table->getTableName(),
-                                $table->getOption('group1')
-                                );
+                    $table->getOption('primarykey'),
+                    $table->getOption('displayfield'),
+                    $table->getTableName(),
+                    $table->getOption('group1')
+                );
                 $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                 $values = array(($node == 'noname' ? '' : $node));
                 $res = Jojo::selectQuery($query, $values);
@@ -414,12 +428,12 @@ function getNodes($t, $node)
                 $pos = 0;
                 foreach ($res as $r) {
                     $nodes[$r['id']] = array(
-                                        'id' => $r['id'],
-                                        'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
-                                        'parent' => 'g1-' . $node,
-                                        'type' => 'file',
-                                        'li_attr' => array ('pos' => $pos++)
-                                        );
+                        'id' => $r['id'],
+                        'text'     => Jojo::htmlspecialchars(substr(strip_tags($r['title']), 0, 100)),
+                        'parent' => 'g1-' . $node,
+                        'type' => 'file',
+                        'li_attr' => array ('pos' => $pos++)
+                    );
                 }
             }
 
@@ -435,11 +449,11 @@ function getNodes($t, $node)
             $query .= "p.pageid, p.pg_order, pg_title, pg_menutitle, ";
         }
         $query .= sprintf("i.%s, i.%s as thisid, " . ($table->getOption('displayfield')=='pageid' ? 'i.' : '')  . "%s as title FROM {%s} i ",
-                        $table->getOption('primarykey'),
-                        $table->getOption('primarykey'),
-                        $table->getOption('displayfield'),
-                        $t
-                        );
+            $table->getOption('primarykey'),
+            $table->getOption('primarykey'),
+            $table->getOption('displayfield'),
+            $t
+        );
         if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
             $query .= " LEFT JOIN {page} p ON (p.pageid=i.pageid) ORDER BY p.pg_order";
         } else {
@@ -452,15 +466,22 @@ function getNodes($t, $node)
         $nodes = array();
         foreach ($res as $r) {
             $nodes[$r['thisid']] = array(
-                                'id'        => $r['thisid'],
-                                'text'     => Jojo::htmlspecialchars($table->getOption('displayfield')=='pageid' ? $r['pg_title'] : substr(strip_tags($r['title']), 0, 100)),
-                                'parent'     => '#',
-                                'type' => 'file',
-                                'li_attr'     => array ('pos' => $pos++)
-                               );
+                'id'      => $r['thisid'],
+                'text'    => Jojo::htmlspecialchars($table->getOption('displayfield')=='pageid' ? $r['pg_title'] : substr(strip_tags($r['title']), 0, 100)),
+                'parent'  => '#',
+                'type'    => 'file',
+                'li_attr' => array ('pos' => $pos++)
+           );
         }
 
     }
+    
+    foreach ($nodes as $id => $node) {
+        if (!array_key_exists('parent', $node)) { continue; }
+        if (!array_key_exists($node['parent'], $nodes)) { continue; }
+        if (!array_key_exists('children', $nodes[$node['parent']])) { continue; }
+        unset($nodes[$node['parent']]['children']);
+    }
+    
     return $nodes;
 }
-
