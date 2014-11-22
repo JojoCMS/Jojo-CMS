@@ -92,21 +92,24 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/grid.less');
 
                 /* Headings, body, etc file */
-                if (Jojo::getOption('tbootstrap_bass_type', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_bass_type', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/type.less');
-                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/code.less');
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/code.less');
+                }
                 /* Labels and badges file */
-                if (Jojo::getOption('tbootstrap_bass_labels', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_bass_labels', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/labels.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/badges.less');
+                }
                 /* Tables file */
                 if (Jojo::getOption('tbootstrap_bass_tables', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tables.less');
                 /* Forms file */
-                if (Jojo::getOption('tbootstrap_bass_forms', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_bass_forms', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/forms.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/input-groups.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/buttons.less');
+                }
                 /* Icons file */
                 if (Jojo::getOption('tbootstrap_bass_sprites', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/glyphicons.less');
@@ -127,9 +130,10 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 if (Jojo::getOption('tbootstrap_components_breadcrumbs', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/breadcrumbs.less');
                 /* Pagination file */
-                if (Jojo::getOption('tbootstrap_components_pagination', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_components_pagination', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/pagination.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/pager.less');
+                }
                 /* Thumbnails file */
                 if (Jojo::getOption('tbootstrap_components_thumbnails', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/thumbnails.less');
@@ -177,11 +181,11 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
 
                 /* Utilities files */
-                if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/print.less');
-
+                }
                 /* get a pre-responsive file from theme if exists */
                 foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
                     $css->addFile($themefile);
