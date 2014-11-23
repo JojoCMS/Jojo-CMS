@@ -56,7 +56,7 @@
     </div>{/if}
     {else}{if $f.prependvalue || $f.appendvalue}
     <div class="input-group">
-        {/if}{if $f.prependvalue}<span class="input-group-addon">{$f.prependvalue}</span>{/if}<input type="{if $f.validation=='email'}email{elseif $f.validation=='url'}url{elseif $f.validation=='integer'}number{else}text{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" {if $f.size}size="{$f.size}" {/if}name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}{if $f.required} required{/if} />{if $f.appendvalue}<span class="input-group-addon">{$f.appendvalue}</span>{/if}{if $f.prependvalue || $f.appendvalue}
+        {/if}{if $f.prependvalue}<span class="input-group-addon">{$f.prependvalue}</span>{/if}<input type="{if $f.validation=='email'}email{elseif $f.validation=='url'}url{elseif $f.validation=='integer'}number{else}text{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" {if $f.size}size="{$f.size}" {/if}name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.appendvalue}<span class="input-group-addon">{$f.appendvalue}</span>{/if}{if $f.prependvalue || $f.appendvalue}
     </div>{/if}
     {/if}
     {if $f.description}<span class="help-block">{$f.description|nl2br}</span>
