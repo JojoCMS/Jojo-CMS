@@ -81,7 +81,7 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
 
                     require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
                     $parsedown = new Parsedown();
-                    $htmltext = $parsedown->parse($text);
+                    $htmltext = $parsedown->text($text);
 
                      if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Change Confirmation', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
                         $messages[] = 'Your password has been changed. You have been emailed a confirmation of the new password. You do not need to login again.';

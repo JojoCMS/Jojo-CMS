@@ -88,7 +88,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
 
                     require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
                     $parsedown = new Parsedown();
-                    $htmltext = $parsedown->parse($text);
+                    $htmltext = $parsedown->text($text);
 
                     if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Reminder', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
                         $messages[] = 'Password reminder has been sent to the email address associated with username ' . $login;
@@ -117,7 +117,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
 
                     require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
                     $parsedown = new Parsedown();
-                    $htmltext = $parsedown->parse($text);
+                    $htmltext = $parsedown->text($text);
 
                      if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Reset Link', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
                         $messages[] = 'Password reset link has been sent to ' . $email;
