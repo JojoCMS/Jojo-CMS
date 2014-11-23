@@ -2791,10 +2791,8 @@ class Jojo {
             $headers  = "MIME-Version: 1.0\n";
             $headers .= $htmlmessage ? "Content-Type: multipart/mixed; boundary=\"mixed-x" . $hash . "\"\r\n" : "Content-Type: text/plain;charset=\"UTF-8\"\n";
             $headers .= "Content-Transfer-Encoding: 7bit\r\n";
-            $headers .= "X-Priority: 3\n";
-            $headers .= "X-MSMail-Priority: Normal\n";
             $headers .= "X-Mailer: php\n";
-            $headers .= $senderaddress ? "From: " . $senderaddress . "\n" : "From: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n";
+            $headers .= $senderaddress ? "From: " . $senderaddress . "\n" : 'From: "' . '=?UTF-8?B?' . base64_encode($fromname) . '?=' . '" <' . $fromaddress . ">\n";
             $headers .= $senderaddress ? "Reply-To: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n" : '';
             $additional="-f$fromaddress";
             $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : $toname . ' <' . $toaddress. '>';
