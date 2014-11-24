@@ -904,4 +904,3 @@ EnterParagraphs.prototype.handleEnter = function(ev)
   
 };	// end of handleEnter()
 
-// END
