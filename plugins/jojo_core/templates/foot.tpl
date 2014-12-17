@@ -1,6 +1,12 @@
 {if !$templateoptions || $templateoptions.frajax || $isadmin}<iframe src="javascript:false;" name="frajax-iframe" id="frajax-iframe" style="display:none; height: 0; width: 0; border: 0;"></iframe>
-{/if}{if !$jqueryhead && !$isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}//ajax.googleapis.com/ajax/libs/jquery/{if $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js{else}{cycle values=$NEXTASSET}external/jquery/jquery-{if $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}.min.js{/if}"></script>
-{/if}{if !$jqueryhead && $OPTIONS.jquery_ui=='yes'}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}http{if $issecure}s{/if}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js{else}{cycle values=$NEXTASSET}{jojoAsset file="external/jquery/jquery.ui.core.min.js"}{/if}"></script>
+{/if}{if !$jqueryhead && !$isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="//ajax.googleapis.com/ajax/libs/jquery/{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js"></script>{if $OPTIONS.jquery_ui=='yes'} 
+<script{if !$htmldoctype} type="text/javascript"{/if} src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>{/if}
+<script{if !$htmldoctype} type="text/javascript"{/if}>
+    if (typeof jQuery == 'undefined') {ldelim} 
+        document.write(unescape("%3Cscript src='{cycle values=$NEXTASSET}external/jquery/jquery-{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}.min.js'{if !$htmldoctype} type='text/javascript'{/if}%3E%3C/script%3E"));{if $OPTIONS.jquery_ui=='yes'} 
+        document.write(unescape("%3Cscript src='{cycle values=$NEXTASSET}{jojoAsset file='external/jquery/jquery.ui.core.min.js'}'{if !$htmldoctype} type='text/javascript'{/if}%3E%3C/script%3E"));{/if}
+    {rdelim}
+</script>
 {/if}{if !$commonhead && !$isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}{jojoAsset file="js/common.js"}"></script>
 {/if}{if !$isadmin}{if !$templateoptions || $templateoptions.menu}
     <!--[if lte IE 7]>
