@@ -259,8 +259,8 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         if (($website != '') && !Jojo::checkUrlFormat($website)) {
             $errors[] = 'Website format is invalid';
         }
-
-        if (Jojo::getOption('comment_useronly', 'no') == 'yes' && $email && !Jojo::selectRow("SELECT userid FROM {user} WHERE us_email=?", array($email)) ) {
+        $user = Jojo::selectRow("SELECT userid, blacklisted FROM {user} WHERE us_email=?", array($email));
+        if (Jojo::getOption('comment_useronly', 'no') == 'yes' && (!$user || (isset($user['blacklisted']) && $user['blacklisted'])) ) {
             $errors[] = 'Comments are restricted to registered users or subscribers only';
         }
 
