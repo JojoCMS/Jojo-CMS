@@ -35,6 +35,7 @@ $query = "
       `us_reset` varchar(255) NOT NULL default '',
       `us_timezone` int(11) NOT NULL default '12',
       `us_groups` varchar(255) NOT NULL default '',
+      `blacklisted` tinyint(4) default '0',
       PRIMARY KEY  (`userid`)
     ) ENGINE=MyISAM CHARSET=utf8 COLLATE utf8_general_ci ;";
 

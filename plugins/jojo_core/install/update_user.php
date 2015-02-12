@@ -121,6 +121,16 @@ $default_fd['user']['us_salt'] = array(
         'fd_tabname' => "Base",
     );
 
+$default_fd['user']['blacklisted'] = array(
+        'fd_name' => "Blacklisted",
+        'fd_type' => "radio",
+        'fd_options' => "1:Yes \n 0:No",
+        'fd_default' => "0",
+        'fd_help' => "",
+        'fd_order' => "10",
+        'fd_tabname' => "Base",
+    );
+
 // Lastfailure Field
 $default_fd['user']['us_lastfailure'] = array(
         'fd_name' => "Lastfailure",

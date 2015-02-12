@@ -170,7 +170,7 @@ function setFormTabs(formid) {
     $(fieldsets).hide();
     $('#' + formid + ' fieldset:first-child').show().before('<div class="tabswitch">' + formlinks + '</div>');
     $('#' + formid + ' .form-submit.endonly').hide();
-    $('#' + formid + ' .form-submit').before('<div class="tabnav"><a class="prev" href="" style="display:none;"><span>&lt; Back</span></a><a class="next" href=""><span>Next &gt;</span></a></div>');
+    $('#' + formid + ' .form-submit').before('<div class="tabnav"><a class="prev btn btn-primary" href="" style="display:none;"><span>&lt; Back</span></a><a class="next btn btn-primary" href=""><span>Next &gt;</span></a></div>');
     setFormTabNav(formid, tabid);
 }
 
