@@ -138,6 +138,9 @@ function showFormTab(formid, tabid) {
     $('#' + formid + ' fieldset').hide();
     $('#' + formid + ' #' + tabid).show();
     $('#' + formid + ' .tabswitch a').removeClass('current');
+    $('html, body').animate({
+        scrollTop: $('#' + formid).offset().top
+    }, 500);
     setFormTabNav(formid, tabid);
 }
 
