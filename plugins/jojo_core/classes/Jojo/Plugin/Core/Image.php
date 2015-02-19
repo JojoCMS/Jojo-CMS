@@ -30,7 +30,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         $im = false;
 
         /* Check file name has correct extension */
-        $validExtensions = array('jpg', 'gif', 'jpeg', 'png');
+        $validExtensions = array('jpg', 'gif', 'jpeg', 'png', 'svg');
         if (!in_array(Jojo::getFileExtension($file), $validExtensions)) {
             /* Not valid, 404 */
             header("HTTP/1.0 404 Not Found", true, 404);
@@ -104,7 +104,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* filetype + mimetype */
         $filetype = Jojo::getFileExtension($filename);
-        $mimetype = ($filetype == 'jpg') ? 'image/jpeg': 'image/' . $filetype;
+        $mimetype = $filetype == 'jpg' ? 'image/jpeg': ($filetype == 'svg' ? 'image/svg+xml' : 'image/' . $filetype);
 
         /* Quality */
         $quality = (isset($_GET['ql'])) ? $_GET['ql'] : Jojo::getOption('jpeg_quality', 85);

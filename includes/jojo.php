@@ -44,7 +44,7 @@ if (strtolower(trim($_REQUEST['uri'], '/')) == 'setup') {
 }
 
 /* check public cache */
-$extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css');
+$extensions = array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css');
 if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Jojo::ctrlF5()) {
     $cachefile = _CACHEDIR.'/public/'.md5($_GET['uri'] ).'.'.Jojo::getFileExtension($_GET['uri']);
     if (Jojo::fileExists($cachefile)) {
