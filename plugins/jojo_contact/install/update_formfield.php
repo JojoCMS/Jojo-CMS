@@ -208,6 +208,16 @@ $default_fd['formfield']['ff_cols'] = array(
         'fd_order' => $o++
     );
 
+// Max Length Field
+$default_fd['formfield']['ff_maxlength'] = array(
+        'fd_name' => "Max Length",
+        'fd_type' => "integer",
+        'fd_required' => "no",
+        'fd_default' => "0",
+        'fd_help' => "Restrict the size of input allowed. Leave blank for unlimited.",
+        'fd_order' => $o++
+    );
+
 // Order
 $default_fd['formfield']['ff_order'] = array(
         'fd_name' => "Order",

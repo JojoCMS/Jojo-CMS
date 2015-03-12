@@ -31,7 +31,7 @@
         {if $f.showlabel || $f.padlabel}<label for="{$f.field}" class="control-label">{if $f.display && $f.showlabel && $f.type!='heading'}{$f.display}{/if}{if $f.required}<span class="required">*</span>{/if}</label>
         {/if}
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
-    {elseif $f.type == 'textarea'}<textarea class="form-control input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>
+    {elseif $f.type == 'textarea'}<textarea class="form-control input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" {if $f.maxlength}maxlength="{$f.maxlength}" {/if}name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>
     {elseif $f.type == 'checkboxes'}{foreach from=$f.options key=ck item=fo}<div class="checkbox{if $f.class} {$f.class}{/if}"><label for="{$f.field}_{$ck}"><input type="checkbox"{if $f.required} class="required"{/if} name="{$f.field}[]" id="{$f.field}_{$ck}" value="{$fo}"{if $f.valuearr}{foreach from=$f.valuearr item=fa}{if $fa==$fo} checked="checked"{/if}{/foreach}{elseif $f.value == 'checked'} checked="checked"{/if} />{$fo}</label></div>
             {/foreach}
     {elseif $f.type == 'radio'}{foreach from=$f.options key=rk item=button}<div class="radio{if $f.class} {$f.class}{/if}"><label for="{$f.field}_{$rk}"><input type="radio"{if $f.required} class="required"{/if} name="{$f.field}" id="{$f.field}_{$rk}" value="{$button}" {if $f.value == $button} checked="checked"{/if} />{$button}</label></div>
@@ -56,7 +56,7 @@
     </div>{/if}
     {else}{if $f.prependvalue || $f.appendvalue}
     <div class="input-group">
-        {/if}{if $f.prependvalue}<span class="input-group-addon">{$f.prependvalue}</span>{/if}<input type="{if $f.validation=='email'}email{elseif $f.validation=='url'}url{elseif $f.validation=='integer'}number{else}text{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" {if $f.size}size="{$f.size}" {/if}name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.appendvalue}<span class="input-group-addon">{$f.appendvalue}</span>{/if}{if $f.prependvalue || $f.appendvalue}
+        {/if}{if $f.prependvalue}<span class="input-group-addon">{$f.prependvalue}</span>{/if}<input type="{if $f.validation=='email'}email{elseif $f.validation=='url'}url{elseif $f.validation=='integer'}number{else}text{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" {if $f.size}size="{$f.size}" {/if}{if $f.maxlength}maxlength="{$f.maxlength}" {/if}name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />{if $f.appendvalue}<span class="input-group-addon">{$f.appendvalue}</span>{/if}{if $f.prependvalue || $f.appendvalue}
     </div>{/if}
     {/if}
     {if $f.description}<span class="help-block">{$f.description|nl2br}</span>

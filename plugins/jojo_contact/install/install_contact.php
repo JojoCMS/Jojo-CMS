@@ -89,6 +89,7 @@ $query = "
         `ff_options` text NOT NULL,
         `ff_rows` int(11) NOT NULL,
         `ff_cols` int(11) NOT NULL,
+        `ff_maxlength` int(11) NOT NULL,
         `ff_description` text NOT NULL,
         `ff_class` varchar(100) NOT NULL default '',
         `ff_displayonly` tinyint(1) NOT NULL default '0',
