@@ -1465,6 +1465,16 @@ $_options[] = array(
     'options'     => 'yes,no'
 );
 
+$_options[] = array(
+    'id'          => 'robots_assets',
+    'category'    => 'SEO',
+    'label'       => 'Allow asset access to bots',
+    'description' => 'Set css, js, images, files and externals to Index on setup and not excluded by default in robots.txt (recommended by Google).',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no'
+);
+
 /* RSS */
 
 $_options[] = array(

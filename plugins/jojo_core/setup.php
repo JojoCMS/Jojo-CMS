@@ -214,7 +214,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_css'
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_css' WHERE pg_link = 'jojo_plugin_css'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_css'")) {
     echo "Adding <b>CSS Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'CSS Handler', pg_link = 'jojo_plugin_core_css', pg_url = 'css', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'CSS Handler', pg_link = 'jojo_plugin_core_css', pg_url = 'css', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // JSON
@@ -246,7 +246,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_exte
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_external' WHERE pg_link = 'jojo_plugin_external'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_external'")) {
     echo "Adding <b>External File Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'External File Handler', pg_link = 'jojo_plugin_core_external', pg_url = 'external', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'External File Handler', pg_link = 'jojo_plugin_core_external', pg_url = 'external', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // Javascript
@@ -254,7 +254,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_js'"
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_js' WHERE pg_link = 'jojo_plugin_js'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_Js'")) {
     echo "Adding <b>Javascript Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Javascript Handler', pg_link = 'jojo_plugin_core_js', pg_url = 'js', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Javascript Handler', pg_link = 'jojo_plugin_core_js', pg_url = 'js', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // Downloads
@@ -262,7 +262,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_down
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_download' WHERE pg_link = 'jojo_plugin_download'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_download'")) {
     echo "Adding <b>Download Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Download Handler', pg_link = 'jojo_plugin_core_download', pg_url = 'downloads', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Download Handler', pg_link = 'jojo_plugin_core_download', pg_url = 'downloads', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // Files
@@ -270,7 +270,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_file
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_file' WHERE pg_link = 'jojo_plugin_file'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_file'")) {
     echo "Adding <b>Plugin File Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Plugin File Handler', pg_link = 'jojo_plugin_core_file', pg_url = 'files', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Plugin File Handler', pg_link = 'jojo_plugin_core_file', pg_url = 'files', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // Inline Files
@@ -278,7 +278,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_inli
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_inline' WHERE pg_link = 'jojo_plugin_inline'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_Inline'")) {
     echo "Adding <b>Plugin Inline File Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Plugin Inline File Handler', pg_link = 'jojo_plugin_core_inline', pg_url = 'inline', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Plugin Inline File Handler', pg_link = 'jojo_plugin_core_inline', pg_url = 'inline', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // Favicon
@@ -286,7 +286,7 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_favi
     Jojo::updateQuery("UPDATE {page} SET pg_link = 'jojo_plugin_core_favicon' WHERE pg_link = 'jojo_plugin_favicon'");
 } elseif (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_favicon'")) {
     echo "Adding <b>Favicon Handler</b> Page<br />";
-    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Favicon Handler', pg_link = 'jojo_plugin_core_favicon', pg_url = 'favicon.ico', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='no', pg_body = ''", array($_NOT_ON_MENU_ID));
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Favicon Handler', pg_link = 'jojo_plugin_core_favicon', pg_url = 'favicon.ico', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
 // Forgot password
@@ -320,6 +320,26 @@ Jojo::updateQuery("UPDATE {page} SET pg_breadcrumbnav='yes' WHERE pg_breadcrumbn
 Jojo::updateQuery("UPDATE {page} SET pg_footernav='yes' WHERE pg_footernav='auto'");
 Jojo::updateQuery("UPDATE {page} SET pg_sitemapnav='yes' WHERE pg_sitemapnav='auto'");
 Jojo::updateQuery("UPDATE {page} SET pg_xmlsitemapnav ='yes' WHERE pg_xmlsitemapnav ='auto'");
+
+
+/* Set assets to Index by default or not if option set */
+$indexassets = Jojo::getOption('robots_assets', 'yes');
+// CSS
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_css'", array($indexassets));
+// Image
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_image'", array($indexassets));
+// External
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_external'", array($indexassets));
+// Javascript
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_js'", array($indexassets));
+// Downloads
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_download'", array($indexassets));
+// Files
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_file'", array($indexassets));
+// Inline Files
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_inline'", array($indexassets));
+// Favicon
+    Jojo::updateQuery("UPDATE {page} SET pg_index=? WHERE pg_link='jojo_plugin_core_favicon'", array($indexassets));
 
 /* Remove certain pages from XML sitemap */
 Jojo::updateQuery("UPDATE {page} SET pg_index='no', pg_xmlsitemapnav='no', pg_followto='no', pg_followfrom='yes' WHERE pg_link='register.php' OR pg_link='user-profile.php' OR pg_link='submit-form.php' OR pg_link='404.php' OR pg_link='forgot-password.php' OR pg_link='change-password.php' or pg_url='styleguide' or pg_url='jojo_plugin_logout'");
