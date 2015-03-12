@@ -36,14 +36,13 @@
     {/if}<![endif]-->
     {if $modernizr != 'no'}<script src="{$SITEURL}/external/modernizr.min.js"></script>
     {/if}{if $jqueryhead || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="//ajax.googleapis.com/ajax/libs/jquery/{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js"></script>{if $OPTIONS.jquery_ui=='yes'} 
-    <script{if !$htmldoctype} type="text/javascript"{/if} src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>{/if}
+    <script{if !$htmldoctype} type="text/javascript"{/if} src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>{/if}
     <script{if !$htmldoctype} type="text/javascript"{/if}>
         if (typeof jQuery == 'undefined') {ldelim} 
             document.write(unescape("%3Cscript src='{cycle values=$NEXTASSET}external/jquery/jquery-{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}.min.js'{if !$htmldoctype} type='text/javascript'{/if}%3E%3C/script%3E"));{if $OPTIONS.jquery_ui=='yes'} 
-            document.write(unescape("%3Cscript src='{cycle values=$NEXTASSET}{jojoAsset file='external/jquery/jquery.ui.core.min.js'}'{if !$htmldoctype} type='text/javascript'{/if}%3E%3C/script%3E"));{/if}
+            document.write(unescape("%3Cscript src='{cycle values=$NEXTASSET}{jojoAsset file='external/jquery/jquery-ui.min.js'}'{if !$htmldoctype} type='text/javascript'{/if}%3E%3C/script%3E"));{/if}
         {rdelim}
     </script>
-    {/if}{if $jqueryhead && $OPTIONS.jquery_ui=='yes'}<script {if !$htmldoctype}type="text/javascript" {/if}src="{if $OPTIONS.googleajaxlibs == "yes"}//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js{else}{cycle values=$NEXTASSET}external/jquery/jquery.ui.core.min.js{/if}"></script>
     {/if}{if $commonhead && !$isadmin}<script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}{jojoAsset file="js/common.js"}"></script>
     {/if}{if $head}{$head}
     {/if}{if $isadmin}<script type="text/javascript" src="{cycle values=$NEXTASSET}{jojoAsset file="js/commonadmin.js"}"></script>
