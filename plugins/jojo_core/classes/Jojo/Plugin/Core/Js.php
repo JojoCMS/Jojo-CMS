@@ -64,16 +64,14 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
 
         switch($file) {
             case 'common':
-                /* Dynamic Javascript */
-                $js->addText("var siteurl = '" . _SITEURL . "';");
-                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , _SITEURL) . "';");
-
-                /* Core functions */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
-
-                /* FRAJAX */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
-
+                if (Jojo::getOption('jojo_corejs', 'no')=='yes') {
+                    /* Core functions */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/core.js');
+                }
+                if (Jojo::getOption('jojo_corefrajax', 'no')=='yes') {
+                    /* FRAJAX */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
+                }
                 if (Jojo::getOption('jquery_useanytime', 'no')=='yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
                 
@@ -127,7 +125,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 if (Jojo::getOption('js')) {
                     $js->addText(Jojo::getOption('js'));
                 }
-
                 break;
                 
             case 'commonadmin':

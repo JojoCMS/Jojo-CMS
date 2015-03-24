@@ -47,13 +47,15 @@ class Jojo_Stitcher {
         $handle = fopen($file, "r");
         $data = filesize($file) > 0 ? fread($handle, filesize($file)) : '';
         fclose($handle);
-        $this->data .= $data . "\n";
-        $this->numfiles++;
-        $this->dirty = true;
-        $_added[$file] = true;
+        if ($data) {
+            $this->data .= $data . "\n";
+            $this->numfiles++;
+            $this->dirty = true;
+            $_added[$file] = true;
 
-        /* Set the modified to this file if it's the most recent */
-        $this->modified = max($this->modified, filemtime($file));
+            /* Set the modified to this file if it's the most recent */
+            $this->modified = max($this->modified, filemtime($file));
+        }
         return true;
     }
 

@@ -744,6 +744,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'css_typekit',
+    'category'    => 'CSS',
+    'label'       => 'Typekit ID',
+    'description' => 'Typekit ID for loading TypeKit webfonts (inserts asynchronous loading script in the head). use .wf-loading css to hide FOUT.',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
     'id'          => 'css_imports',
     'category'    => 'CSS',
     'label'       => 'Server side CSS Imports',
@@ -997,13 +1007,32 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'jojo_corejs',
+    'category'    => 'JS',
+    'label'       => 'Jojo Core JS',
+    'description' => "Include Jojo Core js functions.",
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'jojo_corefrajax',
+    'category'    => 'JS',
+    'label'       => 'Jojo Core Frajax',
+    'description' => "Include Jojo Core frajax functions.",
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+$_options[] = array(
     'id'          => 'jquery_head',
     'category'    => 'JS',
     'label'       => 'jQuery in head',
-    'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
+    'description' => "Load jQuery from the head (slows page load but required if in-page scripts are used on the site), foot (no), or don't load it at all (neither).",
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no'
+    'options'     => 'yes,no,neither'
 );
 
 $_options[] = array(
@@ -1053,7 +1082,7 @@ $_options[] = array(
     'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no'
+    'options'     => 'yes,no,neither'
 );
 
 $_options[] = array(
