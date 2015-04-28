@@ -49,7 +49,7 @@ class Jojo_Field_checkboxes extends Jojo_Field
             $vals[]         = $option['value'];
             $displayvals[]  = $option['name'];
             $checked[]      = (in_array(trim($option['value']), $checked_values)) ? true : false;
-            //$extras[]       = $option['extra'];
+            $extras[]       = isset($option['extra']) ? $option['extra'] : '';
         }
        
 
@@ -57,7 +57,7 @@ class Jojo_Field_checkboxes extends Jojo_Field
         $smarty->assign('displayvals', $displayvals);
         $smarty->assign('checked',     $checked);
         $smarty->assign('extras',      $extras);
-        $smarty->assign('allextras',   $allextras);
+        //$smarty->assign('allextras',   $allextras);
         $smarty->assign('fd_help',     htmlentities($this->fd_help));
         $smarty->assign('readonly',    $this->fd_readonly);
         $smarty->assign('value',       $this->value);
@@ -69,7 +69,7 @@ class Jojo_Field_checkboxes extends Jojo_Field
     function displayView()
     {
         $this->populate();
-        $checked_values = explode("\n", $this->value);
+        $checked_values = Jojo::ta2array($this->value);
         foreach ($checked_values as $k => $v) {
             $checked_values[$k] = trim($v); //trim whitespace - in case of Windows \r characters
         }

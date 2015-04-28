@@ -74,9 +74,29 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
 
         if ($form['form_captcha']){
-            $captchacode = Jojo::getFormData('CAPTCHA','');
-            if (!PhpCaptcha::Validate($captchacode)) {
-                $errors[] = 'Incorrect Spam Prevention Code entered';
+            if (Jojo::getOption('captcha_recaptcha', 'no')=='yes') {
+               $captcharesponse = Jojo::getFormData('g-recaptcha-response','');
+               $secretkey = Jojo::getOption('captcha_secretkey', '');
+               $url = 'https://www.google.com/recaptcha/api/siteverify';
+                $data = array('secret' => $secretkey, 'response' => $captcharesponse);
+                // use key 'http' even if you send the request to https://...
+                $options = array(
+                    'http' => array(
+                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                        'method'  => 'POST',
+                        'content' => http_build_query($data),
+                    ),
+                );
+                $context  = stream_context_create($options);
+                $result = json_decode(file_get_contents($url, false, $context), true);
+               if (!$result['success']) {
+                    $errors[] = 'Incorrect Spam Prevention Code entered';
+                }
+            } else {
+                $captchacode = Jojo::getFormData('CAPTCHA','');
+                if (!PhpCaptcha::Validate($captchacode)) {
+                    $errors[] = 'Incorrect Spam Prevention Code entered';
+                }
             }
         }
 

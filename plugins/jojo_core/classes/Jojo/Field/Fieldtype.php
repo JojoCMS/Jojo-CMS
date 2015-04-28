@@ -38,7 +38,7 @@ class Jojo_Field_fieldtype extends Jojo_Field
             /* Add all the fieldTypes the plugin provides to the array */
             if (isset($_provides['fieldTypes']) && is_array($_provides['fieldTypes'])) {
                 foreach($_provides['fieldTypes'] as $id => $name) {
-                    $this->_types[$id] = $name;;
+                    $this->_types[$id] = $name;
                 }
             }
         }

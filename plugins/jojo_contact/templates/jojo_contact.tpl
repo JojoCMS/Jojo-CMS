@@ -70,7 +70,10 @@
     {/if}
 {/foreach}
     <div class="form-submit{if $form.form_submit_end} endonly{/if}">
-    {if $form.form_captcha}
+    {if $form.form_captcha}{if $OPTIONS.captcha_recaptcha=="yes" && $OPTIONS.captcha_sitekey}<div class="form-group captcha">
+        <div class="g-recaptcha" data-sitekey="{$OPTIONS.captcha_sitekey}"></div>
+    </div>
+    {else}
         <div class="form-group captcha">
             <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
             <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
@@ -79,7 +82,7 @@
             <label for="CAPTCHA" class="control-label">Spam prevention<span class="required">*</span></label>
             <input type="text" class="form-control input text required" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" />
         </div>
-    {/if}
+    {/if}{/if}
         <div class="form-group submit">
             {if $form.form_submit_label}<label class="control-label"></label>{/if}<button type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="btn btn-primary" data-normalval="{$form.form_submit}" >{$form.form_submit}</button>
        </div>

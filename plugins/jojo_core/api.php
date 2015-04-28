@@ -329,11 +329,42 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'captcha_num_chars',
-    'category'    => 'Config',
+    'category'    => 'Captcha',
     'label'       => 'CAPTCHA numer of characters',
-    'description' => 'Number of characters to display on the CAPTCHA image',
+    'description' => 'Number of characters to display on the PhpCaptcha image',
     'type'        => 'integer',
     'default'     => '3',
+    'options'     => ''
+);
+
+
+$_options[] = array(
+    'id'          => 'captcha_recaptcha',
+    'category'    => 'Captcha',
+    'label'       => 'Use ReCaptcha',
+    'description' => 'Replace phpCaptcha with Google\'s ReCaptcha. See https://www.google.com/recaptcha/ for details',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'captcha_sitekey',
+    'category'    => 'Captcha',
+    'label'       => 'ReCaptcha Site Key',
+    'description' => 'Register and create keys for use with Google ReCaptcha here https://www.google.com/recaptcha/',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'captcha_secretkey',
+    'category'    => 'Captcha',
+    'label'       => 'ReCaptcha Secret Key',
+    'description' => 'Register and create keys for use with Google ReCaptcha here https://www.google.com/recaptcha/',
+    'type'        => 'text',
+    'default'     => '',
     'options'     => ''
 );
 
