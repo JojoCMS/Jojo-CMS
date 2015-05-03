@@ -41,3 +41,8 @@ img.icon-image {
 .AnyTime-win {
     z-index: 1000;
 }
+
+form {
+    .confirmation {margin-top: 5px;}
+    .input-group label {font-weight: 400}
+}
