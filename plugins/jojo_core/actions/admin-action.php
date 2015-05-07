@@ -62,7 +62,7 @@ $frajax = new frajax(true);
 $frajax->title = 'Admin Action - ' . _SITETITLE;
 $frajax->sendHeader();
 $frajax->scrollToTop();
-$frajax->assign("h1", "innerHTML", 'Processing...');
+$frajax->assign("itemtitle", "innerHTML", 'Processing...');
 $frajax->script('parent.$("#error").hide()');
 
 $content = array();
@@ -112,20 +112,21 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
         /* Error with one of the values */
         $frajax->script('parent.$("#error").html("<h4>Error</h4><p>The following errors were found...<br />' . implode('<br />', $errors).'</p>").fadeIn("slow");');
         $frajax->script('parent.$("#message").hide();');
-        $frajax->assign("h1", "innerHTML", 'Save Error');
+        $frajax->assign("itemtitle", "innerHTML", 'Save Error');
         foreach ($errors as $k=>$e) {
             $frajax->script('parent.$("#row_' . $k . '").addClass("has-error");');
         }
         exit();
     } else {
         /* Save record */
-        $frajax->assign("h1", "innerHTML", 'Saving...');
+        $frajax->assign("itemtitle", "innerHTML", 'Saving...');
         $frajax->script('parent.$(".form-group").removeClass("has-error");');
+        $frajax->script("parent.$('#btn_save').removeClass('btn-warning');");
 
         $res = $table->saveRecord();
         if ($res !== false) {
             /* Success message */
-            $frajax->script('parent.$("#h1").html("Save successful.").show("fast");');
+            $frajax->script('parent.$("#itemtitle").html("Save successful.").show("fast");');
             $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4><p>'.$res.'</p>").fadeIn().fadeTo(10000, 1).fadeOut();');
 
             /* Clear the content cache after saving */
@@ -147,7 +148,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
         } else {
             /* Error saving */
             $frajax->script('parent.$("#error").html("<h4>Error</h4> Saving failed").fadeIn();');
-            $frajax->assign("h1", "innerHTML", 'Save Error');
+            $frajax->assign("itemtitle", "innerHTML", 'Save Error');
         }
     }
 
@@ -155,7 +156,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
     $table->getRecord($table->getRecordID());
 
     /* Update display */
-    $frajax->assign("h1", "innerHTML",  Jojo::htmlspecialchars(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname'))));
+    $frajax->assign("itemtitle", "innerHTML",  Jojo::htmlspecialchars(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname'))));
 
     /* Update form values */
     foreach ($table->getHTML('edit') as $fieldname => $f) {
@@ -181,7 +182,7 @@ if (Jojo::getPost('btn_delete', false)) {
     } else {
         /* Error deleting */
         $frajax->script('parent.$("#error").html("<h4>Error</h4>Deleting failed").fadeIn();');
-        $frajax->assign("h1", "innerHTML", 'Delete Error');
+        $frajax->assign("itemtitle", "innerHTML", 'Delete Error');
     }
     exit();
 }
@@ -193,9 +194,10 @@ if (Jojo::getPost('btn_addsimilar', false)) {
     $table->setFieldValue($primaryKey, '');
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>Please change the ' . $table->getOption('displayname') . ' fields as appropriate and press save to create a new ' . $table->getOption('displayname') . '.").fadeIn();');
-    $frajax->assign("h1", "innerHTML", 'Copy of ' . $table->getOption('displayvalue'));
+    $frajax->assign("itemtitle", "innerHTML", 'Copy of ' . $table->getOption('displayvalue'));
     $frajax->script('parent.$(".form-group").removeClass("has-error");');
-
+    $frajax->script("parent.$('#btn_save').addClass('btn-warning');");
+    
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();
     $i = 0;
@@ -204,7 +206,7 @@ if (Jojo::getPost('btn_addsimilar', false)) {
         $i++;
         if (Jojo::timer($start) > 1) {
             $percent = floor($i / count($allfields) * 100);
-            $frajax->assign("h1", "innerHTML", 'Loading ' . $percent . '%...');
+            $frajax->assign("itemtitle", "innerHTML", 'Loading ' . $percent . '%...');
             $start = Jojo::timer();
         }
 
@@ -235,10 +237,9 @@ if (Jojo::getPost('btn_addsimilar', false)) {
     $frajax->assign("id", "value", '');
 
     $frajax->script('parent.$("#message").delay(5000).fadeOut();');
-    $frajax->script('parent.$("#btn_addsimilar").fadeOut("fast");');
-    $frajax->script('parent.$("#btn_delete").fadeOut("fast");');
-    $frajax->script('parent.$("#btn_addchild").fadeOut("fast");');
-
+    $frajax->script('parent.$("#btn_addsimilar").hide();');
+    $frajax->script('parent.$("#btn_delete").hide();');
+    $frajax->script('parent.$("#btn_addchild").hide();');
 }
 
 /* Add Child button pressed */
@@ -251,9 +252,10 @@ if (Jojo::getPost('btn_addchild', false)) {
     }
 
     $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4>New page added as a child to the previous page.").fadeIn();');
-    $frajax->assign("h1", "innerHTML", 'New Child');
+    $frajax->assign("itemtitle", "innerHTML", 'New Child');
     $frajax->script('parent.$(".form-group").removeClass("has-error");');
-
+    $frajax->script("parent.$('#btn_save').addClass('btn-warning');");
+    
     $allfields = $table->getHTML('edit');
     $start = Jojo::timer();
     $i=0;
@@ -262,7 +264,7 @@ if (Jojo::getPost('btn_addchild', false)) {
         $i++;
         if (Jojo::timer($start) > 1) {
             $percent = floor($i / count($allfields) * 100);
-            $frajax->assign("h1", "innerHTML", 'Loading '.$percent.'%...');
+            $frajax->assign("itemtitle", "innerHTML", 'Loading '.$percent.'%...');
             $start = Jojo::timer();
         }
 

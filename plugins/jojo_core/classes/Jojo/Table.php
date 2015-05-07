@@ -180,6 +180,7 @@ class Jojo_Table {
                                         'error'     => $field->getError(),
                                         'type'      => $field->getOption('type'),
                                         'required'  => $field->getOption('required'),
+                                        'help'      => $field->getOption('help'),
                                         'flags'     => $field->getOption('flags'),
                                         'privacy'   => $field->getPrivacy(),
                                         );
@@ -195,6 +196,7 @@ class Jojo_Table {
                                     'name' => $field->getDisplayName(),
                                     'tabname'  => $field->getOption('tabname'),
                                     'showlabel'  => $field->getOption('showlabel'),
+                                    'help'  => $field->getOption('help'),
                                     'html' => $field->getHTML($mode),
                                     'error' => $field->getError(),
                                     'type' => $field->getOption('type'),
@@ -441,6 +443,7 @@ class Jojo_Table {
             $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield')) && $this->getFieldByType('Jojo_Field_Order'));
             $smarty->assign('searchable', (boolean)($menutype == 'searchabletree'));
             $smarty->assign('table', $this->table);
+            $smarty->assign('menutype', $menutype);
             $smarty->assign('displayname', $this->getOption('displayname'));
             return $smarty->fetch('admin/edit-ajaxtree.tpl');
         } elseif ($menutype == 'recursivePath' || $menutype == 'array') {

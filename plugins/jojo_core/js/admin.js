@@ -166,4 +166,9 @@ $(document).ready(function(){
   $(".sortabletable").tablesorter({
       widgets: ['zebra'] 
     }); 
+  $('[data-toggle="tooltip"]').tooltip();
+  $('#fields-wrap form').on('keyup change mousewheel', 'input, select, textarea', function(){
+     $('#btn_save').addClass('btn-warning');
+    });
 });
+

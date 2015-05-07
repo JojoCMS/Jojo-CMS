@@ -1,6 +1,6 @@
     {if $searchable}<div class="search form-group"><input id="treediv_q" class="input form-control" type="text" value="Search" onfocus="if ($(this).val()=='Search') $(this).val('');" /></div>
     {/if}
-    <div id="treediv" class="treediv"></div>
+    <div id="treediv" class="treediv{if $menutype} {$menutype}{/if}"></div>
     <script type="text/javascript">{literal}
         var canLoad = true;
         $(function() {

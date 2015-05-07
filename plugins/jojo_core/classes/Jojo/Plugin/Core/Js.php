@@ -133,7 +133,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , _SITEURL) . "';");
 
                 /* Core functions */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/core.js');
 
                 /* FRAJAX */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
@@ -161,7 +161,8 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/alert.js');
                 /* Buttons */
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/button.js');
-
+                /* Tooltip */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/tooltip.js');
                 /* Core functions */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/admin.js');
 

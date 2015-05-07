@@ -49,6 +49,9 @@
 
 // Scaffolding
 // -------------------------
+@grid-columns:              12;
+@grid-gutter-width:         20px;
+
 @body-bg:               #fff;
 @text-color:            @tertiary;
 
@@ -114,8 +117,12 @@ th, td {
 
 /* Body */
 
+#btn_save {
+  margin: 0 0 20px;
+}
 #buttons {
-  padding: 0 0 20px;
+  margin: 0 0 20px;
+  float: right;
 }
 
 .btn {
@@ -126,12 +133,35 @@ th, td {
   display: none;
 }
 
+.symbol {
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    color: #aaa;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+    position: relative;
+    top: -1px;
+    text-align: center;
+    width: 16px;
+}
+.symbol.required {
+    color: @brand-danger;
+}
+.tooltip {
+    min-width: 200px;
+}
 .field-page {
   display: none;
 }
 
 /* Edit */
 
+#btn_add {
+    margin-bottom: 10px;
+}
 #recordlist select {
     border: none;
 }
@@ -143,7 +173,7 @@ th, td {
     min-height: 400px;
     max-height: 800px;
 }
-
+#treediv.list .jstree-ocl { width: 0}
 .jstree-default-responsive {
     > .jstree-container-ul .jstree-loading > .jstree-ocl {
           background-image: url("../external/jstree/dist/themes/default/throbber.gif")
@@ -162,6 +192,13 @@ th, td {
     }
 }
 
+#fields-wrap h2 {
+    margin-top: 0;
+}
+#fields-wrap .readonly .value {
+    display: inline-block;
+    padding: 4px;
+}
 /* Small devices (tablets, 768px and up) */
 @media (min-width: @screen-sm-min) {
     .jstree-default-responsive {
@@ -202,6 +239,7 @@ th, td {
 #fields label {
     text-align: right;
     padding-top: 5px;
+    font-weight: 400;
     span.glyphicon {
         font-size: 8px;
         vertical-align: 1px;

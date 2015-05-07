@@ -22,6 +22,6 @@
         </div>
     </div>
 
-    <h1 id="h1">{if $displayvalue}{$displayvalue}{elseif $title}{$title}{else}Admin{/if}</h1>
+    <h1 id="h1">{if $title}{$title}{else}Admin{/if}</h1>
     {if $content}{$content}{/if}
     <div id="container">
