@@ -117,13 +117,6 @@ th, td {
 
 /* Body */
 
-#btn_save {
-  margin: 0 0 20px;
-}
-#buttons {
-  margin: 0 0 20px;
-  float: right;
-}
 
 .btn {
     font-family: @headings-font-family;
@@ -192,12 +185,21 @@ th, td {
     }
 }
 
-#fields-wrap h2 {
-    margin-top: 0;
-}
-#fields-wrap .readonly .value {
-    display: inline-block;
-    padding: 4px;
+#fields-wrap {
+    h2 {
+        margin-top: 0;
+    }
+    #btn_save {
+      margin: 0 0 20px;
+    }
+    #buttons {
+      margin: 0 0 20px;
+      float: right;
+    }
+    .readonly .value {
+        display: inline-block;
+        padding: 4px;
+    }
 }
 /* Small devices (tablets, 768px and up) */
 @media (min-width: @screen-sm-min) {
