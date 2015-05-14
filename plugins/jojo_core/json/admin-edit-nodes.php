@@ -448,13 +448,17 @@ function getNodes($t, $node)
         if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
             $query .= "p.pageid, p.pg_order, pg_title, pg_menutitle, ";
         }
-        $query .= sprintf("i.%s, i.%s as thisid, " . ($table->getOption('displayfield')=='pageid' ? 'i.' : '')  . "%s as title FROM {%s} i ",
+        $query .= sprintf("i.%s, i.%s as thisid, " . ($table->getOption('displayfield')=='pageid' ? 'i.' : '')  . "%s as title",
             $table->getOption('primarykey'),
             $table->getOption('primarykey'),
-            $table->getOption('displayfield'),
-            $t
+            $table->getOption('displayfield')
         );
-        if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
+        if ($rollover = $table->getOption('rolloverfield')) {
+            $query .= ", $rollover as rollover";
+        }
+        $query .=  " FROM $t i ";
+            
+       if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
             $query .= " LEFT JOIN {page} p ON (p.pageid=i.pageid) ORDER BY p.pg_order";
         } else {
             $query .= $table->getOption('orderbyfields') ? 'ORDER BY ' . $table->getOption('orderbyfields') : '';
@@ -470,8 +474,9 @@ function getNodes($t, $node)
                 'text'    => Jojo::htmlspecialchars($table->getOption('displayfield')=='pageid' ? $r['pg_title'] : substr(strip_tags($r['title']), 0, 100)),
                 'parent'  => '#',
                 'type'    => 'file',
-                'li_attr' => array ('pos' => $pos++)
-           );
+                'li_attr' => array ('pos' => $pos++),
+                'a_attr' => array ('title' => (isset($r['rollover']) ? $r['rollover'] : ''))
+          );
         }
 
     }
