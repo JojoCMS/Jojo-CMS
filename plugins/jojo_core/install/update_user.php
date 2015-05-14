@@ -16,13 +16,14 @@
 $default_td['user'] = array(
         'td_name' => "user",
         'td_primarykey' => "userid",
-        'td_displayfield' => "if(CHAR_LENGTH(us_login) > 0, us_login, us_email)",
-        'td_rolloverfield' => "CONCAT(us_firstname,' ',us_lastname)",
-        'td_orderbyfields' => "us_login",
+        'td_displayfield' => "if(CHAR_LENGTH(us_firstname) > 0, CONCAT(us_firstname,' ',us_lastname,' (',us_email,')'), if(CHAR_LENGTH(us_login) > 0, us_login, us_email))",
+        'td_rolloverfield' => "if(CHAR_LENGTH(us_login) > 0, us_login, us_email)",
+        'td_orderbyfields' => "us_lastname, us_firstname, us_login",
         'td_topsubmit' => "yes",
-        'td_menutype' => "list",
+        'td_menutype' => "searchabletree",
+        'td_privacyfield' => "us_privacy",
+        'td_deleteoption' => "yes"
     );
-
 
 /* User Tab */
 
