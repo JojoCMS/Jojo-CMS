@@ -371,7 +371,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             $content = $css->data;
             Jojo::RecursiveMkdir(dirname($cachefile));
             file_put_contents($cachefile, $content);
-            touch($cachefile, $css->modified);
+            //touch($cachefile, $css->modified);
             Jojo::publicCache('css/'. $f, $content, $css->modified);
         }
 

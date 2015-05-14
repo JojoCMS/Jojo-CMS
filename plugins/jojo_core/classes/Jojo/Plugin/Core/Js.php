@@ -190,7 +190,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             $content = $js->data;
             Jojo::RecursiveMkdir(dirname($cachefile));
             file_put_contents($cachefile, $content);
-            touch($cachefile, $js->modified);
+            //touch($cachefile, $js->modified);
             Jojo::publicCache('js/' . $f, $content, $js->modified);
         }
         exit;

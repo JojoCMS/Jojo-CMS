@@ -192,9 +192,14 @@ class Jojo {
         static $_files;
 
         /* Try to build from file cache (faster) */
-        $cachefile = _CACHEDIR . '/listPlugins.txt';
+        $cachefile = _CACHEDIR . '/listPlugins.txt';//serialize crashes sometimes, causes blank screen
+        $cachefileJson = _CACHEDIR . '/listPlugins.json';//json is more reliable - transition to this
         if (!is_array($_plugins) && !($forceclean || Jojo::ctrlF5()) && file_exists($cachefile)) {
-            list($_plugins, $_files) = @unserialize(file_get_contents($cachefile));
+            if (file_exists($cachefileJson)) {
+            	list($_plugins, $_files) = @json_decode(file_get_contents($cachefileJson), true);
+            } else {
+            	list($_plugins, $_files) = @unserialize(file_get_contents($cachefile));
+            }
         }
 
         /* Fetch list of all the active plugins */
@@ -241,6 +246,7 @@ class Jojo {
                 /* Cache the result for next time */
                 $_files[$file] = $found;
                 file_put_contents($cachefile, serialize(array($_plugins, $_files)));
+                file_put_contents($cachefileJson, json_encode(array($_plugins, $_files)));
             }
 
             if (!$onlyplugins) {
@@ -270,9 +276,14 @@ class Jojo {
         static $_files;
 
         /* Try to build from file cache (faster) */
-        $cachefile = _CACHEDIR . '/listThemes.txt';
+        $cachefile = _CACHEDIR . '/listThemes.txt';//serialize crashes sometimes, causes blank screen
+        $cachefileJson = _CACHEDIR . '/listThemes.json';//json is more reliable - transition to this
         if (!is_array($_themes) && !($forceclean || Jojo::ctrlF5()) && file_exists($cachefile)) {
-            list($_themes, $_files) = @unserialize(file_get_contents($cachefile));
+            if (file_exists($cachefileJson)) {
+            	list($_themes, $_files) = @json_decode(file_get_contents($cachefileJson), true);
+            } else {
+            	list($_themes, $_files) = @unserialize(file_get_contents($cachefile));
+            }
         }
 
         /* Fetch and cache list of all the active themes */
@@ -291,6 +302,7 @@ class Jojo {
 
             /* Cache a copy to file */
             file_put_contents($cachefile, serialize(array($_themes, $_files)));
+            file_put_contents($cachefileJson, json_encode(array($_themes, $_files)));
         }
 
         /* Check all the themes for the file */
@@ -891,10 +903,11 @@ class Jojo {
             return $publiccachefile; //if no data is supplied, return the name of the cache location
         }
         file_put_contents($publiccachefile, $data);
+        /*
         if (is_int($modified)) {
             touch($publiccachefile, $modified);
         }
-        /* todo: periodic cache cleanup */
+         todo: periodic cache cleanup */
     }
 
     /**
