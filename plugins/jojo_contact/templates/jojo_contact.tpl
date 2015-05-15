@@ -4,17 +4,7 @@
 <input type="hidden" name="form_id" id="form_id" value="{$form.form_id}" />
 <input type="hidden" name="form_redirect" id="form_redirect" value="{$form.form_redirect_url}" />
 <input type="hidden" name="MAX_FILE_SIZE" value="{if $maxuploadvalue}{$maxuploadvalue}{else}5000000{/if}" />
-<script type="text/javascript">
-		<!--
-		function triggerAnalyticsEventTracking(){literal}{{/literal}
-			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', 'submit', '{$pg_url}']);
-		{literal}}{/literal}
-		
-		function fieldsettriggeranalyticstracking($fieldsettitle){literal}{{/literal}
-			_gaq.push(['_trackEvent', '{$form.form_name} {$form.form_id}', $fieldsettitle, '{$pg_url}']);
-		{literal}}{/literal} 
-		-->
-	</script>
+
 <div>
 {if $toaddresses}<div class="form-fieldset form-group">
         <label for="form_sendto" class="control-label">##Send Enquiry To##<span class="required">*</span></label>
@@ -26,7 +16,7 @@
 {/if}
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}
     {if ($f.fieldset && $f.fieldset!=$fields[$x].fieldset) || $k==0}{if $k>0}</fieldset>
-    {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if}>{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
+    {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if} title="{$f.fieldset}">{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
     {/if}{if $f.type!='hidden'}<div class="form-group {if $f.type == 'emailwithconfirmation'}text{elseif !in_array($f.type,array('radio','checkbox'))}{$f.type}{/if}{if $f.class} {$f.class}{/if}">
         {if $f.showlabel || $f.padlabel}<label for="{$f.field}" class="control-label">{if $f.display && $f.showlabel && $f.type!='heading'}{$f.display}{/if}{if $f.required}<span class="required">*</span>{/if}</label>
         {/if}
@@ -92,6 +82,7 @@
         </div>
     </div>
 </div>
+
 </form>
 </div>
 <div id="form{$form.form_id}message" class="message alert alert-info" {if !$message}style="display:none;"{/if}>{$message}</div>

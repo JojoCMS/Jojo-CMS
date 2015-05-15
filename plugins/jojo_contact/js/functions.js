@@ -103,10 +103,9 @@ function preFlight(formData, jqForm, options) {
         .val('Loading...');
         
     // trigger event tracking
-    if (typeof triggerAnalyticsEventTracking == 'function') {
-    	if (typeof(_gaq) != 'undefined') {
-    		triggerAnalyticsEventTracking();
-    	}
+    if (typeof(_gaq) != 'undefined') {
+        var formName = $('h1').text() + ' ' + $('#' + formid).attr('name');
+    	_gaq.push(['_trackEvent', formName + ' id:form' + formID, 'submit']);
     }
     
     return true;
@@ -142,6 +141,12 @@ function showFormTab(formid, tabid) {
         scrollTop: $('#' + formid).offset().top
     }, 500);
     setFormTabNav(formid, tabid);
+    // trigger event tracking
+    if (typeof(_gaq) != 'undefined') {
+        var formName = $('h1').text() + ' ' + $('#' + formid).attr('name');
+        var tabName = $('#' + formid + ' #' + tabid).attr('title');
+		_gaq.push(['_trackEvent', formName, tabName]);
+	}
 }
 
 function setFormTabs(formid) {
@@ -189,7 +194,6 @@ function setFormTabNav(formid, tabid) {
     $(fieldsets).each(function(index) {
         if ($(this).attr('id')==tabid) {
             next = true;
-            fieldsettriggeranalyticstrackingtest("'" + $("legend", this).html() + "'");
         } else if (next==true) {
             nexttabid = $(this).attr('id');
             return false;
@@ -222,13 +226,6 @@ function setFormTabNav(formid, tabid) {
     }
 }
 
-function fieldsettriggeranalyticstrackingtest($fieldsettitle) {
-	if (typeof(_gaq) != 'undefined') {
-		if (typeof fieldsettriggeranalyticstracking == 'function') {
-			fieldsettriggeranalyticstracking($fieldsettitle);
-		}
-	}
-}
 
 /*!
  * jQuery Form Plugin
