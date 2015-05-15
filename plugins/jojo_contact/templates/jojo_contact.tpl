@@ -13,10 +13,10 @@
             {/foreach}
         </select>
     </div>
-{/if}
+{/if}{assign var=tabnum value=1}
 {foreach from=$fields key=k item=f }{assign var=x value=`$k-1`}
     {if ($f.fieldset && $f.fieldset!=$fields[$x].fieldset) || $k==0}{if $k>0}</fieldset>
-    {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if} title="{$f.fieldset}">{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
+    {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if} title="{$tabnum}. {$f.fieldset}"{$tabnum = $tabnum+1}>{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
     {/if}{if $f.type!='hidden'}<div class="form-group {if $f.type == 'emailwithconfirmation'}text{elseif !in_array($f.type,array('radio','checkbox'))}{$f.type}{/if}{if $f.class} {$f.class}{/if}">
         {if $f.showlabel || $f.padlabel}<label for="{$f.field}" class="control-label">{if $f.display && $f.showlabel && $f.type!='heading'}{$f.display}{/if}{if $f.required}<span class="required">*</span>{/if}</label>
         {/if}
