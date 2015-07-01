@@ -4,7 +4,7 @@
     <base href="{if $issecure}{$SECUREURL}{else}{$SITEURL}{/if}/" />    
     {if $htmldoctype}<meta charset="{if $charset}{$charset}{else}utf-8{/if}" />{else}<meta http-equiv="content-Type" content="text/html; charset={if $charset}{$charset}{else}utf-8{/if}" /> 
     {/if}{if $htmldoctype}<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width{if !$OPTIONS.initialscale || $OPTIONS.initialscale=='yes'}, initial-scale=1.0{/if}" />
+    <meta name="viewport" content="width=device-width{if !$OPTIONS.initialscale || $OPTIONS.initialscale=='yes'}, minimum-scale=1.0, maximum-scale=1.0{/if}" />
     {/if}{if $metadescription}<meta name="description" content="{$metadescription}" />
     {elseif $pg_metadesc}<meta name="description" content="{$pg_metadesc}" />
     {/if}{if $pg_metakeywords}<meta name="keywords" content="{$pg_metakeywords}" />
