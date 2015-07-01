@@ -193,6 +193,17 @@ if ($issecure && !empty($_GET['sid']) && (_SITEURL != _SECUREURL) && (str_replac
 session_name('jojo');
 session_start();
 
+/* create memcache object if extension is avaialble */
+$memcache = false;
+if (class_exists('Memcached')) {
+    $server = '127.0.0.1';
+    if (!empty($_REQUEST['server'])) {
+        $server = $_REQUEST['server'];
+    }
+    $memcache = new Memcached();
+    $memcache->addServer($server, 11211);
+}
+
 /* Initialise template engine */
 $templateEngine = Jojo::getOption('templateengine', 'smarty');
 switch ($templateEngine) {
