@@ -489,9 +489,23 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             }
 
         } else {
-            /* No change */
             $new_im = $im;
             $nochange = true;
+           /* apply filter */
+            if (isset($filters[$f])) {
+                if (strpos($filters[$f], ';')) {
+                    $ifs = explode(';', $filters[$f]);
+                    foreach ($ifs as $if) {
+                        $if = explode(',', $if);
+                        $filter = array_shift($if);
+                        $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
+                    }
+                } else {
+                    $if = explode(',', $filters[$f]);
+                    $filter = array_shift($if);
+                    $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
+                }
+            }
         }
 
         /* create folders in cache */
