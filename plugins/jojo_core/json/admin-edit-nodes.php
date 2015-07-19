@@ -188,7 +188,7 @@ function getNodes($t, $node)
             }
             if ($table->getOption('categoryfield')) {
                 /* Add nodes from traditional categories */
-                $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pageid');
+                $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pg_order,pg_title');
                 $query = "SELECT " . ($pagesort ? "p.pageid, p.pg_order, " : '');
                 $query .= sprintf("c.%s as id, " . ($categoryTable->getOption('displayfield')=='pageid' ? 'c.' : '')  . "%s as title, c.%s as parentcategory FROM {%s} c",
                     $table->getOption('primarykey'),
@@ -199,7 +199,7 @@ function getNodes($t, $node)
                 if ($pagesort) {
                     $query .= " LEFT JOIN {page} p ON (p.pageid=c.pageid) ORDER BY p.pg_order";
                 } else {
-                    $query .= $categoryTable->getOption('orderbyfields') ? ' ORDER BY ' . $categoryTable->getOption('orderbyfields') : '';
+                    $query .= $table->getOption('orderbyfields') ? ' ORDER BY ' . $table->getOption('orderbyfields') : '';
                 }
                 $res = Jojo::selectQuery($query);
 
@@ -222,7 +222,7 @@ function getNodes($t, $node)
         } else {
             /* Get categories if at root level */
             if ($node == 0) {
-                $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pageid');
+                $pagesort = (boolean)($categoryTable->getOption('orderbyfields')=='pg_order,pg_title');
                 $query = "SELECT " . ($pagesort ? "p.pageid, p.pg_order, " : '');
                 $query .= sprintf("c.%s as id, " . ($categoryTable->getOption('displayfield')=='pageid' ? 'c.' : '')  . "%s as title FROM {%s} c ",
                     $categoryTable->getOption('primarykey'),
