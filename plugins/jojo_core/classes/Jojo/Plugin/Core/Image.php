@@ -493,6 +493,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             $nochange = true;
            /* apply filter */
             if (isset($filters[$f])) {
+                $nochange = false;
+                if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
+                    imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
+                    imagealphablending($new_im, false);
+                }
                 if (strpos($filters[$f], ';')) {
                     $ifs = explode(';', $filters[$f]);
                     foreach ($ifs as $if) {
