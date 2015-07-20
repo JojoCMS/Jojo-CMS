@@ -139,8 +139,7 @@ function getNodes($t, $node)
                         'text'     => Jojo::htmlspecialchars($r['title']),
                         'parent'   => ($r['parent'] ? 'c' . $r['parent'] : '#'),
                         'type'     => 'folder',
-                        'li_attr'  => array ('pos' => $pos++),
-                        'children' => true
+                        'li_attr'  => array ('pos' => $pos++)
                     );
                 }
             }
