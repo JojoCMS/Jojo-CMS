@@ -1682,10 +1682,10 @@ $_options[] = array(
 $_options[] = array(
     'id'          => 'initialscale',
     'category'    => 'Config',
-    'label'       => 'Initial Scale',
-    'description' => 'Include "Initial Scale = 1" in the head. Set to yes for sites you don\'t want scaled to fit on smaller screens.',
+    'label'       => 'No Scale',
+    'description' => 'Force Scale = 1 in the head. Set to no for non-responsive sites.',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no'
 );
 

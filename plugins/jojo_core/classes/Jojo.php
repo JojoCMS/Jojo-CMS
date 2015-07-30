@@ -1263,6 +1263,23 @@ class Jojo {
         return $text;
     }
 
+    /* Convert flat array into a tree */
+    static function list2tree($list, $root = 0, $idfield='id', $parentfield='parentid') {
+        $tree = array();
+        # Traverse the tree and search for direct children of the root
+        foreach($list as $k => $node) {
+            # A direct child is found
+            if($node[$parentfield] == $root) {
+                $tree[$k] = $node;
+                # Remove item from tree (we don't need to traverse this again)
+                unset($list[$k]);
+                # parse its children
+                $tree[$k]['children'] = self::list2tree($list, $node[$idfield], $idfield, $parentfield);
+            }
+        }
+        return empty($tree) ? null : $tree;
+    }
+
     /* Rewrites standard Jojo URLs */
     static function rewrite($table, $id, $name='index', $suffix='s', $allowurlprefix='', $pagenumber=1)
     {
@@ -3357,8 +3374,8 @@ class Jojo {
 
     static function getNav($root=0, $subnavLevels=0, $field='mainnav')
     {
-        global $_USERGROUPS, $selectedPages;
-
+        global $_USERGROUPS, $selectedPages, $isadmin;
+        
         /* Get multilanguage data */
             global $page;
             $mldata = Jojo::getMultiLanguageData();
@@ -3422,7 +3439,7 @@ class Jojo {
                 }
             }
         }
-        return $nav;
+         return $nav;
     }
 
     /* Get currently selected page and step back up through parents to build a current section/sub pages array */
