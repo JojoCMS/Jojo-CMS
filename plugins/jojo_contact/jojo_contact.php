@@ -199,6 +199,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
             $errors = $validationReturn[0];
+            /* filter to set destination dynamically based on submitted form content */
+            $to_email       = Jojo::applyFilter("form_destination", $to_email, $fields);
         }
 
         unset($field);
