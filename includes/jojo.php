@@ -17,7 +17,6 @@
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core
  */
-
 /* Include config files or begin install process */
 if (!file_exists('config.php')) {
     header("Content-type: text/html; charset=utf-8");
@@ -43,6 +42,14 @@ if (strtolower(trim($_REQUEST['uri'], '/')) == 'setup') {
     exit;
 }
 
+ob_start(); // start the output buffer
+
+define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
+define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
+define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
+
+
+
 /* check public cache */
 $extensions = array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css');
 if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Jojo::ctrlF5()) {
@@ -56,11 +63,13 @@ if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Joj
         header('Content-Disposition: inline; filename=' . basename($cachefile) . ';');
         header('Content-Transfer-Encoding: binary');
         echo $data;
+        ob_end_flush(); // Send the output and turn off output buffering
         exit();
     }
     unset($cachefile);
     unset($extensions);
 }
+
 
 /* Set php ini settings */
 //These settings can be added to .htaccess, however Dreamhost (and possibly others) does not allow these.
@@ -99,9 +108,7 @@ define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
 define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
 define('_SITETITLE',        Jojo::getOption('sitetitle'));
 define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
-define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
-define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
+
 
 if (Jojo::usingSslConnection()) {
     define('_PROTOCOL', 'https://');
@@ -123,7 +130,7 @@ if (preg_match('%^/?' . _SITEFOLDER . '/?(.*)%', $_SERVER['REQUEST_URI'], $regs)
     $fullSiteUri = trim($_SERVER['REQUEST_URI'], '/');
 }
 
-/* Remove the langauge code off the front of the URI if this is a multi language site */
+/* Remove the subsection code off the front of the URI if this is a multi-sectioned site */
 $mldata = Jojo::getMultiLanguageData();
 $uri = $fullSiteUri;
 /* Find the first part of the uri */
@@ -244,6 +251,38 @@ if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
 $smarty->assign('IS_MOBILE',            Jojo::isMobile());
 
+/* Authentication */
+$_USERGROUPS = array('everyone');
+
+/* Who's out there?  */
+if ($authClass = Jojo::getFormData('_jojo_authtype', false)) {
+    // TODO: clean this input
+    $authClass = 'Jojo_Auth_' . $authClass;
+    $_SESSION['userid'] = call_user_func(array($authClass, 'authenticate'));
+}
+
+/* Setup global variables for already logged in user */
+Jojo::authenticate();
+
+// page cache settings
+$dynamic_url    = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
+$cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
+
+/* Check for cached copy of page and display if not expired */
+if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::noCache() && !Jojo::ctrlF5() && count($_POST) == 0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
+        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
+        $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
+        $etag = md5($last_modified);
+        readfile($cache_file); //read Cache file
+        header("Content-type: text/html; charset=" . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
+        header('Content-Length: ' . strlen(ob_get_contents()));
+        echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
+        ob_end_flush(); //Flush and turn off output buffering
+        exit(); //no need to proceed further, exit the flow.
+} elseif ((Jojo::ctrlF5() || Jojo::noCache()) && file_exists($cache_file)){
+        unlink($cache_file);
+}
+
 /* Include plugin api.php's so filters and hooks get added */
 if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
     $all = '<?php ';
@@ -273,18 +312,6 @@ if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
     include(_CACHEDIR . '/api.txt');
 }
 
-/* Authentication */
-$_USERGROUPS = array('everyone');
-
-/* Who's out there?  */
-if ($authClass = Jojo::getFormData('_jojo_authtype', false)) {
-    // TODO: clean this input
-    $authClass = 'Jojo_Auth_' . $authClass;
-    $_SESSION['userid'] = call_user_func(array($authClass, 'authenticate'));
-}
-
-/* Setup global variables for already logged in user */
-Jojo::authenticate();
 
 /* Store the search terms used if the refered is external */
 if (!isset($_SESSION['referer']) && isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],_SITEURL) === false) {
@@ -304,20 +331,6 @@ if (isset($_POST['set_mobile'])) {
     Jojo::redirect(_PROTOCOL . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
 }
 
-/* Check for cached copy of page and display if required */
-if (_CONTENTCACHE && count($_POST) == 0 && !Jojo::ctrlF5() && Jojo::getFileExtension($_SERVER['REQUEST_URI']) != 'css'){
-    // Never retrieve cache when data is posted, and never use cache if CTRL-F5 is set
-    $cacheuserid = isset($_USERID) ? $_USERID : 0;
-    $contentcache = Jojo::selectQuery("SELECT * FROM {contentcache} WHERE cc_url = ? AND cc_userid = ? AND cc_expires > ? LIMIT 1", array(_PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], $cacheuserid, strtotime('now')));
-    if (count($contentcache) == 1) {
-        $html = str_replace('<!-- [[CACHE INFORMATION]] -->','<!-- [Page generated '.date('d M y h:ia').' based on copy cached '.date('d M h:i',$contentcache[0]['cc_cached']).'. This copy expires '.date('d M h:i',$contentcache[0]['cc_expires']).'] -->', $contentcache[0]['cc_content']);
-        $html = Jojo::applyFilter('cached_content', $html); //plugins should clear the HTML to regenerate from scratch
-        if (!empty($html)) {
-            echo $html;
-            exit;
-        }
-    }
-}
 
 /* Setup debug mode */
 if (_DEBUG) {
@@ -362,11 +375,13 @@ try {
     $page = Jojo_Plugin::getPage($data);
 } catch (Jojo_Exception_IncludeFile $e) {
     include $e->getFileToInclude();
+    ob_end_flush(); // Send the output and turn off output buffering
     exit;
 }
 /* Page not found, return 404 page */
 if ($page === false) {
     include(_BASEPLUGINDIR . '/jojo_core/404.php');
+    ob_end_flush(); // Send the output and turn off output buffering
     exit;
 }
 
@@ -381,6 +396,7 @@ if (($page->id == 1) && (rtrim($correcturl,'/') != rtrim($actualurl,'/')))  {
     Jojo::redirect($correcturl);
 } elseif ($correcturl != $actualurl) {
     Jojo::redirect($correcturl);
+    ob_end_flush(); // Send the output and turn off output buffering
     exit();
 }
 $smarty->assign('correcturl', $correcturl);
@@ -408,6 +424,7 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
     /* Output the html to the browser */
     header('Content-Length: ' . strlen($html));
     echo $html;
+    ob_end_flush(); // Send the output and turn off output buffering
     exit();
 }
 
@@ -441,6 +458,7 @@ $content = Jojo::applyFilter('jojo:content', $content); //plugins - add any addi
 
 if (isset($content['header']) && $content['header']==404) {
     include(_BASEPLUGINDIR . '/jojo_core/404.php');
+    ob_end_flush(); // Send the output and turn off output buffering
     exit;
 }
 
@@ -574,25 +592,21 @@ $html = Jojo::applyFilter('output', $html);
 $html = str_replace('##', '', $html);
 $html = preg_replace('/<a([^>]*?)href=["\']\\[#\\]([a-z0-9-_]*)?["\']([^>]*?)>/i', '<a$1href="#$2"$3>', $html);
 
+header('Content-Length: ' . strlen($html));
+echo $html;
+
 /* Cache the page */
-if (_CONTENTCACHE && !Jojo::noCache() && ($page->page['pg_contentcache'] != 'no')) {
-    $cacheuserid = isset($_USERID) ? $_USERID : 0;
-    $values = array(
-        _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
-        $cacheuserid,
-        $html,
-        strtotime('now'),
-        strtotime('+'._CONTENTCACHETIME . ' second')
-    );
-    Jojo::insertQuery("REPLACE INTO {contentcache} SET cc_url = ?, cc_userid=?, cc_content=?, cc_cached=?, cc_expires=?", $values);
-    $html = str_replace('<!-- [[CACHE INFORMATION]] -->', '<!-- [Page generated '.date('d M y h:ia',strtotime('now')) . ' and cached until '.date('d M y h:ia',strtotime('+'._CONTENTCACHETIME . ' second')) . '] -->',$html);
-} else {
-    $html = str_replace('<!-- [[CACHE INFORMATION]] -->', '<!-- [Page generated '.date('d M y h:ia',strtotime('now')) . '] -->',$html);
+if (!$_USERID && count($_POST) == 0 && _CONTENTCACHE && !Jojo::noCache() && ($page->page['pg_contentcache'] != 'no')) {
+    if (!is_dir(_CACHEDIR.'/public/')) { //create a new folder if we need to
+        mkdir(_CACHEDIR.'/public/');
+    }
+    $fp = fopen($cache_file, 'w');  //open file for writing
+    fwrite($fp, ob_get_contents()); //write contents of the output buffer in Cache file
+    fclose($fp); //Close file pointer
 }
 
 /* Output the html to the browser */
-header('Content-Length: ' . strlen($html));
-echo $html;
+ob_end_flush(); //Flush and turn off output buffering
 
 
 /* run any auto-maintenance tasks */
