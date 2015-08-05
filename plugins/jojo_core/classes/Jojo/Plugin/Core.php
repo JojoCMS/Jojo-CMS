@@ -615,16 +615,17 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
 
 
-    static function sendCacheHeaders($timestamp, $cachetime=28800) {
+    static function sendCacheHeaders($timestamp=0, $cachetime=28800) {
         // A PHP implementation of conditional get, see
         //   http://fishbowl.pastiche.org/archives/001132.html
+        $timestamp = $timestamp ? $timestamp : time();
         $last_modified = substr(date('r', $timestamp), 0, -5) . 'GMT';
         $etag = md5($last_modified);
         // Send the headers
         header("Last-Modified: $last_modified");
         header("ETag: $etag");
         header('Cache-Control: private, max-age=' . $cachetime);
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
+        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', $timestamp + $cachetime));
         header('Pragma: ');
         // See if the client has provided the required headers
         $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ?
