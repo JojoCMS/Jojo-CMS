@@ -46,7 +46,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         if ($num && $exclude) $num++;
         $shownumcomments = (boolean)(!$minimal && class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
         $query  = "SELECT " . ($minimal ? "ar.articleid, ar_date, ar_title, ar_author, ar_livedate, ar_expirydate, ar_url, ar_category," : "ar.*,  ac.*,");
-        $query  .= " p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
+        $query  .= " p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate, pg_contentcache";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
@@ -80,7 +80,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
      /* get items by id - accepts either an array of ids returning a results array, or a single id returning a single result  */
     static function getItemsById($ids = false, $sortby=false, $include=false) {
         $shownumcomments = (boolean)(class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
-        $query  = "SELECT ar.articleid as id, ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate";
+        $query  = "SELECT ar.articleid as id, ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate, pg_contentcache";
         $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
         $query .= " FROM {article} ar";
         $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
@@ -254,7 +254,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
         /* Are we looking at an article or the index? */
-        $articleid = Jojo::getFormData('id',        0);
+        $id = Jojo::getFormData('id',        0);
         $url       = Jojo::getFormData('url',      '');
         $action    = Jojo::getFormData('action',   '');
         $categorydata =  Jojo::selectRow("SELECT * FROM {articlecategory} WHERE pageid = ?", $pageid);
@@ -303,9 +303,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
 		$featuredfirst = (boolean)(Jojo::getOption('article_features', 'never')=='index' || Jojo::getOption('article_features', 'never')=='always');
+        /* Get a minimal data set of all articles */
         $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true, $featuredfirst);
 
-        if ($articleid || !empty($url)) {
+        if ($id || !empty($url)) {
+            /* 
+            * individual item 
+            */
+
             /* find the current, next and previous items */
             $article = array();
             $prevarticle = array();
@@ -316,8 +321,9 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             foreach ($articles as $a) {
                 if (!empty($url) && $url==$a['ar_url']) {
                     $article = $a;
+                    $id = $article['articleid'];
                     $next = true;
-               } elseif ($articleid==$a['articleid']) {
+               } elseif ($id==$a['articleid']) {
                     $article = $a;
                     $next = true;
                 } elseif ($next==true) {
@@ -337,17 +343,22 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 include(_BASEPLUGINDIR . '/jojo_core/404.php');
                 exit;
             } else {
+                /* Get the full article */
                 $article = self::getItemsById($article['articleid'], '', $include='showhidden');
             }
-
+            /* allow other plugins or theme to modify the item content */
             if ($modarticle = Jojo::runHook('modify_article', array($article))) {
                 $article = $modarticle;
             }
-            /* Get the specific article */
-            $articleid = $article['articleid'];
+            
+            /* allow item cacheing if set to yes or auto */
+            if  ($article['pg_contentcache']=='no') {
+                Jojo::noCache(true);
+            }
+            
             $article['ar_datefriendly'] = Jojo::mysql2date($article['ar_date'], "long");
 
-            /* calculate the next and previous articles */
+            /* assign the previous, next, and one after next items to Smarty */
             if (Jojo::getOption('article_next_prev') == 'yes') {
                 if (!$prevarticle && $nnextarticle) {
                     $smarty->assign('nnextarticle', self::getItemsById($nnextarticle['articleid']));
@@ -363,10 +374,10 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Get tags if used */
             if (class_exists('Jojo_Plugin_Jojo_Tags')) {
                 /* Split up tags for display */
-                $tags = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $articleid);
+                $tags = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $id);
                 $smarty->assign('tags', $tags);
 
-                /* generate tag cloud of tags belonging to this article */
+                /* generate tag cloud of tags belonging to this item */
                 $article_tag_cloud_minimum = Jojo::getOption('article_tag_cloud_minimum');
                 if (!empty($article_tag_cloud_minimum) && ($article_tag_cloud_minimum < count($tags))) {
                     $itemcloud = Jojo_Plugin_Jojo_Tags::getTagCloud('', $tags);
@@ -375,7 +386,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                /* get related articles if tags plugin installed and option enabled */
                 $numrelated = Jojo::getOption('article_num_related');
                 if ($numrelated) {
-                    $related = Jojo_Plugin_Jojo_Tags::getRelated('jojo_article', $articleid, $numrelated, 'jojo_article'); //set the last argument to 'jojo_article' to restrict results to only articles
+                    $related = Jojo_Plugin_Jojo_Tags::getRelated('jojo_article', $id, $numrelated, 'jojo_article'); //set the last argument to 'jojo_article' to restrict results to only articles
                     $smarty->assign('related', $related);
                 }
             }
@@ -403,7 +414,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $smarty->assign('jojo_article', $article);
             $smarty->assign('jojo_articles', $articles);
 
-            /* Prepare fields for display */
+            /* Prepare meta content fields for display */
             if (isset($article['ar_htmllang'])) {
                 // Override the language setting on this page if necessary.
                 $content['pg_htmllang'] = $article['ar_htmllang'];
@@ -414,6 +425,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $content['seotitle']         = Jojo::either($article['seotitle'], $article['title'] . ($article['subtitle'] ? ' - ' . $article['subtitle']: ''));
             $content['breadcrumbs']      = $breadcrumbs;
 
+            /* if a metadescription is not set for this item, autogenerate one using the option template */
             if (!empty($article['ar_metadesc'])) {
                 $content['meta_description'] = $article['ar_metadesc'];
             } else {
@@ -435,47 +447,59 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                         $content['meta_description'] = str_replace($metafilters, $metafilterreplace, $meta_description_template);
             }
             $content['metadescription']  = $content['meta_description'];
+            
+            /* Prepare OpenGraph metatags (for Facebook etc) if required */
             if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes')) {
                 $content['ogtags']['description'] = $article['description'];
                 $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . $article['image'] : '';
                 $content['ogtags']['title'] = $article['title'];
             }
+
             $content['content'] = $smarty->fetch('jojo_article.tpl');
 
         } else {
 
-            /* index section */
+            /* 
+            * index section 
+            */
+            
+           /* don't allow index cacheing if set to no or auto */
+            if  ($this->page['pg_contentcache']!='yes') {
+                Jojo::noCache(true);
+            }
+
+           /* check what page of the index it is  */
             $pagenum = Jojo::getFormData('pagenum', 1);
             if ($pagenum[0] == 'p') {
                 $pagenum = substr($pagenum, 1);
             }
             $smarty->assign('pagenum', $pagenum);
 
-            /* get number of articles for pagination */
+            /* get number of items per page for pagination */
             $articlesperpage = Jojo::getOption('articlesperpage', 40);
             $start = ($articlesperpage * ($pagenum-1));
             $numarticles = count($articles);
             $numpages = ceil($numarticles / $articlesperpage);
-            /* calculate pagination */
+            /* calculate number of pages required */
             $pagination = '';
             if ($numpages > 1) {
                 $smarty->assign('numpages', $numpages);
                 $smarty->assign('pageurl', $pageprefix . self::_getPrefix('article', $categorydata['articlecategoryid']));
+                /* use the global pagination template */
                 $pagination = $smarty->fetch('pagination.tpl');
             }
-
             $smarty->assign('pagination', $pagination);
 
             /* clear the meta description to avoid duplicate content issues */
             $content['metadescription'] = '';
 
-            /* get article content for just the ones on the index page and assign to Smarty */
+            /* get full content for just the items on this index page and assign to Smarty */
             $articles = array_slice($articles, $start, $articlesperpage);
             $articleids = array();
             foreach ($articles as $k=>$a){
                 $articleids[$k] = $a['articleid'];
             }
-			$sortby = $featuredfirst ? false : $sortby;
+            $sortby = $featuredfirst ? false : $sortby;
             $articles = self::getItemsById($articleids, $sortby, $include='showhidden');
             $smarty->assign('jojo_articles', $articles);
 
