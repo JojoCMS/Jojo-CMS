@@ -86,13 +86,9 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             case 'css':
                 header('Content-Type: text/css');
                 if (!$fromcache) {
-                    if (!defined('_CONTENTCACHE'))     define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-                    if (!defined('_CONTENTCACHETIME')) define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
                     $css = new Jojo_Stitcher();
                     $css->type = 'css';
-                    $css->getServerCache();
                     $css->addText($content);
-                    $css->setServerCache();
                     $content = $css->fetch();
                 }
                 break;
@@ -107,8 +103,6 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                     $nojsmin[] = 'ext-all.js';
 
                     /* also anything with .pack.js in the filename can't be jsminned */
-
-
                     if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
                         set_time_limit(180);
                         require_once(_BASEPLUGINDIR . '/jojo_core/external/jshrink/src/JShrink/Minifier.php');
@@ -118,9 +112,9 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                             $newContent = $content;
                         }
                         if (strlen($newContent) <= strlen($content)) {
-                            $content = $newContent;
+                            $content = sprintf('/* JShrink shrunk file by %s bytes */', strlen($newContent) - strlen($content)) . $newContent;
                         } else {
-                            $content = sprintf('/* JSMIN enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
+                            $content = sprintf('/* JShrink enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
                         }
                     }
                 }

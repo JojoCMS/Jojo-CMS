@@ -60,7 +60,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
 
         $js = new Jojo_Stitcher();
         $js->type = 'javascript';
-        $js->getServerCache();
 
         switch($file) {
             case 'common':
@@ -181,7 +180,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
-        $js->setServerCache();
         $optimise = (boolean)(strpos($f, 'pack')===false && strpos($f, 'min')===false);
         $js->output($optimise);
 

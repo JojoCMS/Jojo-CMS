@@ -62,7 +62,6 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
 
         $start = Jojo::timer();
         $css = new Jojo_Stitcher();
-        $css->getServerCache();
         switch($file) {
             case 'styles':
                 /* Include Boilerplate css reset */
@@ -363,7 +362,6 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             exit;
         }
 
-        $css->setServerCache();
         $css->output();
 
         /* Cache a copy for later */
