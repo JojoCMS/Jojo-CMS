@@ -189,7 +189,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
             $i['root'] = Jojo::getSectionRoot($i['pageid']);
-            if ( $i['pg_parent']==$notOnMenu || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if ( (isset($i['pg_parent']) && $i['pg_parent']==$notOnMenu) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
