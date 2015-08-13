@@ -181,10 +181,15 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $pagePermissions = new Jojo_Permissions();
         }
         $mldata = Jojo::getMultiLanguageData();
+        static $notOnMenu;
+        if (!$notOnMenu) {
+            $notOnMenu = Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_title = 'Not on Menu'");
+            $notOnMenu = $notOnMenu['pageid'];
+        }
         foreach ($items as $k=>&$i){
             $pagePermissions->getPermissions('page', $i['pageid']);
             $i['root'] = Jojo::getSectionRoot($i['pageid']);
-            if ( (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if ( $i['pg_parent']==$notOnMenu || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
