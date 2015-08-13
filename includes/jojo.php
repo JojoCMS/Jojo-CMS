@@ -154,23 +154,6 @@ define('_FULLSITEURI', $fullSiteUri); // Site URI including the langauge prefix
 $relativeurl = (_SITEFOLDER!='') ? ltrim(str_replace(_SITEFOLDER . '/', '', $_SERVER['REQUEST_URI']) , '/') : ltrim($_SERVER['REQUEST_URI'], '/');
 define('_RELATIVE_URL', $relativeurl );
 
-
-/* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
-if ($issecure) {
-    $ASSETS[] = _SECUREURL . '/';
-} else {
-    /* define assets array */
-    $ASSETS = array();
-    foreach (explode("\n", Jojo::getOption('assetdomains')) as $a) {
-        if (trim($a)) {
-            $ASSETS[] = trim($a) . '/';
-        }
-    }
-    if (empty($ASSETS)) {
-        $ASSETS[] = _SITEURL . '/';
-    }
-}
-
 /* Setup and start custom session handler */
 @ini_set('session.save_handler', 'user');
 session_set_save_handler(array('Jojo_SessionHandler', 'open'),
@@ -199,6 +182,66 @@ if ($issecure && !empty($_GET['sid']) && (_SITEURL != _SECUREURL) && (str_replac
 }
 session_name('jojo');
 session_start();
+
+/* Authentication */
+$_USERGROUPS = array('everyone');
+
+/* Check for someone logging in  */
+$loginfailure = false;
+if (Jojo::getFormData('username', false) && $authClass = Jojo::getFormData('_jojo_authtype', false)) {
+    // TODO: clean this input
+    $authClass = 'Jojo_Auth_' . $authClass;
+    $logindata = call_user_func(array($authClass, 'authenticate'));
+    if (is_array($logindata) && isset($logindata['userid'])) {
+        $_SESSION['userid'] = $logindata['userid'];
+    } else {
+        $loginfailure = $logindata;
+    }
+} else {
+/* Setup global variables for already logged in user */
+    $logindata = Jojo::authenticate();
+}
+
+// page cache settings
+$dynamic_url    = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
+$cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
+/* Check for cached copy of page and display if not expired */
+if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST) == 0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
+        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
+        $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
+        $etag = md5($last_modified);
+        readfile($cache_file); //read Cache file
+        header("Content-type: text/html; charset=" . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
+        header('Content-Length: ' . strlen(ob_get_contents()));
+        echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
+        ob_end_flush(); //Flush and turn off output buffering
+        exit(); //no need to proceed further, exit the flow.
+} elseif (Jojo::ctrlF5() && file_exists($cache_file)){
+        unlink($cache_file);
+}
+
+/* Set up a memcache instance if it is available */
+$mCache = false;
+if (class_exists('Memcache')) {
+    $mCache = new Memcache();
+    if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
+}
+
+/* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
+if ($issecure) {
+    $ASSETS[] = _SECUREURL . '/';
+} else {
+    /* define assets array */
+    $ASSETS = array();
+    foreach (explode("\n", Jojo::getOption('assetdomains')) as $a) {
+        if (trim($a)) {
+            $ASSETS[] = trim($a) . '/';
+        }
+    }
+    if (empty($ASSETS)) {
+        $ASSETS[] = _SITEURL . '/';
+    }
+}
 
 /* Initialise template engine */
 $templateEngine = Jojo::getOption('templateengine', 'smarty');
@@ -250,38 +293,6 @@ $smarty->assign('SITEFOLDER',       _SITEFOLDER);
 if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
 $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
 $smarty->assign('IS_MOBILE',            Jojo::isMobile());
-
-/* Authentication */
-$_USERGROUPS = array('everyone');
-
-/* Who's out there?  */
-if ($authClass = Jojo::getFormData('_jojo_authtype', false)) {
-    // TODO: clean this input
-    $authClass = 'Jojo_Auth_' . $authClass;
-    $_SESSION['userid'] = call_user_func(array($authClass, 'authenticate'));
-}
-
-/* Setup global variables for already logged in user */
-Jojo::authenticate();
-
-// page cache settings
-$dynamic_url    = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
-$cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
-
-/* Check for cached copy of page and display if not expired */
-if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::noCache() && !Jojo::ctrlF5() && count($_POST) == 0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
-        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
-        $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
-        $etag = md5($last_modified);
-        readfile($cache_file); //read Cache file
-        header("Content-type: text/html; charset=" . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
-        header('Content-Length: ' . strlen(ob_get_contents()));
-        echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
-        ob_end_flush(); //Flush and turn off output buffering
-        exit(); //no need to proceed further, exit the flow.
-} elseif ((Jojo::ctrlF5() || Jojo::noCache()) && file_exists($cache_file)){
-        unlink($cache_file);
-}
 
 /* Include plugin api.php's so filters and hooks get added */
 if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
@@ -362,6 +373,16 @@ if ($templateEngine == 'dwoo') {
     $smarty->setCharset($charset);
 }
 $smarty->assign('charset', $charset);
+
+/* User is logged in */
+$smarty->assign('loggedIn', (boolean)(!empty($logindata)));
+$smarty->assign('userrecord', $logindata);
+if (in_array('admin',$_USERGROUPS)) {
+   $smarty->assign('adminloggedin', true);
+   // allow admins to see hidden pages
+   $_SESSION['showhidden'] = true;
+}
+$smarty->assign('loginmessage', $loginfailure);
 
 /* After login hook */
 if ( isset($_SESSION['loggingin']) && $_SESSION['loggingin']) Jojo::runHook('action_after_login');
@@ -596,13 +617,16 @@ header('Content-Length: ' . strlen($html));
 echo $html;
 
 /* Cache the page */
-if (!$_USERID && count($_POST) == 0 && _CONTENTCACHE && !Jojo::noCache() && ($page->page['pg_contentcache'] != 'no')) {
+if (_CONTENTCACHE && !Jojo::noCache() && !$_USERID && count($_POST) == 0 && ($page->page['pg_contentcache'] != 'no')) {
     if (!is_dir(_CACHEDIR.'/public/')) { //create a new folder if we need to
         mkdir(_CACHEDIR.'/public/');
     }
     $fp = fopen($cache_file, 'w');  //open file for writing
     fwrite($fp, ob_get_contents()); //write contents of the output buffer in Cache file
     fclose($fp); //Close file pointer
+/* or wipe the cache file if it's been set to no cache since */
+} elseif (Jojo::noCache() && file_exists($cache_file)){
+        unlink($cache_file);
 }
 
 /* Output the html to the browser */

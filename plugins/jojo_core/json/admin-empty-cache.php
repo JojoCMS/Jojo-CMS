@@ -25,6 +25,6 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
   exit();
 }
 
-Jojo::clearCache(true);
+Jojo::clearCache($scope='full');
 echo json_encode("Content cache emptied");
 

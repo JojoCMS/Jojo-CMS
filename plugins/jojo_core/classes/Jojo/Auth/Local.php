@@ -2,6 +2,8 @@
 
 class Jojo_Auth_Local {
     public static function authenticate() {
+        global $_USERID, $_USERTIMEZONE, $_USERGROUPS;
+
         $username = Jojo::getFormData('username', '');
         $password = Jojo::getFormData('password', '');
         $remember = Jojo::getFormData('remember', false);
@@ -58,7 +60,23 @@ class Jojo_Auth_Local {
 
                 /* After login hook */
                 $_SESSION['loggingin'] = true;
-                return $logindata['userid'];
+  
+              /* Store User Info */
+                $_USERID = $logindata['userid'];
+                $_USERTIMEZONE = $logindata['us_timezone'];
+                $_SESSION['userid'] = $_USERID;
+
+                /* Get User Group Membership */
+                $_USERGROUPS = array('everyone');
+                $groups = Jojo::selectQuery("SELECT * FROM {usergroup_membership} WHERE userid = ?", array($_USERID));
+
+                /* if admin, set as admin ie to not show analytics when admin viewing site */
+                foreach ($groups as $group) {
+                    if($group['groupid'] != 'notloggedin') { // can't be both logged in, and in the usergroup 'notloggedin'
+                       $_USERGROUPS[] = $group['groupid'];
+                    }
+                }
+                return $logindata;
             }
 
             /* Login failed */
@@ -99,10 +117,12 @@ class Jojo_Auth_Local {
                 setcookie('jojoR', '', time() - 3600, _SITEFOLDER);
             }
 
+            /* User is not logged in */
+            $_USERID = false;
+            $_USERGROUPS[] = 'notloggedin';
+            
             /* Error message to return to user */
-            global $smarty;
-            $smarty->assign('loginmessage', $loginmessage);
-            return false;
+            return $loginmessage;
         }
     }
 

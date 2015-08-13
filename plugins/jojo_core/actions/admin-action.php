@@ -130,7 +130,7 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
             $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4><p>'.$res.'</p>").fadeIn().fadeTo(10000, 1).fadeOut();');
 
             /* Clear the content cache after saving */
-            Jojo::clearCache();
+            Jojo::clearCache($scope='html');
 
             $frajax->assign('id', 'value', $table->getRecordID());
 

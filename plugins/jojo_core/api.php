@@ -248,46 +248,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'contentcache',
-    'category'    => 'Config',
-    'label'       => 'Content cache',
-    'description' => 'If enabled, HTML content will be cached for a period of time to reduce server CPU and loading time for visitors.',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no'
-);
-
-$_options[] = array(
-    'id'          => 'columnbreaks',
-    'category'    => 'Config',
-    'label'       => 'Columns filter',
-    'description' => 'If enabled, content will be checked for columnbreak filters and split into fluid spans.',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no'
-);
-
-$_options[] = array(
-    'id'          => 'contentcachetime',
-    'category'    => 'Config',
-    'label'       => 'Content cache time',
-    'description' => 'The maximum amount of time in seconds content will be cached for, if CONTENTCACHE is enabled. Default 8 hours.',
-    'type'        => 'integer',
-    'default'     => 28800,
-    'options'     => ''
-);
-
-$_options[] = array(
-    'id'          => 'contentcachetime_resources',
-    'category'    => 'Config',
-    'label'       => 'Resources cache time',
-    'description' => 'The maximum amount of time in seconds images, js and css will be cached for. Default 7 days.',
-    'type'        => 'integer',
-    'default'     => 604800,
-    'options'     => ''
-);
-
-$_options[] = array(
     'id'          => 'servertimezone',
     'category'    => 'Config',
     'label'       => 'Server timezone',
@@ -324,6 +284,46 @@ $_options[] = array(
     'description' => 'A newline separated list of local development domains. Certain functions of Jojo will be disabled (such as pinging external services) when you are developing on a test server. Please include http://',
     'type'        => 'textarea',
     'default'     => "http://localhost\nhttp://127.0.0.1",
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'contentcache',
+    'category'    => 'Cacheing',
+    'label'       => 'Content cache',
+    'description' => 'If enabled, rendered HTML pages will be cached for a period of time to reduce server CPU and loading time for visitors.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'contentcachetime',
+    'category'    => 'Cacheing',
+    'label'       => 'Content cache time',
+    'description' => 'The maximum amount of time in seconds content will be cached for, if CONTENTCACHE is enabled. Default 8 hours. Page cache is cleared with every admin record save.',
+    'type'        => 'integer',
+    'default'     => 28800,
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'contentcachetime_memcache',
+    'category'    => 'Cacheing',
+    'label'       => 'Memcache cache time',
+    'description' => 'The time in seconds content will be cached for, if the memcache extension is available. Default 30 minutes. Used for highly repeated data sets (like nav). Set higher for relatively static sites',
+    'type'        => 'integer',
+    'default'     => 1800,
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'contentcachetime_resources',
+    'category'    => 'Cacheing',
+    'label'       => 'Resources cache time',
+    'description' => 'The maximum amount of time in seconds images, js and css will be cached for. Default 7 days.',
+    'type'        => 'integer',
+    'default'     => 604800,
     'options'     => ''
 );
 
@@ -656,6 +656,16 @@ $_options[] = array(
     'category'    => 'HTML Editor',
     'label'       => 'Convert // pseudo-breaks in headings etc to <br />',
     'description' => 'if yes headings will be checked for //, converted for inline use and stripped for SEO titles',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'columnbreaks',
+    'category'    => 'HTML Editor',
+    'label'       => 'Columns filter',
+    'description' => 'If enabled, content will be checked for columnbreak filters and split into boostrap columns.',
     'type'        => 'radio',
     'default'     => 'no',
     'options'     => 'yes,no'

@@ -55,7 +55,7 @@ class Jojo {
      */
     public static function authenticate()
     {
-        global $smarty, $_USERID, $_USERTIMEZONE, $_USERGROUPS;
+        global $_USERID, $_USERTIMEZONE, $_USERGROUPS;
 
         /* Look up user from database */
         $newlogin = false;
@@ -86,19 +86,13 @@ class Jojo {
             /* User is not logged in */
             $_USERID = false;
             $_USERGROUPS[] = 'notloggedin';
-            return;
+            return false;
         }
 
         /* Store User Info */
         $_USERID = $logindata['userid'];
         $_USERTIMEZONE = $logindata['us_timezone'];
         $_SESSION['userid'] = $_USERID;
-
-        /* User is logged in */
-        $smarty->assign('loggedIn', true);
-        $smarty->assign('userrecord', $logindata);
-
-        /* Should we remember this login? */
 
         /* Get User Group Membership */
         $_USERGROUPS = array('everyone');
@@ -108,13 +102,9 @@ class Jojo {
         foreach ($groups as $group) {
             if($group['groupid'] != 'notloggedin') { // can't be both logged in, and in the usergroup 'notloggedin'
                $_USERGROUPS[] = $group['groupid'];
-               if ($group['groupid'] == 'admin') {
-                   $smarty->assign('adminloggedin', true);
-                   // allow admins to see hidden pages
-                   $_SESSION['showhidden'] = true;
-               }
             }
         }
+        return $logindata;
     }
 
     /**
@@ -2691,9 +2681,9 @@ class Jojo {
         return implode(' ',$keywords);
     }
     /* clearing the full argument also wipes Smarty templates_c and the cached api / listplugins / listthemes files */
-    static function clearCache($full = false) {
-        Jojo::deleteQuery("DELETE FROM {contentcache}");
-        if ($full) {
+    static function clearCache($scope='html', $url=false) {
+                
+        if ($scope=='full') {
             if (Jojo::fileExists(_CACHEDIR . '/api.txt')) {
                 unlink(_CACHEDIR.'/api.txt');
             }
@@ -2709,7 +2699,22 @@ class Jojo {
                     unlink(_CACHEDIR . '/smarty/templates_c/' . $file);
                 }
             }
-
+            array_map('unlink', glob(_CACHEDIR . '/public/*.js'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.css'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.html'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
+        } elseif ($scope=='images') {
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
+        } elseif ($url) {
+            unlink(_CACHEDIR . '/public/' . md5($url) . '.' . $scope);
+        } elseif ($scope) {
+            array_map('unlink', glob(_CACHEDIR . '/public/*.' . $scope));
         }
         return true;
     }
@@ -3374,8 +3379,15 @@ class Jojo {
 
     static function getNav($root=0, $subnavLevels=0, $field='mainnav')
     {
-        global $_USERGROUPS, $selectedPages, $isadmin;
+        global $_USERGROUPS, $_USERID, $selectedPages, $mCache;
         
+      /* if memcache is available, check for a stored result */
+        if (!$_USERID && $mCache) {
+            $mKey = md5(_SITEURL . 'nav-r' . $root  . 's' . $subnavLevels . 'f' . $field);
+            if ($cached = $mCache->get($mKey)) {
+                return $cached;
+            }
+        }
         /* Get multilanguage data */
             global $page;
             $mldata = Jojo::getMultiLanguageData();
@@ -3439,6 +3451,12 @@ class Jojo {
                 }
             }
         }
+       /* if memcache is available, stored the result */
+        if (!$_USERID && $mCache) {
+            $mExpires = Jojo::getOption('contentcachetime_memcache', 1800);
+            $mCache->set($mKey, $nav, 0, $mExpires);
+        }
+
          return $nav;
     }
 
