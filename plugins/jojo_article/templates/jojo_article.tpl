@@ -1,4 +1,3 @@
-{if $error}<div class="error">{$error}</div>{/if}
 {if $jojo_article}
 <div id="article"{if $jojo_article.ar_featured} class="featured"{/if}>
     {if $jojo_article.subtitle}<h2>{$jojo_article.subtitle}</h2>{/if}
@@ -28,9 +27,14 @@
     </p>
     {/if}
 {/if}
-
-{if $commenthtml}{$commenthtml}{/if}
-    <ul class="pager">
+{if $commenthtml}
+<h2>##Your Comments##</h2>
+<div id="comments">
+{$commenthtml}
+</div>
+{if $commenterrors}<div class="error">{foreach $commenterrors e}{$e}<br>{/foreach}</div>{/if}
+{/if}
+   <ul class="pager">
         {if $prevarticle}<li><a href="{$prevarticle.url}" title="{$prevarticle.title}">&laquo; ##Previous##</a></li>{/if}
         {if $nextarticle}<li><a href="{$nextarticle.url}" title="{$nextarticle.title}">##Next## &raquo;</a></li>{/if}
     </ul>

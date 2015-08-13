@@ -394,12 +394,14 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Get Comments if used */
             if (class_exists('Jojo_Plugin_Jojo_comment') && (!isset($article['comments']) || $article['comments']) ) {
                 /* Was a comment submitted? */
+                $commenterrors = false;
                 if (Jojo::getFormData('comment', false)) {
-                    Jojo_Plugin_Jojo_comment::postComment($article);
                     Jojo::noCache(true);
+                    $commenterrors = Jojo_Plugin_Jojo_comment::postComment($article);
                 }
                $articlecommentsenabled = (boolean)(isset($article['ar_comments']) && $article['ar_comments']=='yes');
                $commenthtml = Jojo_Plugin_Jojo_comment::getComments($article['id'], $article['plugin'], $article['pageid'], $articlecommentsenabled);
+               $smarty->assign('commenterrors', $commenterrors);
                $smarty->assign('commenthtml', $commenthtml);
             }
 
