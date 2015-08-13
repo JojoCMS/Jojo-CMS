@@ -52,7 +52,6 @@
     {/if}{if $head}{$head}
     {/if}{if $isadmin}<script type="text/javascript" src="{cycle values=$NEXTASSET}{jojoAsset file="js/commonadmin.js"}"></script>
     {else}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition == 'top'}{include file="analytics.tpl"}
-    {/if}{/if}{if $OPTIONS.captcha_recaptcha=="yes"}<script src='https://www.google.com/recaptcha/api.js'></script>
-    {/if}{if $customhead}{$customhead}
+    {/if}{/if}{if $customhead}{$customhead}
     {/if}{jojoHook hook="customhead"}
 </head>

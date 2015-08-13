@@ -27,7 +27,8 @@
     {/if}{if $javascript}{$javascript}{/if}
     /* ]]> */
 </script>{/if}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition != 'top'}
-{include file="analytics.tpl"}{/if}{if $customfoot}
+{include file="analytics.tpl"}{/if}{if $OPTIONS.captcha_recaptcha=="yes"}<script src='//www.google.com/recaptcha/api.js'></script>
+{/if}{if $customfoot}
 {$customfoot}{/if}{if $OPTIONS.customfoot}
 {$OPTIONS.customfoot}{/if}{jojoHook hook="customfoot"}{jojoHook hook="foot"}
 {/if}
