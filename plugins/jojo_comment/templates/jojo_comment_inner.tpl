@@ -7,10 +7,12 @@
         {else}
         <h4>{if $c.website}<a href="#comments" rel="nofollow" onclick="redirectSubmit('{$c.website|replace:'http://':''}'); return false;" title="{$c.website|replace:'http://':''}">{$c.name}</a>{else}{$c.name}{/if}<span class="date"> - {$c.timestamp|date_format}</span></h4>
         {/if}
-        <p id="comment-{$c.commentid}" class="comment-text">{$c.body}</p>
+        <p id="comment-{$c.commentid}" class="comment-text edit-comment">{$c.body}</p>
+        <textarea class="edit-comment form-control" style="display:none;">{$c.bbbody}</textarea>
+        <a class="edit-comment btn btn-default btn-xs clearfix" href="#comments" onclick="saveComment({$c.commentid});return false;" title="Edit Body" style="display: none;">Save</a>
         {if $editperms}
         <div class="comment_actions pull-right">
-              <a class="btn btn-default btn-xs" href="#comments" onclick="frajax('jojo_edit_comment',{$c.commentid}); return false;" title="Edit Body">Edit</a>
+              <a class="edit-comment btn btn-default btn-xs" href="#comments" onclick="editComment({$c.commentid});return false;" title="Edit Body">Edit</a>
               <a class="btn btn-danger btn-xs" href="#comments" id="delete-comment-{$c.commentid}" onclick="deleteComment({$c.commentid}); return false;" title="Delete Comment">Delete</a>
             {if $c.website}
                 {if $c.nofollow}
@@ -27,6 +29,6 @@
         </div>
         {elseif $user && $user.userid==$c.userid}
         <div class="comment_actions">
-              <a class="btn btn-default btn-xs" href="#comments" onclick="frajax('jojo_edit_comment',{$c.commentid}, {$c.userid}); return false;" title="Edit Body">Edit</a>
+              <a class="edit-comment btn btn-default btn-xs" href="#comments" onclick="editComment({$c.commentid});return false;" title="Edit Body">Edit</a>
         </div>
         {/if}

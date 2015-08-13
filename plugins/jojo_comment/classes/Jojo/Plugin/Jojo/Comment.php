@@ -286,7 +286,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
             $thisiscrap = true;
         }
         if ($thisiscrap) {
-            return false;
+            return $errors;
             //could also at this point add $ip to a banned ips list rather than just silent failing them
         }
         $bbcomment = strip_tags($bbcomment);
@@ -306,7 +306,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
             $smarty->assign('website',    $website);
             $smarty->assign('anchortext', $anchortext);
             $smarty->assign('comment',    $bbcomment);
-            return false;
+            return $errors;
         }
 
         /* Create unique approve and delete codes, ensure they are not already in the database for another comment */
@@ -383,16 +383,10 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $log->savetodb();
         unset($log);
 
-        /* Delete cache for this page - forcing regeneration next view */
-        if (_CONTENTCACHE) {
-            $query = "DELETE FROM {contentcache} WHERE cc_url=? LIMIT 1";
-            $values = array(_SITEURL . '/' . $url);
-            Jojo::deleteQuery($query, $values);
-        }
-
-        /* Redirect back to the to see the comment on the page */
+        return false;
+        /* Redirect back to the to see the comment on the page 
         header('location: ' . _SITEURL . '/' . $url);
-        exit();
+        exit();*/
     }
 
     static function getItemsById($ids)
