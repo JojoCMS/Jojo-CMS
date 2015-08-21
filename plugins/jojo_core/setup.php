@@ -289,6 +289,12 @@ if (Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_favi
     Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Favicon Handler', pg_link = 'jojo_plugin_core_favicon', pg_url = 'favicon.ico', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
 }
 
+// Favicon
+if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_core_appletouchicon'")) {
+    echo "Adding <b>Apple Touch Icon Handler</b> Page<br />";
+    Jojo::insertQuery("INSERT INTO {page} SET pg_title = 'Apple Touch Icon Handler', pg_link = 'jojo_plugin_core_appletouchicon', pg_url = 'apple-touch-icon.png', pg_parent= ?, pg_order=0, pg_mainnav='no', pg_footernav='no', pg_sitemapnav='no', pg_xmlsitemapnav='no', pg_index='yes', pg_body = ''", array($_NOT_ON_MENU_ID));
+}
+
 // Forgot password
 if (!Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_link = 'jojo_plugin_forgot_password'")) {
     echo "Adding <b>Forgot Password</b> Page to menu<br />";
