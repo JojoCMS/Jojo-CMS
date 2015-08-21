@@ -33,11 +33,11 @@
     {/if}<!--[if lt IE 9]>{if $include_print_css} 
         <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/print.css"}" media="print" />{/if}{if $include_handheld_css} 
         <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/handheld.css"}" media="handheld" />{/if}{if $htmldoctype} 
-        <script src="//cdn.jsdelivr.net/g/html5shiv,respond"></script>
+        <script src="https://cdn.jsdelivr.net/g/html5shiv,respond"></script>
     {/if}<![endif]-->
     {if $modernizr != 'no'}<script src="{$SITEURL}/external/modernizr.min.js"></script>
-    {/if}{if $OPTIONS.jquery_head=='yes' || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="//ajax.googleapis.com/ajax/libs/jquery/{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js"></script>{if $OPTIONS.jquery_ui=='yes'} 
-    <script{if !$htmldoctype} type="text/javascript"{/if} src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>{/if}
+    {/if}{if $OPTIONS.jquery_head=='yes' || $isadmin}<script {if !$htmldoctype}type="text/javascript" {/if}src="https://ajax.googleapis.com/ajax/libs/jquery/{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}/jquery.min.js"></script>{if $OPTIONS.jquery_ui=='yes'} 
+    <script{if !$htmldoctype} type="text/javascript"{/if} src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>{/if}
     <script{if !$htmldoctype} type="text/javascript"{/if}>
         if (typeof jQuery == 'undefined') {ldelim} 
             document.write(unescape("%3Cscript src='{cycle values=$NEXTASSET}external/jquery/jquery-{if $isadmin}1.9.1{elseif $OPTIONS.jquery_version}{$OPTIONS.jquery_version}{else}1.9.1{/if}.min.js'{if !$htmldoctype} type='text/javascript'{/if}%3E%3C/script%3E"));{if $OPTIONS.jquery_ui=='yes'} 
