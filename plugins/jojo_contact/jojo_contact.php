@@ -37,6 +37,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formSubject = '';
         $formID;
 
+
         /* Get form from current page id or formid*/
         if ($formID) {
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
@@ -72,33 +73,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $f++;
         }
         $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
-
-        if ($form['form_captcha']){
-            if (Jojo::getOption('captcha_recaptcha', 'no')=='yes') {
-               $captcharesponse = Jojo::getFormData('g-recaptcha-response','');
-               $secretkey = Jojo::getOption('captcha_secretkey', '');
-               $url = 'https://www.google.com/recaptcha/api/siteverify';
-                $data = array('secret' => $secretkey, 'response' => $captcharesponse);
-                // use key 'http' even if you send the request to https://...
-                $options = array(
-                    'http' => array(
-                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                        'method'  => 'POST',
-                        'content' => http_build_query($data),
-                    ),
-                );
-                $context  = stream_context_create($options);
-                $result = json_decode(file_get_contents($url, false, $context), true);
-               if (!$result['success']) {
-                    $errors[] = 'Incorrect Spam Prevention Code entered';
-                }
-            } else {
-                $captchacode = Jojo::getFormData('CAPTCHA','');
-                if (!PhpCaptcha::Validate($captchacode)) {
-                    $errors[] = 'Incorrect Spam Prevention Code entered';
-                }
-            }
-        }
 
         $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
         $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
@@ -228,6 +202,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
         }
         $message .= Jojo::emailFooter();
+
+        /* check if it's spammy before doing anything else */
+        $errors = self::isSpam($message, $form['form_captcha']);
 
         $messagefields = '';
         foreach ($fields as $f) {
@@ -495,6 +472,49 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         }
         return $html;
     }
+
+    public static function isSpam($content, $captcha=false) {
+        
+        if (substr_count($content, 'http://')>Jojo::getOption('spam_links', 3)) {
+            header("HTTP/1.0 404 Not Found");
+            ob_end_flush(); // Send the output and turn off output buffering
+            exit;
+        }
+        /* Check CAPTCHA is entered correctly */
+        if ($captcha) {
+            if (Jojo::getOption('captcha_recaptcha', 'no')=='yes') {
+               $captcharesponse = Jojo::getFormData('g-recaptcha-response','');
+               $secretkey = Jojo::getOption('captcha_secretkey', '');
+               $url = 'https://www.google.com/recaptcha/api/siteverify';
+                $data = array('secret' => $secretkey, 'response' => $captcharesponse);
+                // use key 'http' even if you send the request to https://...
+                $options = array(
+                    'http' => array(
+                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                        'method'  => 'POST',
+                        'content' => http_build_query($data),
+                    ),
+                );
+                $context  = stream_context_create($options);
+                $result = json_decode(file_get_contents($url, false, $context), true);
+                /* failures on reCaptcha can 404 because real users will have feedback on success before submitting but bots won't */
+               if (!$result['success']) {
+                    header("HTTP/1.0 404 Not Found.");
+                    ob_end_flush(); // Send the output and turn off output buffering
+                    exit;
+                }
+            } else {
+                $captchacode = Jojo::getFormData('CAPTCHA','');
+                if (!PhpCaptcha::Validate($captchacode)) {
+                    $errors[] = 'Incorrect Spam Prevention Code entered';
+                    return $errors;
+                }
+            }
+        }
+        return false;
+
+    }
+
 
      public static function footjs()
      {

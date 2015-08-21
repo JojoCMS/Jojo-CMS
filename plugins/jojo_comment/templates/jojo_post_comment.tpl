@@ -2,6 +2,7 @@
 {/if}
 <div class="post-comment" id="post-comment" style="clear: both;{if $OPTIONS.comment_show_form == 'yes'}display:block;{else}display:none;{/if}">
   <h3>Post Comment</h3>
+  {if !$user && $OPTIONS.comment_useronly=='yes'}<p class="note">Comments are restricted to registered users or subscribers only - make sure you enter an email address this site will recognise</p>{/if}
   <form id="commentform-{$pageid}" method="post" action="{$correcturl}" class="contact-form no-ajax">
   <fieldset>
 <p class="note"><span class="required">*</span> <em>required fields</em></p>
@@ -38,16 +39,19 @@
         <input type="text" class="form-control text" size="40" name="anchortext" id="anchortext" value="{if $anchortext}{$anchortext}{/if}" title="If we think your comment is especially good, we will use this anchor text for your link" />
     </div>
     {/if}{/if}
-    {if !$user}
-    <div class="form-group">
-        <label for="CAPTCHA" class="control-label">Spam prevention <span class="required">*</span></label>
-        <input type="text" class="form-control text required" size="8" name="CAPTCHA" id="CAPTCHA" value="" />
+    {if $OPTIONS.comment_captcha=='yes'}{if $OPTIONS.captcha_recaptcha=="yes" && $OPTIONS.captcha_sitekey}<div class="form-group captcha">
+        <div class="g-recaptcha" data-sitekey="{$OPTIONS.captcha_sitekey}"></div>
     </div>
-    <div class="form-group captcha">
-        <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
-        <p><img src="{$SITEURL}/external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
-    </div>
-    {/if}
+    {else}
+        <div class="form-group captcha">
+            <p class="note">Please enter the {$OPTIONS.captcha_num_chars|default:3} letter code below. This helps us prevent spam. <em>Code is not case-sensitive</em></p>
+            <p><img src="external/php-captcha/visual-captcha.php" width="200" height="60" alt="Visual CAPTCHA" /></p>
+        </div>
+        <div class="form-group">
+            <label for="CAPTCHA" class="control-label">Spam prevention<span class="required">*</span></label>
+            <input type="text" class="form-control input text required" size="8" name="CAPTCHA" id="CAPTCHA" value="" autocomplete="off" />
+        </div>
+    {/if}{/if}
     <div class="form-group">
         <label for="comment" class="control-label">Comment <span class="required">*</span></label>
         <textarea name="comment" class="form-control textarea required" id="comment" rows="10" cols="40">{if $comment}{$comment}{/if}</textarea>
@@ -57,5 +61,4 @@
     </div>
   </fieldset>
   </form>
-  <p class="note">We welcome comments provided they have something to contribute. Please note that all links will be created using the nofollow attribute. This is a spam free zone. HTML is stripped from comments, but BBCode is allowed.</p>
 </div>
