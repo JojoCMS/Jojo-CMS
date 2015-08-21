@@ -108,6 +108,28 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         return false;
     }
 
+     /* get item by url */
+    static function getItemByUrl($url=false, $categoryid=false, $include=false) {
+        $shownumcomments = (boolean)(class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_show_num', 'no') == 'yes');
+        $query  = "SELECT ar.*, ac.*, p.pageid, pg_menutitle, pg_title, pg_url, pg_status, pg_livedate, pg_expirydate, pg_contentcache";
+        $query .= $shownumcomments ? ", COUNT(com.itemid) AS numcomments" : '';
+        $query .= " FROM {article} ar";
+        $query .= " LEFT JOIN {articlecategory} ac ON (ar.ar_category=ac.articlecategoryid) LEFT JOIN {page} p ON (ac.pageid=p.pageid)";
+        $query .= $shownumcomments ? " LEFT JOIN {comment} com ON (com.itemid = ar.articleid AND com.plugin = 'jojo_article')" : '';
+        $query .=  " WHERE ar_url='$url'";
+        $query .= $categoryid ? " AND ar_category = '$categoryid'" : '';
+        $query .= $shownumcomments ? " GROUP BY articleid" : '';
+        $items = Jojo::selectQuery($query);
+        if ($items) {
+			$items = self::cleanItems($items, '', $include);
+			$items = self::formatItems($items);
+        } 
+        if ($items) {
+        	return $items[0];
+        }
+        return false;
+    }
+    
     /* clean items for output */
     static function cleanItems($items, $exclude=false, $include=false) {
         $now    = time();
@@ -248,7 +270,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $pageid = $this->page['pageid'];
         $pageprefix = Jojo::getPageUrlPrefix($pageid);
         $smarty->assign('multilangstring', $pageprefix);
-
+        $commenterrors = false;
+        /* If a comment is posted, check if it's spammy before doing anything else */
+        if (class_exists('Jojo_Plugin_Jojo_contact') && $comment=Jojo::getFormData('comment', false)) {
+            $commenterrors = Jojo_Plugin_Jojo_contact::isSpam($comment, (boolean)(Jojo::getOption('comment_captcha')=='yes'));
+        }
         if (class_exists('Jojo_Plugin_Jojo_comment') && Jojo::getOption('comment_subscriptions', 'no') == 'yes') {
             Jojo_Plugin_Jojo_comment::processSubscriptionEmails();
         }
@@ -303,49 +329,68 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
 		$featuredfirst = (boolean)(Jojo::getOption('article_features', 'never')=='index' || Jojo::getOption('article_features', 'never')=='always');
-        /* Get a minimal data set of all articles */
-        $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true, $featuredfirst);
 
         if ($id || !empty($url)) {
             /* 
             * individual item 
             */
 
-            /* find the current, next and previous items */
-            $article = array();
-            $prevarticle = array();
-            $nextarticle = array();
-            $nnextarticle = array();
-            $next = false;
-            $nnext = false;
-            foreach ($articles as $a) {
-                if (!empty($url) && $url==$a['ar_url']) {
-                    $article = $a;
-                    $id = $article['articleid'];
-                    $next = true;
-               } elseif ($id==$a['articleid']) {
-                    $article = $a;
-                    $next = true;
-                } elseif ($next==true) {
-                    $nextarticle = $a;
-                    $next = false;
-                    $nnext = true;
-                } elseif ($nnext==true) {
-                    $nnextarticle = $a;
-                     break;
-                } else {
-                    $prevarticle = $a;
-                }
-            }
+            /* if previous and next are required, we need the whole article set to find them */
+            if (Jojo::getOption('article_next_prev') == 'yes') {
 
+                /* Get a minimal data set of all articles */
+                $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true, $featuredfirst);
+                /* find the current, next and previous items */
+                $article = array();
+                $prevarticle = array();
+                $nextarticle = array();
+                $nnextarticle = array();
+                $next = false;
+                $nnext = false;
+                foreach ($articles as $a) {
+                    if (!empty($url) && $url==$a['ar_url']) {
+                        $article = $a;
+                        $id = $article['articleid'];
+                        $next = true;
+                   } elseif ($id==$a['articleid']) {
+                        $article = $a;
+                        $next = true;
+                    } elseif ($next==true) {
+                        $nextarticle = $a;
+                        $next = false;
+                        $nnext = true;
+                    } elseif ($nnext==true) {
+                        $nnextarticle = $a;
+                         break;
+                    } else {
+                        $prevarticle = $a;
+                    }
+                }
+                if ($article) {
+                    /* Get the full article */
+                    $article = self::getItemsById($article['articleid'], '', $include='showhidden');
+                }
+                if (!$prevarticle && $nnextarticle) {
+                    $smarty->assign('nnextarticle', self::getItemsById($nnextarticle['articleid']));
+                }
+                if ($nextarticle) {
+                    $smarty->assign('nextarticle', self::getItemsById($nextarticle['articleid']));
+                }
+                if ($prevarticle) {
+                    $smarty->assign('prevarticle', self::getItemsById($prevarticle['articleid']));
+                }
+
+            } elseif ($id) {
+                $article = self::getItemsById($id, '', $include='showhidden');
+            } elseif ($url) {
+                $article = self::getItemByUrl($url, (is_numeric($categoryid) ? $categoryid : ''), $include='showhidden');
+            }
+            
             /* If the item can't be found, return a 404 */
             if (!$article) {
                 include(_BASEPLUGINDIR . '/jojo_core/404.php');
                 exit;
-            } else {
-                /* Get the full article */
-                $article = self::getItemsById($article['articleid'], '', $include='showhidden');
-            }
+            } 
             /* allow other plugins or theme to modify the item content */
             if ($modarticle = Jojo::runHook('modify_article', array($article))) {
                 $article = $modarticle;
@@ -357,19 +402,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             }
             
             $article['ar_datefriendly'] = Jojo::mysql2date($article['ar_date'], "long");
-
-            /* assign the previous, next, and one after next items to Smarty */
-            if (Jojo::getOption('article_next_prev') == 'yes') {
-                if (!$prevarticle && $nnextarticle) {
-                    $smarty->assign('nnextarticle', self::getItemsById($nnextarticle['articleid']));
-                }
-                if ($nextarticle) {
-                    $smarty->assign('nextarticle', self::getItemsById($nextarticle['articleid']));
-                }
-                if ($prevarticle) {
-                    $smarty->assign('prevarticle', self::getItemsById($prevarticle['articleid']));
-                }
-            }
 
             /* Get tags if used */
             if (class_exists('Jojo_Plugin_Jojo_Tags')) {
@@ -394,10 +426,11 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Get Comments if used */
             if (class_exists('Jojo_Plugin_Jojo_comment') && (!isset($article['comments']) || $article['comments']) ) {
                 /* Was a comment submitted? */
-                $commenterrors = false;
+                $commenterrors = $commenterrors ? $commenterrors : false;
                 if (Jojo::getFormData('comment', false)) {
                     Jojo::noCache(true);
-                    $commenterrors = Jojo_Plugin_Jojo_comment::postComment($article);
+                    $response = Jojo_Plugin_Jojo_comment::postComment($article);
+                    $commenterrors = $response && !empty($response) ? $response : false;
                 }
                $articlecommentsenabled = (boolean)(isset($article['ar_comments']) && $article['ar_comments']=='yes');
                $commenthtml = Jojo_Plugin_Jojo_comment::getComments($article['id'], $article['plugin'], $article['pageid'], $articlecommentsenabled);
@@ -415,7 +448,6 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
             /* Assign article content to Smarty */
             $smarty->assign('jojo_article', $article);
-            $smarty->assign('jojo_articles', $articles);
 
             /* Prepare meta content fields for display */
             if (isset($article['ar_htmllang'])) {
@@ -465,6 +497,8 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* 
             * index section 
             */
+            /* Get a minimal data set of all articles */
+            $articles = self::getArticles('', '', $categoryid, $sortby, $exclude=false, $include='showhidden', $minimal=true, $featuredfirst);
             
            /* don't allow index cacheing if set to no or auto */
             if  ($this->page['pg_contentcache']!='yes') {
