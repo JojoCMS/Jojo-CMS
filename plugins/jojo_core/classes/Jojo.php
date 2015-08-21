@@ -64,7 +64,7 @@ class Jojo {
         $logindata = false;
         if (isset($_SESSION['userid']) && !empty($_SESSION['userid'])) {
             /* User has previously authenticated, lookup by username and code */
-            $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($_SESSION['userid']));
+            $logindata = Jojo::selectQuery("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($_SESSION['userid']));
         } elseif (isset($_COOKIE['jojoR'])) {
             /* Get user details from 'jojoR' (password remember) cookie */
             $values = explode(':', base64_decode($_COOKIE['jojoR']));
@@ -73,11 +73,12 @@ class Jojo {
                 if (count($validtoken)) {
                     array_unshift($values, time());
                     $res = Jojo::updateQuery("UPDATE {auth_token} SET lastused = ? WHERE userid = ? AND token = ? ", $values);
-                    $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($validtoken[0]['userid']));
+                    $logindata = Jojo::selectQuery("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($validtoken[0]['userid']));
                 }
                 if ($logindata) {
                     /* Set loggingIn global */
                     $_SESSION['loggingin'] = true;
+                    $_SESSION['userid'] = $_USERID;
                 }
             }
         }
@@ -88,11 +89,12 @@ class Jojo {
             $_USERGROUPS[] = 'notloggedin';
             return false;
         }
+        
+        $logindata = $logindata[0];
 
         /* Store User Info */
         $_USERID = $logindata['userid'];
         $_USERTIMEZONE = $logindata['us_timezone'];
-        $_SESSION['userid'] = $_USERID;
 
         /* Get User Group Membership */
         $_USERGROUPS = array('everyone');
@@ -446,6 +448,8 @@ class Jojo {
      */
     static function selectRow($query, $values = array())
     {
+        Jojo::_connectToDB();
+
         /* Ensure the values are in an array */
         $values = is_array($values) ? $values : array($values);
 
@@ -3302,7 +3306,7 @@ class Jojo {
                             'languagelist' => array()
                             );
             // get language codes from new table
-            $res = Jojo::selectAssoc("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc WHERE active=1 ORDER BY displayorder");
+            $res = Jojo::selectQuery("SELECT lc_root as pageid, lc_code as languageid, lc_root as root, lc_home as home, lc_longcode as longcode, lc_name as name, lc_defaultlang, lc.* FROM {lang_country} lc WHERE active=1 ORDER BY displayorder");
             $default = !isset($res[0]['default']) ? Jojo::getOption('multilanguage-default') : '';
             foreach ($res as $k=>$r) {
                 $mldata['roots'][$r['languageid']] = $r['root'];
@@ -3317,9 +3321,11 @@ class Jojo {
                     unset($res[$k]);
                 }
             }
+            
             $mldata['default'] = $default;
             $mldata['sectiondata'] = $res;
         }
+
         return $mldata;
     }
 
@@ -3381,13 +3387,6 @@ class Jojo {
     {
         global $_USERGROUPS, $_USERID, $selectedPages, $mCache;
         
-      /* if memcache is available, check for a stored result */
-        if (!$_USERID && $mCache) {
-            $mKey = md5(_SITEURL . 'nav-r' . $root  . 's' . $subnavLevels . 'f' . $field);
-            if ($cached = $mCache->get($mKey)) {
-                return $cached;
-            }
-        }
         /* Get multilanguage data */
             global $page;
             $mldata = Jojo::getMultiLanguageData();
@@ -3450,11 +3449,6 @@ class Jojo {
                     $n['subnav'] = array_merge($pluginsubnav, $n['subnav']);
                 }
             }
-        }
-       /* if memcache is available, stored the result */
-        if (!$_USERID && $mCache) {
-            $mExpires = Jojo::getOption('contentcachetime_memcache', 1800);
-            $mCache->set($mKey, $nav, 0, $mExpires);
         }
 
          return $nav;

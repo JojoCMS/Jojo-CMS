@@ -213,8 +213,8 @@ switch($action) {
         $webdir  = str_replace('\\', '/', $webdir);
         $basedir = str_replace('\\', '/', $basedir);
         $sitedir = str_replace('\\', '/', $sitedir);
-         $altplugindir = str_replace('\\', '/', $altplugindir);
-       $data = explode('/', $webdir);
+        $altplugindir = str_replace('\\', '/', $altplugindir);
+        $data = explode('/', $webdir);
         $suggested_mysite = '';
         for ($i=0; $i<(count($data)-1); $i++) {
             $suggested_mysite .= $data[$i].'/';
@@ -244,7 +244,11 @@ switch($action) {
             <h2>Site URL</h2>
             <p>The Site URL is the address of your homepage. Please include the http:// but do not include the trailing slash. (eg <strong>http://www.example.com</strong>)</p>
             <div class="form-group">
-                <label for="webdir">Site URL: </label><input class="form-control" type="text" size="45" name="siteurl" value="'.$siteurl.'" />
+                <label for="siteurl">Site URL: </label><input class="form-control" type="text" size="45" name="siteurl" value="'.$siteurl.'" />
+           </div>
+            <p>The Secure URL is the SSL secured URL of your site (if you have one - leave blank if not). Please include the https:// but do not include the trailing slash. (eg <strong>https://www.example.com</strong>)</p>
+            <div class="form-group">
+                <label for="secureurl">Secure URL: </label><input class="form-control" type="text" size="45" name="secureurl" value="" />
            </div>
             <h2>File locations</h2>
             <p>The <strong>base directory</strong> and <strong>web directory</strong> should already be completed for you. Please check that these are correct.</p>
@@ -283,6 +287,7 @@ define('_DBNAME', '%s');
 
 /* Directory locations */
 define('_SITEURL',   '%s');
+define('_SECUREURL',   '%s');
 define('_BASEDIR',   '%s');
 define('_WEBDIR',    '%s');
 define('_MYSITEDIR', '%s');
@@ -303,7 +308,7 @@ EOCONFIG;
         if (!isset($_SESSION['dbpass'])) $_SESSION['dbpass'] = ''; //prevent notice error
         $configText = sprintf($configText,
                               $_SESSION['dbhost'], $_SESSION['dbuser'], $_SESSION['dbpass'], $_SESSION['dbname'],
-                              rtrim($_SESSION['siteurl'], '/'), rtrim(str_replace('\\', '/', $_SESSION['basedir']), '/'), rtrim($_SESSION['webdir'], '/'), rtrim($_SESSION['sitedir'], '/'), rtrim($_SESSION['altplugindir'], '/'),
+                              rtrim($_SESSION['siteurl'], '/'), (isset($_SESSION['secureurl']) && $_SESSION['secureurl'] ?  rtrim($_SESSION['secureurl'], '/') : rtrim($_SESSION['siteurl'], '/')), rtrim(str_replace('\\', '/', $_SESSION['basedir']), '/'), rtrim($_SESSION['webdir'], '/'), rtrim($_SESSION['sitedir'], '/'), rtrim($_SESSION['altplugindir'], '/'),
                               $_SESSION['masterpass'], $_SESSION['admin']);
 
         /* If possible create config file automatically */

@@ -17,6 +17,7 @@
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core
  */
+
 /* Include config files or begin install process */
 if (!file_exists('config.php')) {
     header("Content-type: text/html; charset=utf-8");
@@ -44,11 +45,16 @@ if (strtolower(trim($_REQUEST['uri'], '/')) == 'setup') {
 
 ob_start(); // start the output buffer
 
-define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
-define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
-
-
+/* If cache settings aren't set in config, get them from the database */
+if (!defined('_CONTENTCACHE')) {
+    define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
+}
+if (!defined('_CONTENTCACHETIME')) {
+    define('_CONTENTCACHETIME', Jojo::getOption('contentcachetime',3600));
+}
+if (!defined('_CONTENTCACHETIMERESOURCES')) {
+    define('_CONTENTCACHETIMERESOURCES', Jojo::getOption('contentcachetime_resources', 604800));
+}
 
 /* check public cache */
 $extensions = array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css');
@@ -57,10 +63,10 @@ if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Joj
     if (Jojo::fileExists($cachefile)) {
         /* output data */
         $data = file_get_contents($cachefile);
-        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cachefile), Jojo::getOption('contentcachetime_resources', 604800));
+        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cachefile), _CONTENTCACHETIMERESOURCES);
         header('Content-type: ' . Jojo::getMimeType($cachefile));
         header('Content-Length: ' . strlen($data));
-        header('Content-Disposition: inline; filename=' . basename($cachefile) . ';');
+        header('Content-Disposition: inline;');
         header('Content-Transfer-Encoding: binary');
         echo $data;
         ob_end_flush(); // Send the output and turn off output buffering
@@ -69,7 +75,6 @@ if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Joj
     unset($cachefile);
     unset($extensions);
 }
-
 
 /* Set php ini settings */
 //These settings can be added to .htaccess, however Dreamhost (and possibly others) does not allow these.
@@ -84,42 +89,103 @@ if (extension_loaded('mbstring')) {
     mb_internal_encoding('UTF-8');
 }
 
-/* Set the timezone */
-if (function_exists('date_default_timezone_set') && Jojo::getOption('sitetimezone')) {
-    @date_default_timezone_set(Jojo::getOption('sitetimezone'));
-}
-
 /* _SITEURL can be defined in config file (preferred) or in database */
 if (!defined('_SITEURL')) {
     define('_SITEURL', Jojo::getOption('siteurl')); //set _SITEURL constant from database
-} elseif (_SITEURL != Jojo::getOption('siteurl')) {
-    Jojo::setOption('siteurl', _SITEURL); //ensure database record matches config file
 }
-
-/* Define some commonly used constants */
-define('_SITENAME',         Jojo::getOption('sitetitle'));
-define('_NONSECUREURL',     Jojo::getOption('siteurl'));
-define('_SECUREURL',        Jojo::either(Jojo::getOption('secureurl') , Jojo::getOption('siteurl'))); //defaults to be same as SITEURL
-define('_CONTACTNAME',      Jojo::either(Jojo::getOption('contactname'), Jojo::getOption('fromname'), Jojo::getOption('webmastername'))); //used for contact form
-define('_CONTACTADDRESS',   Jojo::either(Jojo::getOption('contactaddress'), Jojo::getOption('fromaddress'), Jojo::getOption('webmasteraddress'))); //used for contact form
-define('_FROMNAME',         Jojo::either(Jojo::getOption('fromname'), Jojo::getOption('sitetitle')));
-define('_FROMADDRESS',      Jojo::getOption('fromaddress'));
-define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
-define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
-define('_SITETITLE',        Jojo::getOption('sitetitle'));
-define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
-
+if (!defined('_SECUREURL')) {
+    define('_SECUREURL', _SITEURL); 
+}
 
 if (Jojo::usingSslConnection()) {
     define('_PROTOCOL', 'https://');
     $issecure = true;
+    define('_SECURESITEFOLDER', ltrim(str_replace(_PROTOCOL . ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '' ) , '' , _SECUREURL), '/')); //the folder in which the website resides, if not the root (eg https://www.foo.com/FOLDER/index.php will return "FOLDER")
 } else {
     define('_PROTOCOL', 'http://');
     $issecure = false;
 }
 
 define('_SITEFOLDER',       ltrim(str_replace(_PROTOCOL . ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '' ) , '' , _SITEURL), '/')); //the folder in which the website resides, if not the root (eg http://www.foo.com/FOLDER/index.php will return "FOLDER")
-define('_SECURESITEFOLDER', ltrim(str_replace(_PROTOCOL . ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '' ) , '' , _SECUREURL), '/')); //the folder in which the website resides, if not the root (eg https://www.foo.com/FOLDER/index.php will return "FOLDER")
+
+/* Setup and start custom session handler 
+@ini_set('session.save_handler', 'user');
+session_set_save_handler(array('Jojo_SessionHandler', 'open'),
+                         array('Jojo_SessionHandler', 'close'),
+                         array('Jojo_SessionHandler', 'read'),
+                         array('Jojo_SessionHandler', 'write'),
+                         array('Jojo_SessionHandler', 'destroy'),
+                         array('Jojo_SessionHandler', 'gc'));
+*/
+if ($issecure) {
+    session_set_cookie_params(0, '/' . _SECURESITEFOLDER);
+} else {
+    session_set_cookie_params(0, '/' . _SITEFOLDER);
+}
+
+/* if sid is set in the GET request on a secure URL, restore this session (previously started on non-secure site). Only applies if secure domain != non-secure domain */
+if ($issecure && !empty($_GET['sid']) && (_SITEURL != _SECUREURL) && (str_replace('http://', '', _SITEURL) != str_replace('https://', '', _SECUREURL))) {
+    /* load the session with the specified session id */
+    session_id($_GET['sid']);
+    session_name('jojo');
+    session_start();
+    $_SESSION['secure_session_started'] = true;
+    /* redirect to strip the session id from the URL */
+    $redirect = preg_replace('/(.*)(\?|&)sid=[^&]+?(&)(.*)/i', '$1$2$4', _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] . '&');
+    $redirect = substr($redirect, 0, -1);
+    Jojo::redirect($redirect);
+}
+session_name('jojo');
+session_start();
+
+
+/* Authentication */
+$_USERGROUPS = array('everyone');
+ /* Check for someone logging in  */
+$loginfailure = false;
+if (Jojo::getFormData('username', false) && $authClass = Jojo::getFormData('_jojo_authtype', false)) {
+    // TODO: clean this input
+    $authClass = 'Jojo_Auth_' . $authClass;
+    $logindata = call_user_func(array($authClass, 'authenticate'));
+    if (is_array($logindata) && isset($logindata['userid'])) {
+        $_SESSION['userid'] = $logindata['userid'];
+    } else {
+        $loginfailure = $logindata;
+    }
+} else {
+/* Setup global variables for already logged in user */
+    $logindata = Jojo::authenticate();
+}
+
+// page cache settings
+$dynamic_url    = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
+$cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
+/* Check for cached copy of page and display if not expired */
+if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST) == 0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
+        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
+        $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
+        $etag = md5($last_modified);
+        readfile($cache_file); //read Cache file
+        header("Content-type: text/html; charset=" . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
+        header('Content-Length: ' . strlen(ob_get_contents()));
+        echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
+        ob_end_flush(); //Flush and turn off output buffering
+        exit(); //no need to proceed further, exit the flow.
+} elseif (Jojo::ctrlF5() && file_exists($cache_file)){
+        unlink($cache_file);
+}
+
+/* Set the timezone */
+if (function_exists('date_default_timezone_set') && Jojo::getOption('sitetimezone')) {
+    @date_default_timezone_set(Jojo::getOption('sitetimezone'));
+}
+
+/* Set up a memcache instance if it is available */
+$mCache = false;
+if (class_exists('Memcache')) {
+    $mCache = new Memcache();
+    if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
+}
 
 /* Work out the Site URI with respect to the Site URL */
 if (preg_match('%^/?' . _SITEFOLDER . '/?(.*)%', $_SERVER['REQUEST_URI'], $regs)) {
@@ -154,78 +220,6 @@ define('_FULLSITEURI', $fullSiteUri); // Site URI including the langauge prefix
 $relativeurl = (_SITEFOLDER!='') ? ltrim(str_replace(_SITEFOLDER . '/', '', $_SERVER['REQUEST_URI']) , '/') : ltrim($_SERVER['REQUEST_URI'], '/');
 define('_RELATIVE_URL', $relativeurl );
 
-/* Setup and start custom session handler */
-@ini_set('session.save_handler', 'user');
-session_set_save_handler(array('Jojo_SessionHandler', 'open'),
-                         array('Jojo_SessionHandler', 'close'),
-                         array('Jojo_SessionHandler', 'read'),
-                         array('Jojo_SessionHandler', 'write'),
-                         array('Jojo_SessionHandler', 'destroy'),
-                         array('Jojo_SessionHandler', 'gc'));
-if ($issecure) {
-    session_set_cookie_params(0, '/' . _SECURESITEFOLDER);
-} else {
-    session_set_cookie_params(0, '/' . _SITEFOLDER);
-}
-
-/* if sid is set in the GET request on a secure URL, restore this session (previously started on non-secure site). Only applies if secure domain != non-secure domain */
-if ($issecure && !empty($_GET['sid']) && (_SITEURL != _SECUREURL) && (str_replace('http://', '', _SITEURL) != str_replace('https://', '', _SECUREURL))) {
-    /* load the session with the specified session id */
-    session_id($_GET['sid']);
-    session_name('jojo');
-    session_start();
-    $_SESSION['secure_session_started'] = true;
-    /* redirect to strip the session id from the URL */
-    $redirect = preg_replace('/(.*)(\?|&)sid=[^&]+?(&)(.*)/i', '$1$2$4', _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] . '&');
-    $redirect = substr($redirect, 0, -1);
-    Jojo::redirect($redirect);
-}
-session_name('jojo');
-session_start();
-
-/* Authentication */
-$_USERGROUPS = array('everyone');
-
-/* Check for someone logging in  */
-$loginfailure = false;
-if (Jojo::getFormData('username', false) && $authClass = Jojo::getFormData('_jojo_authtype', false)) {
-    // TODO: clean this input
-    $authClass = 'Jojo_Auth_' . $authClass;
-    $logindata = call_user_func(array($authClass, 'authenticate'));
-    if (is_array($logindata) && isset($logindata['userid'])) {
-        $_SESSION['userid'] = $logindata['userid'];
-    } else {
-        $loginfailure = $logindata;
-    }
-} else {
-/* Setup global variables for already logged in user */
-    $logindata = Jojo::authenticate();
-}
-
-// page cache settings
-$dynamic_url    = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
-$cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
-/* Check for cached copy of page and display if not expired */
-if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST) == 0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
-        Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
-        $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
-        $etag = md5($last_modified);
-        readfile($cache_file); //read Cache file
-        header("Content-type: text/html; charset=" . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
-        header('Content-Length: ' . strlen(ob_get_contents()));
-        echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
-        ob_end_flush(); //Flush and turn off output buffering
-        exit(); //no need to proceed further, exit the flow.
-} elseif (Jojo::ctrlF5() && file_exists($cache_file)){
-        unlink($cache_file);
-}
-
-/* Set up a memcache instance if it is available */
-$mCache = false;
-if (class_exists('Memcache')) {
-    $mCache = new Memcache();
-    if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
-}
 
 /* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
 if ($issecure) {
@@ -242,6 +236,21 @@ if ($issecure) {
         $ASSETS[] = _SITEURL . '/';
     }
 }
+
+
+/* Define some commonly used constants */
+define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
+define('_SITENAME',         Jojo::getOption('sitetitle'));
+define('_NONSECUREURL',     Jojo::getOption('siteurl'));
+define('_CONTACTNAME',      Jojo::either(Jojo::getOption('contactname'), Jojo::getOption('fromname'), Jojo::getOption('webmastername'))); //used for contact form
+define('_CONTACTADDRESS',   Jojo::either(Jojo::getOption('contactaddress'), Jojo::getOption('fromaddress'), Jojo::getOption('webmasteraddress'))); //used for contact form
+define('_FROMNAME',         Jojo::either(Jojo::getOption('fromname'), Jojo::getOption('sitetitle')));
+define('_FROMADDRESS',      Jojo::getOption('fromaddress'));
+define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
+define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
+define('_SITETITLE',        Jojo::getOption('sitetitle'));
+define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
+
 
 /* Initialise template engine */
 $templateEngine = Jojo::getOption('templateengine', 'smarty');

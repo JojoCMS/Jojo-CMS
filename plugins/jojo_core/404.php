@@ -42,4 +42,5 @@ $log->shortdesc  = '404 error: '. _SITEURL . '/' . _SITEURI;
 $log->desc       = '404 error on ' . _SITEURI . ' - Referer: ' . $ref . ' - User Agent: ' . $ua ;
 $log->savetodb();
 unset($log);
+ob_end_flush(); // Send the output and turn off output buffering
 exit;

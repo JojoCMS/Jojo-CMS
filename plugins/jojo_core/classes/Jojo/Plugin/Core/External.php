@@ -33,7 +33,8 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
         }
 
         /* Check for existence of cached copy if user has not pressed CTRL-F5 */
-        $cachefile = _CACHEDIR . '/external/' . $file;
+        $filename = 'external/' . $file;
+        $cachefile = _CACHEDIR . '/' . $filename;
         $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
         $fromcache = false;
         if (Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
@@ -44,13 +45,13 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             $fromcache = true;
         } else {
             /* Check for external in a Theme */
-            $files = Jojo::listThemes('external/' . $file);
+            $files = Jojo::listThemes($filename);
 
             if (isset($files[0])) {
                 $file = $files[0];
             } else {
                 /* Check for external in a Plugin */
-                $files = Jojo::listPlugins('external/' . $file);
+                $files = Jojo::listPlugins($filename);
                 if (isset($files[0])) {
                     $file = $files[0];
                 } else {
@@ -123,7 +124,9 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             case 'gif':
                 header('Content-Type: image/gif');
                 break;
-
+            case 'swf':
+                header('Content-Type: application/x-shockwave-flash');
+                break;
             case 'jpg':
             case 'jpeg':
                 header('Content-Type: image/jpeg');
@@ -143,19 +146,19 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                 break;
         }
 
-        /* cache a copy for next time */
+        /* cache a copy for next time 
         if (!$fromcache) {
             Jojo::RecursiveMkdir(dirname($cachefile));
             file_put_contents($cachefile, $content);
         }
-
+*/
         /* Send Content */
         if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
 
         parent::sendCacheHeaders(time(), $cachetime);
         header('Content-Length: ' . strlen($content));
         echo $content;
-        Jojo::publicCache($file, $content);
+        Jojo::publicCache($filename, $content);
         exit;
     }
 }

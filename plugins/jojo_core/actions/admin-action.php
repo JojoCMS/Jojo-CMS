@@ -129,9 +129,6 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
             $frajax->script('parent.$("#itemtitle").html("Save successful.").show("fast");');
             $frajax->script('parent.$("#message").html("<h4>Jojo CMS</h4><p>'.$res.'</p>").fadeIn().fadeTo(10000, 1).fadeOut();');
 
-            /* Clear the content cache after saving */
-            Jojo::clearCache($scope='html');
-
             $frajax->assign('id', 'value', $table->getRecordID());
 
             $frajax->script('parent.$("#btn_addsimilar").fadeIn("fast");');
@@ -142,6 +139,9 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
             /* hook for plugins to do something after save is complete */
             Jojo::runHook('admin_action_after_save_' . $table->getTableName(), array('id' => $table->getRecordID()));
             Jojo::runHook('admin_action_after_save', array('table' => $table->getTableName(), 'id' => $table->getRecordID()));
+
+            /* Clear the html cache after saving */
+            Jojo::clearCache($scope='html');
 
             refreshMenu($table, $t, $frajax);
 
@@ -178,6 +178,8 @@ if (Jojo::getPost('btn_delete', false)) {
     Jojo::runHook('admin_action_pre_delete', array($table));
     if ($table->deleteRecord() == true) {
         Jojo::runHook('admin_action_delete_success', array($table));
+        /* Clear the html cache after deleting */
+        Jojo::clearCache($scope='html');
         $frajax->redirect(_SITEURL . '/' . Jojo::getFormData('prefix') . '/' . $t . '/');
     } else {
         /* Error deleting */
