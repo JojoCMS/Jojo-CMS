@@ -58,12 +58,12 @@ if (!defined('_CONTENTCACHETIMERESOURCES')) {
 
 /* check public cache */
 $extensions = array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css');
-if (true && in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Jojo::ctrlF5()) {
+if (in_array(Jojo::getFileExtension($_GET['uri']), $extensions)  && !Jojo::ctrlF5()) {
     $cachefile = _CACHEDIR.'/public/'.md5($_GET['uri'] ).'.'.Jojo::getFileExtension($_GET['uri']);
     if (Jojo::fileExists($cachefile)) {
         /* output data */
-        $data = file_get_contents($cachefile);
         Jojo_Plugin_Core::sendCacheHeaders(filemtime($cachefile), _CONTENTCACHETIMERESOURCES);
+        $data = file_get_contents($cachefile);
         header('Content-type: ' . Jojo::getMimeType($cachefile));
         header('Content-Length: ' . strlen($data));
         header('Content-Disposition: inline;');

@@ -652,6 +652,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         }
         // Nothing has changed since their last request - serve a 304 and exit
         header('HTTP/1.0 304 Not Modified');
+        ob_end_flush(); // Send the output and turn off output buffering
         exit;
     }
 }

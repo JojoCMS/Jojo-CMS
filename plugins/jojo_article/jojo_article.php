@@ -313,7 +313,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
         if ($action == 'rss') {
-            $articles = self::getArticles(100, 0, $categoryid, $sortby, $exclude=false, $include='showhidden');
+            $articles = self::getArticles(Jojo::getOption('rss_num_items', 15) + Jojo::getOption('article_buffer', 0), 0, $categoryid, $sortby, $exclude=false, $include='');
             $rssfields = array(
                 'pagetitle' => $this->page['pg_title'],
                 'pageurl' => _SITEURL . '/' . $pageprefix . $this->page['pg_url'] . '/',
