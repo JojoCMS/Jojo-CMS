@@ -50,7 +50,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
 
         /* check if it's spammy before doing anything else */
-        $errors = self::isSpam('', $form['form_captcha']);
+        $errors = self::isSpam('', $formfields[0]['form_captcha']);
 
         /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
         $form = $formfields[0];
