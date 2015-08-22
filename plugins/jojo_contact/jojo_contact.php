@@ -48,6 +48,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
         }
 
+
+        /* check if it's spammy before doing anything else */
+        $errors = self::isSpam('', $form['form_captcha']);
+
         /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
         $form = $formfields[0];
         $formID = $form['form_id'];
@@ -169,7 +173,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
        }
 
-       if(!count($errors)){
+       if(!$errors){
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
             $errors = $validationReturn[0];
@@ -203,8 +207,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         }
         $message .= Jojo::emailFooter();
 
-        /* check if it's spammy before doing anything else */
-        $errors = self::isSpam($message, $form['form_captcha']);
+        /* check if message is link spam */
+        self::isSpam($message);
 
         $messagefields = '';
         foreach ($fields as $f) {
@@ -252,7 +256,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $htmlmessage = $css ? Jojo::inlineStyle($htmlmessage, $css) : $htmlmessage;
         $res = false;
 
-        if (!count($errors)) {
+        if (!$errors) {
             if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments)) || !$formSend) {
 
                 /* success */
@@ -473,15 +477,16 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $html;
     }
 
-    public static function isSpam($content, $captcha=false) {
+    public static function isSpam($content=false, $captcha=false) {
         
-        if (substr_count($content, 'http://')>Jojo::getOption('spam_links', 3)) {
+        if ($content && substr_count($content, 'http://')>Jojo::getOption('spam_links', 3)) {
             header("HTTP/1.0 404 Not Found");
             ob_end_flush(); // Send the output and turn off output buffering
             exit;
         }
         /* Check CAPTCHA is entered correctly */
         if ($captcha) {
+            $errors=array();
             if (Jojo::getOption('captcha_recaptcha', 'no')=='yes') {
                $captcharesponse = Jojo::getFormData('g-recaptcha-response','');
                $secretkey = Jojo::getOption('captcha_secretkey', '');
