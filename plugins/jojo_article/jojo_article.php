@@ -970,7 +970,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         global $page;
 
         /* add RSS feeds for each page */
-        $categories =  self::getPluginPages('', $page->page['root']);
+        $categories =  self::getPluginPages('showhidden', $page->page['root']);
         foreach ($categories as $c) {
             $prefix =  self::_getPrefix('article', $c['articlecategoryid']) . '/rss/';
             if ($prefix && (isset($c['externalrsslink']) && $c['externalrsslink']) && (!isset($c['rsslink']) || $c['rsslink'] == 1)) {

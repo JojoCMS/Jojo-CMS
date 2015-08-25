@@ -3573,6 +3573,19 @@ class Jojo {
 
         header('Content-type: application/rss+xml');
         echo $rss;
+        ob_end_flush(); //Flush and turn off output buffering
+       
+        /* Cache the page */
+        if (_CONTENTCACHE && !Jojo::noCache()) {
+            $cachefile = _CACHEDIR . '/public/' . md5($pageurl . 'rss/uri=' . ltrim(str_replace(_SITEURL, '', $pageurl) . 'rss/', '/')) . '.html';
+            $fp = fopen($cachefile, 'w');  //open file for writing
+            fwrite($fp, $rss); //write contents to Cache file
+            fclose($fp); //Close file pointer
+        /* or wipe the cache file if it's been set to no cache since */
+        } elseif (Jojo::noCache() && file_exists($cachefile)){
+                unlink($cachefile);
+        }
+
         exit;
     }
 

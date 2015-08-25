@@ -50,10 +50,10 @@ if (!defined('_CONTENTCACHE')) {
     define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
 }
 if (!defined('_CONTENTCACHETIME')) {
-    define('_CONTENTCACHETIME', Jojo::getOption('contentcachetime',3600));
+    define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
 }
 if (!defined('_CONTENTCACHETIMERESOURCES')) {
-    define('_CONTENTCACHETIMERESOURCES', Jojo::getOption('contentcachetime_resources', 604800));
+    define('_CONTENTCACHETIMERESOURCES', Jojo::either(Jojo::getOption('contentcachetime_resources'), 604800));
 }
 
 /* check public cache */
@@ -158,19 +158,19 @@ if (Jojo::getFormData('username', false) && $authClass = Jojo::getFormData('_joj
 }
 
 // page cache settings
-$dynamic_url    = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
+$dynamic_url    = _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
 $cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
 /* Check for cached copy of page and display if not expired */
-if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST) == 0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
+if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST)==0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
         Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
         $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
         $etag = md5($last_modified);
         readfile($cache_file); //read Cache file
-        header("Content-type: text/html; charset=" . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
+        header('Content-type: ' . ( strpos($dynamic_url, '/rss/') ? 'application/rss+xml' : 'text/html') . '; charset=' . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
         header('Content-Length: ' . strlen(ob_get_contents()));
         echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
         ob_end_flush(); //Flush and turn off output buffering
-        exit(); //no need to proceed further, exit the flow.
+        exit();
 } elseif (Jojo::ctrlF5() && file_exists($cache_file)){
         unlink($cache_file);
 }
