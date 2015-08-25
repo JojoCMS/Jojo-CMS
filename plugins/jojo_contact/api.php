@@ -30,3 +30,14 @@ Jojo::addHook('foot', 'footjs', 'jojo_contact');
 
 /* check downloads for permissions */
 Jojo::addHook('jojo_core:downloadFile', 'downloadFile', 'jojo_contact');
+
+$_options[] = array(
+    'id'          => 'spam_links',
+    'category'    => 'Spam',
+    'label'       => 'Spam links',
+    'description' => 'Block form submissions with more than this number of links in the body',
+    'type'        => 'integer',
+    'default'     => '5',
+    'options'     => '',
+    'plugin'      => 'jojo_contact'
+);
