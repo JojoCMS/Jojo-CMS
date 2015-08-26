@@ -166,7 +166,14 @@ if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count(
         $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
         $etag = md5($last_modified);
         readfile($cache_file); //read Cache file
-        header('Content-type: ' . ( strpos($dynamic_url, '/rss/') ? 'application/rss+xml' : 'text/html') . '; charset=' . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
+        $cache_filetype = 'text/html';
+        if (strpos($dynamic_url, '/rss/')) $cache_filetype='application/rss+xml';
+        if (strpos($dynamic_url, '/pdf/')) {
+            $cache_filetype='application/pdf';
+            header('Content-Disposition: attachment;');
+        }
+
+        header('Content-type: ' . $cache_filetype . '; charset=' . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
         header('Content-Length: ' . strlen(ob_get_contents()));
         echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
         ob_end_flush(); //Flush and turn off output buffering
@@ -182,7 +189,7 @@ if (function_exists('date_default_timezone_set') && Jojo::getOption('sitetimezon
 
 /* Set up a memcache instance if it is available */
 $mCache = false;
-if (class_exists('Memcache')) {
+if (class_exists('Memcache') && Jojo::getOption('contentcachetime_memcache', 600)) {
     $mCache = new Memcache();
     if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
 }

@@ -3385,7 +3385,7 @@ class Jojo {
 
     static function getNav($root=0, $subnavLevels=0, $field='mainnav')
     {
-        global $_USERGROUPS, $_USERID, $selectedPages, $mCache;
+        global $selectedPages;
         
         /* Get multilanguage data */
             global $page;
