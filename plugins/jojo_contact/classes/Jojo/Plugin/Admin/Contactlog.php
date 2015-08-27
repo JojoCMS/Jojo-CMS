@@ -32,7 +32,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
             Jojo::deleteQuery("DELETE FROM {formsubmission} WHERE formsubmissionid=$removeid");
         }
         $forms = Jojo::selectQuery("SELECT * FROM {form}");
-        $logs = Jojo::selectQuery("SELECT * FROM {formsubmission} ORDER BY submitted DESC LIMIT 1000");
+        $logs = Jojo::selectQuery("SELECT * FROM {formsubmission} ORDER BY submitted DESC LIMIT 500");
         foreach ($logs as &$e) {
             $e['friendlydate'] = strftime('%x %T', $e['submitted']);
             $fields = unserialize($e['content']);

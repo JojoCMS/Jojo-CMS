@@ -364,9 +364,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $id = $search;
             } else {
                 $form = Jojo::selectRow("SELECT form_id, form_name FROM {form} f WHERE f.form_name = ?", array(trim($search)));
-                $id = $form['form_id'];
+                $id = $form ? $form['form_id'] : '';
             }
-            if (isset($id)) {
+            if (isset($id) && $id) {
                 $formhtml = self::getFormHtml($id, $action='submit-form/', $js=true);
                 $content   = str_replace($matches[0][$k], $formhtml, $content);
             }
