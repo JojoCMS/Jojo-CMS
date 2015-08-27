@@ -162,10 +162,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             if (self::isRemoteFile($filename) || Jojo::fileExists($filename)) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $filename));
 
+                $data = file_get_contents($filename);
                 /* output image headers */
                 parent::sendCacheHeaders(filemtime($filename), $cachetime);
                 header('Content-type: ' . $mimetype);
-                header('Content-Length: ' . strlen($filename));
+                header('Content-Length: ' . strlen($data));
                 header('Content-Disposition: inline; filename=' . basename($filename) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
@@ -178,7 +179,6 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     Imagejpeg($im,null,$quality);
                     Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
                 } else {
-                    $data = file_get_contents($filename);
                     echo $data;
                     /* cache image data */
                     Jojo::publicCache('images/' . $file, $data);
@@ -191,10 +191,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             foreach (Jojo::listThemes('images/' . $file) as $pluginfile) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $pluginfile));
 
+                $data = file_get_contents($pluginfile);
                 /* output image headers */
                 parent::sendCacheHeaders(filemtime($pluginfile), $cachetime);
                 header('Content-type: ' . $mimetype);
-                header('Content-Length: ' . strlen($pluginfile));
+                header('Content-Length: ' . strlen($data));
                 header('Content-Disposition: inline; filename=' . basename($pluginfile) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
@@ -207,12 +208,10 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     Imagejpeg($im,null,$quality);
                     Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
                 } else {
-                    $data = file_get_contents($pluginfile);
                     echo $data;
-                    /* cache image data */
+                   /* cache image data */
                     Jojo::publicCache('images/' . $file, $data);
                 }
-
                 ob_end_flush(); // Send the output and turn off output buffering
                 exit();
 
@@ -221,10 +220,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             foreach (Jojo::listPluginsReverse('images/' . $file) as $pluginfile) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $pluginfile));
 
+                $data = file_get_contents($pluginfile);
                 /* output image headers */
                 parent::sendCacheHeaders(filemtime($pluginfile), $cachetime);
                 header('Content-type: ' . $mimetype);
-                header('Content-Length: ' . strlen($pluginfile));
+                header('Content-Length: ' . strlen($data));
                 header('Content-Disposition: inline; filename=' . basename($pluginfile) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
@@ -237,12 +237,10 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     Imagejpeg($im,null,$quality);
                     Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
                 } else {
-                    $data = file_get_contents($pluginfile);
                     echo $data;
                     /* cache image data */
                     Jojo::publicCache('images/' . $file, $data);
                 }
-
                 ob_end_flush(); // Send the output and turn off output buffering
                 exit();
             }

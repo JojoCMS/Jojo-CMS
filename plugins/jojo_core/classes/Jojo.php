@@ -886,7 +886,7 @@ class Jojo {
      */
     static function publicCache($filename, $data=false, $modified=false)
     {
-        $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css');
+        $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf');
         $extension = Jojo::getFileExtension($filename);
         if (!in_array($extension, $extensions)) {
             return false;

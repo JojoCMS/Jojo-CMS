@@ -32,33 +32,23 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             exit;
         }
 
-        /* Check for existence of cached copy if user has not pressed CTRL-F5 */
         $filename = 'external/' . $file;
-        $cachefile = _CACHEDIR . '/' . $filename;
         $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
-        $fromcache = false;
-        if (Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:externalCachedFile', array('filename' => $cachefile));
+ 
+        /* Check for external in a Theme */
+        $files = Jojo::listThemes($filename);
 
-            parent::sendCacheHeaders(filemtime($cachefile), $cachetime);
-            $file = $cachefile;
-            $fromcache = true;
+        if (isset($files[0])) {
+            $file = $files[0];
         } else {
-            /* Check for external in a Theme */
-            $files = Jojo::listThemes($filename);
-
+            /* Check for external in a Plugin */
+            $files = Jojo::listPlugins($filename);
             if (isset($files[0])) {
                 $file = $files[0];
             } else {
-                /* Check for external in a Plugin */
-                $files = Jojo::listPlugins($filename);
-                if (isset($files[0])) {
-                    $file = $files[0];
-                } else {
-                    /* Not found, 404 time */
-                    header("HTTP/1.0 404 Not Found", true, 404);
-                    exit;
-                }
+                /* Not found, 404 time */
+                header("HTTP/1.0 404 Not Found", true, 404);
+                exit;
             }
         }
 
@@ -86,37 +76,33 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
         switch (Jojo::getFileExtension($file)) {
             case 'css':
                 header('Content-Type: text/css');
-                if (!$fromcache) {
-                    $css = new Jojo_Stitcher();
-                    $css->type = 'css';
-                    $css->addText($content);
-                    $content = $css->fetch();
-                }
+                $css = new Jojo_Stitcher();
+                $css->type = 'css';
+                $css->addText($content);
+                $content = $css->fetch();
                 break;
 
             case 'js':
                 header('Content-Type: application/x-javascript');
-                if (!$fromcache) {
-                    /* JSmin sometimes corrupts files. This is a list of exclusions */
-                    $nojsmin = array();
-                    $nojsmin[] = 'jquery.jqUploader.js';
-                    $nojsmin[] = 'jquery.flash.js';
-                    $nojsmin[] = 'ext-all.js';
+                /* JSmin sometimes corrupts files. This is a list of exclusions */
+                $nojsmin = array();
+                $nojsmin[] = 'jquery.jqUploader.js';
+                $nojsmin[] = 'jquery.flash.js';
+                $nojsmin[] = 'ext-all.js';
 
-                    /* also anything with .pack.js in the filename can't be jsminned */
-                    if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
-                        set_time_limit(180);
-                        require_once(_BASEPLUGINDIR . '/jojo_core/external/jshrink/src/JShrink/Minifier.php');
-                        try {
-                            $newContent = JShrink\Minifier::minify($content);
-                        } catch (Exception $e) { 
-                            $newContent = $content;
-                        }
-                        if (strlen($newContent) <= strlen($content)) {
-                            $content = sprintf('/* JShrink shrunk file by %s bytes */', strlen($newContent) - strlen($content)) . $newContent;
-                        } else {
-                            $content = sprintf('/* JShrink enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
-                        }
+                /* also anything with .pack.js in the filename can't be jsminned */
+                if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
+                    set_time_limit(180);
+                    require_once(_BASEPLUGINDIR . '/jojo_core/external/jshrink/src/JShrink/Minifier.php');
+                    try {
+                        $newContent = JShrink\Minifier::minify($content);
+                    } catch (Exception $e) { 
+                        $newContent = $content;
+                    }
+                    if (strlen($newContent) <= strlen($content)) {
+                        $content = sprintf('/* JShrink shrunk file by %s bytes */', strlen($newContent) - strlen($content)) . $newContent;
+                    } else {
+                        $content = sprintf('/* JShrink enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
                     }
                 }
                 break;
@@ -146,12 +132,6 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                 break;
         }
 
-        /* cache a copy for next time 
-        if (!$fromcache) {
-            Jojo::RecursiveMkdir(dirname($cachefile));
-            file_put_contents($cachefile, $content);
-        }
-*/
         /* Send Content */
         if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
 

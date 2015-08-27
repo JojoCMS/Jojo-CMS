@@ -27,7 +27,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
 
         /* Get requested filename */
         $file = Jojo::getFormData('file', false);
-        $f = $file;
 
         /* Check file name is .js */
         if (!$file || strpos($file, '.js') === false) {
@@ -39,24 +38,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             $file = str_replace( '.js', '', $file);
         }
 
-        /* If the filename is clean, cache the js */
-        $cachefile = false;
-        if (preg_match('%^([a-zA-Z]+)$%', $file)) {
-            $cachefile = _CACHEDIR . '/js/' . $file . '.js';
-        }
-
         $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
-
-        /* Check for existence of cached copy if user has not pressed CTRL-F5 */
-        if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:jsCachedFile', array('filename' => $cachefile));
-            parent::sendCacheHeaders(filemtime($cachefile), $cachetime);
-            $content = file_get_contents($cachefile);
-            if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
-            header('Content-type: text/javascript');
-            echo $content;
-            exit;
-        }
 
         $js = new Jojo_Stitcher();
         $js->type = 'javascript';
@@ -180,17 +162,11 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
-        $optimise = (boolean)(strpos($f, 'pack')===false && strpos($f, 'min')===false);
+        $optimise = (boolean)(strpos($file, 'pack')===false && strpos($file, 'min')===false);
         $js->output($optimise);
 
         /* Cache a copy for later */
-        if ($cachefile) {
-            $content = $js->data;
-            Jojo::RecursiveMkdir(dirname($cachefile));
-            file_put_contents($cachefile, $content);
-            //touch($cachefile, $js->modified);
-            Jojo::publicCache('js/' . $f, $content, $js->modified);
-        }
+        Jojo::publicCache('js/' . $file . '.js', $js->data, $js->modified);
         exit;
     }
 }

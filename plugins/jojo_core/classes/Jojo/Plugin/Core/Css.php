@@ -49,17 +49,6 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         
         $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
 
-        /* Check for existence of cached copy if user has not pressed CTRL-F5 */
-        if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:cssCachedFile', array('filename' => $cachefile));
-            parent::sendCacheHeaders(filemtime($cachefile), $cachetime);
-            $content = file_get_contents($cachefile);
-            if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
-            header('Content-type: text/css');
-            echo $content;
-            exit;
-        }
-
         $start = Jojo::timer();
         $css = new Jojo_Stitcher();
         switch($file) {
@@ -365,13 +354,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         $css->output();
 
         /* Cache a copy for later */
-        if ($cachefile) {
-            $content = $css->data;
-            Jojo::RecursiveMkdir(dirname($cachefile));
-            file_put_contents($cachefile, $content);
-            //touch($cachefile, $css->modified);
-            Jojo::publicCache('css/'. $f, $content, $css->modified);
-        }
+        Jojo::publicCache('css/'. $f, $css->data, $css->modified);
 
         if (_DEBUG) {
             echo "/* Adding files took " . $timetoadd . " ms*/\n";
