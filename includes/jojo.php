@@ -118,6 +118,11 @@ if (Jojo::usingSslConnection()) {
 
 define('_SITEFOLDER',       ltrim(str_replace(_PROTOCOL . ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '' ) , '' , _SITEURL), '/')); //the folder in which the website resides, if not the root (eg http://www.foo.com/FOLDER/index.php will return "FOLDER")
 
+$logindata = false;
+$loginfailure = false;
+$_USERID = false;
+$_USERGROUPS = array('everyone');
+
 /* For resource requests (images, js, css etc) bypass everything only needed for content page requests */
 if (!$resourcerequest) {
 
@@ -143,9 +148,7 @@ if (!$resourcerequest) {
     session_start();
 
     /* Authentication */
-    $_USERGROUPS = array('everyone');
      /* Check for someone logging in  */
-    $loginfailure = false;
     if (Jojo::getFormData('username', false) && $authClass = Jojo::getFormData('_jojo_authtype', false)) {
         // TODO: clean this input
         $authClass = 'Jojo_Auth_' . $authClass;
@@ -184,12 +187,6 @@ if (!$resourcerequest) {
             unlink($cache_file);
     }
 
-    /* Set up a memcache instance if it is available */
-    $mCache = false;
-    if (class_exists('Memcache') && Jojo::getOption('contentcachetime_memcache', 600)) {
-        $mCache = new Memcache();
-        if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
-    }
 }
 /* Set the timezone */
 if (function_exists('date_default_timezone_set') && Jojo::getOption('sitetimezone')) {
@@ -271,7 +268,7 @@ try {
 }
 
 /* Resource not found, return blank 404 */
-if ($page === false && $resourcerequest) {
+if ($page===false && $resourcerequest) {
     header("HTTP/1.0 404 Not Found", true, 404);
     exit;
 }
@@ -294,6 +291,13 @@ if (($page->id == 1) && (rtrim($correcturl,'/') != rtrim($actualurl,'/')))  {
 /* Enable GZIP */
 if (Jojo::getOption('enablegzip', false) == 1 && strpos($_SERVER['REQUEST_URI'], '/actions/') === false) {
     Jojo::gzip();
+}
+
+/* Set up a memcache instance if it is available */
+$mCache = false;
+if (class_exists('Memcache') && Jojo::getOption('contentcachetime_memcache', 600)) {
+    $mCache = new Memcache();
+    if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
 }
 
 /* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
