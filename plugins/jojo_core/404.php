@@ -23,9 +23,12 @@ header("HTTP/1.0 404 Not Found");
 
 /* output the template - if 404.tpl exists within a theme, this will be used in preference to the Jojo default */
 global $smarty;
-$smarty->assign('obfuscatedemail_mailto', Jojo::obfuscateEmail(_WEBMASTERADDRESS, true));
-$smarty->assign('obfuscatedemail', Jojo::obfuscateEmail(_WEBMASTERADDRESS, false));
-echo $smarty->fetch('404.tpl');
+
+if (isset($smarty)) {
+    $smarty->assign('obfuscatedemail_mailto', Jojo::obfuscateEmail(_WEBMASTERADDRESS, true));
+    $smarty->assign('obfuscatedemail', Jojo::obfuscateEmail(_WEBMASTERADDRESS, false));
+    echo $smarty->fetch('404.tpl');
+}
 
 /* If the page was loaded using Google Chrome's preview (while the user is typing) then don't log the error, they're still typing */
 if (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] == ': preview') exit;
