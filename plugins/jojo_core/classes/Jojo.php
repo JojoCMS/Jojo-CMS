@@ -1197,11 +1197,11 @@ class Jojo {
 
         if ($link2secure && $issecure) {
             return '';
-        } else if ($link2secure && !$issecure) {
+        } elseif ($link2secure && !$issecure) {
             return _SECUREURL."/";
-        } else if (!$link2secure && $issecure) {
+        } elseif (!$link2secure && $issecure) {
             return _SITEURL."/";
-        } else if (!$link2secure && !$issecure) {
+        } elseif (!$link2secure && !$issecure) {
             return '';
         }
     }
@@ -2367,9 +2367,9 @@ class Jojo {
             } elseif ($format == 'friendly') { //Friendly will use names such as today, yesterday etc
                 if (date('d/m/Y', strtotime('+0 day')) == date('d/m/Y', $timestamp)) {
                     $d = 'today, ' . date("j M y", $timestamp);
-                } else if (date("d/m/Y", strtotime('+1 day')) == date('d/m/Y', $timestamp)) {
+                } elseif (date("d/m/Y", strtotime('+1 day')) == date('d/m/Y', $timestamp)) {
                     $d = 'tomorrow, ' . date('j M y', $timestamp);
-                } else if (date('d/m/Y', strtotime('-1 day')) == date('d/m/Y', $timestamp)) {
+                } elseif (date('d/m/Y', strtotime('-1 day')) == date('d/m/Y', $timestamp)) {
                     $d = "yesterday, ". date('j M y', $timestamp);
                 } else {
                     $d = date('j M y', $timestamp);
@@ -2710,6 +2710,11 @@ class Jojo {
             array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
             array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
             array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.woff'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.ttf'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.svg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.eot'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.swf'));
         } elseif ($scope=='images') {
             array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
             array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
@@ -2923,11 +2928,11 @@ class Jojo {
         if ( is_null($timestamp) || ($timestamp == 0) ) {return '';}
         if (date('d/m/Y',strtotime('+0 day')) == date('d/m/Y',$timestamp)) {
             $d = $showtime ? 'Today, '.date("h:ia",$timestamp) : 'Today';
-        } else if (date("d/m/Y",strtotime("+1 day")) == date("d/m/Y",$timestamp)) {
+        } elseif (date("d/m/Y",strtotime("+1 day")) == date("d/m/Y",$timestamp)) {
             $d = $showtime ? "Tomorrow, ".date("h:ia",$timestamp) : 'Tomorrow';
-        } else if (date("d/m/Y",strtotime("-1 day")) == date("d/m/Y",$timestamp)) {
+        } elseif (date("d/m/Y",strtotime("-1 day")) == date("d/m/Y",$timestamp)) {
             $d = $showtime ? "Yesterday, ".date("h:ia",$timestamp) : 'Yesterday';
-        } else if (date("Y",strtotime("+0 day")) == date("Y",$timestamp)) { //same year
+        } elseif (date("Y",strtotime("+0 day")) == date("Y",$timestamp)) { //same year
             $d = "".date("jS F",$timestamp); //no need to include year
         } else {
             $d = date("j M Y",$timestamp);
@@ -3370,7 +3375,7 @@ class Jojo {
         if ($page->page['pg_htmllang']) {
             $pagehtmllang = $page->page['pg_htmllang'];
         // otherwise, find the default language for this section from its root
-        } else if ($sectiondata) {
+        } elseif ($sectiondata) {
             $pagehtmllang = $sectiondata['lc_defaultlang'];
         } else {
             $pagehtmllang = 'en';

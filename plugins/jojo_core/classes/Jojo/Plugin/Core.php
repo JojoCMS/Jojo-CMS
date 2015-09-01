@@ -91,7 +91,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pages = self::getItems('sitemap', $sortby='pg_order');
         /* Add pages to the sitemap */
         foreach ($pages as $k => $p) {
-            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], $p['url']);
+            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], _SITEURL . '/' . $p['url']);
         }
         /* Add to the sitemap array */
         $sitemap['pages'] = array(
@@ -125,7 +125,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 if ($p['pageid'] == 1) {
                     // Homepage gets top priority
                     $priority = 1.0;
-                } else if ($p['pg_parent'] == 0) {
+                } elseif ($p['pg_parent'] == 0) {
                     // Top level pages have greater priority
                     $priority = 0.9;
                 } else {

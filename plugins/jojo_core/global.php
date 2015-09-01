@@ -39,6 +39,7 @@ $mldata = Jojo::getMultiLanguageData();
 $sectiondata =  isset($mldata['sectiondata'][$root]) ? $mldata['sectiondata'][$root] : '';
 $smarty->assign('home', ($sectiondata ? $sectiondata['home'] : 1));
 $smarty->assign('root', $root);
+$_SESSION['sectionroot'] = $root;
 $smarty->assign('languagelist', $mldata['sectiondata']);
 
 /* Get one level of main navigation for the top navigation */

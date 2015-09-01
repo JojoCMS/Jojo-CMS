@@ -46,14 +46,16 @@ if (strtolower(trim($_REQUEST['uri'], '/')) == 'setup') {
 ob_start(); // start the output buffer
 
 /* If cache settings aren't set in config, get them from the database */
-if (!defined('_CONTENTCACHE')) {
-    define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-}
-if (!defined('_CONTENTCACHETIME')) {
-    define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'),3600));
-}
-if (!defined('_CONTENTCACHETIMERESOURCES')) {
-    define('_CONTENTCACHETIMERESOURCES', Jojo::either(Jojo::getOption('contentcachetime_resources'), 604800));
+defined('_CONTENTCACHE') or define('_CONTENTCACHE', (Jojo::getOption('contentcache') == 'no' ? false : true));
+defined('_CONTENTCACHETIME') or define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
+defined('_CONTENTCACHETIMERESOURCES') or define('_CONTENTCACHETIMERESOURCES', Jojo::either(Jojo::getOption('contentcachetime_resources'), 604800));
+
+/* Set the timezone */
+if (function_exists('date_default_timezone_set')) {
+    defined('_SITETIMEZONE') or define('_SITETIMEZONE', Jojo::getOption('sitetimezone'));
+    if (_SITETIMEZONE) {
+        @date_default_timezone_set(_SITETIMEZONE);
+    }
 }
 
 $extension = Jojo::getFileExtension($_GET['uri']);
@@ -100,12 +102,8 @@ if (_DEBUG) {
 }
 
 /* _SITEURL can be defined in config file (preferred) or in database */
-if (!defined('_SITEURL')) {
-    define('_SITEURL', Jojo::getOption('siteurl')); //set _SITEURL constant from database
-}
-if (!defined('_SECUREURL')) {
-    define('_SECUREURL', _SITEURL); 
-}
+defined('_SITEURL') or define('_SITEURL', Jojo::getOption('siteurl')); //set _SITEURL constant from database
+defined('_SECUREURL') or define('_SECUREURL', _SITEURL); 
 
 if (Jojo::usingSslConnection()) {
     define('_PROTOCOL', 'https://');
@@ -146,6 +144,13 @@ if (!$resourcerequest) {
     }
     session_name('jojo');
     session_start();
+
+    /* Redirect to Mobile-only version of site */
+    if (isset($_POST['set_mobile'])) {
+        $set_mobile = (boolean)($_POST['set_mobile'] == '1');
+        Jojo::setMobile($set_mobile);
+        Jojo::redirect(_PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    }
 
     /* Authentication */
      /* Check for someone logging in  */
@@ -188,10 +193,6 @@ if (!$resourcerequest) {
     }
 
 }
-/* Set the timezone */
-if (function_exists('date_default_timezone_set') && Jojo::getOption('sitetimezone')) {
-    @date_default_timezone_set(Jojo::getOption('sitetimezone'));
-}
 
 /* Work out the Site URI with respect to the Site URL */
 if (preg_match('%^/?' . _SITEFOLDER . '/?(.*)%', $_SERVER['REQUEST_URI'], $regs)) {
@@ -225,7 +226,7 @@ define('_FULLSITEURI', $fullSiteUri); // Site URI including the langauge prefix
 //relative url is the path from the base url eg for http://foo.com/myfolder/articles/23/foo-bar/ this would be articles/23/foo-bar
 $relativeurl = (_SITEFOLDER!='') ? ltrim(str_replace(_SITEFOLDER . '/', '', $_SERVER['REQUEST_URI']) , '/') : ltrim($_SERVER['REQUEST_URI'], '/');
 define('_RELATIVE_URL', $relativeurl );
-define('_MULTILANGUAGE', Jojo::yes2true(Jojo::getOption('multilanguage')));
+define('_MULTILANGUAGE', (boolean)( isset($mldata['roots']) && count($mldata['roots'])>1 ));
 
 /* Include plugin api.php's so filters and hooks get added */
 if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
@@ -256,6 +257,105 @@ if (_DEBUG || Jojo::ctrlF5() || !file_exists(_CACHEDIR . '/api.txt')) {
     include(_CACHEDIR . '/api.txt');
 }
 
+if (!$resourcerequest) {
+
+    define('_SITENAME',         Jojo::getOption('sitetitle'));
+    define('_NONSECUREURL',     Jojo::getOption('siteurl'));
+    define('_CONTACTNAME',      Jojo::either(Jojo::getOption('contactname'), Jojo::getOption('fromname'), Jojo::getOption('webmastername'))); //used for contact form
+    define('_CONTACTADDRESS',   Jojo::either(Jojo::getOption('contactaddress'), Jojo::getOption('fromaddress'), Jojo::getOption('webmasteraddress'))); //used for contact form
+    define('_FROMNAME',         Jojo::either(Jojo::getOption('fromname'), Jojo::getOption('sitetitle')));
+    define('_FROMADDRESS',      Jojo::getOption('fromaddress'));
+    define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
+    define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
+    define('_SITETITLE',        Jojo::getOption('sitetitle'));
+    define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
+
+    /* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
+    if ($issecure ) {
+        $ASSETS[] = _SECUREURL . '/';
+    } else {
+        /* define assets array */
+        $ASSETS = array();
+        foreach (explode("\n", Jojo::getOption('assetdomains')) as $a) {
+            if (trim($a)) {
+                $ASSETS[] = trim($a) . '/';
+            }
+        }
+        if (empty($ASSETS)) {
+            $ASSETS[] = _SITEURL . '/';
+        }
+    }
+    /* Initialise template engine */
+    $templateEngine = Jojo::getOption('templateengine', 'smarty');
+    switch ($templateEngine) {
+        case 'smarty':
+            require_once(_BASEPLUGINDIR . '/jojo_core/external/smarty/Smarty.class.php');
+
+            $smarty = new Smarty();
+            $smarty->compile_dir  = _CACHEDIR . '/smarty/templates_c';
+            $smarty->cache_dir    = _CACHEDIR . '/smarty/cache';
+            $smarty->default_resource_type = 'jojo';
+            $smarty->register_resource('jojo', array(
+                                    array('Jojo', 'smarty_getTemplate'),
+                                    array('Jojo', 'smarty_getTimestamp'),
+                                    array('Jojo', 'smarty_getSecure'),
+                                    array('Jojo', 'smarty_getTrusted'))
+                                    );
+            break;
+
+        case 'dwoo':
+        default:
+            require_once(_BASEPLUGINDIR . '/jojo_core/external/dwoo/dwooAutoload.php');
+            require_once(_BASEPLUGINDIR . '/jojo_core/classes/jojo_dwoo_smarty_adapter.php');
+            $smarty = new Jojo_Dwoo_Smarty_Adapter();
+            $smarty->show_compat_errors = true;
+            $smarty->compile_dir  = _CACHEDIR . '/dwoo/templates_c';
+            $smarty->cache_dir    = _CACHEDIR . '/dwoo/cache';
+            $smarty->setCharset('utf-8');
+
+            $smarty->template_dir = array_reverse(Jojo::listPlugins('templates', true));
+            break;
+    }
+    $smarty->register_function('jojoHook', array('Jojo', 'runSmartyHook'));
+    $smarty->register_function('jojoAsset', array('Jojo', 'runSmartyAssetHook'));
+    if (_DEBUG) {
+        /* Tell smarty not to cache stuff - can cause problems when swapping themes */
+        $smarty->force_compile = true;
+    }
+
+    $smarty->assign('OPTIONS',          Jojo::getOptions());
+    $smarty->assign('sitetitle',        _SITETITLE);
+    $smarty->assign('QUERY_STRING',     $_SERVER['QUERY_STRING']);
+    $smarty->assign('REQUEST_URI',      $_SERVER['REQUEST_URI']);
+    $smarty->assign('SITENAME',         _SITENAME);
+    $smarty->assign('SITEURL',          _SITEURL);
+    $smarty->assign('SITEURI',          _SITEURI);
+    $smarty->assign('SECUREURL',        _SECUREURL);
+    $smarty->assign('NONSECUREURL',     _NONSECUREURL);
+    $smarty->assign('RELATIVE_URL',     _RELATIVE_URL);
+    $smarty->assign('issecure',         $issecure);
+    $smarty->assign('ADMIN',            _ADMIN);
+    $smarty->assign('SITEFOLDER',       _SITEFOLDER);
+    if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
+    $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
+    $smarty->assign('IS_MOBILE',            Jojo::isMobile());
+
+    /* User is logged in */
+    $smarty->assign('loggedIn', (boolean)(!empty($logindata)));
+    $smarty->assign('userrecord', $logindata);
+    if (in_array('admin',$_USERGROUPS)) {
+       $smarty->assign('adminloggedin', true);
+       // allow admins to see hidden pages
+       $_SESSION['showhidden'] = true;
+    }
+    $smarty->assign('loginmessage', $loginfailure);
+
+    /* After login hook */
+    if ( isset($_SESSION['loggingin']) && $_SESSION['loggingin']) Jojo::runHook('action_after_login');
+    if ( isset($_SESSION['loggingout']) && $_SESSION['loggingout']) Jojo::runHook('action_after_logout');
+
+} 
+
 /* Parse the url out into bits */
 Jojo::runHook('jojo_before_parsepage');
 $data = Jojo::parsepage(_FULLSITEURI);
@@ -267,10 +367,9 @@ try {
     exit;
 }
 
-/* Resource not found, return blank 404 */
-if ($page===false && $resourcerequest) {
-    header("HTTP/1.0 404 Not Found", true, 404);
-    exit;
+/* If page not found or is a malformed resource request, return 404 */
+if ($page===false || $resourcerequest) {
+    include(_BASEPLUGINDIR . '/jojo_core/404.php');
 }
 
 /* If the URL is not what we expected, 301 redirect the visitor */
@@ -288,10 +387,7 @@ if (($page->id == 1) && (rtrim($correcturl,'/') != rtrim($actualurl,'/')))  {
     exit();
 }
 
-/* Enable GZIP */
-if (Jojo::getOption('enablegzip', false) == 1 && strpos($_SERVER['REQUEST_URI'], '/actions/') === false) {
-    Jojo::gzip();
-}
+$smarty->assign('correcturl', $correcturl);
 
 /* Set up a memcache instance if it is available */
 $mCache = false;
@@ -300,130 +396,10 @@ if (class_exists('Memcache') && Jojo::getOption('contentcachetime_memcache', 600
     if (!$mCache->connect('localhost', 11211))  { $mCache = false; }
 }
 
-/* if no assets set, use siteurl/secureurl to make resource links absolute for browsers that don't understand base href) */
-if ($issecure) {
-    $ASSETS[] = _SECUREURL . '/';
-} else {
-    /* define assets array */
-    $ASSETS = array();
-    foreach (explode("\n", Jojo::getOption('assetdomains')) as $a) {
-        if (trim($a)) {
-            $ASSETS[] = trim($a) . '/';
-        }
-    }
-    if (empty($ASSETS)) {
-        $ASSETS[] = _SITEURL . '/';
-    }
+/* Enable GZIP */
+if (Jojo::getOption('enablegzip', false) == 1 && strpos($_SERVER['REQUEST_URI'], '/actions/') === false) {
+    Jojo::gzip();
 }
-
-/* Define some commonly used constants */
-define('_SITENAME',         Jojo::getOption('sitetitle'));
-define('_NONSECUREURL',     Jojo::getOption('siteurl'));
-define('_CONTACTNAME',      Jojo::either(Jojo::getOption('contactname'), Jojo::getOption('fromname'), Jojo::getOption('webmastername'))); //used for contact form
-define('_CONTACTADDRESS',   Jojo::either(Jojo::getOption('contactaddress'), Jojo::getOption('fromaddress'), Jojo::getOption('webmasteraddress'))); //used for contact form
-define('_FROMNAME',         Jojo::either(Jojo::getOption('fromname'), Jojo::getOption('sitetitle')));
-define('_FROMADDRESS',      Jojo::getOption('fromaddress'));
-define('_WEBMASTERNAME',    Jojo::getOption('webmastername'));
-define('_WEBMASTERADDRESS', Jojo::getOption('webmasteraddress'));
-define('_SITETITLE',        Jojo::getOption('sitetitle'));
-define('_SHORTTITLE',       Jojo::getOption('shorttitle'));
-
-
-/* Initialise template engine */
-$templateEngine = Jojo::getOption('templateengine', 'smarty');
-switch ($templateEngine) {
-    case 'smarty':
-        require_once(_BASEPLUGINDIR . '/jojo_core/external/smarty/Smarty.class.php');
-
-        $smarty = new Smarty();
-        $smarty->compile_dir  = _CACHEDIR . '/smarty/templates_c';
-        $smarty->cache_dir    = _CACHEDIR . '/smarty/cache';
-        $smarty->default_resource_type = 'jojo';
-        $smarty->register_resource('jojo', array(
-                                array('Jojo', 'smarty_getTemplate'),
-                                array('Jojo', 'smarty_getTimestamp'),
-                                array('Jojo', 'smarty_getSecure'),
-                                array('Jojo', 'smarty_getTrusted'))
-                                );
-        break;
-
-    case 'dwoo':
-    default:
-        require_once(_BASEPLUGINDIR . '/jojo_core/external/dwoo/dwooAutoload.php');
-        require_once(_BASEPLUGINDIR . '/jojo_core/classes/jojo_dwoo_smarty_adapter.php');
-        $smarty = new Jojo_Dwoo_Smarty_Adapter();
-        $smarty->show_compat_errors = true;
-        $smarty->compile_dir  = _CACHEDIR . '/dwoo/templates_c';
-        $smarty->cache_dir    = _CACHEDIR . '/dwoo/cache';
-        $smarty->setCharset('utf-8');
-
-        $smarty->template_dir = array_reverse(Jojo::listPlugins('templates', true));
-        break;
-}
-$smarty->register_function('jojoHook', array('Jojo', 'runSmartyHook'));
-$smarty->register_function('jojoAsset', array('Jojo', 'runSmartyAssetHook'));
-if (_DEBUG) {
-    /* Tell smarty not to cache stuff - can cause problems when swapping themes */
-    $smarty->force_compile = true;
-}
-
-$smarty->assign('OPTIONS',          Jojo::getOptions());
-$smarty->assign('sitetitle',        _SITETITLE);
-$smarty->assign('QUERY_STRING',     $_SERVER['QUERY_STRING']);
-$smarty->assign('REQUEST_URI',      $_SERVER['REQUEST_URI']);
-$smarty->assign('SITENAME',         _SITENAME);
-$smarty->assign('SITEURL',          _SITEURL);
-$smarty->assign('SITEURI',          _SITEURI);
-$smarty->assign('SECUREURL',        _SECUREURL);
-$smarty->assign('NONSECUREURL',     _NONSECUREURL);
-$smarty->assign('RELATIVE_URL',     _RELATIVE_URL);
-$smarty->assign('issecure',         $issecure);
-$smarty->assign('ADMIN',            _ADMIN);
-$smarty->assign('SITEFOLDER',       _SITEFOLDER);
-if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
-$smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
-$smarty->assign('IS_MOBILE',            Jojo::isMobile());
-
-/* Page not found, return formatted404 page */
-if ($page === false) {
-    include(_BASEPLUGINDIR . '/jojo_core/404.php');
-    ob_end_flush();
-    exit;
-}
-
-/* Store the search terms used if the refered is external */
-if (!isset($_SESSION['referer']) && isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],_SITEURL) === false) {
-    $_SESSION['referer'] = $_SERVER['HTTP_REFERER'];
-    require_once(_BASEPLUGINDIR . '/jojo_core/external/lgf-searchReferencesV2/lgf-search-Functions.php');
-    $keywords = ExtractKeywords3($_SESSION['referer']);
-    $_SESSION['referer_searchphrase'] = is_array($keywords) ? implode(' ', $keywords) : '';
-    setcookie('referer_searchphrase', $_SESSION['referer_searchphrase'], 0);
-}
-if (isset($_SESSION['referer_searchphrase'])) {
-    setcookie('referer_searchphrase', $_SESSION['referer_searchphrase'], 0);
-}
-
-if (isset($_POST['set_mobile'])) {
-    $set_mobile = ($_POST['set_mobile'] == '1') ? true : false;
-    Jojo::setMobile($set_mobile);
-    Jojo::redirect(_PROTOCOL . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-}
-
-/* User is logged in */
-$smarty->assign('loggedIn', (boolean)(!empty($logindata)));
-$smarty->assign('userrecord', $logindata);
-if (in_array('admin',$_USERGROUPS)) {
-   $smarty->assign('adminloggedin', true);
-   // allow admins to see hidden pages
-   $_SESSION['showhidden'] = true;
-}
-$smarty->assign('loginmessage', $loginfailure);
-
-/* After login hook */
-if ( isset($_SESSION['loggingin']) && $_SESSION['loggingin']) Jojo::runHook('action_after_login');
-if ( isset($_SESSION['loggingout']) && $_SESSION['loggingout']) Jojo::runHook('action_after_logout');
-
-$smarty->assign('correcturl', $correcturl);
 
 /* Custom code from all plugins and theme */
 $templateoptions = array();
@@ -452,6 +428,18 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
     exit();
 }
 
+/* Store the search terms used if the refered is external */
+if (!isset($_SESSION['referer']) && isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],_SITEURL) === false) {
+    $_SESSION['referer'] = $_SERVER['HTTP_REFERER'];
+    require_once(_BASEPLUGINDIR . '/jojo_core/external/lgf-searchReferencesV2/lgf-search-Functions.php');
+    $keywords = ExtractKeywords3($_SESSION['referer']);
+    $_SESSION['referer_searchphrase'] = is_array($keywords) ? implode(' ', $keywords) : '';
+    setcookie('referer_searchphrase', $_SESSION['referer_searchphrase'], 0);
+}
+if (isset($_SESSION['referer_searchphrase'])) {
+    setcookie('referer_searchphrase', $_SESSION['referer_searchphrase'], 0);
+}
+
 /* Assign all page fields to smarty */
 foreach($page->page as $key => $value) {
     $smarty->assign($key, $value);
@@ -460,7 +448,7 @@ foreach($page->page as $key => $value) {
 $languagedata = Jojo::getPageHtmlLanguage();
 $smarty->assign ('pg_htmllang', $languagedata['languageid'] );
 
-$charset = !empty($languagedata['charset']) ? $languagedata['charset'] : 'utf-8';
+$charset = $languagedata['charset'] ?: 'utf-8';
 $direction = $languagedata['direction'];
 if ($direction == 'rtl') {
     $smarty->assign('rtl', true);

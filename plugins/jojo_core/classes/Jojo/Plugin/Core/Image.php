@@ -499,7 +499,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         if ($filetype == "gif") {
             Imagegif($new_im);
             Imagegif($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.gif');
-        } else if ($filetype == "png") {
+        } elseif ($filetype == "png") {
             imagesavealpha($new_im, true);
             Imagepng($new_im);
             Imagepng($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.png');
@@ -623,7 +623,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             if ($isfile) {
                if ($filetype == "gif") {
                     Imagegif($im, $file);
-                } else if ($filetype == "png") {
+                } elseif ($filetype == "png") {
                     imagesavealpha($new_im, true);
                     Imagepng($im, $file);
                 } else {
