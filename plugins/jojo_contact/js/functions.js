@@ -60,7 +60,7 @@ $(document).ready(function() {
                     });
                 } 
                 if ($("fieldset", this).length>1 && $(this).hasClass('multipage')) {
-                    setFormTabs($(this).attr('id'));
+                    setFormTabs(formid);
                 }
             }
             if ($("input.anytime", this).length>0) {
@@ -104,7 +104,7 @@ function preFlight(formData, jqForm, options) {
         
     // trigger event tracking
     if (typeof(_gaq) != 'undefined') {
-        var formName = $('h1').text() + ' ' + $('#' + formid).attr('name');
+        var formName = $('h1').text() + ' ' + $('#' + formID).attr('name');
     	_gaq.push(['_trackEvent', formName + ' id:form' + formID, 'submit']);
     }
     

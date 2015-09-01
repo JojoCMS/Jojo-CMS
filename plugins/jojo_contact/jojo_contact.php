@@ -60,7 +60,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formSubject = $form['form_subject'];
         $formAnalytics = $form['form_tracking_code_analytics'];
         $formTrackingcode = $form['form_tracking_code'];
-        $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
+        $formSuccessMessage = $form['form_success_message'] ?: ( Jojo::getOption('contact_success_message', '') ?: 'Your message was sent successfully.' );
 
         $smarty->assign('formTrackingcode', $formTrackingcode);
 
@@ -183,12 +183,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
         unset($field);
 
-
-        $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
-        $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
-        $subject  = $formSubject ? $formSubject : 'Message from the ' . $formName . ' form';
+        $from_name = $from_name ?: Jojo::getOption('sitetitle');
+        $from_email = $from_email ?: Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS);
+        $subject  = $formSubject ?: 'Message from the ' . $formName . ' form';
         $subject = mb_convert_encoding($subject, 'HTML-ENTITIES', 'UTF-8');
-
         $smarty->assign('subject', $subject);
 
         $message  = '';
@@ -214,7 +212,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         foreach ($fields as $f) {
             if ((isset($f['displayonly']) && $f['displayonly']==1) || $f['type'] == 'note') { continue; };
             if ($f['type'] == 'heading') {
-                $messagefields .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
+                $messagefields .=  '<h' . ($f['size'] ?: '3') . '>' . $f['value'] . '</h' . ($f['size'] ?: '3') . '>';
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
                 $messagefields .= '<p>' . $f['display'] . ($f['filelink'] ? ' <a href="' . _SITEURL . '/downloads' . $f['filelink'] . '">' . _SITEURL . '/downloads' . $f['filelink'] .'</a>' : '') .'</p>';
             } else {
@@ -384,7 +382,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         $form = $formfields[0];
         $form['form_submit'] = isset($form['form_submit']) && $form['form_submit'] ? $form['form_submit'] : 'Submit';
-        $form['form_success_message'] = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
+        $form['form_success_message'] = $form['form_success_message'] ?: Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
         $hideonsuccess = $form['form_hideonsuccess'];
         $formCaptcha = $form['form_captcha'];
 
@@ -432,6 +430,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         if ($sent) {
             $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $_SESSION['sendstatus'] : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
             $smarty->assign('sent', $sent);
+            Jojo::noCache(true);
         }
         //reset send status
         unset($_SESSION['sendstatus']);
@@ -566,7 +565,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
 
                 $folder = $field['type'] == 'privateupload' || $field['type'] == 'attachment' ? 'private/' : '';
-                $folder .= $form['form_uploadfolder'] ? $form['form_uploadfolder'] : $form['form_id'];
+                $folder .= $form['form_uploadfolder'] ?: $form['form_id'];
                 /* All appears good, so prepare to move file to final resting place */
                 $destination = _DOWNLOADDIR . '/uploads/' . $folder . '/' . basename($filename);
 
