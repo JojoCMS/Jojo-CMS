@@ -219,6 +219,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $messagefields .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
             }
         }
+        $messagefields = self::personaliseMessage($messagefields, $fields);
+        
         $replymessage = isset($form['form_autoreply_bodycode']) && $form['form_autoreply_bodycode'] ? Jojo::relative2absolute($form['form_autoreply_bodycode'], _SITEURL) :  '';
         if (strpos($replymessage, '[[conditional:')!==false) {
             preg_match('~\[\[conditional:([^\]]*)\]\]~', $replymessage, $matches);
