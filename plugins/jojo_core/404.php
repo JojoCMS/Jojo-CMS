@@ -30,20 +30,24 @@ if (isset($smarty)) {
     echo $smarty->fetch('404.tpl');
 }
 
-/* If the page was loaded using Google Chrome's preview (while the user is typing) then don't log the error, they're still typing */
-if (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] == ': preview') exit;
+if (Jojo::getOption('eventlog_404','no')=='yes') {
 
-$ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    /* If the page was loaded using Google Chrome's preview (while the user is typing) then don't log the error, they're still typing */
+    if (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] == ': preview') exit;
 
-/* log the error */
-$ref             = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 
-$log             = new Jojo_Eventlog();
-$log->code       = '404';
-$log->importance = !empty($ref) ? 'high' : 'normal'; //if they came from another page, this could indicate a broken link so is a higher priority
-$log->shortdesc  = '404 error: '. _SITEURL . '/' . _SITEURI;
-$log->desc       = '404 error on ' . _SITEURI . ' - Referer: ' . $ref . ' - User Agent: ' . $ua ;
-$log->savetodb();
-unset($log);
+    /* log the error */
+    $ref             = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+    $log             = new Jojo_Eventlog();
+    $log->code       = '404';
+    $log->importance = !empty($ref) ? 'high' : 'normal'; //if they came from another page, this could indicate a broken link so is a higher priority
+    $log->shortdesc  = '404 error: '. _SITEURL . '/' . _SITEURI;
+    $log->desc       = '404 error on ' . _SITEURI . ' - Referer: ' . $ref . ' - User Agent: ' . $ua ;
+    $log->savetodb();
+    unset($log);
+}
+
 ob_end_flush(); // Send the output and turn off output buffering
 exit;

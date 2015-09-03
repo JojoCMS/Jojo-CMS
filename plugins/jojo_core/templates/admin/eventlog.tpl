@@ -1,6 +1,6 @@
 {include file="admin/header.tpl"}
 <div id="event-log">
-<p><button class="btn btn-default btn-sm" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</button><button class="btn btn-default btn-sm" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</button></p>
+{if $OPTIONS.eventlog_404=='yes'}<p><button class="btn btn-default btn-sm" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</button><button class="btn btn-default btn-sm" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</button></p>{/if}
 <table class="table">
     <thead>
         <tr>
@@ -10,7 +10,7 @@
         </tr>
     </thead>
     <tbody>
-{foreach item=e from=$log}
+{foreach item=e from=$log}{if !($e.el_code=='404' && $OPTIONS.eventlog_404=='no')}
         <tr class="{$e.el_importance|replace:' ':'-'}{if $e.el_code=='404'} 404{/if}">
             <td title="{$e.el_datetime}">{$e.friendlydate}</td>
             <td>{$e.el_code}</td>
@@ -26,7 +26,7 @@
 {/if}
             </td>
         </tr>
-{/foreach}
+{/if}{/foreach}
     </tbody>
 </table>
 </div>

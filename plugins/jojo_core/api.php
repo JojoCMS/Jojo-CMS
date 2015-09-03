@@ -148,6 +148,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'eventlog_404',
+    'category'    => 'Config',
+    'label'       => 'Log 404 errors',
+    'description' => 'Log errored requests for pages that don\'t exist. Useful for periodic checking of bad links or candidates for redirection.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
     'id'          => 'enablegzip',
     'category'    => 'Config',
     'label'       => 'Enable GZip',
