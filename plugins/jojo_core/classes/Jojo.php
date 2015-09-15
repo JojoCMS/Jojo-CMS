@@ -358,6 +358,7 @@ class Jojo {
             $_db->Connect(_DBHOST, _DBUSER, _DBPASS, _DBNAME);
             $_db->query("SET CHARACTER SET 'utf8'");
             $_db->query("SET NAMES 'utf8'");
+            $_db->SetFetchMode(ADODB_FETCH_ASSOC);
             if (_DEBUG) {
                 $_db->LogSQL(true);
             }
@@ -407,7 +408,6 @@ class Jojo {
 
         /* Include database abstration object */
         global $_db;
-        $_db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /* Execute Query */
         $rs = $_db->Execute($query, $values);
