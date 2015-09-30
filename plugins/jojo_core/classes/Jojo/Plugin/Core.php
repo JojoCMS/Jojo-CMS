@@ -417,19 +417,15 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     public static function subpages($content)
     {
         if (strpos($content, '[[subpages]]')!==false) {
-            global $page;
+            global $page, $smarty;
             $pageid = $page->id;
-            $subpages = Jojo::getNav($pageid, 1);
+            $subpages = Jojo::getNav($pageid, Jojo::getOption('nav_mainnav', 0));
             if ($subpages) {
-                $html = '<ul>' . "\n";
-                foreach ($subpages as $s) {
-                    $html .= '<li><a href="' . $s['url'] . '" title="' . $s['title'] . '">' . $s['label'] . '</a></li>' . "\n";
-                }
-                $html .= '</ul>';
+                $smarty->assign('subpages', $subpages);
+                $html = $smarty->fetch('subpages.tpl');
             } else {
                 $html = '';
             }
-
             $content = str_replace(array('<p>[[subpages]]</p>', '<p>[[subpages]] </p>', '<p>[[subpages]]&nbsp;</p>','[[subpages]]'), $html, $content);
         }
         return $content;
