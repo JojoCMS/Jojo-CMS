@@ -112,18 +112,6 @@ function confirmdelete() {
     }
 }
 
-function xyz(c,a,b,s) {
-    var s = (s == null) ? true : s;
-    var o = '';
-    var m = '';
-    var m2 = ':otliam';
-    for (i = 0; i <= b.length; i++) {o = b.charAt (i) + o;}
-    b = o;
-    for (i = 0; i <= m2.length; i++) {m = m2.charAt (i) + m;}
-    if (!s) {m = '';}
-    return m + a + unescape('%'+'4'+'0') + b + '.' + c;
-}
-
 function validate(val,type) {
     if (type=='email'){
         return val.match(/^(?:^[A-Z0-9._%-]+@[A-Z0-9.-]+\.(?:[A-Z]{2}|com|org|net|biz|info|name|aero|biz|info|jobs|museum|name)$)$/i);

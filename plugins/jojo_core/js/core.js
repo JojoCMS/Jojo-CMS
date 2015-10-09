@@ -61,3 +61,15 @@ function isNull(a) {
 function nl2br(myString){
   return myString.replace( /\n/g, '<br />\n' );
 }
+
+function xyz(c,a,b,s) {
+    var s = (s == null) ? true : s;
+    var o = '';
+    var m = '';
+    var m2 = ':otliam';
+    for (i = 0; i <= b.length; i++) {o = b.charAt (i) + o;}
+    b = o;
+    for (i = 0; i <= m2.length; i++) {m = m2.charAt (i) + m;}
+    if (!s) {m = '';}
+    return m + a + unescape('%'+'4'+'0') + b + '.' + c;
+}
