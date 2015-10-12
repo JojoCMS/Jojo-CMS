@@ -124,6 +124,16 @@ $_USERGROUPS = array('everyone');
 /* For resource requests (images, js, css etc) bypass everything only needed for content page requests */
 if (!$resourcerequest) {
 
+    defined('_SESSIONHANDLER') or define('_SESSIONHANDLER', Jojo::getOption('enable_sessionhandler', false)); //use database session handler
+    if (_SESSIONHANDLER) {
+        @ini_set('session.save_handler', 'user');
+        session_set_save_handler(array('Jojo_SessionHandler', 'open'),
+                                 array('Jojo_SessionHandler', 'close'),
+                                 array('Jojo_SessionHandler', 'read'),
+                                 array('Jojo_SessionHandler', 'write'),
+                                 array('Jojo_SessionHandler', 'destroy'),
+                                 array('Jojo_SessionHandler', 'gc'));
+    }
     if ($issecure) {
         session_set_cookie_params(0, '/' . _SECURESITEFOLDER);
     } else {

@@ -168,6 +168,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'enable_sessionhandler',
+    'category'    => 'Config',
+    'label'       => 'Enable Custom Session Handler',
+    'description' => 'Store sessions in the database rather than using the native PHP session manager. Offers better time limit control for Cart sites.',
+    'type'        => 'radio',
+    'default'     => '0',
+    'options'     => '0,1'
+);
+
+$_options[] = array(
     'id'          => 'doctype',
     'category'    => 'Config',
     'label'       => 'Doctype',
