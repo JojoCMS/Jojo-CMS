@@ -65,6 +65,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
         $table = &Jojo_Table::singleton($t);
         if ($id > 0) {
             $table->getRecord($id);
+            $smarty->assign('requested_id', $id);
         }
 
         /* Fetch list of tabs from fields */
