@@ -313,19 +313,24 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         }
 
         if ($action == 'rss') {
-            $articles = self::getArticles(Jojo::getOption('rss_num_items', 15) + Jojo::getOption('article_buffer', 0), 0, $categoryid, $sortby, $exclude=false, $include='');
-            $rssfields = array(
-                'pagetitle' => $this->page['pg_title'],
-                'pageurl' => _SITEURL . '/' . $pageprefix . $this->page['pg_url'] . '/',
-                'title' => 'ar_title',
-                'body' => 'ar_body',
-                'url' => 'url',
-                'date' => 'date',
-                'datetype' => 'unix',
-                'options' => array('snip' => (isset($categorydata['snippet']) ? $categorydata['snippet'] : '400' ), 'imagesize' => '')
-            );
-            $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
-            Jojo::getFeed($articles, $rssfields);
+            if ($categorydata['rsslink']) {
+                $articles = self::getArticles(Jojo::getOption('rss_num_items', 15) + Jojo::getOption('article_buffer', 0), 0, $categoryid, $sortby, $exclude=false, $include='');
+                $rssfields = array(
+                    'pagetitle' => $this->page['pg_title'],
+                    'pageurl' => _SITEURL . '/' . $pageprefix . $this->page['pg_url'] . '/',
+                    'title' => 'ar_title',
+                    'body' => 'ar_body',
+                    'url' => 'url',
+                    'date' => 'date',
+                    'datetype' => 'unix',
+                    'options' => array('snip' => (isset($categorydata['snippet']) ? $categorydata['snippet'] : '400' ), 'imagesize' => '')
+                );
+                $articles = array_slice($articles, 0, Jojo::getOption('rss_num_items', 15));
+                Jojo::getFeed($articles, $rssfields);
+            } else {
+                include(_BASEPLUGINDIR . '/jojo_core/404.php');
+                exit;
+            }
         }
 
 		$featuredfirst = (boolean)(Jojo::getOption('article_features', 'never')=='index' || Jojo::getOption('article_features', 'never')=='always');
