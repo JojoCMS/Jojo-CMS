@@ -38,7 +38,15 @@
         </select>
     {elseif $f.type =='heading'}<h{if in_array($f.size, array(1,2,3,4,5,6))}{$f.size}{else}3{/if}{if $f.class} class="{$f.class}"{/if}>{if $f.value}{$f.value}{else}{$f.display}{/if}</h{if in_array($f.size, array(1,2,3,4,5,6))}{$f.size}{else}3{/if}>
     {elseif $f.type=='note'}<p class="{if $f.class}{$f.class}{/if}">{if $f.value}{$f.value}{else}{$f.display}{/if}</p>
-    {elseif $f.type=='upload' || $f.type=='privateupload' || $f.type=='attachment'}<input type="file" class="fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}" id="FILE_{$f.field}"  {if $f.size}size="{$f.size}" {/if}value="" />
+    {elseif $f.type=='upload' || $f.type=='privateupload' || $f.type=='attachment'}
+    <div class="input-group">
+                <span class="input-group-btn">
+                    <span class="btn btn-primary btn-file">
+                        Browse&hellip; <input type="file" class="fileupload {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" name="FILE_{$f.field}[]" id="FILE_{$f.field}"{if $f.size} size="{$f.size}"{/if} multiple>
+                    </span>
+                </span>
+                <input type="text" class="form-control" readonly>
+    </div>
     {elseif $f.type=='emailwithconfirmation'}<input type="email" class="form-control input text{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" size="{$f.size}" name="{$f.field}" id="{$f.field}" value=""{if $f.placeholder} placeholder="{$f.placeholder}"{/if} />
     {elseif $f.type=='date'}{if $anytime}<div class="input-group">{/if}
         <input type="{if $anytime}text{else}date{/if}" class="form-control input {$f.type}{if $f.class} {$f.class}{/if}{if $f.required} required{/if}{if $anytime} anytime{/if}{if $f.validation && $f.validation!=$f.type} {$f.validation}{/if}" {if $f.size}size="{$f.size}" {/if}name="{$f.field}" id="{$f.field}" value="{$f.value}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}{if $anytime && $f.options} data-format="{$f.options[0]}"{/if} />

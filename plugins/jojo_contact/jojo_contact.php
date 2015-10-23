@@ -159,17 +159,24 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             }
             /* if field is file upload field then need to check for a file and transfer it to the folder */
             if ($field['type'] == 'upload' || $field['type'] == 'privateupload' || $field['type'] == 'attachment') {
-                $field['filelink'] = '';
+                $field['filelink'] = array();
                 if (!isset($_FILES["FILE_".$field['field']])) continue;
-                $file = $_FILES["FILE_".$field['field']];
-                $uploadresponse = self::upload($file, $field, $form);
-                if ($uploadresponse['errors']) $errors[] = $uploadresponse['errors'];
-                if ($field['type'] == 'attachment') {
-                    $field['value'] = $uploadresponse['filename'];
-                    $attachments[] = $uploadresponse['filepath'];
-               } else {
-                    $field['filelink'] = $uploadresponse['filelink'];
-                }
+                $files = $_FILES["FILE_".$field['field']];
+                
+                if (is_array($files['name'])) {
+                    $files = self::reArrayFiles($files);
+                    foreach($files as $f) {
+                        $uploadresponse = self::upload($f, $field, $form);
+                        if ($uploadresponse['errors']) $errors[] = $uploadresponse['errors'];
+                         if ($field['type'] == 'attachment') {
+                            $field['value'] .= $uploadresponse['filename'] . ' ';
+                            $attachments[] = $uploadresponse['filepath'];
+                       } else {
+                            $field['filelink'][] = $uploadresponse['filelink'];
+                        }
+                   }
+
+                } 
             }
        }
 
@@ -198,7 +205,12 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             } elseif ($f['type'] == 'heading') {
                 $message .=  "\r\n<b>" . $f['value'] . "</b>\r\n";
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
-                $message .= $f['display'] . ($f['filelink'] ? ' ' . _SITEURL . '/downloads' . $f['filelink'] : '') . "\r\n";
+                $message .= $f['display'] . "\r\n";
+                if ($f['filelink'] && is_array($f['filelink'])) {
+                    foreach ($f['filelink'] as $l) {
+                        $message .= _SITEURL . '/downloads' . $l . "\r\n";
+                    }
+                }
             } else {
                 $message .= (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n\r\n" : $f['value'] . "\r\n" );
             }
@@ -214,7 +226,13 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             if ($f['type'] == 'heading') {
                 $messagefields .=  '<h' . ($f['size'] ?: '3') . '>' . $f['value'] . '</h' . ($f['size'] ?: '3') . '>';
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
-                $messagefields .= '<p>' . $f['display'] . ($f['filelink'] ? ' <a href="' . _SITEURL . '/downloads' . $f['filelink'] . '">' . _SITEURL . '/downloads' . $f['filelink'] .'</a>' : '') .'</p>';
+                $messagefields .= '<p>' . $f['display'];
+                if ($f['filelink'] && is_array($f['filelink'])) {
+                    foreach ($f['filelink'] as $fl) {
+                        $messagefields .=  '<br><a href="' . _SITEURL . '/downloads' . $fl . '">' . _SITEURL . '/downloads' . $fl .'</a>';
+                    }
+                }
+                $messagefields .= '</p>';
             } else {
                 $messagefields .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
             }
@@ -610,5 +628,21 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             exit;
         }
         return true;
+    }
+    
+    public static function reArrayFiles(&$file_post)
+    {
+
+        $file_ary = array();
+        $file_count = count($file_post['name']);
+        $file_keys = array_keys($file_post);
+
+        for ($i=0; $i<$file_count; $i++) {
+            foreach ($file_keys as $key) {
+                $file_ary[$i][$key] = $file_post[$key][$i];
+            }
+        }
+
+        return $file_ary;
     }
 }
