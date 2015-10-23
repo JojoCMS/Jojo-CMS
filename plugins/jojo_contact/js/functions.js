@@ -14,8 +14,7 @@ $(document).ready(function() {
                             if (uploads.length>0) {
                                 var percentVal = percentComplete + '%';
                                 $('#' + formid + ' .progress').show();
-                                $('#' + formid + ' .progress .bar').width(percentVal);
-                                $('#' + formid + ' .progress .percent').html(percentVal);
+                                $('#' + formid + ' .progress-bar').width(percentVal).attr('aria-valuenow', percentComplete).html(percentVal);
                             }
                         },
                         success:       showResponse,  // post-submit callback

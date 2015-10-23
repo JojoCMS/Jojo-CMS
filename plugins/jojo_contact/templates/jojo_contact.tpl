@@ -18,7 +18,7 @@
     {if ($f.fieldset && $f.fieldset!=$fields[$x].fieldset) || $k==0}{if $k>0}</fieldset>
     {/if}<fieldset{if $f.fieldsetid} id="{$f.fieldsetid}"{/if} title="{$tabnum}. {$f.fieldset}"{$tabnum = $tabnum+1}>{if $f.fieldset && $form.form_fieldsets}<legend>{$f.fieldset}</legend>{/if}
     {/if}{if $f.type!='hidden'}<div class="form-group {if $f.type == 'emailwithconfirmation'}text{elseif !in_array($f.type,array('radio','checkbox'))}{$f.type}{/if}{if $f.class} {$f.class}{/if}">
-        {if $f.showlabel || $f.padlabel}<label for="{$f.field}" class="control-label">{if $f.display && $f.showlabel && $f.type!='heading'}{$f.display}{/if}{if $f.required}<span class="required">*</span>{/if}</label>
+        {if $f.showlabel || $f.padlabel}<label for="{$f.field}" class="control-label">{if $f.display && $f.showlabel && $f.type!='heading'}{$f.display}{/if}{if $f.required}<span class="required text-danger">*</span>{/if}</label>
         {/if}
     {/if}{if $f.type == 'hidden'}<input type="hidden" name="{$f.field}" id="{$f.field}" value="{$f.value}" />
     {elseif $f.type == 'textarea'}<textarea class="form-control input textarea{if $f.class} {$f.class}{/if}{if $f.required} required{/if}" rows="{$f.rows|default:'10'}" cols="{$f.cols|default:'29'}" {if $f.maxlength}maxlength="{$f.maxlength}" {/if}name="{$f.field}" id="{$f.field}"{if $f.placeholder} placeholder="{$f.placeholder}"{/if}>{$f.value}</textarea>
@@ -76,9 +76,8 @@
         <div class="form-group submit">
             {if $form.form_submit_label}<label class="control-label"></label>{/if}<button type="submit" name="contactsubmit" id="contactsubmit" value="{$form.form_submit}" class="btn btn-primary" data-normalval="{$form.form_submit}" >{$form.form_submit}</button>
        </div>
-        <div class="progress" style="display: none;">
-            <div class="bar"></div >
-            <div class="percent">0%</div >
+        <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="display: none;">
+            <div class="progress-bar">0%</div >
         </div>
     </div>
 </div>
