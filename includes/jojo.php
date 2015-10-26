@@ -59,7 +59,7 @@ if (function_exists('date_default_timezone_set')) {
 }
 
 $extension = Jojo::getFileExtension($_GET['uri']);
-$resourcerequest = in_array($extension, array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf') && strpos($_GET['uri'],'/private/')===false);
+$resourcerequest = (boolean)(in_array($extension, array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf')) && strpos($_GET['uri'],'/private/')===false);
 /* check public cache */
 if ($resourcerequest  && !Jojo::ctrlF5()) {
     $cachefile = _CACHEDIR.'/public/'.md5($_GET['uri'] ) . '.' . $extension;
