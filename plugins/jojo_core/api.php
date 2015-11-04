@@ -694,6 +694,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'columnbreaks_min',
+    'category'    => 'HTML Editor',
+    'label'       => 'Columns Min Size',
+    'description' => 'If the columns filter is enabled, the min screen size before columns break. xs = phone, sm = tablet, md = desktop',
+    'type'        => 'radio',
+    'default'     => 'sm',
+    'options'     => 'xs,sm,md,lg'
+);
+
+$_options[] = array(
     'id'          => 'wysiwyg',
     'category'    => 'HTML Editor',
     'label'       => 'WYSIWYG Editor',
