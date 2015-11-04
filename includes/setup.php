@@ -247,7 +247,7 @@ if (Jojo::tableexists('option')) {
                             $plugin,
                             $o['category'],
                             $o['label'],
-                            substr($o['description'], 0, 255),
+                            $o['description']
                         )
                     );
             } else {
@@ -260,8 +260,8 @@ if (Jojo::tableexists('option')) {
                             $plugin,
                             $o['category'],
                             $o['label'],
-                            substr($o['description'], 0, 255),
-                            $o['id'],
+                            $o['description'],
+                            $o['id']
                         )
                     );
             }
