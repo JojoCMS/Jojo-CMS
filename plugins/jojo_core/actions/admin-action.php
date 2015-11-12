@@ -177,7 +177,8 @@ if (Jojo::getPost('btn_save', false) || Jojo::getPost('saveform', false)) {
 if (Jojo::getPost('btn_delete', false)) {
     Jojo::runHook('admin_action_pre_delete', array($table));
     if ($table->deleteRecord() == true) {
-        Jojo::runHook('admin_action_delete_success', array($table));
+        Jojo::runHook('admin_action_delete_success_' . $table->getTableName(), array('id' => $table->getRecordID()));
+        Jojo::runHook('admin_action_delete_success', array($table, 'id' => $table->getRecordID()));
         /* Clear the html cache after deleting */
         Jojo::clearCache($scope='html');
         $frajax->redirect(_SITEURL . '/' . Jojo::getFormData('prefix') . '/' . $t . '/');
