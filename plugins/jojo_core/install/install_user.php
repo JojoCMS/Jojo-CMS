@@ -25,6 +25,7 @@ $query = "
       `us_login` varchar(100) NOT NULL default '',
       `us_password` varchar(255) NOT NULL default '',
       `us_salt` varchar(16) NOT NULL default '',
+      `us_lastsuccess` datetime NOT NULL default '0000-00-00 00:00:00',
       `us_lastfailure` datetime NOT NULL default '0000-00-00 00:00:00',
       `us_failures` int(11) NOT NULL default '0',
       `us_locked` int(11) NOT NULL default '0',
