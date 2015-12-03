@@ -119,7 +119,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                     $parsedown = new Parsedown();
                     $htmltext = $parsedown->text($text);
 
-                     if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Reset Link', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
+                     if (Jojo::simpleMail((isset($user['us_firstname']) && $user['us_firstname'] ? $user['us_firstname'] : $user['us_login']), $user['us_email'], 'Password Reset Link', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
                         $messages[] = 'Password reset link has been sent to ' . $email;
                     } else {
                         $errors[] = 'There was an error sending the Reset email. Please contact the webmaster for further help ' . _FROMADDRESS;

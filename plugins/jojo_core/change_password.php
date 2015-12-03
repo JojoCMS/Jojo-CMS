@@ -76,6 +76,7 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
 
                     $smarty->assign('name',  Jojo::either($user['us_firstname'],$user['us_login']));
                     $smarty->assign('login', $user['us_login']);
+                    $smarty->assign('email', $user['us_email']);
                     $smarty->assign('new',   $new);
                     $text = $smarty->fetch('change_password_confirmation.tpl');
 
