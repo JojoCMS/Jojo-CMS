@@ -13,6 +13,7 @@
  * @author  Harvey Kane <code@ragepank.com>
  * @author  Michael Cochrane <mikec@jojocms.org>
  * @author  Melanie Schulz <mel@gardyneholt.co.nz>
+ * @author  Tom Dale <tom@zero.co.nz>
  * @license http://www.fsf.org/copyleft/lgpl.html GNU Lesser General Public License
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core

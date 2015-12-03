@@ -13,6 +13,7 @@
  * @author  Harvey Kane <code@ragepank.com>
  * @author  Michael Cochrane <mikec@jojocms.org>
  * @author  Melanie Schulz <mel@gardyneholt.co.nz>
+ * @author  Tom Dale <tom@zero.co.nz>
  * @license http://www.fsf.org/copyleft/lgpl.html GNU Lesser General Public License
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core
@@ -632,11 +633,10 @@ class Jojo {
         $query = Jojo::prefixTables($query);
 
         if (_DEBUG) {
-            /*if (strtoupper(substr($query, 0, 5)) != 'ALTER' &&
+            if (strtoupper(substr($query, 0, 5)) != 'ALTER' &&
                 strtoupper(substr($query, 0, 4)) != 'DROP') {
                 echo "<hr>Non Update query: $query<hr>";
             }
-            */
         }
         /* Include database abstration object */
         global $_db;
@@ -1759,11 +1759,27 @@ class Jojo {
 
                 /* Is function available */
                 if (!is_callable(array($classname, $functionname))) {
-                      /* Skip hook if function doesn't exist
-                         TODO: log error here */
+                      /* Skip hook if function doesn't exist */
+                        $log             = new Jojo_Eventlog();
+                        $log->code       = 'core';
+                        $log->importance = 'high';
+                        $log->shortdesc  = 'Function not callable';
+                        $log->desc       = 'Function not callable for ' . $classname . '::' . $functionname . ' from hook ' . $tag;
+                        $log->savetodb();
+                        unset($log);
                         continue 1;
                 }
 
+                if (!is_array($optionalArgs)) {
+                    $optionalArgs = array();
+                    $log             = new Jojo_Eventlog();
+                    $log->code       = 'core';
+                    $log->importance = 'high';
+                    $log->shortdesc  = 'Args not array';
+                    $log->desc       = 'Function args (' . print_r($optionalArgs). ') not in array form for ' . $classname . '::' . $functionname . ' from ' . $tag;
+                    $log->savetodb();
+                    unset($log);
+                }
                 $result = call_user_func_array(array($classname, $functionname), $optionalArgs);
                 $optionalArgs = $result ? $result : $optionalArgs;
             }
