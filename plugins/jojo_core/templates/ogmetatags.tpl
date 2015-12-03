@@ -24,4 +24,10 @@
     <meta property="og:video" content="{$ogdata.video}" />{if $ogdata.video_height} 
     <meta property="og:video:height" content="{$ogdata.video_height}" />{/if}{if $ogdata.video_width} 
     <meta property="og:video:width" content="{$ogdata.video_width}" />{/if}
-    <meta property="og:video:type" content="application/x-shockwave-flash" />{/if}{/if}
+    <meta property="og:video:type" content="application/x-shockwave-flash" />{/if}
+    <meta name="twitter:card" value="summary" />
+    <meta name="twitter:url" value="{$ogdata.url}" />
+    <meta name="twitter:title" value="{$ogdata.title}" />
+    <meta name="twitter:description" value="{if $ogdata.description}{$ogdata.description}{/if}" />
+    <meta name="twitter:image" value="{if $ogdata.image}{$ogdata.image}{elseif $pageimage}{$pageimage}{/if}" />{if Jojo::getOption('twitter_id','')} 
+    <meta name="twitter:site" value="@{Jojo::getOption('twitter_id','')}" />{/if}{/if}
