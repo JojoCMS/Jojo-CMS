@@ -776,10 +776,10 @@ class Jojo {
     static function printTableDifference($table,$difference) {
         if (isset($difference) && is_array($difference)) {
             foreach ($difference as $col => $v) {
-                echo sprintf("<div class=\"box\"><div class='error'><font color='red'>Table <b>%s</b> column <b>%s</b> exists but is different to expected - resolve this manually.</font></div>", $table, $col);
-                echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;Found: %s<br/>&nbsp;&nbsp;&nbsp;&nbsp;Expected: %s<br/>", $v['found'], $v['expected']);
-                echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;SQL: %s<br />",$v['alter']);
-                echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;<form method=\"post\"><input type=\"hidden\" name=\"sql\" value=\"%s\" /><input type=\"submit\" name=\"submit\" value=\"Fix\" /></form></div>",$v['alter']);
+                echo sprintf("<div class=\"box\"><div class='error text-danger'>Table <b>%s</b> column <b>%s</b> exists but is different to expected.</div>", $table, $col);
+                echo sprintf("Current: %s<br/>Expected: %s<br/>", $v['found'], $v['expected']);
+                echo sprintf("SQL: %s",$v['alter']);
+                echo sprintf("<form method=\"post\"><input type=\"hidden\" name=\"sql\" value=\"%s\" /><input class=\"btn btn-default btn-sm\" type=\"submit\" name=\"submit\" value=\"Update Table\" /></form></div>",$v['alter']);
             }
         }
     }

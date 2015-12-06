@@ -46,7 +46,7 @@ if (!isset($isAdmin) || !$isAdmin) {
         <div class="form-group">
             <label for="simplepass">Password:</label><input class="form-control" type="password" size="20" id="simplepass" name="simplepass" />
         </div>
-        <input  class="btn btn-default" type="submit" name="submit" value="Login" />'
+        <input class="btn btn-default" type="submit" name="submit" value="Run Setup" />'
         ;
         echo "</form>
         </div>
@@ -86,7 +86,6 @@ $_folders[_CACHEDIR . '/smarty/templates_c'] = 'Smarty Template Cache Directory'
 $_folders[_CACHEDIR . '/smarty/cache'] = 'Smarty Cache Directory';
 $_folders[_CACHEDIR . '/dwoo/templates_c'] = 'Dwoo Template Cache Directory';
 $_folders[_CACHEDIR . '/dwoo/cache'] = 'Dwoo Cache Directory';
-$_folders[_CACHEDIR . '/images'] = 'Image Cache Directory';
 
 foreach($_folders as $folder => $name) {
     $res = Jojo::RecursiveMkdir($folder);
@@ -760,7 +759,8 @@ include(_BASEPLUGINDIR . '/jojo_core/install/plugin-scanner.php');
 
 /* Output HTML footer */
 if (!isset($isAdmin) || !$isAdmin) {
-    echo '<h2>Setup complete</h2><p>Go to the <a class="btn btn-primary" href="' . Jojo::getOption('siteurl','',true) . '">Site Home</a> or <a class="btn btn-primary" href="' . Jojo::getOption('siteurl','',true) . '/admin/">Site Admin</a> to configure the install.</p>
+    echo '<h2>Setup complete</h2>
+    <p>Go to the <a class="btn btn-primary" href="' . Jojo::getOption('siteurl','',true) . '">Site Home</a> or <a class="btn btn-primary" href="' . Jojo::getOption('siteurl','',true) . '/admin/">Site Admin</a> to configure the install.</p>
     <div class="well">
         <h2>Want to reset location?</h2>
         <p>In order to move the location of a website, please follow these steps.<ul><li>Edit the <strong>_SITEURL</strong> constant in config.php to reflect the new location (you may need to create this line if it does not already exist).</li><li>Edit the <strong>RewriteBase</strong> line of .htaccess to reflect the new location.</li><li><strong>Run setup</strong> again (refresh this page).</li></ul></p>
