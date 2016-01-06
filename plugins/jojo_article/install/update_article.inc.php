@@ -51,8 +51,8 @@ $default_fd['article']['articleid'] = array(
         'fd_mode' => "advanced",
     );
 
-$defaultcat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} ");
-$defaultcat = isset($defaultpage['articlecategoryid']) ? $defaultpage['articlecategoryid'] : 1;
+$defaultcat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory}");
+$defaultcat = isset($defaultcat['articlecategoryid']) ? $defaultcat['articlecategoryid'] : 1;
 // Category Field
 $default_fd['article']['ar_category'] = array(
         'fd_name' => "Article Page",
