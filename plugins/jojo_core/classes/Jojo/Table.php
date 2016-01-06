@@ -239,7 +239,7 @@ class Jojo_Table {
             $newrecord = false;
         } else {
             $sqltype = Jojo::getMySQLType($this->getTableName(), $this->getOption('primarykey'));
-            if (strpos($sqltype,'varchar') !== false && $this->currentrecord != '') {
+            if (strpos($sqltype,'varchar') !== false && $this->currentrecord) {
                 $newrecord = false;
             }
         }
