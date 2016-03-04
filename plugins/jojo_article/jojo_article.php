@@ -169,6 +169,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['date']       = $i['ar_date'];
             $i['datefriendly'] = isset($i['dateformat']) && !empty($i['dateformat']) ? strftime($i['dateformat'], $i['ar_date']) :  Jojo::formatTimestamp($i['ar_date'], "medium");
             $i['image'] = !empty($i['ar_image']) ? 'articles/' . urlencode($i['ar_image']) : '';
+            $i['readtime'] =  self::get_readtime($i['ar_body']);
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
              if (class_exists('Jojo_Plugin_Jojo_Tags') && Jojo::getOption('article_tags', 'no') == 'yes' ) {
@@ -1052,4 +1053,41 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
         $snippets = self::getItemsById($ids);
         return $snippets;
     }
+    
+/*
+* Read Time
+*/
+    public static function get_readtime($content){
+
+        $wpm = "270";
+        $readtime = 0;
+
+        // add extra time for line breaks (eg poetry)
+        preg_match_all('/(<br[^>]*>)/i', $content, $matches);
+        $breakcount = count($matches[0]);
+        $readtime = $breakcount*2;
+
+        // calculate time for images
+        preg_match_all('/(<img[^>]+>)/i', $content, $matches);
+        $imagecount = count($matches[0]);
+        if ($imagecount>10) {
+            $readtime = ($imagecount-10)*3;
+            $imagecount = 10;
+        }
+        $imagetime = 12;
+        for ($i = 1; $i <= $imagecount; $i++) {
+            $readtime = $readtime + $imagetime;
+            $imagetime = $imagetime-1; 
+        }
+        $readtime = $readtime / 60;
+
+        // calculate time for words
+        $content = strip_tags($content);
+        $content_words = str_word_count($content);
+        $readtime = $readtime + ($content_words / $wpm);
+        $estimated_minutes = floor($readtime);
+
+        return  $estimated_minutes < 1 ? "&lt;1" : $estimated_minutes;
+    }
+
 }
