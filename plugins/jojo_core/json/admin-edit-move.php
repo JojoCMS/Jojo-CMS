@@ -36,6 +36,7 @@ $newPos    = Jojo::getPost('order');
 
 
 $groupbyfield = $table->getOption('group1');
+$orderfield = $table->getFieldByType('Jojo_Field_Order');
 
 /**
  * All under a parent id
@@ -44,7 +45,6 @@ if ($table->getOption('parentfield')) {
     $idfield = $table->getOption('primarykey');
     $parentfield = $table->getOption('parentfield');
 
-    $orderfield = $table->getFieldByType('Jojo_Field_Order');
     if ($orderfield) {
         /* Re-parent and re-order */
         $orderfield = $orderfield->getOption('field');
@@ -92,10 +92,9 @@ if ($table->getOption('parentfield')) {
 /**
  * All under a category
  */
-if ($categoryfield = $table->getOption('categoryfield')) {
+ elseif ($categoryfield = $table->getOption('categoryfield')) {
 
     $idfield = $table->getOption('primarykey');
-    $orderfield = $table->getFieldByType('Jojo_Field_Order');
  
     $newParent = ltrim($newParent, 'c');
 
@@ -146,7 +145,7 @@ if ($categoryfield = $table->getOption('categoryfield')) {
 /**
  * All under a second level group
  */
-if ($table->getOption('group1') && $table->getOption('group2') && $newParent[0] == '~') {
+elseif ($table->getOption('group1') && $table->getOption('group2') && $newParent[0] == '~') {
     $g1 = substr($newParent, strpos($newParent, '|') + 1);
     $g1 = ($g1 == 'noname') ? '' : $g1;
     $g2 = substr($newParent, 1, strpos($newParent, '|') - 1);
@@ -167,7 +166,6 @@ if ($table->getOption('group1') && $table->getOption('group2') && $newParent[0] 
         exit;
     }
 
-    $orderfield = $table->getFieldByType('Jojo_Field_Order');
     if ($orderfield) {
         /* Re parent and re order rows */
         $siblings = array();
@@ -291,4 +289,39 @@ if ($table->getOption('group1') && !$table->getOption('group2') && $newParent[0]
         Jojo::updateQuery($query, $values);
         echo "Moved - group1 changed updated";
     }
+}
+
+/**
+ * Just a straight list
+ */
+elseif ($orderfield) {
+    $idfield = $table->getOption('primarykey');
+
+    /* Re-order */
+    $orderfield = $orderfield->getOption('field');
+    $res = Jojo::selectQuery("SELECT `$idfield` FROM {{$tablename}} ORDER BY $orderfield");
+    $siblings = array();
+    foreach ($res as $s) {
+        $siblings[] = $s[$idfield];
+    }
+
+    /* Ensure this item isn't in there already */
+    $currentPos = array_search($id, $siblings);
+    if ($currentPos !== false) {
+        unset($siblings[$currentPos]);
+        $siblings = array_values($siblings);
+    }
+
+    /* Insert the new item */
+    array_splice($siblings, $newPos, 0, $id);
+
+    /* Re-order items */
+    $query = "UPDATE {{$tablename}} SET $orderfield = ? WHERE $idfield = ?";
+    foreach($siblings as $o => $sid) {
+        $values = array($o, $sid);
+        Jojo::updateQuery($query, $values);
+    }
+
+    echo "Re-ordered";
+    exit;
 }
