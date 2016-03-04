@@ -440,7 +440,7 @@ class Jojo_Table {
 
         if ($menutype == 'tree' || $menutype == 'searchabletree' || $menutype == "auto" || $menutype == "list" || !$menutype ) {
             global $smarty;
-            $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield')) && $this->getFieldByType('Jojo_Field_Order'));
+            $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield') || $this->getOption('categorytable')) && $this->getFieldByType('Jojo_Field_Order'));
             $smarty->assign('searchable', (boolean)($menutype == 'searchabletree'));
             $smarty->assign('table', $this->table);
             $smarty->assign('menutype', $menutype);

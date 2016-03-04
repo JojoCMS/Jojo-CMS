@@ -90,6 +90,60 @@ if ($table->getOption('parentfield')) {
 }
 
 /**
+ * All under a category
+ */
+if ($categoryfield = $table->getOption('categoryfield')) {
+
+    $idfield = $table->getOption('primarykey');
+    $orderfield = $table->getFieldByType('Jojo_Field_Order');
+ 
+    $newParent = ltrim($newParent, 'c');
+
+    if ($orderfield) {
+        /* Re-categorize and re-order */
+        $orderfield = $orderfield->getOption('field');
+        $res = Jojo::selectQuery("SELECT `$idfield` FROM {{$tablename}} WHERE $categoryfield = ? ORDER BY $orderfield", array($newParent));
+        $siblings = array();
+        foreach ($res as $s) {
+            $siblings[] = $s[$idfield];
+        }
+
+        /* Ensure this item isn't in there already */
+        $currentPos = array_search($id, $siblings);
+        if ($currentPos !== false) {
+            unset($siblings[$currentPos]);
+            $siblings = array_values($siblings);
+        }
+
+        /* Insert the new item */
+        array_splice($siblings, $newPos, 0, $id);
+
+        /* Re-categorize item */
+        $query = "UPDATE {{$tablename}} SET $categoryfield = ?, $orderfield = ? WHERE $idfield = ?";
+        $values = array($newParent, $newPos, $id);
+        Jojo::updateQuery($query, $values);
+
+        /* Re-order item */
+        $query = "UPDATE {{$tablename}} SET $orderfield = ? WHERE $idfield = ?";
+        foreach($siblings as $o => $sid) {
+            $values = array($o, $sid);
+            Jojo::updateQuery($query, $values);
+        }
+
+        echo "Moved by category id and re-ordered";
+        exit;
+    } else {
+        /* Re-categorize item */
+        $query = "UPDATE {{$tablename}} SET $categoryfield = ? WHERE $idfield = ?";
+        $values = array($newParent, $id);
+        Jojo::updateQuery($query, $values);
+
+        echo "Moved by category id";
+        exit;
+    }
+}
+
+/**
  * All under a second level group
  */
 if ($table->getOption('group1') && $table->getOption('group2') && $newParent[0] == '~') {
