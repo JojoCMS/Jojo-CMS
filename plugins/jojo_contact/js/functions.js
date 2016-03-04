@@ -102,9 +102,11 @@ function preFlight(formData, jqForm, options) {
         .val('Loading...');
         
     // trigger event tracking
-    if (typeof(_gaq) != 'undefined') {
-        var formName = $('h1').text() + ' ' + $('#' + formID).attr('name');
-    	_gaq.push(['_trackEvent', formName + ' id:form' + formID, 'submit']);
+    var formName = $('h1').text() + ' ' + $('#form' + formID).attr('name');
+    if (typeof ga !== 'undefined') {
+        ga('send', 'event', formName + ' id:form' + formID, 'submit');
+    } else if (typeof _gaq !== 'undefined') {
+        _gaq.push(['_trackEvent', formName + ' id:form' + formID, 'submit']);
     }
     
     return true;
@@ -141,11 +143,14 @@ function showFormTab(formid, tabid) {
     }, 500);
     setFormTabNav(formid, tabid);
     // trigger event tracking
-    if (typeof(_gaq) != 'undefined') {
-        var formName = $('h1').text() + ' ' + $('#' + formid).attr('name');
-        var tabName = $('#' + formid + ' #' + tabid).attr('title');
-		_gaq.push(['_trackEvent', formName, tabName]);
-	}
+    var formName = $('h1').text() + ' ' + $('#' + formid).attr('name');
+    var tabName = $('#' + formid + ' #' + tabid).attr('title');
+    if (typeof ga !== 'undefined') {
+        ga('send', 'event', formName, tabName);
+    } else if (typeof _gaq !== 'undefined') {
+        _gaq.push(['_trackEvent', formName, tabName]);
+    }
+
 }
 
 function setFormTabs(formid) {
