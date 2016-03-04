@@ -5,7 +5,7 @@
         <input type="hidden" name="_jojo_authtype" value="local" />
         {if $redirect}<input type="hidden" name="redirect" id="redirect" value="{$redirect}" />{/if}
         <div class="form-group">
-            <label for="username" class="control-label">Username</label>
+            <label for="username" class="control-label">Username{if $OPTIONS.allow_email_login=='yes'} or Email Address{/if}</label>
             <input class="form-control" type="text" name="username" tabindex=10 id="username" value="{if $username}{$username}{/if}" />
         </div>
         <div class="form-group">
