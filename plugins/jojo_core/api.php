@@ -332,9 +332,9 @@ if (class_exists('Memcache')) {
         'id'          => 'contentcachetime_memcache',
         'category'    => 'Cacheing',
         'label'       => 'Memcache cache time',
-        'description' => 'The time in seconds content will be cached for, if the memcache extension is available. Default 30 minutes. Used for highly repeated data sets (like nav). Set higher for relatively static sites, set to 0 to disable.',
+        'description' => 'The time in seconds content will be cached for, if the memcache extension is available. Disabled by default. Used for highly repeated data sets (like nav). Set higher for relatively static sites, set to 0 to disable.',
         'type'        => 'integer',
-        'default'     => 1800,
+        'default'     => 0,
         'options'     => ''
     );
 }
