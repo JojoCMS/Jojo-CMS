@@ -84,6 +84,7 @@ $_provides['fieldTypes'] = array(
         'internalurl'      => 'Internal URL',
         'list'             => 'List',
         'many2many'        => 'Many 2 Many List',
+        'many2manyordered' => 'Many 2 Many List with Ordering',
         'order'            => 'Order',
         'password'         => 'Password',
         'permissions'      => 'Permissions',
