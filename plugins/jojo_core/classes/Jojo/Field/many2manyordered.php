@@ -53,7 +53,7 @@ class Jojo_Field_many2manyordered extends Jojo_Field
         $categories = Jojo::selectQuery("SELECT * FROM {" .  $this->linktable . "} WHERE `" . $this->linkitemid . "` = ?", $itemid);
         $selections = array(); //simple array holding all the categories the item is assigned to
         foreach ($categories as $c) {
-            $selections[$c[$this->linkcatid]] = $c['displayorder'];
+            $selections[$c[$this->linkcatid]] = $c[$this->linktableorderfield];
         }
 
         $tablename = $this->cattable;
@@ -95,7 +95,7 @@ class Jojo_Field_many2manyordered extends Jojo_Field
 
         $tree = new hktree('tree');
         $tree->liststyle = 'none';
-        $tree->listclass = 'unstyled';
+        $tree->listclass = 'list-unstyled';
 
         /* loop through each option and display */
         foreach ($options as $o) {
@@ -104,7 +104,8 @@ class Jojo_Field_many2manyordered extends Jojo_Field
             $item = '<input type="text" name="fm_' . $this->fd_field . '_' . $o['value'] . '_order" value="' . $position . '" size="3" style="width:35px;display:inline-block;" />&nbsp;<label class="checkbox inline"><input type="checkbox" name="fm_' . $this->fd_field . "_" . $o['value']."\" id=\"fm_".$this->fd_field."_".$o['value']."\" value=\"".$o['value']."\" onchange=\"fullsave = true;\"".$isselected."> ".$o['name']."</label><br />\n";
             $tree->addNode($o['value'], $o['parent'], $item);
         }
-        $output = '<ul class="unstyled"><li><span style="width:35px;">Position</span></li></ul>';
+        $output = '<h3>' . rtrim(ucfirst($this->cattable),'s') . 's</h3>';
+        $output .= '<ul class="list-unstyled"><li><span style="width:35px;">Order</span></li></ul>';
         $output .= $tree->printout_plain();
 
         return $output;
@@ -133,7 +134,7 @@ class Jojo_Field_many2manyordered extends Jojo_Field
 
         Jojo::deleteQuery("DELETE FROM {" . $this->linktable . "} WHERE `" . $this->linkitemid . "` = ?", array($this->table->getRecordID()));
         foreach ($selected as $k => $v) {
-            $q = "REPLACE INTO {" . $this->linktable . "} SET `" . $this->linkitemid . "` = ?, `" . $this->linkcatid ."` = ?, `displayorder` = ?";
+            $q = "REPLACE INTO {" . $this->linktable . "} SET `" . $this->linkitemid . "` = ?, `" . $this->linkcatid ."` = ?, `" . $this->linktableorderfield . "` = ?";
             Jojo::insertQuery($q, array($this->table->getRecordID(), $k, $v));
         }
         return true;

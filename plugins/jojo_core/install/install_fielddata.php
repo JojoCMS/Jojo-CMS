@@ -44,6 +44,7 @@ $query = "
       `fd_m2m_linktable` varchar(255) NOT NULL default '',
       `fd_m2m_linkitemid` varchar(255) NOT NULL default '',
       `fd_m2m_linkcatid` varchar(255) NOT NULL default '',
+      `fd_m2m_linkorderfield` varchar(255) NOT NULL default '',
       `fd_m2m_cattable` varchar(255) NOT NULL default '',
       `fd_maxsize` int(11) NOT NULL default '0',
       `fd_units` varchar(100) NOT NULL default '',

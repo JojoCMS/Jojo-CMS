@@ -273,6 +273,7 @@ th, td {
         font-weight: 400;
     }
 }
+#fields li label { padding-top: 0 }
 
 /* General */
 div.clear {
