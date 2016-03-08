@@ -32,31 +32,23 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             exit;
         }
 
-        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
-        $cachefile = _CACHEDIR . '/external/' . $file;
-        $fromcache = false;
-        if (Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:externalCachedFile', array('filename' => $cachefile));
+        $filename = 'external/' . $file;
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
+ 
+        /* Check for external in a Theme */
+        $files = Jojo::listThemes($filename);
 
-            parent::sendCacheHeaders(filemtime($cachefile));
-            $file = $cachefile;
-            $fromcache = true;
+        if (isset($files[0])) {
+            $file = $files[0];
         } else {
-            /* Check for external in a Theme */
-            $files = Jojo::listThemes('external/' . $file);
-
+            /* Check for external in a Plugin */
+            $files = Jojo::listPlugins($filename);
             if (isset($files[0])) {
                 $file = $files[0];
             } else {
-                /* Check for external in a Plugin */
-                $files = Jojo::listPlugins('external/' . $file);
-                if (isset($files[0])) {
-                    $file = $files[0];
-                } else {
-                    /* Not found, 404 time */
-                    header("HTTP/1.0 404 Not Found", true, 404);
-                    exit;
-                }
+                /* Not found, 404 time */
+                header("HTTP/1.0 404 Not Found", true, 404);
+                exit;
             }
         }
 
@@ -84,44 +76,33 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
         switch (Jojo::getFileExtension($file)) {
             case 'css':
                 header('Content-Type: text/css');
-                if (!$fromcache) {
-                    if (!defined('_CONTENTCACHE'))     define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-                    if (!defined('_CONTENTCACHETIME')) define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
-                    $css = new Jojo_Stitcher();
-                    $css->type = 'css';
-                    $css->getServerCache();
-                    $css->addText($content);
-                    $css->setServerCache();
-                    $content = $css->fetch();
-                }
+                $css = new Jojo_Stitcher();
+                $css->type = 'css';
+                $css->addText($content);
+                $content = $css->fetch();
                 break;
 
             case 'js':
                 header('Content-Type: application/x-javascript');
-                if (!$fromcache) {
-                    /* JSmin sometimes corrupts files. This is a list of exclusions */
-                    $nojsmin = array();
-                    $nojsmin[] = 'jquery.jqUploader.js';
-                    $nojsmin[] = 'jquery.flash.js';
-                    $nojsmin[] = 'ext-all.js';
+                /* JSmin sometimes corrupts files. This is a list of exclusions */
+                $nojsmin = array();
+                $nojsmin[] = 'jquery.jqUploader.js';
+                $nojsmin[] = 'jquery.flash.js';
+                $nojsmin[] = 'ext-all.js';
 
-                    /* also anything with .pack.js in the filename can't be jsminned */
-
-
-                    if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
-                        set_time_limit(180);
-                        require_once(_BASEPLUGINDIR . '/jojo_core/external/jsmin/jsmin.php');
-                        try {
-                            $newContent = JSMin::minify($content);
-                        } catch (Exception $e) {
-                            $newContent = $content;
-                        }
-
-                        if (strlen($newContent) <= strlen($content)) {
-                            $content = $newContent;
-                        } else {
-                            $content = sprintf('/* JSMIN enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
-                        }
+                /* also anything with .pack.js in the filename can't be jsminned */
+                if (!in_array(basename($file), $nojsmin) && strpos($file, 'pack')==false && strpos($file, 'min')==false) {
+                    set_time_limit(180);
+                    require_once(_BASEPLUGINDIR . '/jojo_core/external/jshrink/src/JShrink/Minifier.php');
+                    try {
+                        $newContent = JShrink\Minifier::minify($content);
+                    } catch (Exception $e) { 
+                        $newContent = $content;
+                    }
+                    if (strlen($newContent) <= strlen($content)) {
+                        $content = sprintf('/* JShrink shrunk file by %s bytes */', strlen($newContent) - strlen($content)) . $newContent;
+                    } else {
+                        $content = sprintf('/* JShrink enlarged file by %s bytes */', strlen($newContent) - strlen($content)) . $content;
                     }
                 }
                 break;
@@ -129,7 +110,9 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
             case 'gif':
                 header('Content-Type: image/gif');
                 break;
-
+            case 'swf':
+                header('Content-Type: application/x-shockwave-flash');
+                break;
             case 'jpg':
             case 'jpeg':
                 header('Content-Type: image/jpeg');
@@ -149,21 +132,13 @@ class Jojo_Plugin_Core_External extends Jojo_Plugin_Core {
                 break;
         }
 
-        /* cache a copy for next time */
-        if (!$fromcache) {
-            Jojo::RecursiveMkdir(dirname($cachefile));
-            file_put_contents($cachefile, $content);
-        }
-
         /* Send Content */
         if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
 
+        parent::sendCacheHeaders(time(), $cachetime);
         header('Content-Length: ' . strlen($content));
-        header('Cache-Control: private, max-age=28800');
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-        header('Pragma: ');
         echo $content;
-        Jojo::publicCache($f, $content);
+        Jojo::publicCache($filename, $content);
         exit;
     }
 }

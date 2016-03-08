@@ -29,7 +29,7 @@ $frajax = new frajax(true, true);
 $frajax->title = 'Load record - ' . _SITETITLE;
 $frajax->sendHeader();
 $frajax->scrollToTop();
-$frajax->assign('h1', 'innerHTML', 'Loading...');
+$frajax->assign('itemtitle', 'innerHTML', 'Loading...');
 $frajax->script('parent.$(".control-group").removeClass("error");');
 
 $content = array();
@@ -62,7 +62,7 @@ if (strpos($sqltype,'varchar') !== false && $id != '') {
 
 
 /* Update form values */
-//$frajax->assign("h1", "innerHTML", 'Loading fields...');
+//$frajax->assign("itemtitle", "innerHTML", 'Loading fields...');
 $i = 0;
 $allfields = $table->getHTML('edit');
 $start = Jojo::timer();
@@ -71,7 +71,7 @@ foreach ($allfields as $fieldname => $f) {
     $i++;
     if (Jojo::timer($start) > 1) {
         $percent = floor($i / count($allfields) * 100);
-        $frajax->assign("h1", "innerHTML", 'Loading '.$percent.'%...');
+        $frajax->assign("itemtitle", "innerHTML", 'Loading '.$percent.'%...');
         $start = Jojo::timer();
     }
     $frajax->script('parent.$(".form-group").removeClass("has-error");');
@@ -115,9 +115,10 @@ foreach ($allfields as $fieldname => $f) {
 
 //$table->getOption('displayvalue');
 $frajax->assign("id", "value", $id);
-$frajax->assign("h1", "innerHTML",  substr(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')),0,40));
+$frajax->assign("itemtitle", "innerHTML",  Jojo::htmlspecialchars(substr(Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')),0,100)));
 $frajax->hide("message", "Fade", 1);
 $frajax->hide("error", "Fade", 1);
+$frajax->script("parent.$('#btn_save').removeClass('btn-warning');");
 if ($id == '') {
     $frajax->hide('btn_addsimilar', 'Fade', 1);
     $frajax->hide('btn_delete', 'Fade', 1);

@@ -30,7 +30,7 @@ $default_td['article'] = array(
         'td_orderbyfields' => "ar_date DESC, articleid DESC",
         'td_topsubmit' => "yes",
         'td_deleteoption' => "yes",
-        'td_menutype' => "tree",
+        'td_menutype' => "searchabletree",
         'td_help' => "News Articles are managed from here. Depending on the exact configuration, the most recent 5 articles may be shown on the homepage or sidebar, or they may be listed only on the news page. All News Articles have their own \"full info\" page, which has a unique URL for the search engines. This is based on the title of the article, so please do not change the title of an article unless absolutely necessary, as the PageRank of the article may suffer. The system will comfortably take many hundreds of articles, but you may want to manually delete anything that is no longer relevant, or correct.",
         'td_golivefield' => "ar_livedate",
         'td_expiryfield' => "ar_expirydate",
@@ -51,8 +51,8 @@ $default_fd['article']['articleid'] = array(
         'fd_mode' => "advanced",
     );
 
-$defaultcat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory} ");
-$defaultcat = isset($defaultpage['articlecategoryid']) ? $defaultpage['articlecategoryid'] : 1;
+$defaultcat = Jojo::selectRow("SELECT articlecategoryid FROM {articlecategory}");
+$defaultcat = isset($defaultcat['articlecategoryid']) ? $defaultcat['articlecategoryid'] : 1;
 // Category Field
 $default_fd['article']['ar_category'] = array(
         'fd_name' => "Article Page",
@@ -77,13 +77,24 @@ $default_fd['article']['ar_title'] = array(
         'fd_tabname' => "Content",
     );
 
+// SubTitle Field
+$default_fd['article']['ar_subtitle'] = array(
+        'fd_name' => "Subtitle",
+        'fd_type' => "text",
+        'fd_required' => "no",
+        'fd_size' => "60",
+        'fd_help' => "An optional subtitle for the article",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+    );
+
 // SEO Title Field
 $default_fd['article']['ar_seotitle'] = array(
         'fd_name' => "SEO Title",
         'fd_type' => "text",
         'fd_options' => "seotitle",
         'fd_size' => "60",
-        'fd_help' => "Title of the Article - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
+        'fd_help' => "Version of the title used by search engines - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
         'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",

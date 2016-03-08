@@ -2,6 +2,11 @@ function redirectSubmit(url) {
         window.location.href = 'http://' + url;
 }
 
+function editComment(id) {
+        $('#comment-wrap-' + id + ' .edit-comment').toggle();
+        return false;
+}
+
 function deleteComment(id) {
         $('#delete-comment-' + id ).html('Deleting comment...');
        data=new Array();
@@ -31,6 +36,15 @@ function anchorComment(id, yes) {
         } else {
             data = {name: 'noanchor', value: id };
         }
+        $.get(this.href, {}, function() {commentUpdate(data, id); });
+        /* Don't go to the update page */
+        return false;
+}
+
+function saveComment(id) {
+       data=new Array();
+        var content = $('#comment-wrap-' + id + ' textarea').val();
+        data = {name: 'update', value: id, content: content };
         $.get(this.href, {}, function() {commentUpdate(data, id); });
         /* Don't go to the update page */
         return false;

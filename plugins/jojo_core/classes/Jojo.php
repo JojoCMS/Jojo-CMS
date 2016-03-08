@@ -13,6 +13,7 @@
  * @author  Harvey Kane <code@ragepank.com>
  * @author  Michael Cochrane <mikec@jojocms.org>
  * @author  Melanie Schulz <mel@gardyneholt.co.nz>
+ * @author  Tom Dale <tom@zero.co.nz>
  * @license http://www.fsf.org/copyleft/lgpl.html GNU Lesser General Public License
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core
@@ -55,7 +56,7 @@ class Jojo {
      */
     public static function authenticate()
     {
-        global $smarty, $_USERID, $_USERTIMEZONE, $_USERGROUPS;
+        global $_USERID, $_USERTIMEZONE, $_USERGROUPS;
 
         /* Look up user from database */
         $newlogin = false;
@@ -64,7 +65,7 @@ class Jojo {
         $logindata = false;
         if (isset($_SESSION['userid']) && !empty($_SESSION['userid'])) {
             /* User has previously authenticated, lookup by username and code */
-            $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($_SESSION['userid']));
+            $logindata = Jojo::selectQuery("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($_SESSION['userid']));
         } elseif (isset($_COOKIE['jojoR'])) {
             /* Get user details from 'jojoR' (password remember) cookie */
             $values = explode(':', base64_decode($_COOKIE['jojoR']));
@@ -73,11 +74,12 @@ class Jojo {
                 if (count($validtoken)) {
                     array_unshift($values, time());
                     $res = Jojo::updateQuery("UPDATE {auth_token} SET lastused = ? WHERE userid = ? AND token = ? ", $values);
-                    $logindata = Jojo::selectRow("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($validtoken[0]['userid']));
+                    $logindata = Jojo::selectQuery("SELECT * FROM {user} WHERE userid = ? AND us_locked = 0 LIMIT 1", array($validtoken[0]['userid']));
                 }
                 if ($logindata) {
                     /* Set loggingIn global */
                     $_SESSION['loggingin'] = true;
+                    $_SESSION['userid'] = $_USERID;
                 }
             }
         }
@@ -86,19 +88,14 @@ class Jojo {
             /* User is not logged in */
             $_USERID = false;
             $_USERGROUPS[] = 'notloggedin';
-            return;
+            return false;
         }
+        
+        $logindata = $logindata[0];
 
         /* Store User Info */
         $_USERID = $logindata['userid'];
         $_USERTIMEZONE = $logindata['us_timezone'];
-        $_SESSION['userid'] = $_USERID;
-
-        /* User is logged in */
-        $smarty->assign('loggedIn', true);
-        $smarty->assign('userrecord', $logindata);
-
-        /* Should we remember this login? */
 
         /* Get User Group Membership */
         $_USERGROUPS = array('everyone');
@@ -108,13 +105,9 @@ class Jojo {
         foreach ($groups as $group) {
             if($group['groupid'] != 'notloggedin') { // can't be both logged in, and in the usergroup 'notloggedin'
                $_USERGROUPS[] = $group['groupid'];
-               if ($group['groupid'] == 'admin') {
-                   $smarty->assign('adminloggedin', true);
-                   // allow admins to see hidden pages
-                   $_SESSION['showhidden'] = true;
-               }
             }
         }
+        return $logindata;
     }
 
     /**
@@ -192,9 +185,14 @@ class Jojo {
         static $_files;
 
         /* Try to build from file cache (faster) */
-        $cachefile = _CACHEDIR . '/listPlugins.txt';
+        $cachefile = _CACHEDIR . '/listPlugins.txt';//serialize crashes sometimes, causes blank screen
+        $cachefileJson = _CACHEDIR . '/listPlugins.json';//json is more reliable - transition to this
         if (!is_array($_plugins) && !($forceclean || Jojo::ctrlF5()) && file_exists($cachefile)) {
-            list($_plugins, $_files) = @unserialize(file_get_contents($cachefile));
+            if (file_exists($cachefileJson)) {
+            	list($_plugins, $_files) = @json_decode(file_get_contents($cachefileJson), true);
+            } else {
+            	list($_plugins, $_files) = @unserialize(file_get_contents($cachefile));
+            }
         }
 
         /* Fetch list of all the active plugins */
@@ -241,6 +239,7 @@ class Jojo {
                 /* Cache the result for next time */
                 $_files[$file] = $found;
                 file_put_contents($cachefile, serialize(array($_plugins, $_files)));
+                file_put_contents($cachefileJson, json_encode(array($_plugins, $_files)));
             }
 
             if (!$onlyplugins) {
@@ -270,9 +269,14 @@ class Jojo {
         static $_files;
 
         /* Try to build from file cache (faster) */
-        $cachefile = _CACHEDIR . '/listThemes.txt';
+        $cachefile = _CACHEDIR . '/listThemes.txt';//serialize crashes sometimes, causes blank screen
+        $cachefileJson = _CACHEDIR . '/listThemes.json';//json is more reliable - transition to this
         if (!is_array($_themes) && !($forceclean || Jojo::ctrlF5()) && file_exists($cachefile)) {
-            list($_themes, $_files) = @unserialize(file_get_contents($cachefile));
+            if (file_exists($cachefileJson)) {
+            	list($_themes, $_files) = @json_decode(file_get_contents($cachefileJson), true);
+            } else {
+            	list($_themes, $_files) = @unserialize(file_get_contents($cachefile));
+            }
         }
 
         /* Fetch and cache list of all the active themes */
@@ -291,6 +295,7 @@ class Jojo {
 
             /* Cache a copy to file */
             file_put_contents($cachefile, serialize(array($_themes, $_files)));
+            file_put_contents($cachefileJson, json_encode(array($_themes, $_files)));
         }
 
         /* Check all the themes for the file */
@@ -354,6 +359,7 @@ class Jojo {
             $_db->Connect(_DBHOST, _DBUSER, _DBPASS, _DBNAME);
             $_db->query("SET CHARACTER SET 'utf8'");
             $_db->query("SET NAMES 'utf8'");
+            $_db->SetFetchMode(ADODB_FETCH_ASSOC);
             if (_DEBUG) {
                 $_db->LogSQL(true);
             }
@@ -403,7 +409,6 @@ class Jojo {
 
         /* Include database abstration object */
         global $_db;
-        $_db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /* Execute Query */
         $rs = $_db->Execute($query, $values);
@@ -444,6 +449,8 @@ class Jojo {
      */
     static function selectRow($query, $values = array())
     {
+        Jojo::_connectToDB();
+
         /* Ensure the values are in an array */
         $values = is_array($values) ? $values : array($values);
 
@@ -626,11 +633,10 @@ class Jojo {
         $query = Jojo::prefixTables($query);
 
         if (_DEBUG) {
-            /*if (strtoupper(substr($query, 0, 5)) != 'ALTER' &&
+            if (strtoupper(substr($query, 0, 5)) != 'ALTER' &&
                 strtoupper(substr($query, 0, 4)) != 'DROP') {
                 echo "<hr>Non Update query: $query<hr>";
             }
-            */
         }
         /* Include database abstration object */
         global $_db;
@@ -770,10 +776,10 @@ class Jojo {
     static function printTableDifference($table,$difference) {
         if (isset($difference) && is_array($difference)) {
             foreach ($difference as $col => $v) {
-                echo sprintf("<div class=\"box\"><div class='error'><font color='red'>Table <b>%s</b> column <b>%s</b> exists but is different to expected - resolve this manually.</font></div>", $table, $col);
-                echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;Found: %s<br/>&nbsp;&nbsp;&nbsp;&nbsp;Expected: %s<br/>", $v['found'], $v['expected']);
-                echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;SQL: %s<br />",$v['alter']);
-                echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;<form method=\"post\"><input type=\"hidden\" name=\"sql\" value=\"%s\" /><input type=\"submit\" name=\"submit\" value=\"Fix\" /></form></div>",$v['alter']);
+                echo sprintf("<div class=\"box\"><div class='error text-danger'>Table <b>%s</b> column <b>%s</b> exists but is different to expected.</div>", $table, $col);
+                echo sprintf("Current: %s<br/>Expected: %s<br/>", $v['found'], $v['expected']);
+                echo sprintf("SQL: %s",$v['alter']);
+                echo sprintf("<form method=\"post\"><input type=\"hidden\" name=\"sql\" value=\"%s\" /><input class=\"btn btn-default btn-sm\" type=\"submit\" name=\"submit\" value=\"Update Table\" /></form></div>",$v['alter']);
             }
         }
     }
@@ -880,7 +886,7 @@ class Jojo {
      */
     static function publicCache($filename, $data=false, $modified=false)
     {
-        $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css');
+        $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf');
         $extension = Jojo::getFileExtension($filename);
         if (!in_array($extension, $extensions)) {
             return false;
@@ -891,10 +897,11 @@ class Jojo {
             return $publiccachefile; //if no data is supplied, return the name of the cache location
         }
         file_put_contents($publiccachefile, $data);
+        /*
         if (is_int($modified)) {
             touch($publiccachefile, $modified);
         }
-        /* todo: periodic cache cleanup */
+         todo: periodic cache cleanup */
     }
 
     /**
@@ -1190,11 +1197,11 @@ class Jojo {
 
         if ($link2secure && $issecure) {
             return '';
-        } else if ($link2secure && !$issecure) {
+        } elseif ($link2secure && !$issecure) {
             return _SECUREURL."/";
-        } else if (!$link2secure && $issecure) {
+        } elseif (!$link2secure && $issecure) {
             return _SITEURL."/";
-        } else if (!$link2secure && !$issecure) {
+        } elseif (!$link2secure && !$issecure) {
             return '';
         }
     }
@@ -1248,6 +1255,23 @@ class Jojo {
         // Remove empty entries
         $text = array_filter($text, 'strlen');
         return $text;
+    }
+
+    /* Convert flat array into a tree */
+    static function list2tree($list, $root = 0, $idfield='id', $parentfield='parentid') {
+        $tree = array();
+        # Traverse the tree and search for direct children of the root
+        foreach($list as $k => $node) {
+            # A direct child is found
+            if($node[$parentfield] == $root) {
+                $tree[$k] = $node;
+                # Remove item from tree (we don't need to traverse this again)
+                unset($list[$k]);
+                # parse its children
+                $tree[$k]['children'] = self::list2tree($list, $node[$idfield], $idfield, $parentfield);
+            }
+        }
+        return empty($tree) ? null : $tree;
     }
 
     /* Rewrites standard Jojo URLs */
@@ -1311,9 +1335,9 @@ class Jojo {
         return $url;
     }
     
-    static function htmlspecialchars($string)
+    static function htmlspecialchars($string, $notrim = false)
     {
-         return htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
+         return htmlspecialchars(( $notrim ? $string : trim($string) ), ENT_COMPAT, 'UTF-8', false);
     }
 
     /* The standard file_exists() function will return true if a directory exists of the same name, this won't */
@@ -1735,11 +1759,27 @@ class Jojo {
 
                 /* Is function available */
                 if (!is_callable(array($classname, $functionname))) {
-                      /* Skip hook if function doesn't exist
-                         TODO: log error here */
+                      /* Skip hook if function doesn't exist */
+                        $log             = new Jojo_Eventlog();
+                        $log->code       = 'core';
+                        $log->importance = 'high';
+                        $log->shortdesc  = 'Function not callable';
+                        $log->desc       = 'Function not callable for ' . $classname . '::' . $functionname . ' from hook ' . $tag;
+                        $log->savetodb();
+                        unset($log);
                         continue 1;
                 }
 
+                if (!is_array($optionalArgs)) {
+                    $optionalArgs = array();
+                    $log             = new Jojo_Eventlog();
+                    $log->code       = 'core';
+                    $log->importance = 'high';
+                    $log->shortdesc  = 'Args not array';
+                    $log->desc       = 'Function args (' . print_r($optionalArgs). ') not in array form for ' . $classname . '::' . $functionname . ' from ' . $tag;
+                    $log->savetodb();
+                    unset($log);
+                }
                 $result = call_user_func_array(array($classname, $functionname), $optionalArgs);
                 $optionalArgs = $result ? $result : $optionalArgs;
             }
@@ -2343,9 +2383,9 @@ class Jojo {
             } elseif ($format == 'friendly') { //Friendly will use names such as today, yesterday etc
                 if (date('d/m/Y', strtotime('+0 day')) == date('d/m/Y', $timestamp)) {
                     $d = 'today, ' . date("j M y", $timestamp);
-                } else if (date("d/m/Y", strtotime('+1 day')) == date('d/m/Y', $timestamp)) {
+                } elseif (date("d/m/Y", strtotime('+1 day')) == date('d/m/Y', $timestamp)) {
                     $d = 'tomorrow, ' . date('j M y', $timestamp);
-                } else if (date('d/m/Y', strtotime('-1 day')) == date('d/m/Y', $timestamp)) {
+                } elseif (date('d/m/Y', strtotime('-1 day')) == date('d/m/Y', $timestamp)) {
                     $d = "yesterday, ". date('j M y', $timestamp);
                 } else {
                     $d = date('j M y', $timestamp);
@@ -2488,44 +2528,6 @@ class Jojo {
         	return $ip;
         }
         return false;
-    }
-
-    /* reads the user agent string and gives the browser type - quick and simple detection */
-    static function getBrowser()
-    {
-        static $_browser;
-
-        if (isset($_browser)) return $_browser;
-
-        $version = '';
-        $nav = '';
-        $browsers = 'mozilla msie gecko firefox konqueror safari netscape navigator opera mosaic lynx amaya omniweb snoopy chrome';
-        $browsers = explode(' ', $browsers);
-
-        $nua = isset($_SERVER['HTTP_USER_AGENT']) ? strToLower( $_SERVER['HTTP_USER_AGENT']) : '';
-
-        $l = strlen($nua);
-        $x = count($browsers);
-        for ($i=0; $i<$x; $i++) {
-            $browser = $browsers[$i];
-            $n = stristr($nua, $browser);
-            if (strlen($n) > 0) {
-                $version = '';
-                $nav = $browser;
-                $j = strpos($nua, $nav) + $n + strlen($nav) + 1;
-                for (; $j<=$l; $j++){
-                    $s = substr($nua, $j, 1);
-                    if (is_numeric($version.$s)) {
-                        $version .= $s;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-        if ($nav == 'msie') $nav = 'internet explorer';
-        $_browser = ucwords($nav . ' ' . $version);
-        return $_browser;
     }
 
     /* Given a string of page content, this script will return a short list of words to use in the
@@ -2699,9 +2701,9 @@ class Jojo {
         return implode(' ',$keywords);
     }
     /* clearing the full argument also wipes Smarty templates_c and the cached api / listplugins / listthemes files */
-    static function clearCache($full = false) {
-        Jojo::deleteQuery("DELETE FROM {contentcache}");
-        if ($full) {
+    static function clearCache($scope='html', $url=false) {
+                
+        if ($scope=='full') {
             if (Jojo::fileExists(_CACHEDIR . '/api.txt')) {
                 unlink(_CACHEDIR.'/api.txt');
             }
@@ -2717,11 +2719,34 @@ class Jojo {
                     unlink(_CACHEDIR . '/smarty/templates_c/' . $file);
                 }
             }
-
+            array_map('unlink', glob(_CACHEDIR . '/public/*.js'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.css'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.html'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.woff'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.ttf'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.svg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.eot'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.swf'));
+        } elseif ($scope=='images') {
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
+            array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
+        } elseif ($url) {
+            unlink(_CACHEDIR . '/public/' . md5($url) . '.' . $scope);
+        } elseif ($scope) {
+            array_map('unlink', glob(_CACHEDIR . '/public/*.' . $scope));
         }
         return true;
     }
 
+    /**
+     * DEPRECATED
+     */
     static function html2text($html)
     {
         return Text_Filter::filter($html, 'html2text');
@@ -2749,7 +2774,7 @@ class Jojo {
         return false;
     }
 
-    static function simpleMail($toname, $toaddress, $subject, $message, $fromname=_FROMNAME, $fromaddress=_FROMADDRESS, $htmlmessage=false, $senderaddress=false)
+    static function simpleMail($toname, $toaddress, $subject, $message, $fromname=_FROMNAME, $fromaddress=_FROMADDRESS, $htmlmessage=false, $senderaddress=false, $attachments=array())
     {
         //Protect against email injection
         $badStrings = array("Content-Type:",
@@ -2806,40 +2831,68 @@ class Jojo {
             $mail->setSubject('=?UTF-8?B?'.base64_encode($subject).'?=');
             $mail->setTextCharset('UTF-8');
 
+            # Add encoded attachments
+            if ($attachments) {
+                foreach ($attachments as $a) {
+                    if (is_file($a)) {
+                        $name = basename($a);
+                        $file = file_get_contents($a);
+                        $mail->addAttachment($file, $name);
+                   }
+                }
+            }
+
             $result = $mail->send(array($toaddress), 'smtp');
             return $result;
         } else {
-            # Setup mime boundary
-            $mime_boundary = 'Multipart_Boundary_x'.md5(time()).'x';
+            # Setup mime boundary hash
+            $hash = md5(time()).'x';
 
             $headers  = "MIME-Version: 1.0\n";
-            $headers .= $htmlmessage ? "Content-Type: multipart/alternative; boundary=\"$mime_boundary\"\r\n" : "Content-Type: text/plain;charset=\"UTF-8\"\n";
+            $headers .= $htmlmessage ? "Content-Type: multipart/mixed; boundary=\"mixed-x" . $hash . "\"\r\n" : "Content-Type: text/plain;charset=\"UTF-8\"\n";
             $headers .= "Content-Transfer-Encoding: 7bit\r\n";
-            $headers .= "X-Priority: 3\n";
-            $headers .= "X-MSMail-Priority: Normal\n";
             $headers .= "X-Mailer: php\n";
-            $headers .= $senderaddress ? "From: " . $senderaddress . "\n" : "From: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n";
+            $headers .= $senderaddress ? "From: " . $senderaddress . "\n" : 'From: "' . '=?UTF-8?B?' . base64_encode($fromname) . '?=' . '" <' . $fromaddress . ">\n";
             $headers .= $senderaddress ? "Reply-To: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n" : '';
             $additional="-f$fromaddress";
             $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : $toname . ' <' . $toaddress. '>';
             if ($htmlmessage) {
                 $body = '';
+                $body.= '--mixed-x' . $hash . "\n";
+                $body.= "Content-Type: multipart/alternative; boundary=\"alt-x" . $hash . "\"\n\n";
+
                 # Add in plain text version
-                $body.= "--$mime_boundary\n";
+                $body.= '--alt-x' . $hash . "\n";
                 $body.= "Content-Type: text/plain; charset=\"charset=us-ascii\"\n";
                 $body.= "Content-Transfer-Encoding: 7bit\n\n";
                 $body.= $message;
                 $body.= "\n\n";
 
                 # Add in HTML version
-                $body.= "--$mime_boundary\n";
+                $body.= '--alt-x' . $hash . "\n";
                 $body.= "Content-Type: text/html; charset=\"UTF-8\"\n";
                 $body.= "Content-Transfer-Encoding: 7bit\n\n";
                 $body.= $htmlmessage;
                 $body.= "\n\n";
+                
+                $body.= '--alt-x' . $hash . "--\n\n";
+
+                # Add encoded attachments
+                if ($attachments) {
+                    foreach ($attachments as $a) {
+                        if (is_file($a)) {
+                            $body.= '--mixed-x' . $hash . "\n";
+                            $body.= "Content-Type: " . Jojo::getMimeType($a) . "; name=\"" . basename($a) . "\" size=\"" . filesize($a) .  "\";\n";
+                            $body.= "Content-Transfer-Encoding: base64\n";
+                            $body.= "Content-Disposition: attachment\n\n";
+                            $body.= chunk_split(base64_encode(file_get_contents($a)));
+                            $body.= "\n\n";
+                       }
+                    }
+                }
 
                 # End email
-                $body.= "--$mime_boundary--\n"; # <-- Notice trailing --, required to close email body for mime's
+                $body.= '--mixed-x' . $hash . "--\n"; # <-- Notice trailing --, required to close email body for mime's
                 $message = $body;
             }
             return mail($to, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers, $additional);
@@ -2891,11 +2944,11 @@ class Jojo {
         if ( is_null($timestamp) || ($timestamp == 0) ) {return '';}
         if (date('d/m/Y',strtotime('+0 day')) == date('d/m/Y',$timestamp)) {
             $d = $showtime ? 'Today, '.date("h:ia",$timestamp) : 'Today';
-        } else if (date("d/m/Y",strtotime("+1 day")) == date("d/m/Y",$timestamp)) {
+        } elseif (date("d/m/Y",strtotime("+1 day")) == date("d/m/Y",$timestamp)) {
             $d = $showtime ? "Tomorrow, ".date("h:ia",$timestamp) : 'Tomorrow';
-        } else if (date("d/m/Y",strtotime("-1 day")) == date("d/m/Y",$timestamp)) {
+        } elseif (date("d/m/Y",strtotime("-1 day")) == date("d/m/Y",$timestamp)) {
             $d = $showtime ? "Yesterday, ".date("h:ia",$timestamp) : 'Yesterday';
-        } else if (date("Y",strtotime("+0 day")) == date("Y",$timestamp)) { //same year
+        } elseif (date("Y",strtotime("+0 day")) == date("Y",$timestamp)) { //same year
             $d = "".date("jS F",$timestamp); //no need to include year
         } else {
             $d = date("j M Y",$timestamp);
@@ -2987,9 +3040,9 @@ class Jojo {
 
         $custom = array(
             'text_filter' => _BASEPLUGINDIR . '/jojo_core/external/Horde/Filter.php',
-            'browser'     => _BASEPLUGINDIR . '/jojo_core/external/Horde/Browser.php',
-            'string'      => _BASEPLUGINDIR . '/jojo_core/external/Horde/String.php',
-            'util'        => _BASEPLUGINDIR . '/jojo_core/external/Horde/Util.php',
+            'horde_browser'     => _BASEPLUGINDIR . '/jojo_core/external/Horde/Browser.php',
+            'horde_string'      => _BASEPLUGINDIR . '/jojo_core/external/Horde/String.php',
+            'horde_util'        => _BASEPLUGINDIR . '/jojo_core/external/Horde/Util.php',
             'phpcaptcha'  => _BASEPLUGINDIR . '/jojo_core/external/php-captcha/php-captcha.inc.php',
             'htmlmimemail'=> _BASEPLUGINDIR . '/jojo_core/external/mimemail/htmlMimeMail.php',
             'hktree'      => _BASEPLUGINDIR . '/jojo_core/external/hktree/hktree.class.php',
@@ -3111,17 +3164,26 @@ class Jojo {
 
     public static function getFormData($var, $default = null)
     {
-        return Util::getFormData($var, $default);
+        return Horde_Util::getFormData($var, $default);
     }
 
     public static function getGet($var, $default = null)
     {
-        return Util::getGet($var, $default);
+        return Horde_Util::getGet($var, $default);
     }
 
     public static function getPost($var, $default = null)
     {
-        return Util::getPost($var, $default);
+        return Horde_Util::getPost($var, $default);
+    }
+
+    public static function getBrowser()
+    {
+        $browser = new Horde_Browser();
+        $name = $browser->getBrowser();
+        if ($name == 'msie') $name = 'Internet Explorer';
+        return $name;
+
     }
 
     public static function bb2Html($bbcode, $options=array())
@@ -3131,12 +3193,6 @@ class Jojo {
         if (isset($options['nofollow']) && $options['nofollow']) $bb->nofollow = true;
         $html = $bb->convert('bbcode2html');
         return $html;
-    }
-
-    public static function markdown2Html($markdown)
-    {
-        require_once(_BASEPLUGINDIR.'/jojo_core/external/php-markdown/markdown.php');
-        return Markdown($markdown);
     }
 
     /**
@@ -3286,9 +3342,11 @@ class Jojo {
                     unset($res[$k]);
                 }
             }
+            
             $mldata['default'] = $default;
             $mldata['sectiondata'] = $res;
         }
+
         return $mldata;
     }
 
@@ -3333,7 +3391,7 @@ class Jojo {
         if ($page->page['pg_htmllang']) {
             $pagehtmllang = $page->page['pg_htmllang'];
         // otherwise, find the default language for this section from its root
-        } else if ($sectiondata) {
+        } elseif ($sectiondata) {
             $pagehtmllang = $sectiondata['lc_defaultlang'];
         } else {
             $pagehtmllang = 'en';
@@ -3348,8 +3406,8 @@ class Jojo {
 
     static function getNav($root=0, $subnavLevels=0, $field='mainnav')
     {
-        global $_USERGROUPS, $selectedPages;
-
+        global $selectedPages;
+        
         /* Get multilanguage data */
             global $page;
             $mldata = Jojo::getMultiLanguageData();
@@ -3413,7 +3471,8 @@ class Jojo {
                 }
             }
         }
-        return $nav;
+
+         return $nav;
     }
 
     /* Get currently selected page and step back up through parents to build a current section/sub pages array */
@@ -3535,6 +3594,19 @@ class Jojo {
 
         header('Content-type: application/rss+xml');
         echo $rss;
+        ob_end_flush(); //Flush and turn off output buffering
+       
+        /* Cache the page */
+        if (_CONTENTCACHE && !Jojo::noCache()) {
+            $cachefile = _CACHEDIR . '/public/' . md5($pageurl . 'rss/uri=' . ltrim(str_replace(_SITEURL, '', $pageurl) . 'rss/', '/')) . '.html';
+            $fp = fopen($cachefile, 'w');  //open file for writing
+            fwrite($fp, $rss); //write contents to Cache file
+            fclose($fp); //Close file pointer
+        /* or wipe the cache file if it's been set to no cache since */
+        } elseif (Jojo::noCache() && file_exists($cachefile)){
+                unlink($cachefile);
+        }
+
         exit;
     }
 
@@ -3808,16 +3880,21 @@ class Jojo {
       return isset($table[$matches[1]]) ? $table[$matches[1]] : '';
     }
 
-    static function inlineStyle($html, $css=array(), $list2table=false) {
+    static function inlineStyle($html, $css=false, $list2table=false) {
+        
         if ($list2table) {
             $html = str_replace('<ul>', '<table cellspacing="0" cellpadding="0" border="0">', $html);
             $html = str_replace('<li>', '<tr><td align="left" valign="top"><p>&bull;&nbsp;&nbsp;</p></td><td><p>', $html);
             $html = str_replace('</li>', '</p></td></tr>', $html);
             $html = str_replace('</ul>', '</table>', $html);
         }
-        foreach ($css as $style) {
-            $html = str_replace('<' . $style['tag'], '<' . $style['tag'] . ' style="' . $style['style'] . '"', $html);
-        }
+        
+        require_once _BASEPLUGINDIR . '/jojo_core/external/csstoinline/CssToInlineStyles.php';
+        require_once _BASEPLUGINDIR . '/jojo_core/external/csstoinline/Exception.php';
+        // create instance
+        $cssToInlineStyles = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles($html, $css);
+        // process HTML
+        $html = $cssToInlineStyles->convert();
         return $html;
     }
 
@@ -3877,7 +3954,9 @@ class Jojo {
 
         /* known mobile user agents */
         /* TODO: http://code.google.com/p/php-mobile-detect/ may be a better alternative */
-        $is_mobile = (preg_match('/android.+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i',$useragent)||preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|e\-|e\/|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(di|rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\-|2|g)|yas\-|your|zeto|zte\-/i',substr($useragent,0,4)));
-        return $is_mobile;
+        //$is_mobile = (preg_match('/android.+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i',$useragent)||preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|e\-|e\/|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(di|rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\-|2|g)|yas\-|your|zeto|zte\-/i',substr($useragent,0,4)));
+        /* Horde mobile detection */
+        $browser = new Horde_Browser();
+        return $browser->isMobile();
     }
 }

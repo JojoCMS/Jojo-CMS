@@ -23,3 +23,4 @@
  */
 
 $indexes['user'][] = 'us_login';
+$indexes['user'][] = 'us_email';

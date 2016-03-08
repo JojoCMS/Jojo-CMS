@@ -49,8 +49,8 @@ if ($commentid && !$body) {
     $html  = '<form action="actions/jojo_edit_comment.php" target="frajax-iframe" method="post">';
     $html .= '<input type="hidden" name="commentid" value="'.$commentid.'" />';
     $html .= '<input type="hidden" name="userid" value="'.$userid.'" />';
-    $html .= '<textarea name="comment-body" id="comment-body-'.$commentid.'" style="width: 98%; height: 300px;">'.htmlentities($comment['bbbody']).'</textarea><br />';
-    $html .= '<input type="submit" name="save" value="Save" /></form>';
+    $html .= '<div class="form-group"><textarea class="form-control" name="comment-body" id="comment-body-'.$commentid.'">'.htmlentities($comment['bbbody']).'</textarea></div>';
+    $html .= '<button class="btn btn-default btn-sm" type="submit" name="save" value="Save">Save</button></form>';
 
     $frajax->assign('comment-'.$commentid,'innerHTML',$html);
 }

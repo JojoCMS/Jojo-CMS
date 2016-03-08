@@ -49,6 +49,9 @@
 
 // Scaffolding
 // -------------------------
+@grid-columns:              12;
+@grid-gutter-width:         20px;
+
 @body-bg:               #fff;
 @text-color:            @tertiary;
 
@@ -76,7 +79,7 @@ body {
 
 h1 {
   font-size: 23px;
-  margin: 23px 0 12px;
+  margin: 23px 0 20px;
 }
 
 h2 {
@@ -114,9 +117,6 @@ th, td {
 
 /* Body */
 
-#buttons {
-  padding: 0 0 20px;
-}
 
 .btn {
     font-family: @headings-font-family;
@@ -126,12 +126,35 @@ th, td {
   display: none;
 }
 
+.symbol {
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    color: #aaa;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+    position: relative;
+    top: -1px;
+    text-align: center;
+    width: 16px;
+}
+.symbol.required {
+    color: @brand-danger;
+}
+.tooltip {
+    min-width: 200px;
+}
 .field-page {
   display: none;
 }
 
 /* Edit */
 
+#btn_add {
+    margin-bottom: 10px;
+}
 #recordlist select {
     border: none;
 }
@@ -144,7 +167,7 @@ th, td {
     max-height: 800px;
 }
 
-.jstree-default-responsive {
+.jstree-default {
     > .jstree-container-ul .jstree-loading > .jstree-ocl {
           background-image: url("../external/jstree/dist/themes/default/throbber.gif")
     }
@@ -157,16 +180,54 @@ th, td {
     .jstree-wholerow-clicked {
         background: #cdcdcd;
     }
-    .jstree-node, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
+    .jstree-node, .jstree-default, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
         background-image: url("../external/jstree/dist/themes/default/40px.png");
+    }
+    > .jstree-no-dots .jstree-closed > .jstree-ocl {
+        background: none;
+        color: #aaa;
+        &:after {
+            font-family: "Glyphicons Halflings";
+            content:"\e080";
+            font-size: 12px;
+            font-style: normal;
+            line-height: 26px;
+        }
+    }
+    > .jstree-no-dots .jstree-open > .jstree-ocl {
+        background: none;
+        color: #aaa;
+        &:after {
+            font-family: "Glyphicons Halflings";
+            content:"\e114";
+            font-size: 12px;
+            font-style: normal;
+            line-height: 26px;
+        }
     }
 }
 
+#fields-wrap {
+    h2 {
+        margin-top: 0;
+    }
+    #btn_save {
+      margin: 0 0 20px;
+    }
+    #buttons {
+      margin: 0 0 20px;
+      float: right;
+    }
+    .readonly .value {
+        display: inline-block;
+        padding: 4px;
+    }
+}
 /* Small devices (tablets, 768px and up) */
 @media (min-width: @screen-sm-min) {
-    .jstree-default-responsive {
+    .jstree-default {
         .jstree-node, .jstree-icon, .jstree-node > .jstree-ocl, .jstree-themeicon, .jstree-checkbox {
-            background-image: url("../external/jstree/dist/themes/default/32px.png");
+            background-image: url("../external/jstree/dist/themes/default/40px.png");
         }
         .jstree-node {
             line-height: 22px;
@@ -202,6 +263,7 @@ th, td {
 #fields label {
     text-align: right;
     padding-top: 5px;
+    font-weight: 400;
     span.glyphicon {
         font-size: 8px;
         vertical-align: 1px;
@@ -211,6 +273,7 @@ th, td {
         font-weight: 400;
     }
 }
+#fields li label { padding-top: 0 }
 
 /* General */
 div.clear {
@@ -506,13 +569,17 @@ ul.plugins {
     }
 }
 
-#option-items .saving {
-  float: right;
-  clear: none;
-  color: red;
-  width: 30%;
+#option-items {
+    h4 span {
+        float:right;
+    }
+    .saving {
+      float: right;
+      clear: none;
+      color: red;
+      width: 30%;
+    }
 }
-
 div.options, div.readme {
   display: none;
 }

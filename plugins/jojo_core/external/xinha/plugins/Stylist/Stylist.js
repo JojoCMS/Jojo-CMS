@@ -549,7 +549,7 @@ Xinha.ripStylesFromCSSString = function(css, skip_imports, imports_relative_to)
   var selectors = { };
   for(var x = 0; x < css.length; x++)
   {
-    if(css[x].trim())
+    if(css[x].trim() && css[x].indexOf("col-")==-1 && css[x].indexOf("carousel")==-1 && css[x].indexOf("panel")==-1 && css[x].indexOf("div.")==-1)
     {
       selectors[css[x].trim()] = css[x].trim();
     }

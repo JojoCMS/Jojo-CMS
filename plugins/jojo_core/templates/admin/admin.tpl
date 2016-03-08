@@ -4,17 +4,15 @@
 
 <div class="col-md-6">
 
-    {if !($browser->getBrowser() == 'mozilla' ||
-                           $browser->hasFeature('issafari') ||
-                           $browser->hasFeature('ischome'))}
+    {if !($browser == 'mozilla' || $browser == 'webkit' ) }
     <div class="admin-home-item-left">
 
         <h3>Browser Warning!</h3>
-        <p>Jojo CMS is currently in a beta release, and this version has only been tested in the <a href="http://www.getfirefox.com" target="_BLANK">Firefox</a> and <a href="www.apple.com/safari/" target="_BLANK">Safari</a> browsers. There are several known issues with Internet Explorer in particular which will prevent some features of the admin area from working.</p>
+        <p>Jojo CMS Admin has only been tested in the <a href="http://www.getfirefox.com" target="_BLANK">Firefox</a>, <a href="http://www.google.com/chrome" target="_BLANK">Chrome</a> and <a href="www.apple.com/safari/" target="_BLANK">Safari</a> browsers. There are several known issues with Internet Explorer in particular which will prevent some features of the admin area from working.</p>
 
-        <p>You are currently using the <strong>{$browser->getBrowser()}</strong> browser</p>
+        <p>You are currently using the <strong>{$browser}</strong> browser</p>
 
-        <p>We recommend you download the latest version of <a href="http://www.getfirefox.com">Firefox</a> or <a href="www.apple.com/safari/" target="_BLANK">Safari</a>, both free.</p>
+        <p>We recommend you download the latest version of <a href="http://www.getfirefox.com">Firefox</a>, <a href="http://www.google.com/chrome" target="_BLANK">Chrome</a> or <a href="www.apple.com/safari/" target="_BLANK">Safari</a>, all free, all good.</p>
 
     </div>
     {/if}
@@ -22,7 +20,7 @@
     <div class="admin-home-item-left">
 
         <h2>Welcome</h2>
-        Welcome to the admin section of your website.{if $jojoversion} Currently running Jojo CMS {$jojoversion}{/if}
+        Welcome to the admin section of your website.{if $jojoversion} Currently running Jojo CMS {$jojoversion}{/if}.
 
     </div>
 
@@ -49,42 +47,24 @@
         <h3>Edit Site Options</h3>
         <p>These options are for managing your website. Unless you know what these do, they are best left unchanged</p>
 
-        <form action="" method="post" class="form-horizontal">
+        <!-- [Content Cache] -->
+        <h3>Content Cache: </h3>
+        <div class="controls">
+            <label for="content-cache-on" class="radio inline"><input type="radio" name="content-cache" id="content-cache-on" onclick="$('#savemsg_contentcache').hide().html('Saving...').show(); frajax('admin-set-options','contentcache','yes');"{if $OPTIONS.contentcache == 'yes'} checked="checked"{/if} />On</label>
+            <label for="content-cache-off" class="radio inline"><input type="radio" name="content-cache" id="content-cache-off" onclick="$('#savemsg_contentcache').hide().html('Saving...').show(); frajax('admin-set-options','contentcache','no');"{if $OPTIONS.contentcache == 'no'} checked="checked"{/if} />Off</label>
+            <span id="savemsg_contentcache" style="color: red;" class="inline-help"></span>
+        </div>
+        <p>Caching your website's content makes it run a lot faster, and reduces load on the server. It should usually be left on, unless new features are being tested</p>
 
-            <!-- [Content Cache] -->
-            <label class="control-label">Content Cache: </label>
-            <div class="controls">
-                <label for="content-cache-on" class="radio inline"><input type="radio" name="content-cache" id="content-cache-on" onclick="$('#savemsg_contentcache').hide().html('Saving...').show(); frajax('admin-set-options','contentcache','yes');"{if $OPTIONS.contentcache == 'yes'} checked="checked"{/if} />On</label>
-                <label for="content-cache-off" class="radio inline"><input type="radio" name="content-cache" id="content-cache-off" onclick="$('#savemsg_contentcache').hide().html('Saving...').show(); frajax('admin-set-options','contentcache','no');"{if $OPTIONS.contentcache == 'no'} checked="checked"{/if} />Off</label>
-                <span id="savemsg_contentcache" style="color: red;" class="inline-help"></span>
-            </div>
-            <br />
-            Caching your website's content makes it run a lot faster, and reduces load on the server. It should usually be left on, unless new features are being tested
-            <br /><br />
+        <!-- [Empty Content Cache] -->
+        <p><button class="btn btn-warning empty-cache" data-scope="html"/>Empty Page Cache</button></p>
+        <p>Pages have a cache time of {$contentcachetime} - emptying the cache will ensure everyone will see fresh content immediately.</p>
+        <p><button class="btn btn-warning empty-cache" data-scope="js"/>Empty JS Cache</button>
+        <button class="btn btn-warning empty-cache" data-scope="css"/>Empty CSS Cache</button></p>
+        <p>Resources (images, css, js etc) have a cache time of {$resourcecachetime} and should usually not need be cleared.</p>
+        <p><button class="btn btn-danger empty-cache" data-scope="full"/>Clear Everything</button></p>
 
-            <!-- [Empty Content Cache] -->
-            <label class="control-label">Empty Cache: </label>
-            <div class="controls">
-            <input type="submit" name="empty-cache" id="empty-cache" value="Empty" class="btn"
-                   onclick="{literal}$(this).attr('value', 'Emptying cache'); $.get(siteurl + '/json/admin-empty-cache.php', null, function(data) {$('#empty-cache').attr('value', 'Cache Emptied');}); return false;{/literal}"
-                   />
-                </div>
-            <br />
-            Every page has a maximum cache time of 8 hours, however emptying the cache will ensure everyone will see fresh content immediately.
-            <br /><br />
-
-            <!-- [Enable GZip] -->
-            <label class="control-label">GZip: </label>
-            <div class="controls">
-                <label for="enable-gzip-on" class="radio inline"><input type="radio" name="enable-gzip" id="enable-gzip-on" onclick="$('#savemsg_enablegzip').hide().html('Saving...').show(); frajax('admin-set-options','enablegzip','1');"{if $OPTIONS.enablegzip == '1'} checked="checked"{/if} />Enabled</label>
-                <label for="enable-gzip-off" class="radio inline"><input type="radio" name="enable-gzip" id="enable-gzip-off" onclick="$('#savemsg_enablegzip').hide().html('Saving...').show(); frajax('admin-set-options','enablegzip','0');"{if $OPTIONS.enablegzip == '0'} checked="checked"{/if} />Disabled</label>
-                <span id="savemsg_enablegzip" style="color: red;" class="inline-help"></span>
-            </div>
-            <br />
-            GZipping your content reduces the amount of data that needs to be downloaded, and this can make a big difference to speed. Does not work correctly on some webhosts.
-            <br /><br />
-            All options are available from the <a href="{$ADMIN}/options/">options page</a>.
-        </form>
+        <p>All options are available from the <a href="{$ADMIN}/options/">options page</a>.</p>
     </div>
 </div>
 

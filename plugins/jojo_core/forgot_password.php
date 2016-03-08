@@ -36,7 +36,7 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
 
         /* A reset hash has been sent via GET - find the relevant user and generate random password */
         if ($reset != '') {
-            $user = Jojo::selectRow("SELECT userid, us_email, us_login, us_reminder FROM {user} WHERE us_reset= ?", array($reset));
+            $user = Jojo::selectRow("SELECT userid, us_email, us_login, us_firstname, us_reminder FROM {user} WHERE us_reset= ?", array($reset));
 
             if (!$user) {
                 $errors[] = 'This password reset code has expired. Please use the form below to generate another reset code.';
@@ -65,16 +65,14 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
             foreach ($users as $user) {
                 /* ensure we have an email address */
                 $email = $user['us_email'];
-    
-    
+
                 if (($type == 'reminder') && ($user['us_reminder'] == '')) {
                     $action = 'reset';
                     $messages[] = 'There is no password reminder for this account - sending password reset link instead.';
                 } else  {
                     $action = $type;
                 }
-                
-    
+
                 if (empty($email) && !count($errors)) {
                     $errors[] = 'There is no email address stored against this user account, so the password is unable to be reset. Please contact the webmaster ('._FROMADDRESS.') to manually reset your password.';
                 } elseif ($action == 'reminder') {
@@ -82,24 +80,27 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                     $reminder = $user['us_reminder'];
                     $login    = $user['us_login'];
                     $userid   = $user['userid'];
-    
-                    $mail = new htmlMimeMail();
-    
+
                     $smarty->assign('email',    $email);
                     $smarty->assign('login',    $login);
                     $smarty->assign('reminder', $reminder);
                     $text = $smarty->fetch('forgot-password-reminder.tpl');
-    
-                    $mail->setText($text);
-                    $mail->setFrom(_SITETITLE.' <'._FROMADDRESS.'>');
-                    $mail->setSubject('Password Reminder');
-                    $result = $mail->send(array($email));
-                    $messages[] = $result ? 'Password reminder has been sent to the email address associated with username '.$login : 'There was an error sending the reminder email. Please contact the webmaster for further help '._FROMADDRESS;
+
+                    require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
+                    $parsedown = new Parsedown();
+                    $htmltext = $parsedown->text($text);
+
+                    if (Jojo::simpleMail(Jojo::either($user['us_firstname'],$user['us_login']), $user['us_email'], 'Password Reminder', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
+                        $messages[] = 'Password reminder has been sent to the email address associated with username ' . $login;
+                    } else {
+                        $errors[] = 'There was an error sending the reminder email. Please contact the webmaster for further help ' . _FROMADDRESS;
+                    }
+
                 } else if ($action == 'reset') {
                     $userid = $user['userid'];
                     $login  = $user['us_login'];
                     /* Generate a random hash and store this against the user */
-    
+
                     /* keep generating random codes until we get a unique one */
                     while (empty($auth)) {
                         $auth = strtolower(Jojo::randomstring(16));
@@ -107,18 +108,22 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                         if ($data[0]['num'] > 0) unset($auth);
                     }
                     Jojo::updateQuery("UPDATE {user} SET us_reset = ? WHERE userid = ? LIMIT 1", array($auth, $userid));
-    
+
                     /* Send reset email */
-                    $mail = new htmlMimeMail();
                     $smarty->assign('email', $email);
                     $smarty->assign('login', $login);
                     $smarty->assign('auth',  $auth);
                     $text = $smarty->fetch('forgot-password-reset.tpl');
-                    $mail->setText($text);
-                    $mail->setFrom(_SITETITLE.' <'._FROMADDRESS.'>');
-                    $mail->setSubject('Password Reset Link');
-                    $result  = $mail->send(array($email));
-                    $messages[] = $result ? 'Password reset link has been sent to '.$email : 'There was an error sending the Reset email. Please contact the webmaster for further help '._FROMADDRESS;
+
+                    require_once _BASEPLUGINDIR . '/jojo_core/external/parsedown/Parsedown.php';
+                    $parsedown = new Parsedown();
+                    $htmltext = $parsedown->text($text);
+
+                     if (Jojo::simpleMail((isset($user['us_firstname']) && $user['us_firstname'] ? $user['us_firstname'] : $user['us_login']), $user['us_email'], 'Password Reset Link', $text, _SITETITLE, _FROMADDRESS, $htmltext)) {
+                        $messages[] = 'Password reset link has been sent to ' . $email;
+                    } else {
+                        $errors[] = 'There was an error sending the Reset email. Please contact the webmaster for further help ' . _FROMADDRESS;
+                    }
                 }
             }
         }

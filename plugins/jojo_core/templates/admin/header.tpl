@@ -16,12 +16,12 @@
                         {/foreach}
                     </ul>
                 {/if}</li>
-                {/foreach}
+                {/if}{/foreach}
                 <li><a href="{$SITEURL}/" title="Homepage" target="_blank" class="btn btn-default">Open Site</a></li>
             </ul>
         </div>
     </div>
 
-    <h1 id="h1">{if $displayvalue}{$displayvalue}{elseif $title}{$title}{else}Admin{/if}</h1>
+    <h1 id="h1">{if $title}{$title}{else}Admin{/if}</h1>
     {if $content}{$content}{/if}
     <div id="container">

@@ -57,14 +57,6 @@ class Jojo_Field_fileupload extends Jojo_Field
                 $filesize = filesize(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$this->value);
                 $filetype = Jojo::getFileExtension($this->value);
 
-                /* display logo image (dependent on file extension) if one exists, otherwise use the default (txt) */
-                if (file_exists(_BASEPLUGINDIR . '/jojo_core/images/cms/filetypes/' . $filetype . '.gif')) {
-                    $filelogo = 'images/cms/filetypes/' . $filetype . '.gif';
-                } else {
-                    $filelogo = 'images/cms/filetypes/default.gif';
-                }
-                $retval .= '<span title="'. Jojo::roundBytes($filesize).'"><a href="'._SITEURL.'/downloads/'.$this->fd_table.'s/'.$this->value.'" target="_BLANK"><img src="'.$filelogo.'" border="0" align="absmiddle" /> '.$this->value.'</a></span><a href="" title="Delete File" onclick="$(\'input[name=fm_'.$this->fd_field.'_delete]\').val(\'delete\'); alert(\'This image will be deleted when the record is saved\');return false;"><img src="images/cms/icons/delete.png" border="0" align="absmiddle" /></a><br />';
-
                 /* If an image, then display a thumbnail image */
                 if ( (strtolower(Jojo::getFileExtension($this->value)) == "jpg") or (strtolower(Jojo::getFileExtension($this->value)) == "jpeg") or (strtolower(Jojo::getFileExtension($this->value)) == "gif") or (strtolower(Jojo::getFileExtension($this->value)) == "png") ) {
                     /* read cropdata */
@@ -84,7 +76,8 @@ class Jojo_Field_fileupload extends Jojo_Field
                             $thumb_w = round($this->thumbsize * ($imagesize[0] / $imagesize[1]));
                             $thumb_h = $this->thumbsize;
                         }
-                        $retval .= "<div id=\"crop_canvas_".$this->fd_field."\" class=\"crop_canvas\" style=\"width:".$thumb_w."px;height:".$thumb_h."px;\"></div><img src=\"images/".$this->thumbsize."/".$this->fd_table."s/".$this->value."\" border=\"0\" width=\"$thumb_w\" height=\"$thumb_h\" alt=\"".$this->value."\"title=\"Actual size ".$imagesize[0]."x".$imagesize[1]."px ". Jojo::roundBytes($filesize)."\" style=\"\" /><br />";
+                        $retval .= '<div id="crop_canvas_' . $this->fd_field . '" class="crop_canvas" style="width:' . $thumb_w . 'px;height:' . $thumb_h . 'px;"></div><img src="images/' . $this->thumbsize . '/' . $this->fd_table . 's/' . $this->value . '" border="0" width="' . $thumb_w . '" height="' . $thumb_h . '" alt="" /><br>
+                        <p><span class="note">click image to ' . ( $cropdata ? 'move' : 'set' ) . ' focal point for auto-cropping</span></p>';
                     }
                 }
             } else { //the database says there should be a file, but there isn't
@@ -94,7 +87,8 @@ class Jojo_Field_fileupload extends Jojo_Field
 
         $class = ($this->error != "") ? 'error' : '';
         $retval .= '<input type="hidden" name="fm_'.$this->fd_field."\" value=\"".$this->value."\" /><input type=\"hidden\" name=\"fm_".$this->fd_field."_delete\" value=\"\" />";
-        $retval .= '<div style="color: #999">'.$this->value.'</div>';
+        $retval .=  $this->value ? '<p>'.$this->value.'&nbsp; <span class="note">('. ( $imagesize ? $imagesize[0] . 'x' . $imagesize[1] . 'px - ' : '') . Jojo::roundBytes($filesize) . ')</span>&nbsp; <a class="btn btn-default btn-xs" href="'._SITEURL.'/downloads/'.$this->fd_table.'s/'.$this->value.'" target="_BLANK">view file</a> <a class="btn btn-default btn-xs" href="" title="Delete File" onclick="$(\'input[name=fm_'.$this->fd_field.'_delete]\').val(\'delete\');$(this).addClass(\'btn-danger\');return false;">remove (on save)</a></p>
+        <div>replace (on save) with:</div>' : '';
         $retval .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->fd_maxvalue.'" />'."\n".'<input class="' . $class . '" type="file" name="fm_FILE_'.$this->fd_field.'" id="fm_FILE_'.$this->fd_field.'"  size="'.$this->fd_size.'" value=""'.$readonly.' onchange="fullsave=true;" title="'.htmlentities($this->fd_help).'" />';
         $cropval = ($crop_x && $crop_y) ? $crop_x .','. $crop_y : '';
         $retval .= '<input type="hidden" name="fm_crop_'.$this->fd_field.'" id="fm_crop_'.$this->fd_field.'" value="'.$cropval.'" />';
@@ -114,14 +108,8 @@ class Jojo_Field_fileupload extends Jojo_Field
             if (file_exists(_DOWNLOADDIR . '/' . $this->fd_table . 's/' . $this->value)) {
                 $filesize = filesize(_DOWNLOADDIR . '/' . $this->fd_table . 's/' . $this->value);
                 $filetype = strtolower(Jojo::getFileExtension($this->value));
-                /* display logo image (dependent on file extension) if one exists, otherwise use the default (txt) */
-                if (file_exists(_BASEPLUGINDIR . '/jojo_core/images/cms/filetypes/' . $filetype . '.gif')) {
-                    $filelogo = 'images/cms/filetypes/' . $filetype . '.gif';
-                } else {
-                    $filelogo = 'images/cms/filetypes/default.gif';
-                }
                 $retval .= '<div class="col-md-12">';
-                $retval .= '<span title="' . Jojo::roundBytes($filesize) . "\"><a href=\"" . _SITEURL . "/downloads/" . $this->fd_table . "s/" . $this->value . "\" target=\"_BLANK\"><img src=\"" . $filelogo . "\" border=\"0\" align=\"absmiddle\"> " . $this->value . "</a></span><br>";
+                $retval .= '<span title="' . Jojo::roundBytes($filesize) . "\"><a href=\"" . _SITEURL . "/downloads/" . $this->fd_table . "s/" . $this->value . "\" target=\"_BLANK\">" . $this->value . "</a></span><br>";
 
                 //If an image, then display a thumbnail image
                 if ( $filetype == "jpg" || $filetype == "jpeg" ) {
@@ -193,20 +181,10 @@ class Jojo_Field_fileupload extends Jojo_Field
         }
 
         /* set cropdata if needed */
-        if (!empty($newvalue) && !empty($_POST['fm_crop_'.$this->fd_field])) {
+        if (!empty($newvalue) && !empty($_POST['fm_crop_' . $this->fd_field])) {
             $crop = explode(',', $_POST['fm_crop_'.$this->fd_field]);
             $data = file_get_contents(_DOWNLOADDIR.'/'.$this->fd_table.'s/'.$newvalue);
             Jojo::updateQuery("REPLACE INTO {cropdata} SET hash=?, filename=?, x=?, y=?", array(sha1($data), $newvalue, $crop[0], $crop[1]));
-
-            /* wipe any cached copies of this image */
-            $cache_folders = scandir(_CACHEDIR.'/images/');
-            foreach ($cache_folders as $root) {
-                $root = _CACHEDIR.'/images/'.$root;
-                if (($root == '.') || ($root == '..') || !is_dir($root)) continue;
-                if (Jojo::fileExists($root.'/'.$this->fd_table.'s/'.$newvalue)) {
-                    unlink($root.'/'.$this->fd_table.'s/'.$newvalue);
-                }
-            }
         }
 
         /* ensure we have data to work with */

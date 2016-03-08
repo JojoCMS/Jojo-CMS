@@ -2,23 +2,29 @@ form.contact-form textarea {
     vertical-align: top;
 }
 
-form span.required, form span.error {
-  color: red;
-  padding-left: 5px;
+form span.error {
+  color: @brand-danger;
 }
 
-form.contact-form  input.date {
-    background: url("../images/cms/icons/calendar_view_day.png") no-repeat scroll 2px 2px transparent;
-    padding-left: 20px;
+form .btn-file {
+  position: relative;
+  overflow: hidden;
 }
-
-form a.cleardata {
-  color: red;
-  margin-left: -20px;
-  cursor: pointer;
+form .btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  background: red;
+  cursor: inherit;
+  display: block;
 }
-
-form.contact-form .progress { display: none; position:relative; width:400px; border: 1px solid #ddd; padding: 1px; border-radius: 3px; }
-form.contact-form .bar { background-color: #B4F5B4; width:0%; height:20px; border-radius: 3px; }
-form.contact-form .percent { position:absolute; display:inline-block; top:3px; left:48%; }
-
+form input[readonly] {
+  background-color: white !important;
+  cursor: text !important;
+}

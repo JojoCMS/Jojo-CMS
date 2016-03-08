@@ -1,3 +1,14 @@
+$(document).ready(function() {
+
+  $('.empty-cache').click(function(){
+    $(this).html('Emptying ...');
+    var button = $(this);
+    $.get( 'json/admin-empty-cache.php', {scope: $(this).attr('data-scope')}, function(){button.html('Cache Emptied');} );
+     return false;
+  });
+
+});
+
 // insertcode is used for bold, italic, underline and quote and just
 // wraps the tags around a selection or prompts the user for some
 // text to apply the tag to
@@ -166,4 +177,9 @@ $(document).ready(function(){
   $(".sortabletable").tablesorter({
       widgets: ['zebra'] 
     }); 
+  $('[data-toggle="tooltip"]').tooltip();
+  $('#fields-wrap form').on('keyup change mousewheel', 'input, select, textarea', function(){
+     $('#btn_save').addClass('btn-warning');
+    });
 });
+

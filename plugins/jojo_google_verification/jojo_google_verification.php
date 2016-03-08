@@ -23,7 +23,7 @@ class Jojo_Plugin_jojo_google_verification extends Jojo_Plugin
     function _getContent()
     {
         /* valid Google verification filenames are stored in Jojo::getOption('googleverification'), one valid filename per line. Valid files will return a 200 response, invalid return a 404. Alternatively, you can still upload the empy verification file onto the server. */
-        $filename = $_GET['filename'];
+        $filename = isset($_GET['filename']) ? $_GET['filename'] : '';
         $valid = explode("\n", Jojo::getOption('googleverification'));
         foreach ($valid as $file) {
             if (trim($file) == $filename) {

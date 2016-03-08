@@ -32,7 +32,10 @@ class Jojo_Plugin_Admin extends Jojo_Plugin
         }
 
         /* Browser detection */
-        $smarty->assign('browser', Browser::singleton());
+        $smarty->assign('browser', Jojo::getBrowser());
+
+        $smarty->assign('contentcachetime', self::humanTime(_CONTENTCACHETIME));
+        $smarty->assign('resourcecachetime', self::humanTime(_CONTENTCACHETIMERESOURCES));
 
         Jojo_Plugin_Admin::adminMenu();
         $content['content'] = $smarty->fetch('admin/admin.tpl');
@@ -52,4 +55,35 @@ class Jojo_Plugin_Admin extends Jojo_Plugin
         $adminnav = Jojo::getNav($adminroot, 3);
         $smarty->assign('jojo_admin_nav', $adminnav);
     }
+
+
+    public static function humanTime($time, $since=false)
+    {
+        $time = $since ? time() - $time : $time;
+        $humantime = '';
+        $elapsed = 0;
+        $s = '';
+        $points = array(
+            'year'     => 31556926,
+            'month'    => 2629743,
+            'week'     => 604800,
+            'day'      => 86400,
+            'hour'     => 3600,
+            'minute'   => 60,
+            'second'   => 1
+        );
+ 
+        foreach($points as $point => $value)
+        {
+            if($elapsed=floor($time/$value))
+            {
+                $s = $elapsed>1?'s':'';
+                $humantime .= "$elapsed $point$s ";
+                break;
+            }
+        }
+        
+        return $humantime;
+    }
+        
 }

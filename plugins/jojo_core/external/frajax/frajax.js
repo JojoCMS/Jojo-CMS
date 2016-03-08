@@ -3,9 +3,9 @@ function frajax(action,a,b,c,d,e,f,g,h,i,j) {
     var r = /(http|https):\/\/.*/;
     var m = r.exec(window.location);
     if (m != null && m.length > 1) {
-    	if (m[1] == 'https') {
-    	    url  = secureurl;
-    	}
+        if (m[1] == 'https') {
+            url  = secureurl;
+        }
     }
     url += '/actions/' + action + '.php?';
     if (a) {url += 'arg1=' + encodeURIComponent(a);}

@@ -13,6 +13,7 @@
  * @author  Harvey Kane <code@ragepank.com>
  * @author  Michael Cochrane <mikec@jojocms.org>
  * @author  Melanie Schulz <mel@gardyneholt.co.nz>
+ * @author  Tom Dale <tom@zero.co.nz>
  * @license http://www.fsf.org/copyleft/lgpl.html GNU Lesser General Public License
  * @link    http://www.jojocms.org JojoCMS
  * @package jojo_core
@@ -39,12 +40,17 @@ if (!isset($isAdmin) || !$isAdmin) {
     if ((!isset($_SESSION['simplepass']) || $_SESSION['simplepass'] != _MASTERPASS) && (!isset($_COOKIE['simplepass']) || $_COOKIE['simplepass'] != _MASTERPASS)) {
         jojo_install_header();
         echo '<h1 id="h1">Jojo Setup</h1><p>The Jojo setup process requires authentication.</p>'."\n";
-        echo '<div class="box">'."\n";
+        echo '<div class="well">'."\n";
         echo "<form method=\"post\" class=\"form\" action=\"".$_SERVER['REQUEST_URI']."\">\n";
-        echo "<h2>Enter password</h2>\n";
-        echo '<label for="simplepass">Password:</label><input type="password" size="20" id="simplepass" name="simplepass" /><br />';
-        echo "\n<label></label><input type=\"submit\" name=\"submit\" value=\"Login\" />\n";
-        echo "</form><div class=\"clear\"></div></div><p><em>If you are unsure of the password, please check the <strong>_MASTERPASS</strong> setting in your config.php file.</em></p>\n";
+        echo '<h2>Enter password</h2>
+        <div class="form-group">
+            <label for="simplepass">Password:</label><input class="form-control" type="password" size="20" id="simplepass" name="simplepass" />
+        </div>
+        <input class="btn btn-default" type="submit" name="submit" value="Run Setup" />'
+        ;
+        echo "</form>
+        </div>
+        <p><em>If you are unsure of the password, please check the <strong>_MASTERPASS</strong> setting in your config.php file.</em></p>";
         jojo_install_footer();
         exit();
     }
@@ -80,7 +86,6 @@ $_folders[_CACHEDIR . '/smarty/templates_c'] = 'Smarty Template Cache Directory'
 $_folders[_CACHEDIR . '/smarty/cache'] = 'Smarty Cache Directory';
 $_folders[_CACHEDIR . '/dwoo/templates_c'] = 'Dwoo Template Cache Directory';
 $_folders[_CACHEDIR . '/dwoo/cache'] = 'Dwoo Cache Directory';
-$_folders[_CACHEDIR . '/images'] = 'Image Cache Directory';
 
 foreach($_folders as $folder => $name) {
     $res = Jojo::RecursiveMkdir($folder);
@@ -123,7 +128,7 @@ if (isset($_POST['delete_orphaned_options'])) {
 if (isset($_POST['delete_orphaned_pages'])) {
     foreach ($_POST['orphaned_pages'] as $p) {
         $data = Jojo::selectQuery("SELECT pg_title FROM {page} WHERE pageid = ?", array($p));
-        echo "Removing orphaned page <b>".$data[0]['pg_title']."</b> from database<br/>";
+        echo "Removing orphaned page <b>". Jojo::htmlspecialchars($data[0]['pg_title'])."</b> from database<br/>";
         Jojo::deleteQuery("DELETE FROM {page}  WHERE pageid = ? LIMIT 1", array($p));
     }
 }
@@ -131,7 +136,8 @@ if (isset($_POST['delete_orphaned_pages'])) {
 /* Default Tabledata settings */
 $default_td = array();
 
-echo '<h1 id="h1">Running setup<div id="setup_loading"></div></h1><p>The Jojo setup script is an important part of the system. It applies version upgrades to the database, refreshes the cache, and performs other important housekeeping tasks. It is highly recommended that you run setup after every Jojo upgrade, and after adding any new files to plugins.</p><p>Consider running setup to be the equivalent of restarting Windows - it will fix all manner of problems, and is a good thing to do before seeking support.</p><p>If you do not see a "Setup Complete" message at the bottom of the page, it means the setup process has failed, which is usually due to a faulty install script in a plugin. The resulting error message should give some indication as to which plugin is responsible.</p>';
+echo '<h1 id="h1">Running setup<div id="setup_loading"></div></h1>
+<p>The Jojo setup script is an important part of the system. It applies version upgrades to the database, refreshes the cache, and performs other important housekeeping tasks. It is highly recommended that you run setup after every Jojo upgrade, and after adding any new files to plugins.</p><p>Consider running setup to be the equivalent of restarting Windows - it will fix all manner of problems, and is a good thing to do before seeking support.</p><p>If you do not see a "Setup Complete" message at the bottom of the page, it means the setup process has failed, which is usually due to a faulty install script in a plugin. The resulting error message should give some indication as to which plugin is responsible.</p>';
 
 /* On first run, ensure database is set to utf8 as a default collation */
 if (!$indexes) {
@@ -241,7 +247,7 @@ if (Jojo::tableexists('option')) {
                             $plugin,
                             $o['category'],
                             $o['label'],
-                            substr($o['description'], 0, 255),
+                            $o['description']
                         )
                     );
             } else {
@@ -254,8 +260,8 @@ if (Jojo::tableexists('option')) {
                             $plugin,
                             $o['category'],
                             $o['label'],
-                            substr($o['description'], 0, 255),
-                            $o['id'],
+                            $o['description'],
+                            $o['id']
                         )
                     );
             }
@@ -267,13 +273,14 @@ if (Jojo::tableexists('option')) {
 /* Remove orphaned options */
 if (count($allOptions)) {
     echo '<form method="post" id="orphaned-options">';
-    echo '<h3>Orphaned options</h3><p>The following options don\'t appear to be required by Jojo, and in most cases they can be deleted. Before deleting however, please ensure that the options aren\'t required by any custom plugins. If in doubt, there is no harm in leaving these options alone so please do not delete options unless you are sure they are no longer needed.</p>';
+    echo '<h3>Orphaned options</h3>
+    <p>The following options don\'t appear to be required by Jojo, and in most cases they can be deleted. Before deleting however, please ensure that the options aren\'t required by any custom plugins. If in doubt, there is no harm in leaving these options alone so please do not delete options unless you are sure they are no longer needed.</p>';
     foreach($allOptions as $n => $v) {
         /* PLEASE don't delete old options automatically. Some of them are VERY important. */
         echo "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_options[]\" value=\"$n\" /> Orphaned option found <b>$n</b></label><br/>";
     }
-    echo '<input type="button" onclick="var optionsForm = document.getElementById(\'orphaned-options\'); for (i = 0; i < optionsForm.length; i++) {optionsForm.elements[i].checked = true;} return false;" value="Select all" /> &nbsp; ';
-    echo '<input type="submit" name="delete_orphaned_options" value="Delete selected" /></form>';
+    echo '<input class="btn btn-default btn-xs" type="button" onclick="var optionsForm = document.getElementById(\'orphaned-options\'); for (i = 0; i < optionsForm.length; i++) {optionsForm.elements[i].checked = true;} return false;" value="Select all" /> &nbsp; ';
+    echo '<input class="btn btn-default" type="submit" name="delete_orphaned_options" value="Delete selected" /></form>';
 }
 
 
@@ -294,19 +301,20 @@ foreach($pages as $page) {
     if ($page['pg_link'] != '') {
         $classname = strtolower($page['pg_link']);
         if (!class_exists($classname)) {
-            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Dead Link page found (plugin missing or uninstalled)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+            $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Dead Link page found (plugin missing or uninstalled)<b> ".Jojo::htmlspecialchars($page['pg_title'])."</b> (ID: ".$page['pageid'].")</label><br/>";
         }
     }
     if ($page['pg_parent'] != 0 && !isset($pages[$page['pg_parent']]) ) {
-        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing or moved)<b> ".$page['pg_title']."</b> (ID: ".$page['pageid'].")</label><br/>";
+        $html .= "<label style=\"float: none; display: inline\"><input style=\"float: none; display: inline; width: auto;\" type=\"checkbox\" name=\"orphaned_pages[]\" value=\"".$page['pageid']."\" /> Orphaned page found (parent set but missing or moved)<b> ".Jojo::htmlspecialchars($page['pg_title'])."</b> (ID: ".$page['pageid'].")</label><br/>";
     }
 }
 if (!empty($html)) {
     echo '<form method="post" id="orphaned-pages">';
-    echo '<h3>Orphaned pages</h3><p>The following pages don\'t appear to be required by Jojo, and in most cases they can be deleted. Before deleting however, please ensure that the pages aren\'t required by any custom plugins.</p>';
+    echo '<h3>Orphaned pages</h3>
+    <p>The following pages don\'t appear to be required by Jojo, and in most cases they can be deleted. Before deleting however, please ensure that the pages aren\'t required by any custom plugins.</p>';
     echo $html;
-    echo '<input type="button" onclick="var pagesForm = document.getElementById(\'orphaned-pages\'); for (i = 0; i < pagesForm.length; i++) {pagesForm.elements[i].checked = true;} return false;" value="Select all" /> &nbsp; ';
-    echo '<input type="submit" name="delete_orphaned_pages" value="Delete selected" /></form>';
+    echo '<input class="btn btn-default btn-xs" type="button" onclick="var pagesForm = document.getElementById(\'orphaned-pages\'); for (i = 0; i < pagesForm.length; i++) {pagesForm.elements[i].checked = true;} return false;" value="Select all" /> &nbsp; ';
+    echo '<input class="btn btn-default" type="submit" name="delete_orphaned_pages" value="Delete selected" /></form>';
 }
 
 /* Turn off caching of dynamic pages */
@@ -469,7 +477,7 @@ foreach ($tables as $tblname => $tbltype)  {
     }
 
     /* setup indexes for the table */
-    echo '<div><h4>Checking indexes for '.$tblname.'...</h4>';
+    echo '<h4>Checking indexes for '.$tblname.'...</h4>';
 
     /* Get the existing indexes */
     $table_indexes = Jojo::selectQuery("SHOW INDEXES FROM {".$tblname."}");
@@ -742,7 +750,8 @@ if (count($data)) {
 
 /* Warn about redirects plugin change */
 if (Jojo::tableexists('redirect') && Jojo::selectRow('SELECT * FROM {redirect}') && !Jojo::selectRow('SELECT * FROM {plugin} where name = "jojo_redirect" AND active = "yes"')) {
-    echo "<h3 style='color:red'>Redirect plugin</h3>\n<p>The redirect feature has now been moved into a seperate plugin. You have redirects in the database but the plugin is not currently installed. Go to the <a href='" . Jojo::getOption('siteurl','',true) . "/admin/plugins/'>Manage Plugins</a> and install the <em>Jojo Redirect</em> plugin to make redirects work again.</p>";
+    echo "<h3 style='color:red'>Redirect plugin</h3>
+    <p>The redirect feature has now been moved into a seperate plugin. You have redirects in the database but the plugin is not currently installed. Go to the <a href='" . Jojo::getOption('siteurl','',true) . "/admin/plugins/'>Manage Plugins</a> and install the <em>Jojo Redirect</em> plugin to make redirects work again.</p>";
 }
 
 /* Plugin scanner to look for obvious errors in plugins */
@@ -750,8 +759,12 @@ include(_BASEPLUGINDIR . '/jojo_core/install/plugin-scanner.php');
 
 /* Output HTML footer */
 if (!isset($isAdmin) || !$isAdmin) {
-    echo '<br /><h2>Setup complete</h2><p class="action">Go to the <a href="' . Jojo::getOption('siteurl','',true) . '">Homepage</a> or <a href="' . Jojo::getOption('siteurl','',true) . '/admin/">admin login</a> to configure the install. <button onclick="window.location=\'' . Jojo::getOption('siteurl','',true) . '/\';">Homepage</button> <button onclick="window.location=\'' . Jojo::getOption('siteurl','',true) . '/admin/\';">Admin area</button></p>'."\n";
-    echo '<div class="box"><h2>Looking for reset location?</h2><p>This process has changed recently. In order to move the location of a website, please follow these steps.<ul><li>Edit the <strong>_SITEURL</strong> constant in config.php to reflect the new location (you may need to create this line if it does not already exist).</li><li>Edit the <strong>RewriteBase</strong> line of .htaccess to reflect the new location.</li><li><strong>Run setup</strong> again (refresh this page).</li></ul></p></div>';
+    echo '<h2>Setup complete</h2>
+    <p>Go to the <a class="btn btn-primary" href="' . Jojo::getOption('siteurl','',true) . '">Site Home</a> or <a class="btn btn-primary" href="' . Jojo::getOption('siteurl','',true) . '/admin/">Site Admin</a> to configure the install.</p>
+    <div class="well">
+        <h2>Want to reset location?</h2>
+        <p>In order to move the location of a website, please follow these steps.<ul><li>Edit the <strong>_SITEURL</strong> constant in config.php to reflect the new location (you may need to create this line if it does not already exist).</li><li>Edit the <strong>RewriteBase</strong> line of .htaccess to reflect the new location.</li><li><strong>Run setup</strong> again (refresh this page).</li></ul></p>
+    </div>';
     echo '<script type="text/javascript">document.getElementById(\'h1\').innerHTML = \'Setup Complete\';</script>';
     jojo_install_footer();
 }

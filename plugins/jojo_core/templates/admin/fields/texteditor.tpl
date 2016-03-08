@@ -50,7 +50,7 @@
 </div>
 
 {* Raw content *}
-<div class="hidden"><textarea name="fm_{$fd_field}" id="fm_{$fd_field}" rows="10" cols="30">{$value}</textarea></div>
+<div class="hidden"><textarea name="fm_{$fd_field}" id="fm_{$fd_field}" rows="10" cols="30">{if $value}{$value}{else}&nbsp;{/if}</textarea></div>
 
 {* Initialize editors *}
 
@@ -64,7 +64,7 @@ $(document).ready(function() {ldelim}
     {/if}setTextEditorContent("fm_{$fd_field}");
     $('#editor_{$fd_field}_{$editortype}').show();
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {ldelim}
-        startVisibleXinhaEditors();
-    {rdelim})
+        
+    {rdelim});
 {rdelim});
 </script>

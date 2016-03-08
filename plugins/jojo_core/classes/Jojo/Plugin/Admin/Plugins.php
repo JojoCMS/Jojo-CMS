@@ -66,9 +66,9 @@ class Jojo_Plugin_Admin_plugins extends Jojo_Plugin
                 } 
                 if ($readme) {
                     //$readme = nl2br(htmlspecialchars($readme, ENT_COMPAT, 'UTF-8', false));
-                    //$readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
+                    $readme = str_replace(array('[', ']'), array('&#91;', '&#93;'), $readme);
                     $parsedown = new Parsedown();
-                    $readme = $parsedown->parse($readme);
+                    $readme = $parsedown->text($readme);
                 }
  
                 /* Get plugin version */

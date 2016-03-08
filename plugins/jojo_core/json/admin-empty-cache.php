@@ -24,7 +24,7 @@ if (!$page->perms->hasPerm($_USERGROUPS, 'view')) {
   echo "You do not have permission to use this function";
   exit();
 }
-
-Jojo::clearCache(true);
+$scope  = Jojo::getFormData('scope', false);
+Jojo::clearCache($scope);
 echo json_encode("Content cache emptied");
 

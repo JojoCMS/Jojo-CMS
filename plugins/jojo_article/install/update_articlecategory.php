@@ -17,6 +17,7 @@ $default_td['articlecategory'] = array(
         'td_name' => "articlecategory",
         'td_primarykey' => "articlecategoryid",
         'td_displayfield' => "pageid",
+        'td_orderbyfields' => "pageid",
         'td_filter' => "yes",
         'td_topsubmit' => "yes",
         'td_addsimilar' => "no",
@@ -188,5 +189,5 @@ $default_fd['articlecategory']['comments'] = array(
         'fd_readonly' => "0",
         'fd_default' => "1",
         'fd_order' => $o++,
-        'fd_tabname' => "Content",
+        'fd_tabname' => "Content"
     );

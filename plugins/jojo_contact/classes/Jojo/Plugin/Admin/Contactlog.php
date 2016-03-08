@@ -32,7 +32,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
             Jojo::deleteQuery("DELETE FROM {formsubmission} WHERE formsubmissionid=$removeid");
         }
         $forms = Jojo::selectQuery("SELECT * FROM {form}");
-        $logs = Jojo::selectQuery("SELECT * FROM {formsubmission} ORDER BY submitted DESC LIMIT 1000");
+        $logs = Jojo::selectQuery("SELECT * FROM {formsubmission} ORDER BY submitted DESC LIMIT 500");
         foreach ($logs as &$e) {
             $e['friendlydate'] = strftime('%x %T', $e['submitted']);
             $fields = unserialize($e['content']);
@@ -50,7 +50,7 @@ class Jojo_Plugin_Admin_Contactlog extends Jojo_Plugin
                     $message .= ($f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n" : $f['value'] . "\r\n" );
                 }
             }
-            $e['shortdesc'] = str_replace("\r\n", ', ', substr(trim(htmlspecialchars($message, ENT_COMPAT, 'UTF-8', false)), 0, 100));
+            $e['shortdesc'] = str_replace("\r\n", ' ', substr(trim(htmlspecialchars($message, ENT_COMPAT, 'UTF-8', false)), 0, 150));
             $e['desc'] = nl2br(trim(htmlspecialchars($message, ENT_COMPAT, 'UTF-8', false)));
         }
         if (isset($_POST['submit'])) {

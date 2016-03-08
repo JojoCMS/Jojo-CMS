@@ -367,9 +367,9 @@ class Dwoo_Template_String implements Dwoo_ITemplate
 			$compiler->setSecurityPolicy($dwoo->getSecurityPolicy());
 			$this->makeDirectory(dirname($compiledFile), $dwoo->getCompileDir());
 			file_put_contents($compiledFile, $compiler->compile($dwoo, $this));
-			if ($this->chmod !== null) {
-				chmod($compiledFile, $this->chmod);
-			}
+			//if ($this->chmod !== null) {
+			//	chmod($compiledFile, $this->chmod);
+			//}
 
 			self::$cache['compiled'][$this->compileId] = true;
 		}

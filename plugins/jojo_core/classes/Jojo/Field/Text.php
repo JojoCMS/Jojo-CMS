@@ -74,6 +74,7 @@ class Jojo_Field_text extends Jojo_Field
         $smarty->assign('value',         htmlentities($this->value, ENT_COMPAT, 'UTF-8'));
         $smarty->assign('maxsize',       $this->fd_maxsize);
         $smarty->assign('readonly',      $this->fd_readonly);
+        $smarty->assign('required',      $this->fd_required);
         $smarty->assign('fd_units',      $this->fd_units);
         $smarty->assign('fd_help',       htmlentities($this->fd_help));
         $smarty->assign('counterstrlen', $this->counter - strlen($this->value));

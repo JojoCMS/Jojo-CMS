@@ -54,18 +54,18 @@ Jojo::addHook('foot', 'systeminstaller_menu', 'Core');
 Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'Core');
 
 /* Register URI patterns */
-Jojo::registerURI("css/[file:([^\/]*)$]",                                            'Jojo_Plugin_Core_Css');             // "css/something.css" for css files
-Jojo::registerURI("json/[file:([^\/]*)$]",                                           'Jojo_Plugin_Core_Json');            // "json/something.php" for json requests
-Jojo::registerURI("actions/[file:([^\/]*)$]",                                        'Jojo_Plugin_Core_Action');          // "actions/something.php" for frajax requests
-Jojo::registerURI("images/[file:(.*)$]",                                             'Jojo_Plugin_Core_Image');           // "images/somewhere/something.jpg" for image files
-Jojo::registerURI("js/[file:(.*)$]",                                                 'Jojo_Plugin_Core_Js');              // "js/something.js" for javascript files
-Jojo::registerURI("external/[file:(.*)$]",                                           'Jojo_Plugin_Core_External');        // "external/somewhere/something.ext" for external files
-Jojo::registerURI("downloads/[file:(.*)$]",                                          'Jojo_Plugin_Core_Download');        // "download/somewhere/something.ext" for user uploaded files
-Jojo::registerURI("files/[file:(.*)$]",                                              'Jojo_Plugin_Core_File');            // "files/somewhere/something.ext" for custom files for a plugin, eg flash
-Jojo::registerURI("inline/[file:(.*)$]",                                             'Jojo_Plugin_Core_Inline');          // "inline/somewhere/something.ext" any file in the downloads folder to be served inline
-Jojo::registerURI("forgot-password/reset/[reset:([a-f0-9]{40})]",                    'Jojo_Plugin_Forgot_password'); // "forgot-password/reset/21b618b7252f6dbc6744200ced0c44ce3e2664da/" - 40 chars of hex
-Jojo::registerURI("forgot-password/reset/[reset:([a-z0-9]{16})]",                    'Jojo_Plugin_Forgot_password'); // "forgot-password/reset/sga4v6wqg6ij65jd/" - a shorter version 16 chars of alpha numeric
-Jojo::registerURI("login/[redirect:(.*)]",                                           'Jojo_Plugin_Login');           // "login/page-to-redirect-to-on-success/" for login page
+Jojo::registerURI("css/[file:([^\/]*)$]",                                 'Jojo_Plugin_Core_Css');             // "css/something.css" for css files
+Jojo::registerURI("json/[file:([^\/]*)$]",                                 'Jojo_Plugin_Core_Json');            // "json/something.php" for json requests
+Jojo::registerURI("actions/[file:([^\/]*)$]",                             'Jojo_Plugin_Core_Action');          // "actions/something.php" for frajax requests
+Jojo::registerURI("images/[file:(.*)$]",                                   'Jojo_Plugin_Core_Image');           // "images/somewhere/something.jpg" for image files
+Jojo::registerURI("js/[file:(.*)$]",                                        'Jojo_Plugin_Core_Js');              // "js/something.js" for javascript files
+Jojo::registerURI("external/[file:(.*)$]",                                  'Jojo_Plugin_Core_External');        // "external/somewhere/something.ext" for external files
+Jojo::registerURI("downloads/[file:(.*)$]",                                'Jojo_Plugin_Core_Download');        // "download/somewhere/something.ext" for user uploaded files
+Jojo::registerURI("files/[file:(.*)$]",                                     'Jojo_Plugin_Core_File');            // "files/somewhere/something.ext" for custom files for a plugin, eg flash
+Jojo::registerURI("inline/[file:(.*)$]",                                    'Jojo_Plugin_Core_Inline');          // "inline/somewhere/something.ext" any file in the downloads folder to be served inline
+Jojo::registerURI("forgot-password/reset/[reset:([a-f0-9]{40})]",    'Jojo_Plugin_Forgot_password'); // "forgot-password/reset/21b618b7252f6dbc6744200ced0c44ce3e2664da/" - 40 chars of hex
+Jojo::registerURI("forgot-password/reset/[reset:([a-z0-9]{16})]",    'Jojo_Plugin_Forgot_password'); // "forgot-password/reset/sga4v6wqg6ij65jd/" - a shorter version 16 chars of alpha numeric
+Jojo::registerURI("login/[redirect:(.*)]",                                 'Jojo_Plugin_Login');           // "login/page-to-redirect-to-on-success/" for login page
 
 $_provides['fieldTypes'] = array(
         'birthday'         => 'Birthday',
@@ -84,6 +84,7 @@ $_provides['fieldTypes'] = array(
         'internalurl'      => 'Internal URL',
         'list'             => 'List',
         'many2many'        => 'Many 2 Many List',
+        'many2manyordered' => 'Many 2 Many List with Ordering',
         'order'            => 'Order',
         'password'         => 'Password',
         'permissions'      => 'Permissions',
@@ -99,7 +100,7 @@ $_provides['fieldTypes'] = array(
         'timestamp'        => 'Timestamp',
         'url'              => 'URL',
         'unixdate'         => 'Unix Date',
-        'yesno'         => 'Yes or No',
+        'yesno'         => 'Yes or No'
         );
 
 $_provides['pluginClasses'] = array(
@@ -132,7 +133,7 @@ $_provides['pluginClasses'] = array(
         'Jojo_Plugin_Logout'              => 'Core - Logout',
         'Jojo_Plugin_Register'            => 'Core - User Registration',
         'Jojo_Plugin_Submit_form'         => 'Core - Submit Form Handler',
-        'Jojo_Plugin_User_profile'        => 'Core - User Profile',
+        'Jojo_Plugin_User_profile'        => 'Core - User Profile'
         );
 
 /* Config */
@@ -148,13 +149,33 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'eventlog_404',
+    'category'    => 'Config',
+    'label'       => 'Log 404 errors',
+    'description' => 'Log errored requests for pages that don\'t exist. Useful for periodic checking of bad links or candidates for redirection.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
     'id'          => 'enablegzip',
     'category'    => 'Config',
     'label'       => 'Enable GZip',
     'description' => 'Gzipping website content is a way of compressing HTML pages so they are faster to download. This should usually be enabled, but is not supported on some web hosts.',
     'type'        => 'radio',
     'default'     => '0',
-    'options'     => '0,1',
+    'options'     => '0,1'
+);
+
+$_options[] = array(
+    'id'          => 'enable_sessionhandler',
+    'category'    => 'Config',
+    'label'       => 'Enable Custom Session Handler',
+    'description' => 'Store sessions in the database rather than using the native PHP session manager. Offers better time limit control for Cart sites.',
+    'type'        => 'radio',
+    'default'     => '0',
+    'options'     => '0,1'
 );
 
 $_options[] = array(
@@ -164,7 +185,7 @@ $_options[] = array(
     'description' => 'Declare Doctype as XHTML or HTML5.',
     'type'        => 'radio',
     'default'     => 'html5',
-    'options'     => 'xhtml,html5',
+    'options'     => 'xhtml,html5'
 );
 
 $_options[] = array(
@@ -174,7 +195,7 @@ $_options[] = array(
     'description' => 'Add browser conditionals to html tag',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -184,7 +205,7 @@ $_options[] = array(
     'description' => 'This option is set automatically. This is the URL that is used for the site. Where several domains are available for a site, they will all be redirected to the URL specified here. NO TRAILING SLASH.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -194,7 +215,7 @@ $_options[] = array(
     'description' => 'If there is a SSL version of the site, enter the URL here, including the https:// but not the trailing slash.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -204,7 +225,7 @@ $_options[] = array(
     'description' => 'A new-line seperated list of domains that can be used for hosting images and CSS. See the documentation for details on Assets.',
     'type'        => 'textarea',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -214,7 +235,17 @@ $_options[] = array(
     'description' => 'Anything added here will be added to the end of the document head on all pages',
     'type'        => 'textarea',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'customfoot',
+    'category'    => 'Config',
+    'label'       => 'Global customfoot',
+    'description' => 'Anything added here will be added to the end of the document foot on all pages',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -224,7 +255,7 @@ $_options[] = array(
     'description' => 'This will enable additional multilanguage features if set to YES. Please run SETUP after changing this option.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -234,37 +265,7 @@ $_options[] = array(
     'description' => 'Default sub-section for this site',
     'type'        => 'select',
     'default'     => 'en',
-    'options'     => implode(',', Jojo::selectAssoc("SELECT lc_code, lc_code as name FROM {lang_country} ORDER BY `lc_code`")),
-);
-
-$_options[] = array(
-    'id'          => 'contentcache',
-    'category'    => 'Config',
-    'label'       => 'Content cache',
-    'description' => 'If enabled, HTML content will be cached for a period of time to reduce server CPU and loading time for visitors.',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'columnbreaks',
-    'category'    => 'Config',
-    'label'       => 'Columns filter',
-    'description' => 'If enabled, content will be checked for columnbreak filters and split into fluid spans.',
-    'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
-);
-
-$_options[] = array(
-    'id'          => 'contentcachetime',
-    'category'    => 'Config',
-    'label'       => 'Content cache time',
-    'description' => 'The maximum amount of time in seconds content will be cached for, if CONTENTCACHE is enabled. Default 8 hours.',
-    'type'        => 'integer',
-    'default'     => 28800,
-    'options'     => '',
+    'options'     => implode(',', Jojo::selectAssoc("SELECT lc_code, lc_code as name FROM {lang_country} ORDER BY `lc_code`"))
 );
 
 $_options[] = array(
@@ -274,7 +275,7 @@ $_options[] = array(
     'description' => 'eg 12 for New Zealand. This option is used by some plugins to autocalculate times correctly for users if the server is not in their timezone.',
     'type'        => 'integer',
     'default'     => '0',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -284,7 +285,7 @@ $_options[] = array(
     'description' => 'The timezone of the site will be deployed in. Causes all times (modified, go live etc) to be calculated in this timezone.',
     'type'        => 'text',
     'default'     => 'Pacific/Auckland',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -294,7 +295,7 @@ $_options[] = array(
     'description' => 'If enabled, PHP warnings and errors will be displayed, even when DEBUG mode is off',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -308,13 +309,86 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'contentcache',
+    'category'    => 'Cacheing',
+    'label'       => 'Content cache',
+    'description' => 'If enabled, rendered HTML pages will be cached for a period of time to reduce server CPU and loading time for visitors.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'contentcachetime',
+    'category'    => 'Cacheing',
+    'label'       => 'Content cache time',
+    'description' => 'The maximum amount of time in seconds content will be cached for, if CONTENTCACHE is enabled. Default 8 hours. Page cache is cleared with every admin record save.',
+    'type'        => 'integer',
+    'default'     => 28800,
+    'options'     => ''
+);
+
+if (class_exists('Memcache')) {
+    $_options[] = array(
+        'id'          => 'contentcachetime_memcache',
+        'category'    => 'Cacheing',
+        'label'       => 'Memcache cache time',
+        'description' => 'The time in seconds content will be cached for, if the memcache extension is available. Disabled by default. Used for highly repeated data sets (like nav). Set higher for relatively static sites, set to 0 to disable.',
+        'type'        => 'integer',
+        'default'     => 0,
+        'options'     => ''
+    );
+}
+
+$_options[] = array(
+    'id'          => 'contentcachetime_resources',
+    'category'    => 'Cacheing',
+    'label'       => 'Resources cache time',
+    'description' => 'The maximum amount of time in seconds images, js and css will be cached for. Default 7 days.',
+    'type'        => 'integer',
+    'default'     => 604800,
+    'options'     => ''
+);
+
+$_options[] = array(
     'id'          => 'captcha_num_chars',
-    'category'    => 'Config',
+    'category'    => 'Captcha',
     'label'       => 'CAPTCHA numer of characters',
-    'description' => 'Number of characters to display on the CAPTCHA image',
+    'description' => 'Number of characters to display on the PhpCaptcha image',
     'type'        => 'integer',
     'default'     => '3',
-    'options'     => '',
+    'options'     => ''
+);
+
+
+$_options[] = array(
+    'id'          => 'captcha_recaptcha',
+    'category'    => 'Captcha',
+    'label'       => 'Use ReCaptcha',
+    'description' => 'Replace phpCaptcha with Google\'s ReCaptcha. See https://www.google.com/recaptcha/ for details',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'captcha_sitekey',
+    'category'    => 'Captcha',
+    'label'       => 'ReCaptcha Site Key',
+    'description' => 'Register and create keys for use with Google ReCaptcha here https://www.google.com/recaptcha/',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'captcha_secretkey',
+    'category'    => 'Captcha',
+    'label'       => 'ReCaptcha Secret Key',
+    'description' => 'Register and create keys for use with Google ReCaptcha here https://www.google.com/recaptcha/',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -324,7 +398,7 @@ $_options[] = array(
     'description' => 'Which template engine to use when rendering pages. Smarty is the older one, Dwoo is newer and faster but some older templates may not work in it.',
     'type'        => 'radio',
     'default'     => 'dwoo',
-    'options'     => 'dwoo,smarty',
+    'options'     => 'dwoo,smarty'
 );
 
 $_options[] = array(
@@ -334,7 +408,7 @@ $_options[] = array(
     'description' => 'Force lowercase of internal URLs',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 
@@ -347,7 +421,7 @@ $_options[] = array(
     'description' => 'If there is a logical abbreviation for the site, this can be used instead of the full title where space is limited.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -357,7 +431,7 @@ $_options[] = array(
     'description' => 'The site title is displayed in the title bar of all pages, and is the default for outgoing emails and communications from the site. This should be the name of the website or business.',
     'type'        => 'text',
     'default'     => 'SITETITLE',
-    'options'     => '',
+    'options'     => ''
 );
 
 
@@ -539,16 +613,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'image_cachetime',
-    'category'    => 'Images',
-    'label'       => 'Image cache time',
-    'description' => 'The maximum amount of time in seconds images will be cached for. Default 7 days.',
-    'type'        => 'integer',
-    'default'     => 604800,
-    'options'     => '',
-);
-
-$_options[] = array(
     'id'          => 'image_sharpen',
     'category'    => 'Images',
     'label'       => 'Sharpen',
@@ -621,6 +685,26 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'columnbreaks',
+    'category'    => 'HTML Editor',
+    'label'       => 'Columns filter',
+    'description' => 'If enabled, content will be checked for columnbreak filters and split into boostrap columns.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'columnbreaks_min',
+    'category'    => 'HTML Editor',
+    'label'       => 'Columns Min Size',
+    'description' => 'If the columns filter is enabled, the min screen size before columns break. xs = phone, sm = tablet, md = desktop',
+    'type'        => 'radio',
+    'default'     => 'sm',
+    'options'     => 'xs,sm,md,lg'
+);
+
+$_options[] = array(
     'id'          => 'wysiwyg',
     'category'    => 'HTML Editor',
     'label'       => 'WYSIWYG Editor',
@@ -636,8 +720,8 @@ $_options[] = array(
     'label'       => 'WYSIWYG Editor Style',
     'description' => 'Show the WYSIWYG editor inline, or as a popup window (does not apply to BB Editor).',
     'type'        => 'radio',
-    'default'     => 'inline',//inline is intended to be default once stable
-    'options'     => 'inline,popup',
+    'default'     => 'inline',
+    'options'     => 'inline,popup'
 );
 
 $_options[] = array(
@@ -647,7 +731,7 @@ $_options[] = array(
     'description' => 'if yes the baseHref will be removed from links. that means you will get relative links, not absolute-links.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -657,7 +741,7 @@ $_options[] = array(
     'description' => 'if yes the editor wil allow the use of font face/size/colour styling.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -667,7 +751,7 @@ $_options[] = array(
     'description' => 'Set the default view for image and file libraries to either thumbnail or plain list (much faster for large libraries)',
     'type'        => 'radio',
     'default'     => 'thumbview',
-    'options'     => 'thumbview,listview',
+    'options'     => 'thumbview,listview'
 );
 
 $_options[] = array(
@@ -677,7 +761,7 @@ $_options[] = array(
     'description' => 'sets the maximum file upload size',
     'type'        => 'text',
     'default'     => '5000',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -687,7 +771,7 @@ $_options[] = array(
     'description' => 'sets the allowed file link file types - comma separated list of file extensions',
     'type'        => 'text',
     'default'     => 'jpg,jpeg,gif,pdf,ip,txt,doc,docx,ppt,pptx,psd,png,html,swf,mp3,mp4,xml,xls',
-    'options'     => '',
+    'options'     => ''
 );
 
 
@@ -700,7 +784,7 @@ $_options[] = array(
     'description' => 'Any additional CSS required by the site can be added here. This may be easier and quicker than editing the CSS file and uploading via FTP.',
     'type'        => 'textarea',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -710,7 +794,7 @@ $_options[] = array(
     'description' => 'Any additional CSS specifically for printouts required by the site can be added here. This may be easier and quicker than editing the CSS file and uploading via FTP.',
     'type'        => 'textarea',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -720,7 +804,27 @@ $_options[] = array(
     'description' => 'Any additional CSS specifically for handheld devices and PDAs required by the site can be added here. This may be easier and quicker than editing the CSS file and uploading via FTP.',
     'type'        => 'textarea',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'css-email',
+    'category'    => 'CSS',
+    'label'       => 'Inline CSS for email',
+    'description' => 'CSS styles to be applied to emails',
+    'type'        => 'textarea',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'css_typekit',
+    'category'    => 'CSS',
+    'label'       => 'Typekit ID',
+    'description' => 'Typekit ID for loading TypeKit webfonts (inserts asynchronous loading script in the head). use .wf-loading css to hide FOUT.',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -730,7 +834,7 @@ $_options[] = array(
     'description' => 'Have Jojo include CSS @imports on the server to save the browser using extra HTTP requests.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -740,7 +844,7 @@ $_options[] = array(
     'description' => 'Add normalize.css (reset, media etc) to style.css',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -750,7 +854,7 @@ $_options[] = array(
     'description' => 'Bootstap\'s base files: variables, mixins, scaffolding and utilities.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -760,7 +864,7 @@ $_options[] = array(
     'description' => 'A responsive mobile-first grid system.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -770,7 +874,7 @@ $_options[] = array(
     'description' => 'Typography formatting for headings, lists, code etc',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -780,7 +884,7 @@ $_options[] = array(
     'description' => 'Highlight items by adding a badge or label to links, navs, and more',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -790,7 +894,7 @@ $_options[] = array(
     'description' => 'Table formatting - used by Cart etc. Can be combined with Panels',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -800,7 +904,7 @@ $_options[] = array(
     'description' => 'Form element and button formatting - used by Contact, Cart etc',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 
@@ -811,7 +915,7 @@ $_options[] = array(
     'description' => 'A layout contruct for snippets - used by Article indexes, Search results etc',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -821,7 +925,7 @@ $_options[] = array(
     'description' => 'Glyphicons icon set',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -831,7 +935,7 @@ $_options[] = array(
     'description' => 'Group a series of buttons together on a single line with the button group. Add on optional radio and checkbox style behavior with the Buttons JS option.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -841,7 +945,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s navs.less file',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -851,7 +955,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s navbar.less file',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -861,7 +965,7 @@ $_options[] = array(
     'description' => 'Breadcrumb formatting, with CSS separators',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -871,7 +975,7 @@ $_options[] = array(
     'description' => 'Pagination styling for Articles etc. Includes standard and "Pager" formats',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -881,7 +985,7 @@ $_options[] = array(
     'description' => 'Display grids of images, videos, text, and more.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -891,7 +995,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s alerts.less file',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -901,7 +1005,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s progress-bars.less file',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -911,7 +1015,7 @@ $_options[] = array(
     'description' => 'Now called a Jumbotron.. A lightweight, flexible component that can optionally extend the entire viewport to showcase key content on your site.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -921,7 +1025,7 @@ $_options[] = array(
     'description' => 'Advanced list styling - can be combined with Panels',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -931,7 +1035,7 @@ $_options[] = array(
     'description' => 'Block content formatting - also used for accordians (with Collapse)',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -941,7 +1045,7 @@ $_options[] = array(
     'description' => 'A simple content block style.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -951,7 +1055,7 @@ $_options[] = array(
     'description' => 'Close X icon for use with Modals, Alerts etc',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 /* JS */
@@ -963,7 +1067,7 @@ $_options[] = array(
     'description' => 'Load jQuery from the Google Ajax Librarys site.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -973,17 +1077,36 @@ $_options[] = array(
     'description' => 'Add modernizr script classes to html tag. Yes uses v2.6.2 minimal included in Jojo. Custom uses modernizr.min.js in the theme/external directory',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no,custom',
+    'options'     => 'yes,no,custom'
 );
 
+$_options[] = array(
+    'id'          => 'jojo_corejs',
+    'category'    => 'JS',
+    'label'       => 'Jojo Core JS',
+    'description' => "Include Jojo Core js functions.",
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'jojo_corefrajax',
+    'category'    => 'JS',
+    'label'       => 'Jojo Core Frajax',
+    'description' => "Include Jojo Core frajax functions.",
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
 $_options[] = array(
     'id'          => 'jquery_head',
     'category'    => 'JS',
     'label'       => 'jQuery in head',
-    'description' => 'Load jQuery from the head (slows page load but required if in-page scripts are used on the site).',
+    'description' => "Load jQuery from the head (slows page load but required if in-page scripts are used on the site), foot (no), or don't load it at all (neither).",
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no,neither'
 );
 
 $_options[] = array(
@@ -993,7 +1116,7 @@ $_options[] = array(
     'description' => 'Which version of jQ to use.',
     'type'        => 'radio',
     'default'     => '1.9.1',
-    'options'     => '1.7.2,1.9.1',
+    'options'     => '1.7.2,1.9.1,1.11.1'
 );
 
 $_options[] = array(
@@ -1003,7 +1126,7 @@ $_options[] = array(
     'description' => 'Load jQuery Mobile touch event code (for triggering swipe and tap events etc). Requires jQuery 1.8+',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1013,7 +1136,7 @@ $_options[] = array(
     'description' => 'Load jQuery UI code.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1033,7 +1156,7 @@ $_options[] = array(
     'description' => 'Load common javascript file from the head (slows page load but required if in-page scripts are used on the site).',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no,neither'
 );
 
 $_options[] = array(
@@ -1043,7 +1166,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-modal.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1053,7 +1176,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-dropdown.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1063,7 +1186,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-scrollspy.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1073,7 +1196,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-tab.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1083,7 +1206,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-tooltip.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1093,7 +1216,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-popover.js file into common.js, this will also include  Tooltips',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1103,7 +1226,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-affix.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1113,7 +1236,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-alert.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1123,7 +1246,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-button.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1133,7 +1256,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-collapse.js file into common.js. This will automatically be included if CSS Navbar and responsive navbar are included',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1143,7 +1266,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-carousel.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1153,7 +1276,7 @@ $_options[] = array(
     'description' => 'Include Twitter Bootstap\'s bootstrap-typeahead.js file into common.js',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 
@@ -1166,7 +1289,7 @@ $_options[] = array(
     'description' => 'The website will send out various emails - such as followups to comments, and site reports. This address is used when sending mail from the site.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1176,7 +1299,7 @@ $_options[] = array(
     'description' => 'The name that is used for sending out mail from the website.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1186,7 +1309,7 @@ $_options[] = array(
     'description' => 'The email address of the webmaster. Is displayed on 404 pages and other places on the site. It is usually obfuscated to prevent spam, though some plugins may not do this.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1196,7 +1319,7 @@ $_options[] = array(
     'description' => 'The full name of the webmaster. Is displayed on 404 pages and other places on the site.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1206,7 +1329,7 @@ $_options[] = array(
     'description' => 'The name of the company developing the site. Used in meta data.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1216,7 +1339,7 @@ $_options[] = array(
     'description' => 'The email address of the person who will be receiving any enquiries from the site. If empty, the values in FROM ADDRESS or WEBMASTER ADDRESS will be used instead.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1226,7 +1349,7 @@ $_options[] = array(
     'description' => 'The name of the person who will be receiving any enquiries from the site. If empty, the values in FROM NAME or WEBMASTER NAME will be used instead.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 /* Google Analytics */
@@ -1237,7 +1360,7 @@ $_options[] = array(
     'description' => 'The number provided by Google Analytics for tracking site traffic - eg UA-XXXXX-X',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1247,7 +1370,7 @@ $_options[] = array(
     'description' => 'The type of Google analytics code - universal, asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored.',
     'type'        => 'radio',
     'default'     => 'universal',
-    'options'     => 'universal,async,ga',
+    'options'     => 'universal,async,ga'
 );
 
 $_options[] = array(
@@ -1257,7 +1380,7 @@ $_options[] = array(
     'description' => 'Allow Google analytics to track between http and https servers of the same domain, and between domains.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1267,7 +1390,7 @@ $_options[] = array(
   'description' => 'Default at the bottom, but when you need to track events within a page, you need Analytics at the top of the HTML',
   'type'        => 'radio',
   'default'     => 'bottom',
-  'options'     => 'top,bottom',
+  'options'     => 'top,bottom'
 );
 
 /* Email */
@@ -1278,7 +1401,7 @@ $_options[] = array(
     'description' => 'Enables sending mail using SMTP. If enabled, please ensure other options for host, port etc are set.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1288,7 +1411,7 @@ $_options[] = array(
     'description' => 'SMTP Hostname to use for sending mail eg smtp.domain.com',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1298,7 +1421,7 @@ $_options[] = array(
     'description' => 'Port to connect to for sending SMTP mail.',
     'type'        => 'text',
     'default'     => '25',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1308,7 +1431,7 @@ $_options[] = array(
     'description' => 'Username, if required by the SMTP server.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1318,7 +1441,7 @@ $_options[] = array(
     'description' => 'Password, if required by the SMTP server.',
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 /* Security */
@@ -1330,7 +1453,7 @@ $_options[] = array(
     'description' => 'If a user registers on the site, they are automatically added to this group. This is used to give some automatic extra permissions to registered users. Available groups: ' . implode(', ',Jojo::selectAssoc("SELECT groupid, groupid as name FROM {usergroups} ORDER BY `groupid`")),
     'type'        => 'text',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1340,7 +1463,7 @@ $_options[] = array(
     'description' => 'When this option is enabled, all user accounts require a unique email address. When disabled, users can register multiple account s on one email address.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1350,7 +1473,17 @@ $_options[] = array(
     'description' => 'The cost of hashing user passwords. Higher is harder to crack, but will cause a slight delay as users sign in',
     'type'        => 'text',
     'default'     => '10',
-    'options'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'password_email',
+    'category'    => 'Security',
+    'label'       => 'Email Passwords',
+    'description' => 'If enabled, new passwords set using the Change Password form will be emailed to the user.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
 );
 
 /* SEO */
@@ -1362,7 +1495,7 @@ $_options[] = array(
     'description' => 'This option controls the character used to separate the page title and the company name/branding. Usually a pipe or dash. Do include spaces either side of the character if you need them.',
     'type'        => 'text',
     'default'     => ' | ',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1372,7 +1505,7 @@ $_options[] = array(
     'description' => 'The name of the site is automatically appended to titles of all pages. This can be placed at the start or end of the title - ie branding first, or branding last.',
     'type'        => 'radio',
     'default'     => 'last',
-    'options'     => 'first,last',
+    'options'     => 'first,last'
 );
 
 $_options[] = array(
@@ -1382,7 +1515,7 @@ $_options[] = array(
     'description' => 'If this option is set, the site title will be left off page titles, if adding it would cause the whole title to be longer than the length of a Google title. Enabling this is good for SEO, but can mean some inconsistencies in branding across the titles of the site.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1392,7 +1525,7 @@ $_options[] = array(
     'description' => 'When this option is enabled, meta keywords can be edited via edit pages. Disable this option if you are not going to be editing meta keywords (or consider them worthless)',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1402,7 +1535,7 @@ $_options[] = array(
     'description' => 'When this option is enabled meta og:: tags, used by Facebook et al, will be included in the head',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1412,7 +1545,7 @@ $_options[] = array(
     'description' => 'If enabled, Search Engines use your description, etc instead of the Open Directory Project description if it exists.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1432,7 +1565,17 @@ $_options[] = array(
     'description' => 'If enabled, Search Engines use your description, etc instead of the Yahoo Directory description if it exists.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
+    'id'          => 'robots_assets',
+    'category'    => 'SEO',
+    'label'       => 'Allow asset access to bots',
+    'description' => 'Set css, js, images, files and externals to Index on setup and not excluded by default in robots.txt (recommended by Google).',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no'
 );
 
 /* RSS */
@@ -1444,7 +1587,7 @@ $_options[] = array(
     'description' => 'The number of items to be displayed in the RSS feed (more will use more bandwidth))',
     'type'        => 'integer',
     'default'     => '15',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1454,7 +1597,7 @@ $_options[] = array(
     'description' => 'If YES, a full copy of the item is provided in the RSS feed. If NO, the RSS feed only includes content before the snip filter tag.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1464,7 +1607,7 @@ $_options[] = array(
     'description' => 'If Full Description is set to No above, truncate events with no embedded snip filter tag to this length',
     'type'        => 'integer',
     'default'     => '800',
-    'options'     => '',
+    'options'     => ''
 );
 
 $_options[] = array(
@@ -1474,7 +1617,7 @@ $_options[] = array(
     'description' => 'Appends a source link to the bottom of each item in the RSS feed. This is to ensure scraper sites are providing a link back to the original event.',
     'type'        => 'radio',
     'default'     => 'yes',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1484,7 +1627,7 @@ $_options[] = array(
     'description' => 'A one sentence unique description of what the site is about. Included in RSS feeds.',
     'type'        => 'textarea',
     'default'     => '',
-    'options'     => '',
+    'options'     => ''
 );
 
 /* Social Networking */
@@ -1566,7 +1709,7 @@ $_options[] = array(
     'description' => 'If YES, allows users to login with their email address or username.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
@@ -1576,16 +1719,16 @@ $_options[] = array(
     'description' => 'Serve .mob.tpl files (if available) to mobile browsers. Note your theme will need to support this.',
     'type'        => 'radio',
     'default'     => 'no',
-    'options'     => 'yes,no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(
     'id'          => 'initialscale',
     'category'    => 'Config',
-    'label'       => 'Initial Scale',
-    'description' => 'Include "Initial Scale = 1" in the head. Set to yes for sites you don\'t want scaled to fit on smaller screens.',
+    'label'       => 'No Scale',
+    'description' => 'Force Scale = 1 in the head. Set to no for non-responsive sites.',
     'type'        => 'radio',
-    'default'     => 'no',
-    'options'     => 'yes,no',
+    'default'     => 'yes',
+    'options'     => 'yes,no'
 );
 

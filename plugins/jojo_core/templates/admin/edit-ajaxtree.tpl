@@ -1,6 +1,7 @@
     {if $searchable}<div class="search form-group"><input id="treediv_q" class="input form-control" type="text" value="Search" onfocus="if ($(this).val()=='Search') $(this).val('');" /></div>
     {/if}
-    <div id="treediv" class="treediv"></div>
+    <div id="treediv" class="treediv{if $menutype} {$menutype}{/if}"></div>
+    {if $requested_id}<input type="hidden" name="requestedid" id="requestedid" value="{$requested_id}" />{/if}
     <script type="text/javascript">{literal}
         var canLoad = true;
         $(function() {
@@ -9,7 +10,7 @@
                     'data' : {
                         'url' : siteurl + "/json/admin-edit-nodes.php?table={/literal}{$table}{literal}",
                         'data' : function (node) {
-                          return { 'id' : (node.id ? node.id : 0) };
+                          return { 'id' : (node.id ? node.id : '#') };
                         },
                         'dataType' : 'json',
                     },
@@ -31,16 +32,23 @@
                 'plugins' : [{if $draggable} "dnd",{/if}{if $searchable} "search",{/if} "state", "wholerow", "types" ]{literal}
             });
              $("#treediv").bind('select_node.jstree', function (e, data) {
-                node = data.instance.get_node(data.selected[0]);
-                if (canLoad && node.type=='file' && node.id) {
-                    frajax('load', '{/literal}{$table}{literal}', node.id);
-                } else if (node.type=='folder') {
-                    if (node.state.opened) {
-                        $("#treediv").jstree("close_node", node.id);
-                    } else {
-                        $("#treediv").jstree("open_node", node.id);
+                var currentid = $('#requestedid').length>0 ? $('#requestedid').val() : '';
+                if (currentid) {
+                    node = data.instance.get_node(currentid);
+                    $("#treediv").jstree("select_node", node.id);
+                } else {
+                    node = data.instance.get_node(data.selected[0]);
+                    if (canLoad && node.type=='file' && node.id) {
+                        frajax('load', '{/literal}{$table}{literal}', node.id);
+                    } else if (node.type=='folder') {
+                        if (node.state.opened) {
+                            $("#treediv").jstree("close_node", node.id);
+                        } else {
+                            $("#treediv").jstree("open_node", node.id);
+                        }
                     }
                 }
+                $('#requestedid').val('');
                 return false;
             });
 

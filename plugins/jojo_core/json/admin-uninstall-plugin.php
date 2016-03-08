@@ -44,6 +44,8 @@ if (file_exists(_BASEPLUGINDIR . '/' . $plugin . '/uninstall.php')) {
     include (_BASEPLUGINDIR . '/' . $plugin . '/uninstall.php');
 } elseif (file_exists(_PLUGINDIR . '/' . $plugin . '/uninstall.php')) {
     include (_PLUGINDIR . '/' . $plugin . '/uninstall.php');
+} elseif (file_exists(_ALTPLUGINDIR . '/' . $plugin . '/uninstall.php')) {
+    include (_ALTPLUGINDIR . '/' . $plugin . '/uninstall.php');
 }
 ob_end_clean();
 

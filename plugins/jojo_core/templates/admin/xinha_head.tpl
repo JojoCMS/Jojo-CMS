@@ -13,13 +13,13 @@
 
 <script type="text/javascript">
 /*<![CDATA[*/
-    xinha_editors = null;
-    xinha_init    = null;
-    xinha_config  = null;
-    xinha_plugins = null;
+    var xinha_editors = null;
+    var xinha_init    = null;
+    var xinha_config  = null;
+    var xinha_plugins = null;
+    var xinha_editor_names = null;
 
-    // This contains the names of textareas we will make into Xinha editors
-      xinha_plugins = xinha_plugins ? xinha_plugins :
+    xinha_plugins = xinha_plugins ? xinha_plugins :
       [
         /* Load plugins */
         {/literal}
@@ -29,19 +29,19 @@
         {literal}
        ];
 
-     xinha_editors = xinha_editors ? xinha_editors :
+    // This contains the names of textareas we will make into Xinha editors
+    xinha_editors = xinha_editors ? xinha_editors :
       [
         {/literal}{foreach name=wysiwyg from=$wysiwyg_editors item=editor}'fm_{$editor}_xinha'{if !$smarty.foreach.wysiwyg.last}, {/if}{/foreach}{literal}
       ];
 
-    var xinha_editor_names = null;
 
     Xinha.makeVisibleEditors = function(xinha_editors, xinha_config, xinha_plugins) {
         var visible_editors = [];
         for (var i in xinha_editors) {
             var editor_id = xinha_editors[i];
             if (typeof editor_id == "string") {
-                if ($('#' + xinha_editors[i]).is(':visible')) {
+                if ($('#' + xinha_editors[i]).is(':visible') || parent.$('#' + xinha_editors[i]).is(':visible')) {
                     visible_editors.push(editor_id);
                 }
             }
@@ -51,7 +51,7 @@
 
     function startVisibleXinhaEditors() {
         xinha_editors = Xinha.makeVisibleEditors(
-             xinha_editor_names, xinha_config, xinha_plugins
+             xinha_editors, xinha_config, xinha_plugins
         );
         Xinha.startEditors(xinha_editors);
     }
@@ -148,11 +148,13 @@
                 }
         }
 
-    xinha_editor_names = xinha_editors;
+        //xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
+        //Xinha.startEditors(xinha_editors);
 
-  startVisibleXinhaEditors();
-  window.onload = null;
-}
+        startVisibleXinhaEditors();
+ 
+        window.onload = null;
+    }
 //window.onload = xinha_init;
 Xinha._addEvent(window,'load', xinha_init)
 

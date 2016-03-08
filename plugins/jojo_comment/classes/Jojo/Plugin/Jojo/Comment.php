@@ -234,14 +234,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $website         = Jojo::getFormData('website',         '');
         $anchortext      = htmlspecialchars(Jojo::getFormData('anchortext',      ''), ENT_COMPAT, 'UTF-8', false);
         $bbcomment       = Jojo::getFormData('comment',         '');
-        $captchacode     = Jojo::getFormData('CAPTCHA',     '');
         if (!empty($website)) $website = Jojo::addhttp($website);
-        $ip = Jojo::getIP();
-
-        /* Check CAPTCHA is entered correctly */
-        if (empty($_USERID) && Jojo::getOption('contactcaptcha') == 'yes' && !PhpCaptcha::Validate($captchacode)) {
-            $errors[] = 'Invalid code entered';
-        }
 
         /* Error checking */
         if ($name == '') {
@@ -259,35 +252,26 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         if (($website != '') && !Jojo::checkUrlFormat($website)) {
             $errors[] = 'Website format is invalid';
         }
-
-        if (Jojo::getOption('comment_useronly', 'no') == 'yes' && $email && !Jojo::selectRow("SELECT userid FROM {user} WHERE us_email=?", array($email)) ) {
-            $errors[] = 'Comments are restricted to registered users or subscribers only';
+        if ($errors) {
+            return $errors;
         }
 
         /* rate limiting to prevent spam */
+        $ip = Jojo::getIP();
         $rate_comments = Jojo::getOption('comment_spam_num', 3); // maximum X posts
         $rate_mins = Jojo::getOption('comment_spam_time', 5);  // in X mins
         $ratelimit = Jojo::selectQuery("SELECT * FROM {comment} WHERE ip='" . $ip . "' AND timestamp >" . strtotime('-' . $rate_mins . ' minutes'));
         if (count($ratelimit)>$rate_comments) {
             $errors[] = 'We limit comments to ' . $rate_comments . ' every ' . $rate_mins . ' minutes to prevent automated spam. Please try posting your comment again in a few minutes, and sorry for any inconvenience';
+            return $errors;
         }
 
-        $thisiscrap = false;
-        if (Jojo::getOption('comment_spam_keywords', '')) {
-            $crap = Jojo::ta2array(Jojo::getOption('comment_spam_keywords'));
-            foreach($crap as $c) {
-                if(strpos(strtolower($website), $c) !== false || strpos(strtolower($name), $c) !== false ) {
-                    $thisiscrap = true;
-                    break;
-                }
+        if (Jojo::getOption('comment_useronly', 'no') == 'yes'){
+            $user = Jojo::selectRow("SELECT userid, blacklisted FROM {user} WHERE us_email=?", array($email));
+             if (!$user || (isset($user['blacklisted']) && $user['blacklisted'])) {
+                $errors[] = 'Posting is restricted to registered users or subscribers only';
+                return $errors;
             }
-        }
-        if (!$thisiscrap && substr_count($bbcomment, 'http://')>Jojo::getOption('comment_spam_links', 5)) {
-            $thisiscrap = true;
-        }
-        if ($thisiscrap) {
-            return false;
-            //could also at this point add $ip to a banned ips list rather than just silent failing them
         }
         $bbcomment = strip_tags($bbcomment);
         /* Convert BBCode to HTML */
@@ -297,17 +281,6 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $bb->setBBCode($bbcomment);
         $htmlcomment = $bb->convert('bbcode2html');
 
-        /* Return errors */
-        if (count($errors)) {
-            /* Error */
-            $smarty->assign('error',      implode("<br />\n", $errors));
-            $smarty->assign('name',       $name);
-            $smarty->assign('email',      $email);
-            $smarty->assign('website',    $website);
-            $smarty->assign('anchortext', $anchortext);
-            $smarty->assign('comment',    $bbcomment);
-            return false;
-        }
 
         /* Create unique approve and delete codes, ensure they are not already in the database for another comment */
         $query = 'SELECT * FROM {comment} WHERE approvecode = ? OR deletecode = ? OR anchortextcode = ?';
@@ -359,6 +332,7 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $message .= _SITEURL . '/' . self::_getPrefix() . '/' . $deletecode . "/\n";
         $message .= Jojo::emailFooter();
 
+        if (!$email) { $email = _WEBMASTERADDRESS; }
         /* Email comment to webmaster and site contact */
         if (Jojo::getOption('comment_webmaster', 'yes')=='yes') {
             Jojo::simplemail(_WEBMASTERNAME, _WEBMASTERADDRESS, Jojo::getOption('sitetitle') . ' Comment - ' . $title, $message, $name, $email);
@@ -382,16 +356,10 @@ class Jojo_Plugin_Jojo_Comment extends Jojo_Plugin
         $log->savetodb();
         unset($log);
 
-        /* Delete cache for this page - forcing regeneration next view */
-        if (_CONTENTCACHE) {
-            $query = "DELETE FROM {contentcache} WHERE cc_url=? LIMIT 1";
-            $values = array(_SITEURL . '/' . $url);
-            Jojo::deleteQuery($query, $values);
-        }
-
-        /* Redirect back to the to see the comment on the page */
+        return true;
+        /* Redirect back to the to see the comment on the page 
         header('location: ' . _SITEURL . '/' . $url);
-        exit();
+        exit();*/
     }
 
     static function getItemsById($ids)

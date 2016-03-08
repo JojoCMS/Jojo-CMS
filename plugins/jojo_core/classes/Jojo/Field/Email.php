@@ -64,6 +64,7 @@ class Jojo_Field_email extends Jojo_Field
         $confirm = (strpos($this->fd_options, 'confirm') !== false) ? true : false;
         $smarty->assign('confirm', $confirm);
         $smarty->assign('readonly', $this->fd_readonly);
+        $smarty->assign('required', $this->fd_required);
         $smarty->assign('fd_size',  $this->fd_size);
         $smarty->assign('value',    $this->value);
         $smarty->assign('fd_help',  htmlentities($this->fd_help));

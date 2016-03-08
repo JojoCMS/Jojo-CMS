@@ -193,7 +193,9 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
                 }
 
                 if (class_exists($classname)) {
-                    $results = array_merge($results, call_user_func(array($classname, 'getTagSnippets'), array_keys($pluginids)));
+                    if ($pluginresults = call_user_func(array($classname, 'getTagSnippets'), array_keys($pluginids))) {
+                        $results = array_merge($results, $pluginresults);
+                    }
                 }
             }
 
@@ -201,12 +203,16 @@ class Jojo_Plugin_Jojo_Tags extends Jojo_Plugin
 
         /* sort result so best matches are first */
         $sortedresults = array();
-        foreach ($results as $i=>$result) {
-            //$results[$i]['title'] = $results[$i]['title'] . ' - '.$counter['jojo_article'][$results[$i]['id']];  //debug - uncomment to see the closeness of matches
-            $sortedresults[$sort['jojo_article'][$result['id']]] = $result;
+        if ($results) {
+            foreach ($results as $i=>$result) {
+                //$results[$i]['title'] = $results[$i]['title'] . ' - '.$counter['jojo_article'][$results[$i]['id']];  //debug - uncomment to see the closeness of matches
+                $sortedresults[$sort['jojo_article'][$result['id']]] = $result;
+            }
+            sort($sortedresults);
+            return $sortedresults;
+        } else {
+            return false;
         }
-        sort($sortedresults);
-        return $sortedresults;
     }
 
     function _getContent()

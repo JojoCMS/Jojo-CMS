@@ -240,38 +240,56 @@ $default_fd['fielddata']['fd_autoupdate'] = array(
 
 /* Many-to-many Tab */
 
+$o=0;
+
 // Link Table Field
 $default_fd['fielddata']['fd_m2m_linktable'] = array(
-        'fd_name' => "Link Table",
+        'fd_name' => "Links Table Name",
         'fd_type' => "text",
         'fd_size' => "20",
-        'fd_order' => "1",
+        'fd_help' => "The name of the table containing the item to item links",
+        'fd_order' => $o++,
         'fd_tabname' => "Many-to-many",
     );
 
 // Link Item Field Field
 $default_fd['fielddata']['fd_m2m_linkitemid'] = array(
-        'fd_name' => "Link Item Field",
+        'fd_name' => "Link From Field",
         'fd_type' => "text",
         'fd_size' => "20",
-        'fd_order' => "2",
-        'fd_tabname' => "Many-to-many",
-    );
-
-// Link Category Field Field
-$default_fd['fielddata']['fd_m2m_linkcatid'] = array(
-        'fd_name' => "Link Category Field",
-        'fd_type' => "text",
-        'fd_size' => "20",
-        'fd_order' => "3",
+        'fd_help' => "The name of the field from THIS table that is used in the link table",
+        'fd_order' => $o++,
         'fd_tabname' => "Many-to-many",
     );
 
 // Link Category Table Field
 $default_fd['fielddata']['fd_m2m_cattable'] = array(
-        'fd_name' => "Link Category Table",
+        'fd_name' => "Link To Table",
         'fd_type' => "text",
         'fd_size' => "20",
-        'fd_order' => "4",
+        'fd_help' => "The name of the table being LINKED TO",
+        'fd_order' => $o++,
         'fd_tabname' => "Many-to-many",
     );
+
+// Link Category Field Field
+$default_fd['fielddata']['fd_m2m_linkcatid'] = array(
+        'fd_name' => "Link To Field Name",
+        'fd_type' => "text",
+        'fd_size' => "20",
+        'fd_help' => "The name of the field from table being LINKED TO that is used in the link table",
+        'fd_order' => $o++,
+        'fd_tabname' => "Many-to-many",
+    );
+
+// Link Order Field
+$default_fd['fielddata']['fd_m2m_linkorderfield'] = array(
+        'fd_name' => "Link Table Order Field",
+        'fd_type' => "text",
+        'fd_size' => "20",
+        'fd_help' => "(m2m ordered only) The name of the ordering field in table containing the item to item links",
+        'fd_order' => $o++,
+        'fd_tabname' => "Many-to-many",
+    );
+
+

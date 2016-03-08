@@ -33,7 +33,7 @@
 {foreach item=res from=$results}
   <div class="media search-result search-cat-{$res.type|strtolower|replace:' ':'-'}">
     {if $OPTIONS.search_relevance =='yes'}<div class="search-relevance-display" style="width:{$res.displayrelevance|string_format:"%d"}px;" title="Search relevance: {$res.relevance|string_format:"%.1f"}"></div>{/if}
-    {if $res.image && $OPTIONS.search_images =='yes'}<a class="pull-left" href="{$res.url}" title="{$res.title}" rel="nofollow"><img class="media-object"  src="images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}s120{/if}/{$res.image}" class="pull-left" alt="{$res.title}" /></a>{/if}
+    {if $res.image && $OPTIONS.search_images =='yes'}<a class="pull-left" href="{$res.url}" title="{$res.title}" rel="nofollow"><img class="media-object"  src="{$SITEURL}/images/{if $OPTIONS.search_image_format}{$OPTIONS.search_image_format}{else}s120{/if}/{$res.image}" class="pull-left" alt="{$res.title}" /></a>{/if}
     <div class="media-body">
         <h3 class="media-heading"><a href="{$res.url}" title="{$res.title}">{$res.title}</a></h3>
         <p>{$res.body}</p>

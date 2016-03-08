@@ -1,9 +1,5 @@
 @icon-font-path: '../external/bootstrap/fonts/';
 
-i.icon-white {
-    background-image: url("../external/bootstrap/img/glyphicons-halflings-white.png");
-}
-
 .hidden {
   display: none;
   visibility: inherit;
@@ -30,21 +26,23 @@ img.icon-image {
     background-image: none;
 }
 
-form.post_redirect_form {
-  display: inline;
+.pagination > li.ellip {
+    background: none;
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+    color: #DBA070;
+    float: left;
+    line-height: 1.4;
+    margin-left: -1px;
+    padding: 6px 12px;
+    position: relative;
 }
 
-button.post_redirect_submit {
-  border: 0;
-  background: transparent;
-  text-decoration: underline;
+.AnyTime-win {
+    z-index: 1000;
 }
 
-button.post_redirect_submit span {
-  text-decoration: underline;
+form {
+    .confirmation {margin-top: 5px;}
+    .input-group label {font-weight: 400}
 }
-
-button.post_redirect_submit span:hover {
-  text-decoration: underline;
-}
-

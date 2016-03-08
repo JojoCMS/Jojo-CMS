@@ -223,18 +223,6 @@ $default_fd['form']['form_autoreply_bodycode'] = array(
         'fd_tabname' => 'Response'
     );
 
-// Reply Style
-$default_fd['form']['form_autoreply_css'] = array(
-        'fd_name' => "Form CSS",
-        'fd_type' => "text",
-        'fd_required' => "no",
-        'fd_size' => "60",
-        'fd_help' => "The CSS formatting style to use in the email.",
-        'fd_order' => $o++,
-        'fd_tabname' => 'Response'
-    );
-
-
 /* Advanced Tab */
 $o=0;
 

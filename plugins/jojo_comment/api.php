@@ -125,13 +125,13 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'comment_spam_links',
+    'id'          => 'comment_captcha',
     'category'    => 'Comments',
-    'label'       => 'Spam links',
-    'description' => 'Block comments with more than this number of links in the body',
-    'type'        => 'integer',
-    'default'     => '5',
-    'options'     => '',
+    'label'       => 'Use Captcha on post comment form',
+    'description' => '',
+    'type'        => 'radio',
+    'default'     => 'yes',
+    'options'     => 'yes,no',
     'plugin'      => 'jojo_comment'
 );
 
@@ -153,17 +153,6 @@ $_options[] = array(
     'description' => 'Time limit of (#) comments allowed from one IP address',
     'type'        => 'integer',
     'default'     => '5',
-    'options'     => '',
-    'plugin'      => 'jojo_comment'
-);
-
-$_options[] = array(
-    'id'          => 'comment_spam_keywords',
-    'category'    => 'Comments',
-    'label'       => 'Spam keywords',
-    'description' => 'A newline seperated list of keywords. Block any comment with these words in the name or website fields',
-    'type'        => 'textarea',
-    'default'     => '',
     'options'     => '',
     'plugin'      => 'jojo_comment'
 );

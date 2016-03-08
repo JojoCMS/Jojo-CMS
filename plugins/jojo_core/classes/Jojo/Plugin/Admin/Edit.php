@@ -65,6 +65,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
         $table = &Jojo_Table::singleton($t);
         if ($id > 0) {
             $table->getRecord($id);
+            $smarty->assign('requested_id', $id);
         }
 
         /* Fetch list of tabs from fields */
@@ -142,6 +143,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
             if (!empty($f['js'])) $content['javascript'] .= "\n".$f['js'];
         }
         $smarty->assign('wysiwyg_editors', $wysiwyg_editors);
+        $smarty->assign('javascript', $content['javascript']);
 
         // Create button text
         if ($table->getRecordID() > 0) {
@@ -162,12 +164,7 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
         $smarty->assign('displayvalue',  Jojo::either($table->getOption('displayvalue'), "New " . $table->getOption('displayname')));
         $smarty->assign('displayname', $table->getOption('displayname'));
 
-
-        if ($table->getOption('menutype') == 'none') {
-            $smarty->assign('recordlist', '');
-        } else {
-            $smarty->assign('recordlist', $table->createlist($table->getOption('menutype'), false, $prefix, $id));
-        }
+        $smarty->assign('recordlist', $table->createlist($table->getOption('menutype'), false, $prefix, $id));
 
         $smarty->assign('message', isset($message) ? $message : '');
 

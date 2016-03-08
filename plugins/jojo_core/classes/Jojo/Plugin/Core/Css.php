@@ -46,33 +46,11 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         if (preg_match('%^([a-zA-Z]+)$%', $file)) {
             $cachefile = _CACHEDIR . '/css/' . $file . '.css';
         }
-
-        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
-        if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:cssCachedFile', array('filename' => $cachefile));
-            parent::sendCacheHeaders(filemtime($cachefile));
-            $content = file_get_contents($cachefile);
-            if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
-            header('Content-type: text/css');
-            //header('Cache-Control: ');
-            //header('Pragma:');
-            header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            //header('Expires: ');
-            header('Cache-Control: private, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-            header('Pragma: ');
-            echo $content;
-            exit;
-        }
-
-        if (!defined('_CONTENTCACHE')) {
-            define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-            define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
-        }
+        
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
 
         $start = Jojo::timer();
         $css = new Jojo_Stitcher();
-        $css->getServerCache();
         switch($file) {
             case 'styles':
                 /* Include Boilerplate css reset */
@@ -102,21 +80,24 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/grid.less');
 
                 /* Headings, body, etc file */
-                if (Jojo::getOption('tbootstrap_bass_type', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_bass_type', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/type.less');
-                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/code.less');
+                    $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/code.less');
+                }
                 /* Labels and badges file */
-                if (Jojo::getOption('tbootstrap_bass_labels', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_bass_labels', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/labels.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/badges.less');
+                }
                 /* Tables file */
                 if (Jojo::getOption('tbootstrap_bass_tables', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tables.less');
                 /* Forms file */
-                if (Jojo::getOption('tbootstrap_bass_forms', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_bass_forms', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/forms.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/input-groups.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/buttons.less');
+                }
                 /* Icons file */
                 if (Jojo::getOption('tbootstrap_bass_sprites', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/glyphicons.less');
@@ -137,9 +118,10 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 if (Jojo::getOption('tbootstrap_components_breadcrumbs', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/breadcrumbs.less');
                 /* Pagination file */
-                if (Jojo::getOption('tbootstrap_components_pagination', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_components_pagination', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/pagination.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/pager.less');
+                }
                 /* Thumbnails file */
                 if (Jojo::getOption('tbootstrap_components_thumbnails', 'no') == 'yes')
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/thumbnails.less');
@@ -187,11 +169,11 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/component-animations.less');
 
                 /* Utilities files */
-                if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes')
+                if (Jojo::getOption('tbootstrap_variables', 'no') == 'yes') {
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/utilities.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
                     $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/print.less');
-
+                }
                 /* get a pre-responsive file from theme if exists */
                 foreach (Jojo::listThemes('css/pre-responsive.less') as $themefile) {
                     $css->addFile($themefile);
@@ -324,7 +306,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/modals.less');
                 /* Dropdowns file */
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/dropdowns.less');
-
+                $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/tooltip.less');
                 $css->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/less/responsive-utilities.less');
 
 
@@ -369,17 +351,10 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             exit;
         }
 
-        $css->setServerCache();
         $css->output();
 
         /* Cache a copy for later */
-        if ($cachefile) {
-            $content = $css->data;
-            Jojo::RecursiveMkdir(dirname($cachefile));
-            file_put_contents($cachefile, $content);
-            touch($cachefile, $css->modified);
-            Jojo::publicCache($f, $content, $css->modified);
-        }
+        Jojo::publicCache('css/'. $f, $css->data, $css->modified);
 
         if (_DEBUG) {
             echo "/* Adding files took " . $timetoadd . " ms*/\n";

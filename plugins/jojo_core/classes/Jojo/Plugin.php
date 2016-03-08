@@ -116,6 +116,7 @@ class Jojo_Plugin {
                 $smarty->assign('tags', $tags);
             }
         }
+        $smarty->assign('title', $result['title']);
 
         /* Class specific content */
         $extra = $this->_getContent();

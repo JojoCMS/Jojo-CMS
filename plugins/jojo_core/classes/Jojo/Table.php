@@ -180,6 +180,7 @@ class Jojo_Table {
                                         'error'     => $field->getError(),
                                         'type'      => $field->getOption('type'),
                                         'required'  => $field->getOption('required'),
+                                        'help'      => $field->getOption('help'),
                                         'flags'     => $field->getOption('flags'),
                                         'privacy'   => $field->getPrivacy(),
                                         );
@@ -195,6 +196,7 @@ class Jojo_Table {
                                     'name' => $field->getDisplayName(),
                                     'tabname'  => $field->getOption('tabname'),
                                     'showlabel'  => $field->getOption('showlabel'),
+                                    'help'  => $field->getOption('help'),
                                     'html' => $field->getHTML($mode),
                                     'error' => $field->getError(),
                                     'type' => $field->getOption('type'),
@@ -237,7 +239,7 @@ class Jojo_Table {
             $newrecord = false;
         } else {
             $sqltype = Jojo::getMySQLType($this->getTableName(), $this->getOption('primarykey'));
-            if (strpos($sqltype,'varchar') !== false && $this->currentrecord != '') {
+            if (strpos($sqltype,'varchar') !== false && $this->currentrecord) {
                 $newrecord = false;
             }
         }
@@ -435,20 +437,16 @@ class Jojo_Table {
     /* DTree with ajax needs to be treated carefully, because it returns script, not HTML */
     function createlist($menutype = "tree", $ajax = false, $prefix = 'edit', $selectednode=false)
     {
-        if ($menutype == "auto" && ($this->getOption('parentfield') || $this->getOption('group1'))) {
-            $menutype = "tree";
-        } elseif ($menutype == "auto") {
-            $menutype = 'list';
-        }
 
-        if ($menutype == 'tree' || $menutype == 'searchabletree') {
+        if ($menutype == 'tree' || $menutype == 'searchabletree' || $menutype == "auto" || $menutype == "list" || !$menutype ) {
             global $smarty;
-            $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield')) && $this->getFieldByType('Jojo_Field_Order'));
+            $smarty->assign('draggable', ($this->getOption('group1') || $this->getOption('parentfield') || $this->getOption('categorytable') || !($this->getOption('group1') || $this->getOption('parentfield') || $this->getOption('categorytable'))) && $this->getFieldByType('Jojo_Field_Order'));
             $smarty->assign('searchable', (boolean)($menutype == 'searchabletree'));
             $smarty->assign('table', $this->table);
+            $smarty->assign('menutype', $menutype);
             $smarty->assign('displayname', $this->getOption('displayname'));
             return $smarty->fetch('admin/edit-ajaxtree.tpl');
-        } elseif ($menutype == 'list' || $menutype == 'recursivePath' || $menutype == 'array') {
+        } elseif ($menutype == 'recursivePath' || $menutype == 'array') {
             global $_USERGROUPS;
             $idfield = $this->getOption('primarykey');
             $displayfield  =  Jojo::either($this->getOption('displayfield'), $this->getOption('primarykey'));

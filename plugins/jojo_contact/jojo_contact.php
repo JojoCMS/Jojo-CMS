@@ -28,6 +28,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         Jojo::noFormInjection();
 
         $fields = array();
+        $attachments = array();
         $errors = array();
         $from_email = '';
         $from_name = '';
@@ -35,6 +36,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $to_email = '';
         $formSubject = '';
         $formID;
+
 
         /* Get form from current page id or formid*/
         if ($formID) {
@@ -46,6 +48,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
         }
 
+
+        /* check if it's spammy before doing anything else */
+        $errors = self::isSpam('', $formfields[0]['form_captcha']);
+
         /* Find the form that belongs to the current page id and get all the formfields that belong to that form */
         $form = $formfields[0];
         $formID = $form['form_id'];
@@ -54,7 +60,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formSubject = $form['form_subject'];
         $formAnalytics = $form['form_tracking_code_analytics'];
         $formTrackingcode = $form['form_tracking_code'];
-        $formSuccessMessage = !empty($form['form_success_message']) ? $form['form_success_message'] : (Jojo::getOption('contact_success_message', '') ? Jojo::getOption('contact_success_message') : 'Your message was sent successfully.');
+        $formSuccessMessage = $form['form_success_message'] ?: ( Jojo::getOption('contact_success_message', '') ?: 'Your message was sent successfully.' );
 
         $smarty->assign('formTrackingcode', $formTrackingcode);
 
@@ -71,13 +77,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $f++;
         }
         $fields = Jojo::applyFilter("formfields_last", $fields, $formID);
-
-        if ($form['form_captcha']){
-            $captchacode = Jojo::getFormData('CAPTCHA','');
-            if (!PhpCaptcha::Validate($captchacode)) {
-                $errors[] = 'Incorrect Spam Prevention Code entered';
-            }
-        }
 
         $to_email       =  empty($form['form_to']) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $form['form_to'];
         $to_name       =  Jojo::either(_FROMNAME, _WEBMASTERNAME);
@@ -111,10 +110,10 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 foreach($_POST[$field['field']] as $f) {
                     $field['valuearr'][$f] = $f;
                 }
-            } elseif (Util::getFormData('form_' . $field['field'], '')) {
-                $field['value'] = ($field['type']!='heading') ? Util::getFormData('form_' . $field['field'], '') : $field['value'];
+            } elseif (Jojo::getFormData('form_' . $field['field'], '')) {
+                $field['value'] = ($field['type']!='heading') ? Jojo::getFormData('form_' . $field['field'], '') : $field['value'];
             } else {
-                $field['value'] = ($field['type']!='heading') ? Util::getFormData($field['field'], '') : $field['display'];
+                $field['value'] = ($field['type']!='heading') ? Jojo::getFormData($field['field'], '') : $field['display'];
             }
             /* set the fromemail value if appropriate */
 
@@ -159,30 +158,42 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 }
             }
             /* if field is file upload field then need to check for a file and transfer it to the folder */
-            if ($field['type'] == 'upload' || $field['type'] == 'privateupload') {
-                $field['filelink'] = '';
+            if ($field['type'] == 'upload' || $field['type'] == 'privateupload' || $field['type'] == 'attachment') {
+                $field['filelink'] = array();
                 if (!isset($_FILES["FILE_".$field['field']])) continue;
-                $file = $_FILES["FILE_".$field['field']];
-                $uploadresponse = self::upload($file, $field, $form);
-                if ($uploadresponse['errors']) $errors[] = $uploadresponse['errors'];
-                $field['filelink'] = $uploadresponse['filepath'];
+                $files = $_FILES["FILE_".$field['field']];
+                
+                if (is_array($files['name'])) {
+                    $files = self::reArrayFiles($files);
+                    foreach($files as $f) {
+                        $uploadresponse = self::upload($f, $field, $form);
+                        if ($uploadresponse['errors']) $errors[] = $uploadresponse['errors'];
+                         if ($field['type'] == 'attachment') {
+                            $field['value'] .= $uploadresponse['filename'] . ' ';
+                            $attachments[] = $uploadresponse['filepath'];
+                       } else {
+                            $field['filelink'][] = $uploadresponse['filelink'];
+                        }
+                   }
+
+                } 
             }
        }
 
-       if(!count($errors)){
+       if(!$errors){
             /* run further validation hook */
             $validationReturn = Jojo::runHook('contact_form_validation_success', array($errors, $fields));
             $errors = $validationReturn[0];
+            /* filter to set destination dynamically based on submitted form content */
+            $to_email       = Jojo::applyFilter("form_destination", $to_email, $fields);
         }
 
         unset($field);
 
-
-        $from_name = empty($from_name) ? Jojo::getOption('sitetitle') : $from_name;
-        $from_email = empty($from_email) ? Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS) : $from_email;
-        $subject  = $formSubject ? $formSubject : 'Message from the ' . $formName . ' form';
+        $from_name = $from_name ?: Jojo::getOption('sitetitle');
+        $from_email = $from_email ?: Jojo::either(_CONTACTADDRESS, _FROMADDRESS, _WEBMASTERADDRESS);
+        $subject  = $formSubject ?: 'Message from the ' . $formName . ' form';
         $subject = mb_convert_encoding($subject, 'HTML-ENTITIES', 'UTF-8');
-
         $smarty->assign('subject', $subject);
 
         $message  = '';
@@ -194,24 +205,40 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             } elseif ($f['type'] == 'heading') {
                 $message .=  "\r\n<b>" . $f['value'] . "</b>\r\n";
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
-                $message .= $f['display'] . ($f['filelink'] ? ' ' . _SITEURL . '/downloads' . $f['filelink'] : '') . "\r\n";
+                $message .= $f['display'] . "\r\n";
+                if ($f['filelink'] && is_array($f['filelink'])) {
+                    foreach ($f['filelink'] as $l) {
+                        $message .= _SITEURL . '/downloads' . $l . "\r\n";
+                    }
+                }
             } else {
                 $message .= (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? "\r\n" . $f['value'] . "\r\n\r\n" : $f['value'] . "\r\n" );
             }
         }
         $message .= Jojo::emailFooter();
 
+        /* check if message is link spam */
+        self::isSpam($message);
+
         $messagefields = '';
         foreach ($fields as $f) {
             if ((isset($f['displayonly']) && $f['displayonly']==1) || $f['type'] == 'note') { continue; };
             if ($f['type'] == 'heading') {
-                $messagefields .=  '<h' . ($f['size'] ? $f['size'] : '3') . '>' . $f['value'] . '</h' . ($f['size'] ? $f['size'] : '3') . '>';
+                $messagefields .=  '<h' . ($f['size'] ?: '3') . '>' . $f['value'] . '</h' . ($f['size'] ?: '3') . '>';
             } elseif ($f['type'] == 'upload' || $f['type'] == 'privateupload') {
-                $messagefields .= '<p>' . $f['display'] . ($f['filelink'] ? ' <a href="' . _SITEURL . '/downloads' . $f['filelink'] . '">' . _SITEURL . '/downloads' . $f['filelink'] .'</a>' : '') .'</p>';
+                $messagefields .= '<p>' . $f['display'];
+                if ($f['filelink'] && is_array($f['filelink'])) {
+                    foreach ($f['filelink'] as $fl) {
+                        $messagefields .=  '<br><a href="' . _SITEURL . '/downloads' . $fl . '">' . _SITEURL . '/downloads' . $fl .'</a>';
+                    }
+                }
+                $messagefields .= '</p>';
             } else {
                 $messagefields .= '<p>' . (isset($f['showlabel']) && $f['showlabel'] ? $f['display'] . ': ' : '' ) . ($f['type'] == 'textarea' || $f['type'] == 'checkboxes' ? '<br>' . nl2br($f['value']) : $f['value'] ) . '</p>';
             }
         }
+        $messagefields = self::personaliseMessage($messagefields, $fields);
+        
         $replymessage = isset($form['form_autoreply_bodycode']) && $form['form_autoreply_bodycode'] ? Jojo::relative2absolute($form['form_autoreply_bodycode'], _SITEURL) :  '';
         if (strpos($replymessage, '[[conditional:')!==false) {
             preg_match('~\[\[conditional:([^\]]*)\]\]~', $replymessage, $matches);
@@ -230,25 +257,25 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $replymessage = $conditionstate ? str_replace($matches[0], '', $replymessage[0]) : $replymessage[1];
             }
         }
-        $htmlcss = isset($form['form_autoreply_css']) ? $form['form_autoreply_css'] : '';
+        $css = Jojo::getOption('css-email', '');
         $autoreply =  0;
         if (isset($form['form_autoreply']) && $form['form_autoreply'] ) {
             $autoreply = 1;
             $replymessage .=  $messagefields;
             $replymessage =  self::personaliseMessage($replymessage, $fields);
-            $replymessage = self::cleanHTML($replymessage, $htmlcss);
             $smarty->assign('htmlmessage', $replymessage);
             $replymessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
+            $replymessage = $css ? Jojo::inlineStyle($replymessage, $css) : $replymessage;
         }
 
         $htmlmessage =  $messagefields . '<p>' . nl2br(Jojo::emailFooter()) . '</p>';
-        $htmlmessage = self::cleanHTML($htmlmessage, $htmlcss);
         $smarty->assign('htmlmessage', $htmlmessage);
-        $htmlmessage  = $smarty->fetch('jojo_contact_autoreply.tpl');
+        $htmlmessage  = $smarty->fetch('email.tpl');
+        $htmlmessage = $css ? Jojo::inlineStyle($htmlmessage, $css) : $htmlmessage;
         $res = false;
 
-        if (!count($errors)) {
-            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>')) || !$formSend) {
+        if (!$errors) {
+            if (($formSend && Jojo::simpleMail($to_name, $to_email, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments)) || !$formSend) {
 
                 /* success */
                 $responsemessage = $formSuccessMessage;
@@ -261,12 +288,12 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
 
                 /* send a copy to the main email as well the multi-choice one (if option is set) */
                if ($form['form_choice'] && $form['form_choice_list'] && isset($_POST['form_sendto']) && isset($form['form_choice_cc']) && $form['form_choice_cc'] && $form['form_to'] && $to_email != $form['form_to']) {
-                    Jojo::simpleMail(Jojo::either(_FROMNAME, _WEBMASTERNAME), $form['form_to'], $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
+                    Jojo::simpleMail(Jojo::either(_FROMNAME, _WEBMASTERNAME), $form['form_to'], $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments);
                 }
 
                 /* send a copy to the webmaster */
                if ($form['form_webmaster_copy'] && $to_email != _WEBMASTERADDRESS) {
-                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>');
+                    Jojo::simpleMail(_WEBMASTERNAME, _WEBMASTERADDRESS, $subject, $message, $from_name, $from_email, $htmlmessage, $from_name . '<' . $sender_email . '>', $attachments);
                 }
 
                 /* store a copy of the message in the database*/
@@ -355,9 +382,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $id = $search;
             } else {
                 $form = Jojo::selectRow("SELECT form_id, form_name FROM {form} f WHERE f.form_name = ?", array(trim($search)));
-                $id = $form['form_id'];
+                $id = $form ? $form['form_id'] : '';
             }
-            if (isset($id)) {
+            if (isset($id) && $id) {
                 $formhtml = self::getFormHtml($id, $action='submit-form/', $js=true);
                 $content   = str_replace($matches[0][$k], $formhtml, $content);
             }
@@ -375,7 +402,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_id = ? ORDER BY ff_order", array($formID));
         $form = $formfields[0];
         $form['form_submit'] = isset($form['form_submit']) && $form['form_submit'] ? $form['form_submit'] : 'Submit';
-        $form['form_success_message'] = $form['form_success_message'] ? $form['form_success_message'] : Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
+        $form['form_success_message'] = $form['form_success_message'] ?: Jojo::getOption('contact_success_message', 'Your message was sent successfully.');
         $hideonsuccess = $form['form_hideonsuccess'];
         $formCaptcha = $form['form_captcha'];
 
@@ -423,6 +450,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         if ($sent) {
             $smarty->assign('message', ( isset($_SESSION['sendstatus']) && $_SESSION['sendstatus'] ? $_SESSION['sendstatus'] : 'There was an error sending your message. This error has been logged, so we will attend to this problem as soon as we can.'));
             $smarty->assign('sent', $sent);
+            Jojo::noCache(true);
         }
         //reset send status
         unset($_SESSION['sendstatus']);
@@ -452,17 +480,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         return $_toAddresses;
     }
 
-    static function cleanHTML($html, $css='')
-    {
-        // basic inline styling for supplied content
-        $html = str_replace('<p>', '<p style="font-size:13px;' . $css . '">', $html);
-        $html = str_replace('<td>', '<td style="font-size:13px;' . $css . '">', $html);
-        $html= str_replace(array('<h1>', '<h2>', '<h3>'), '<p style="font-size: 16px;' . $css . '">', $html);
-        $html = str_replace(array('<h4>','<h5>', '<h6>'), '<p style="font-size: 14px;' . $css . '">', $html);
-        $html = str_replace(array('</h1>', '</h2>', '</h3>', '</h4>','</h5>', '</h6>'), '</p>', $html);
-        return $html;
-    }
-
     static function personaliseMessage($html, $fields)
     {
         // filter message for personalisation by field display name eg [[From Name]]
@@ -478,6 +495,50 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         }
         return $html;
     }
+
+    public static function isSpam($content=false, $captcha=false) {
+        
+        if ($content && substr_count($content, 'http://')>Jojo::getOption('spam_links', 3)) {
+            header("HTTP/1.0 404 Not Found");
+            ob_end_flush(); // Send the output and turn off output buffering
+            exit;
+        }
+        /* Check CAPTCHA is entered correctly */
+        if ($captcha) {
+            $errors=array();
+            if (Jojo::getOption('captcha_recaptcha', 'no')=='yes') {
+               $captcharesponse = Jojo::getFormData('g-recaptcha-response','');
+               $secretkey = Jojo::getOption('captcha_secretkey', '');
+               $url = 'https://www.google.com/recaptcha/api/siteverify';
+                $data = array('secret' => $secretkey, 'response' => $captcharesponse);
+                // use key 'http' even if you send the request to https://...
+                $options = array(
+                    'http' => array(
+                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                        'method'  => 'POST',
+                        'content' => http_build_query($data),
+                    ),
+                );
+                $context  = stream_context_create($options);
+                $result = json_decode(file_get_contents($url, false, $context), true);
+                /* failures on reCaptcha can 404 because real users will have feedback on success before submitting but bots won't */
+               if (!$result['success']) {
+                    header("HTTP/1.0 404 Not Found.");
+                    ob_end_flush(); // Send the output and turn off output buffering
+                    exit;
+                }
+            } else {
+                $captchacode = Jojo::getFormData('CAPTCHA','');
+                if (!PhpCaptcha::Validate($captchacode)) {
+                    $errors[] = 'Incorrect Spam Prevention Code entered';
+                    return $errors;
+                }
+            }
+        }
+        return false;
+
+    }
+
 
      public static function footjs()
      {
@@ -523,8 +584,8 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                     die($error);
                 }
 
-                $folder = $field['type'] == 'privateupload' ? 'private/' : '';
-                $folder .= $form['form_uploadfolder'] ? $form['form_uploadfolder'] : $form['form_id'];
+                $folder = $field['type'] == 'privateupload' || $field['type'] == 'attachment' ? 'private/' : '';
+                $folder .= $form['form_uploadfolder'] ?: $form['form_id'];
                 /* All appears good, so prepare to move file to final resting place */
                 $destination = _DOWNLOADDIR . '/uploads/' . $folder . '/' . basename($filename);
 
@@ -551,7 +612,9 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $error = 'An unknown error occurred - please contact the webmaster ('._WEBMASTERADDRESS.')';
         }
         $reponse['errors'] = $error;
-        $reponse['filepath'] = str_replace(_DOWNLOADDIR, '', $destination);
+        $reponse['filepath'] = $destination;
+        $reponse['filelink'] = str_replace(_DOWNLOADDIR, '', $destination);
+        $reponse['filename'] = $newname ? basename($newname) : basename($filename);
         return $reponse;
     }
 
@@ -565,5 +628,21 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             exit;
         }
         return true;
+    }
+    
+    public static function reArrayFiles(&$file_post)
+    {
+
+        $file_ary = array();
+        $file_count = count($file_post['name']);
+        $file_keys = array_keys($file_post);
+
+        for ($i=0; $i<$file_count; $i++) {
+            foreach ($file_keys as $key) {
+                $file_ary[$i][$key] = $file_post[$key][$i];
+            }
+        }
+
+        return $file_ary;
     }
 }

@@ -44,8 +44,6 @@
 
       <head>
         <title>Google Sitemap File</title>
-        <link href="css/gss.css" type="text/css" rel="stylesheet"/>
-        <script type="text/javascript" src="js/gss.js"></script>
       </head>
 
       <!-- Store in $fileType if we are in a sitemap or in a siteindex -->

@@ -10,7 +10,7 @@ To change this password to something more familiar, <b>copy this one first</b> (
   <li>{$messages[m]}</li>
   {/section}</ul>
 </div>{/if}
-{if $errors}<div class="error alert alert-error">
+{if $errors}<div class="error alert alert-danger">
   <ul>{section name=e loop=$errors}
   <li>{$errors[e]}</li>
   {/section}</ul>

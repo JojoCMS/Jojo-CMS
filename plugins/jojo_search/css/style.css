@@ -15,10 +15,4 @@
     a.current-filter {
         font-weight:bold;
     }
-    select {
-      width: auto;
-    }
-    .btn {
-      vertical-align: top;
-    }
 }

@@ -83,6 +83,7 @@ class Jojo_Field
             $this->linkitemid = $fielddata['fd_m2m_linkitemid'];
             $this->linkcatid = $fielddata['fd_m2m_linkcatid'];
             $this->cattable = $fielddata['fd_m2m_cattable'];
+            $this->linktableorderfield = isset($fielddata['fd_m2m_linkorderfield']) ? $fielddata['fd_m2m_linkorderfield'] : 'order';
 
             //echo "VAL=" . $this->fd_default . "<br>";
             if (empty($this->value)) {

@@ -27,17 +27,18 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* Get requested filename */
         $file = urldecode(Jojo::getFormData('file', 'default.jpg'));
-        $timestamp = strtotime('+1 day');
+        $im = false;
 
         /* Check file name has correct extension */
-        $validExtensions = array('jpg', 'gif', 'jpeg', 'png');
+        $validExtensions = array('jpg', 'gif', 'jpeg', 'png', 'svg');
         if (!in_array(Jojo::getFileExtension($file), $validExtensions)) {
             /* Not valid, 404 */
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
 
-        $cachetime = Jojo::getOption('image_cachetime', 86400);
+        $cachetime = _CONTENTCACHETIMERESOURCES;
+        Jojo::RecursiveMkdir(_CACHEDIR . '/public/'); //in case this folder does not exist
         $pad = false;
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {
@@ -104,7 +105,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* filetype + mimetype */
         $filetype = Jojo::getFileExtension($filename);
-        $mimetype = ($filetype == 'jpg') ? 'image/jpeg': 'image/' . $filetype;
+        $mimetype = $filetype == 'jpg' ? 'image/jpeg': ($filetype == 'svg' ? 'image/svg+xml' : 'image/' . $filetype);
 
         /* Quality */
         $quality = (isset($_GET['ql'])) ? $_GET['ql'] : Jojo::getOption('jpeg_quality', 85);
@@ -156,124 +157,91 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         Jojo::runHook('jojo_core:imageCheckAccess', array('filename' => $filename));
 
-        /* Check for existance of server-cached copy if user has not pressed CTRL-F5 */
-        if (is_file($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:imageCachedFile', array('filename' => $cachefile));
-
-            parent::sendCacheHeaders(filemtime($cachefile));
-
-            /* output image data */
-            $data = file_get_contents($cachefile);
-            header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            header('Cache-Control: public, max-age=' . $cachetime );
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
-            header('Pragma: ');
-            header('Content-type: ' . $mimetype);
-            header('Content-Length: ' . strlen($data));
-            header('Content-Disposition: inline; filename=' . basename($filename) . ';');
-            header('Content-Description: PHP Generated Image (cached)');
-            header('Content-Transfer-Encoding: binary');
-            echo $data;
-            exit();
-        }
-
         /* for default sized images, read image data directly to save reprocessing */
         if (($s == 'default') || ($s == '')) {
             if (self::isRemoteFile($filename) || Jojo::fileExists($filename)) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $filename));
 
-                parent::sendCacheHeaders(filemtime($filename));
-
-                /* output image data */
-                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
-                    // sharpen the image
-                    $im = self::createIm($filename, $filetype);
-                    $im = self::applySharpening($im, $sharpness);
-                    $data = Imagejpeg($im,null,$quality);
-                } else {
-                    $data = file_get_contents($filename);
-                }
-
-                //header('Cache-Control: public');
-                if (!self::isRemoteFile($filename)) {
-                    header('Last-Modified: ' . date('D, d M Y H:i:s \G\M\T', filemtime($filename)));
-                }
-                header('Cache-Control: public, max-age=' . $cachetime);
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
-                header('Pragma: ');
+                $data = file_get_contents($filename);
+                /* output image headers */
+                parent::sendCacheHeaders(filemtime($filename), $cachetime);
                 header('Content-type: ' . $mimetype);
                 header('Content-Length: ' . strlen($data));
                 header('Content-Disposition: inline; filename=' . basename($filename) . ';');
                 header('Content-Description: PHP Generated Image (cached)');
                 header('Content-Transfer-Encoding: binary');
-                echo $data;
 
-                /* Cache for quicker response next time */
-                Jojo::RecursiveMkdir(dirname($cachefile));
-                file_put_contents($cachefile, $data);
-                Jojo::publicCache($file, $data);
+                /* output image data */
+                if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
+                    // sharpen the image
+                    $im = imagecreatefromjpeg($filename);
+                    $im = self::applySharpening($im, $sharpness);
+                    Imagejpeg($im,null,$quality);
+                    Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
+                } else {
+                    echo $data;
+                    /* cache image data */
+                    Jojo::publicCache('images/' . $file, $data);
+                }
+
+                ob_end_flush(); // Send the output and turn off output buffering
                 exit();
             }
 
             foreach (Jojo::listThemes('images/' . $file) as $pluginfile) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $pluginfile));
-                parent::sendCacheHeaders(filemtime($pluginfile));
+
+                $data = file_get_contents($pluginfile);
+                /* output image headers */
+                parent::sendCacheHeaders(filemtime($pluginfile), $cachetime);
+                header('Content-type: ' . $mimetype);
+                header('Content-Length: ' . strlen($data));
+                header('Content-Disposition: inline; filename=' . basename($pluginfile) . ';');
+                header('Content-Description: PHP Generated Image (cached)');
+                header('Content-Transfer-Encoding: binary');
 
                 /* output image data */
                 if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
                     // sharpen the image
-                    $im = self::createIm($pluginfile, $filetype);
+                    $im = imagecreatefromjpeg($pluginfile);
                     $im = self::applySharpening($im, $sharpness);
-                    $data = Imagejpeg($im,null,$quality);
+                    Imagejpeg($im,null,$quality);
+                    Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
                 } else {
-                    $data = file_get_contents($pluginfile);
+                    echo $data;
+                   /* cache image data */
+                    Jojo::publicCache('images/' . $file, $data);
                 }
-                header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: public, max-age=' . $cachetime);
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
-                header('Pragma: ');
-                header('Content-type: ' . $mimetype);
-                header('Content-Length: ' . strlen($data));
-                header('Content-Disposition: inline; filename=' . basename($filename) . ';');
-                header('Content-Description: PHP Generated Image (cached)');
-                header('Content-Transfer-Encoding: binary');
-                echo $data;
-
-                /* Cache for quicker response next time */
-                Jojo::RecursiveMkdir(dirname($cachefile));
-                file_put_contents($cachefile, $data);
-                Jojo::publicCache($file, $data);
+                ob_end_flush(); // Send the output and turn off output buffering
                 exit();
+
             }
 
             foreach (Jojo::listPluginsReverse('images/' . $file) as $pluginfile) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $pluginfile));
-                parent::sendCacheHeaders(filemtime($pluginfile));
+
+                $data = file_get_contents($pluginfile);
+                /* output image headers */
+                parent::sendCacheHeaders(filemtime($pluginfile), $cachetime);
+                header('Content-type: ' . $mimetype);
+                header('Content-Length: ' . strlen($data));
+                header('Content-Disposition: inline; filename=' . basename($pluginfile) . ';');
+                header('Content-Description: PHP Generated Image (cached)');
+                header('Content-Transfer-Encoding: binary');
 
                 /* output image data */
                 if (($filetype == 'jpg' || $filetype == 'jpeg') && $sharpness) {
                     // sharpen the image
-                    $im = self::createIm($pluginfile, $filetype);
+                    $im = imagecreatefromjpeg($pluginfile);
                     $im = self::applySharpening($im, $sharpness);
-                    $data = Imagejpeg($im,null,$quality);
+                    Imagejpeg($im,null,$quality);
+                    Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
                 } else {
-                    $data = file_get_contents($pluginfile);
+                    echo $data;
+                    /* cache image data */
+                    Jojo::publicCache('images/' . $file, $data);
                 }
-                header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($pluginfile)));
-                header('Cache-Control: public, max-age=' . $cachetime);
-                header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
-                header('Pragma: ');
-                header('Content-type: ' . $mimetype);
-                header('Content-Length: ' . strlen($data));
-                header('Content-Disposition: inline; filename=' . basename($filename) . ';');
-                header('Content-Description: PHP Generated Image (cached)');
-                header('Content-Transfer-Encoding: binary');
-                echo $data;
-
-                /* Cache for quicker response next time */
-                Jojo::RecursiveMkdir(dirname($cachefile));
-                file_put_contents($cachefile, $data);
-                Jojo::publicCache($file, $data);
+                ob_end_flush(); // Send the output and turn off output buffering
                 exit();
             }
         }
@@ -489,13 +457,29 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             }
 
         } else {
-            /* No change */
             $new_im = $im;
             $nochange = true;
+           /* apply filter */
+            if (isset($filters[$f])) {
+                $nochange = false;
+                if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
+                    imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
+                    imagealphablending($new_im, false);
+                }
+                if (strpos($filters[$f], ';')) {
+                    $ifs = explode(';', $filters[$f]);
+                    foreach ($ifs as $if) {
+                        $if = explode(',', $if);
+                        $filter = array_shift($if);
+                        $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
+                    }
+                } else {
+                    $if = explode(',', $filters[$f]);
+                    $filter = array_shift($if);
+                    $new_im = self::applyFilter($new_im, $filter, $if, $isfile=false);
+                }
+            }
         }
-
-        /* create folders in cache */
-        Jojo::RecursiveMkdir(dirname($cachefile));
 
         /* Allow custom watermark code to be inserted depending on the site */
         foreach(Jojo::listPlugins('config/watermark.inc.php') as $wmfile) {
@@ -505,29 +489,23 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         $new_im = Jojo::applyFilter('image_watermark', $new_im);
 
         /* output image data */
+        parent::sendCacheHeaders(filemtime($filename), $cachetime);
         header('Content-type: ' . $mimetype);
         header('Content-Disposition: inline; filename=' . basename($filename) . ';');
         header('Content-Description: PHP Generated Image');
         header('Content-Transfer-Encoding: binary');
 
-        header('Cache-Control: public, max-age=' . $cachetime);
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
-        header('Pragma: ');
-
         // output
         if ($filetype == "gif") {
             Imagegif($new_im);
-            Imagegif($new_im, $cachefile);
-            Imagegif($new_im, Jojo::publicCache($file));
-        } else if ($filetype == "png") {
+            Imagegif($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.gif');
+        } elseif ($filetype == "png") {
             imagesavealpha($new_im, true);
             Imagepng($new_im);
-            Imagepng($new_im, $cachefile);
-            Imagepng($new_im, Jojo::publicCache($file));
+            Imagepng($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.png');
         } else {
-            Imagejpeg($new_im, $cachefile, $quality);
-            Imagejpeg($new_im, Jojo::publicCache($file), $quality);
-            Imagejpeg($new_im,null,$quality);
+           Imagejpeg($new_im,null,$quality);
+           Imagejpeg($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
         }
 
         // cleanup
@@ -572,7 +550,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
     /* Sharpen image. Takes a php image resource.
     Recommended for photographic images only - graphics tend to go a bit strange. 
-    Can also be used for blurring, with negative sharpness values.  
+    Can also be used for mild blurring, with negative sharpness values.  
     10 = strong, 20 = mild */
     static function applySharpening($im, $sharpness=18) 
     {
@@ -645,7 +623,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             if ($isfile) {
                if ($filetype == "gif") {
                     Imagegif($im, $file);
-                } else if ($filetype == "png") {
+                } elseif ($filetype == "png") {
                     imagesavealpha($new_im, true);
                     Imagepng($im, $file);
                 } else {

@@ -91,7 +91,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pages = self::getItems('sitemap', $sortby='pg_order');
         /* Add pages to the sitemap */
         foreach ($pages as $k => $p) {
-            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], $p['url']);
+            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], _SITEURL . '/' . $p['url']);
         }
         /* Add to the sitemap array */
         $sitemap['pages'] = array(
@@ -125,7 +125,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 if ($p['pageid'] == 1) {
                     // Homepage gets top priority
                     $priority = 1.0;
-                } else if ($p['pg_parent'] == 0) {
+                } elseif ($p['pg_parent'] == 0) {
                     // Top level pages have greater priority
                     $priority = 0.9;
                 } else {
@@ -181,10 +181,16 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $pagePermissions = new Jojo_Permissions();
         }
         $mldata = Jojo::getMultiLanguageData();
+        static $notOnMenu;
         foreach ($items as $k=>&$i){
+            if (!$notOnMenu && isset($i['pg_parent'])) {
+                $notOnMenu = Jojo::selectRow("SELECT pageid FROM {page} WHERE pg_title = 'Not on Menu'");
+                $notOnMenu = $notOnMenu['pageid'];
+            }
+            
             $pagePermissions->getPermissions('page', $i['pageid']);
             $i['root'] = Jojo::getSectionRoot($i['pageid']);
-            if ( (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
+            if ( (isset($i['pg_parent']) && $i['pg_parent']===$notOnMenu) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !$pagePermissions->hasPerm($_USERGROUPS, 'show')) || (!$pagePermissions->hasPerm($_USERGROUPS, 'view') && !($for=='nav' || $for=='sitemap')) || $i['pg_livedate']>$now || (!empty($i['pg_expirydate']) && $i['pg_expirydate']<$now) || $i['pg_status']=='inactive' || ($for!='showhidden' && $i['pg_status']!='active') || ($for =='sitemap' && (!isset($mldata['sectiondata'][$i['root']]) || $i['pg_sitemapnav']=='no')) || ($for =='xmlsitemap' && ($i['pg_xmlsitemapnav']=='no' || $i['pg_index']=='no' || !isset($mldata['sectiondata'][$i['root']]))) || ($for =='breadcrumbs' && $i['pg_breadcrumbnav']=='no')) {
                 unset($items[$k]);
                 continue;
             }
@@ -378,10 +384,10 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 $colspan = 4;
                 break;
               case '3':
-                $colspan=3;
+                $colspan = 3;
                 break;
               case '5':
-                $colspan=2;
+                $colspan = 2;
                 break;
               case '13':
                 $colspan = 4;
@@ -390,12 +396,14 @@ class Jojo_Plugin_Core extends Jojo_Plugin
                 $colspan = 8;
                 break;
               default:
-                $colspan=12;
+                $colspan = 6;
             }
 
-            $colopen = '<div class="row-fluid"><div class="span' . $colspan . ' first"><div class="columncontent">';
+            $breaksize = Jojo::getOption('columnbreaks_min', 'sm');
+
+            $colopen = '<div class="row"><div class="col-' . $breaksize . '-' . $colspan . ' first"><div class="columncontent">';
             $colclose = '</div></div></div>';
-            $colbreak = '</div></div><div class="span' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
+            $colbreak = '</div></div><div class="col-' . $breaksize . '-' . ($uneven ? $uneven : $colspan) . '"><div class="columncontent">';
             $colbreak = Jojo::applyFilter("columns_breakformat", $colbreak);
 
             $content = strpos($content, '[[columns]]')!==false ? str_replace(array('<p>[[columns]]</p>', '<p>[[columns]] </p>', '<p>[[columns]]&nbsp;</p>','[[columns]]'), $colopen, $content) : $colopen . "\n" . $content;
@@ -411,19 +419,15 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     public static function subpages($content)
     {
         if (strpos($content, '[[subpages]]')!==false) {
-            global $page;
+            global $page, $smarty;
             $pageid = $page->id;
-            $subpages = Jojo::getNav($pageid, 1);
+            $subpages = Jojo::getNav($pageid, Jojo::getOption('nav_mainnav', 0));
             if ($subpages) {
-                $html = '<ul>' . "\n";
-                foreach ($subpages as $s) {
-                    $html .= '<li><a href="' . $s['url'] . '" title="' . $s['title'] . '">' . $s['label'] . '</a></li>' . "\n";
-                }
-                $html .= '</ul>';
+                $smarty->assign('subpages', $subpages);
+                $html = $smarty->fetch('subpages.tpl');
             } else {
                 $html = '';
             }
-
             $content = str_replace(array('<p>[[subpages]]</p>', '<p>[[subpages]] </p>', '<p>[[subpages]]&nbsp;</p>','[[subpages]]'), $html, $content);
         }
         return $content;
@@ -615,16 +619,17 @@ class Jojo_Plugin_Core extends Jojo_Plugin
 
 
 
-    protected static function sendCacheHeaders($timestamp) {
+    static function sendCacheHeaders($timestamp=0, $cachetime=28800) {
         // A PHP implementation of conditional get, see
         //   http://fishbowl.pastiche.org/archives/001132.html
+        $timestamp = $timestamp ? $timestamp : time();
         $last_modified = substr(date('r', $timestamp), 0, -5) . 'GMT';
-        $etag = '"'.md5($last_modified) . '"';
+        $etag = md5($last_modified);
         // Send the headers
         header("Last-Modified: $last_modified");
         header("ETag: $etag");
-        header('Cache-Control: private, max-age=28800');
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
+        header('Cache-Control: private, max-age=' . $cachetime);
+        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', $timestamp + $cachetime));
         header('Pragma: ');
         // See if the client has provided the required headers
         $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ?
@@ -645,6 +650,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         }
         // Nothing has changed since their last request - serve a 304 and exit
         header('HTTP/1.0 304 Not Modified');
+        ob_end_flush(); // Send the output and turn off output buffering
         exit;
     }
 }

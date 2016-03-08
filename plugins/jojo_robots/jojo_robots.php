@@ -27,8 +27,8 @@ class Jojo_Plugin_Jojo_robots extends Jojo_Plugin
 
         /* An array of pages to exclude - in addition to any pages marked as noindex in the admin area */
         $disallow = array('_docs','_htaccess','_stats', 'actions',
-                          'classes','includes','install','js','css',
-                          'config','external','login','templates',
+                          'classes','includes','install',
+                          'config','login','templates',
                           'forgot-password','change-password','register');
 
         if (Jojo::getOption('robots.txt')) {

@@ -25,6 +25,7 @@ $query = "
       `us_login` varchar(100) NOT NULL default '',
       `us_password` varchar(255) NOT NULL default '',
       `us_salt` varchar(16) NOT NULL default '',
+      `us_lastsuccess` datetime NOT NULL default '0000-00-00 00:00:00',
       `us_lastfailure` datetime NOT NULL default '0000-00-00 00:00:00',
       `us_failures` int(11) NOT NULL default '0',
       `us_locked` int(11) NOT NULL default '0',
@@ -35,6 +36,7 @@ $query = "
       `us_reset` varchar(255) NOT NULL default '',
       `us_timezone` int(11) NOT NULL default '12',
       `us_groups` varchar(255) NOT NULL default '',
+      `blacklisted` tinyint(4) default '0',
       PRIMARY KEY  (`userid`)
     ) ENGINE=MyISAM CHARSET=utf8 COLLATE utf8_general_ci ;";
 

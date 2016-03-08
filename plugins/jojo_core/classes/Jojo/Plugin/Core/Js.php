@@ -27,7 +27,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
 
         /* Get requested filename */
         $file = Jojo::getFormData('file', false);
-        $f = $file;
 
         /* Check file name is .js */
         if (!$file || strpos($file, '.js') === false) {
@@ -39,51 +38,21 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             $file = str_replace( '.js', '', $file);
         }
 
-        /* If the filename is clean, cache the js */
-        $cachefile = false;
-        if (preg_match('%^([a-zA-Z]+)$%', $file)) {
-            $cachefile = _CACHEDIR . '/js/' . $file . '.js';
-        }
-
-        /* Check for existance of cached copy if user has not pressed CTRL-F5 */
-        if ($cachefile && Jojo::fileExists($cachefile) && !Jojo::ctrlF5()) {
-            Jojo::runHook('jojo_core:jsCachedFile', array('filename' => $cachefile));
-            parent::sendCacheHeaders(filemtime($cachefile));
-            $content = file_get_contents($cachefile);
-            if (Jojo::getOption('enablegzip') == 1) Jojo::gzip();
-            header('Content-type: text/javascript');
-            //header('Cache-Control: ');
-            //header('Pragma:');
-            header('Last-Modified: '.date('D, d M Y H:i:s \G\M\T', filemtime($cachefile)));
-            //header('Expires: ');
-            header('Cache-Control: private, max-age=28800');
-            header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + 28800));
-            header('Pragma: ');
-            echo $content;
-            exit;
-        }
-
-        if (!defined('_CONTENTCACHE')) {
-            define('_CONTENTCACHE',     Jojo::getOption('contentcache') == 'no' ? false : true);
-            define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
-        }
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
 
         $js = new Jojo_Stitcher();
         $js->type = 'javascript';
-        $js->getServerCache();
 
         switch($file) {
             case 'common':
-                /* Dynamic Javascript */
-                $js->addText("var siteurl = '" . _SITEURL . "';");
-                $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , _SITEURL) . "';");
-
-                /* Core functions */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
-
-                /* FRAJAX */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
-
+                if (Jojo::getOption('jojo_corejs', 'no')=='yes') {
+                    /* Core functions */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/core.js');
+                }
+                if (Jojo::getOption('jojo_corefrajax', 'no')=='yes') {
+                    /* FRAJAX */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
+                }
                 if (Jojo::getOption('jquery_useanytime', 'no')=='yes')
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
                 
@@ -137,7 +106,6 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 if (Jojo::getOption('js')) {
                     $js->addText(Jojo::getOption('js'));
                 }
-
                 break;
                 
             case 'commonadmin':
@@ -146,7 +114,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 $js->addText("var secureurl = '" . Jojo::either(Jojo::getOption('secureurl') , _SITEURL) . "';");
 
                 /* Core functions */
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/functions.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/core.js');
 
                 /* FRAJAX */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/frajax/frajax.js');
@@ -156,12 +124,12 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/tablesorter/jquery.tablesorter.min.js');
                 if (Jojo::getOption('wysiwyg_style')=='popup') {
                     /* Include Markitup editor css if using popup editor*/
-                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.pack.js');
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/jquery.markitup.js');
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/html/set.js');
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/markitup/sets/bbcode/set.js');
                 }
-                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jstree/dist/jstree.js');
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/anytime/anytimec.js');
+                $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/jstree/dist/jstree.js');
 
                 /* Twitter Bootstrap options */
                 /* Transitions */
@@ -174,7 +142,8 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/alert.js');
                 /* Buttons */
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/button.js');
-
+                /* Tooltip */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/tooltip.js');
                 /* Core functions */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/admin.js');
 
@@ -193,18 +162,11 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
-        $js->setServerCache();
-        $optimise = (boolean)(strpos($f, 'pack')===false && strpos($f, 'min')===false);
+        $optimise = (boolean)(strpos($file, 'pack')===false && strpos($file, 'min')===false);
         $js->output($optimise);
 
         /* Cache a copy for later */
-        if ($cachefile) {
-            $content = $js->data;
-            Jojo::RecursiveMkdir(dirname($cachefile));
-            file_put_contents($cachefile, $content);
-            touch($cachefile, $js->modified);
-            Jojo::publicCache($f, $content, $js->modified);
-        }
+        Jojo::publicCache('js/' . $file . '.js', $js->data, $js->modified);
         exit;
     }
 }
