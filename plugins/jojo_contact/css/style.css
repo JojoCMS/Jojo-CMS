@@ -1,11 +1,6 @@
 form.contact-form textarea {
     vertical-align: top;
 }
-
-form span.error {
-  color: @brand-danger;
-}
-
 form .btn-file {
   position: relative;
   overflow: hidden;
@@ -24,7 +19,7 @@ form .btn-file input[type=file] {
   cursor: inherit;
   display: block;
 }
-form input[readonly] {
+form.contact-form input[readonly] {
   background-color: white !important;
   cursor: text !important;
 }
