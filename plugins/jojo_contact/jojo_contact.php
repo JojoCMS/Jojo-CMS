@@ -363,7 +363,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $this->page['pg_body'] = str_replace(array('<p>[[contactform]]</p>','<p>[[contactform]]&nbsp;</p>'), '[[contactform]]', $this->page['pg_body']);
             $content['content']    = str_replace('[[contactform]]', $formhtml, $this->page['pg_body']);
         }
-        $content['javascript'] = $smarty->fetch('jojo_contact_js.tpl');
 
         return $content;
     }
@@ -385,7 +384,7 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
                 $id = $form ? $form['form_id'] : '';
             }
             if (isset($id) && $id) {
-                $formhtml = self::getFormHtml($id, $action='submit-form/', $js=true);
+                $formhtml = self::getFormHtml($id, $action='submit-form/');
                 $content   = str_replace($matches[0][$k], $formhtml, $content);
             }
         }
@@ -456,10 +455,6 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
         unset($_SESSION['sendstatus']);
 
         $formhtml = $smarty->fetch('jojo_contact.tpl');
-        if ($js) {
-            $js =  '<script type="text/javascript">' . $smarty->fetch('jojo_contact_js.tpl') . '</script>'."\n";
-            $formhtml = $formhtml . "\n" . $js;
-        }
         return $formhtml;
     }
 
