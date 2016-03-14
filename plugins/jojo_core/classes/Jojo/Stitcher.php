@@ -66,7 +66,8 @@ class Jojo_Stitcher {
         $this->dirty = true;
     }
 
-    function getServerCache()
+    /* deprecated */
+    function getServerCache() 
     {
         if (_CONTENTCACHE && !isset($_SERVER['HTTP_PRAGMA'])) {
             //$cacheuserid = isset($_USERID) ? $_USERID : 0;
@@ -92,6 +93,7 @@ class Jojo_Stitcher {
         }
     }
 
+    /* deprecated */
     function setServerCache()
     {
         //global $_USERID;

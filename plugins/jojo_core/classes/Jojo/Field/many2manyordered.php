@@ -104,8 +104,7 @@ class Jojo_Field_many2manyordered extends Jojo_Field
             $item = '<input type="text" name="fm_' . $this->fd_field . '_' . $o['value'] . '_order" value="' . $position . '" size="3" style="width:35px;display:inline-block;" />&nbsp;<label class="checkbox inline"><input type="checkbox" name="fm_' . $this->fd_field . "_" . $o['value']."\" id=\"fm_".$this->fd_field."_".$o['value']."\" value=\"".$o['value']."\" onchange=\"fullsave = true;\"".$isselected."> ".$o['name']."</label><br />\n";
             $tree->addNode($o['value'], $o['parent'], $item);
         }
-        $output = '<h3>' . rtrim(ucfirst($this->cattable),'s') . 's</h3>';
-        $output .= '<ul class="list-unstyled"><li><span style="width:35px;">Order</span></li></ul>';
+        $output = '<ul class="list-unstyled"><li><span class="note">Order</span></li></ul>';
         $output .= $tree->printout_plain();
 
         return $output;
