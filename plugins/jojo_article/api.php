@@ -49,6 +49,7 @@ Jojo::addFilter('content', 'removesnip', 'jojo_article');
 Jojo::addHook('admin_action_after_save_article', 'admin_action_after_save_article', 'jojo_article');
 Jojo::addHook('admin_action_after_save_page', 'admin_action_after_save_page', 'jojo_article');
 Jojo::addHook('admin_action_after_save_articlecategory', 'admin_action_after_save_articlecategory', 'jojo_article');
+Jojo::addHook('admin_action_delete_success_article', 'admin_action_delete_success_article', 'jojo_article');
 
 $_options[] = array(
     'id'          => 'article_show_num_comments',

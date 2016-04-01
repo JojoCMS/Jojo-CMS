@@ -172,8 +172,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $i['readtime'] =  self::get_readtime($i['ar_body']);
             $i['url']          = self::getArticleUrl($i['articleid'], $i['ar_url'], $i['ar_title'], $i['pageid'], $i['ar_category']);
             $i['plugin']     = 'jojo_article';
-             if (class_exists('Jojo_Plugin_Jojo_Tags') && Jojo::getOption('article_tags', 'no') == 'yes' ) {
-                /* Split up tags for display */
+             if (class_exists('Jojo_Plugin_Jojo_Tags')) {
                 $i['tags'] = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $i['articleid']);
             }
            unset($items[$k]['ar_bbbody']);
@@ -318,7 +317,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 $articles = self::getArticles(Jojo::getOption('rss_num_items', 15) + Jojo::getOption('article_buffer', 0), 0, $categoryid, $sortby, $exclude=false, $include='');
                 $rssfields = array(
                     'pagetitle' => $this->page['pg_title'],
-                    'pageurl' => _SITEURL . '/' . $pageprefix . $this->page['pg_url'] . '/',
+                    'pageurl' => $pageprefix . $this->page['pg_url'] . '/',
                     'title' => 'ar_title',
                     'body' => 'ar_body',
                     'url' => 'url',
@@ -411,14 +410,12 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 
             /* Get tags if used */
             if (class_exists('Jojo_Plugin_Jojo_Tags')) {
-                /* Split up tags for display */
-                $tags = Jojo_Plugin_Jojo_Tags::getTags('jojo_article', $id);
-                $smarty->assign('tags', $tags);
+                $smarty->assign('tags', $article['tags']);
 
                 /* generate tag cloud of tags belonging to this item */
                 $article_tag_cloud_minimum = Jojo::getOption('article_tag_cloud_minimum');
-                if (!empty($article_tag_cloud_minimum) && ($article_tag_cloud_minimum < count($tags))) {
-                    $itemcloud = Jojo_Plugin_Jojo_Tags::getTagCloud('', $tags);
+                if (!empty($article_tag_cloud_minimum) && ($article_tag_cloud_minimum < count($article['tags']))) {
+                    $itemcloud = Jojo_Plugin_Jojo_Tags::getTagCloud('', $article['tags']);
                     $smarty->assign('itemcloud', $itemcloud);
                 }
                /* get related articles if tags plugin installed and option enabled */
@@ -912,8 +909,26 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             $htmllanguage =  $mldata['sectiondata'][Jojo::getSectionRoot($article['pageid'])]['lc_defaultlang'];
             Jojo::updateQuery("UPDATE {article} SET `ar_htmllang`=? WHERE `articleid`=?", array($htmllanguage, $id));
         }
+        /* Clear the cache for this item  and its index page*/
+        if ($article['url']) { Jojo::clearCache($scope='html', $article['url'] . 'index.html', $rmdir=true); }
+        if ($article['pageurl']) { Jojo::clearCache($scope='html', $article['pageurl'] . 'index.html'); }
+        if (class_exists('Jojo_Plugin_Jojo_Tags') && $article['tags']) {
+            foreach ($article['tags'] as $t) {
+                if ($t['url']) { Jojo::clearCache($scope='html', 'tags/' . $t['url'] . '/' . 'index.html'); }
+            }
+        }
+
 
         Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
+        return true;
+    }
+
+    static function admin_action_delete_success_article($id)
+    {
+        $article = self::getItemsById($id);
+        /* Clear the cache for this item  and its index page*/
+        Jojo::clearCache($scope='html', $article['url'] . 'index.html', $rmdir=true);
+        Jojo::clearCache($scope='html', $article['pageurl'] . 'index.html');
         return true;
     }
 
@@ -1059,7 +1074,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
 */
     public static function get_readtime($content){
 
-        $wpm = "270";
+        $wpm = "260";
         $readtime = 0;
 
         // add extra time for line breaks (eg poetry)
