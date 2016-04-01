@@ -49,6 +49,7 @@ ob_start(); // start the output buffer
 defined('_CONTENTCACHE') or define('_CONTENTCACHE', (Jojo::getOption('contentcache') == 'no' ? false : true));
 defined('_CONTENTCACHETIME') or define('_CONTENTCACHETIME', Jojo::either(Jojo::getOption('contentcachetime'), 3600));
 defined('_CONTENTCACHETIMERESOURCES') or define('_CONTENTCACHETIMERESOURCES', Jojo::either(Jojo::getOption('contentcachetime_resources'), 604800));
+defined('_RESOURCEROOTCACHE') or define('_RESOURCEROOTCACHE', (Jojo::getOption('resource_rootcache') == 'yes' ? _WEBDIR : false));
 
 /* Set the timezone */
 if (function_exists('date_default_timezone_set')) {
@@ -62,7 +63,7 @@ $extension = Jojo::getFileExtension($_GET['uri']);
 $resourcerequest = (boolean)(in_array($extension, array('jpg', 'jpeg', 'gif', 'png', 'svg', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf')) && strpos($_GET['uri'],'/private/')===false);
 /* check public cache */
 if ($resourcerequest  && !Jojo::ctrlF5()) {
-    $cachefile = _CACHEDIR.'/public/'.md5($_GET['uri'] ) . '.' . $extension;
+    $cachefile = _CACHEDIR.'/public/'. $_GET['uri'];
     if (Jojo::fileExists($cachefile)) {
         /* output data */
         Jojo_Plugin_Core::sendCacheHeaders(filemtime($cachefile), _CONTENTCACHETIMERESOURCES);
@@ -179,24 +180,29 @@ if (!$resourcerequest) {
     }
 
     // page cache settings
-    $dynamic_url    = _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']; // requested dynamic page (full url)
-    $cache_file     = _CACHEDIR.'/public/'.md5($dynamic_url).'.html'; // construct a cache file
+    $dynamic_url    = $_SERVER['REQUEST_URI']; // requested dynamic page (full url)
+    $cache_file     = _CACHEDIR . '/public/html' . $dynamic_url .'index.html'; // construct a cache file
     /* Check for cached copy of page and display if not expired */
-    if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST)==0 && file_exists($cache_file) && time() - _CONTENTCACHETIME < filemtime($cache_file)) { //check Cache exist and it's not expired.
+    if (!(isset($_USERID) && $_USERID) && _CONTENTCACHE && !Jojo::ctrlF5() && count($_POST)==0 && file_exists($cache_file)) { //check cache copy exists 
             Jojo_Plugin_Core::sendCacheHeaders(filemtime($cache_file), _CONTENTCACHETIME);
-            $last_modified = substr(date('r', filemtime($cache_file)), 0, -5) . 'GMT';
-            $etag = md5($last_modified);
             readfile($cache_file); //read Cache file
-            $cache_filetype = 'text/html';
-            if (strpos($dynamic_url, '/rss/')) $cache_filetype='application/rss+xml';
-            if (strpos($dynamic_url, '/pdf/')) {
-                $cache_filetype='application/pdf';
-                header('Content-Disposition: attachment;');
+            if (strpos($dynamic_url, '/rss/')!==false) {
+                header('Content-type: application/rss+xml');
+                header('Content-Length: ' . strlen(ob_get_contents()));
+                ob_end_flush(); //Flush and turn off output buffering
+            } elseif (strpos($dynamic_url, '/pdf/')!==false) {
+                $uriparts = explode('/', trim($dynamic_url,'/'));
+                $pdftitle = array_pop($uriparts);
+                header('Content-type: application/pdf');
+                header('Content-Disposition: attachment; filename=' . ucwords(str_replace(array('-','_'), ' ', $pdftitle)) . '.pdf');
+                header('Content-Length: ' . strlen(ob_get_contents()));
+                ob_end_flush(); //Flush and turn off output buffering
+            } else{
+                header('Content-type: text/html; charset=' . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
+                header('Content-Length: ' . strlen(ob_get_contents()));
+                ob_end_flush(); //Flush and turn off output buffering
+                echo '<!-- cached page - ' . date('l jS \of F Y h:i:s A', filemtime($cache_file)) . ', Page : ' . $dynamic_url . ' -->';
             }
-            header('Content-type: ' . $cache_filetype . '; charset=' . (isset($charset) && $charset != '' ? $charset : 'utf-8'));
-            header('Content-Length: ' . strlen(ob_get_contents()));
-            echo '<!-- cached page - '.date('l jS \of F Y h:i:s A', filemtime($cache_file)).', Page : '.$dynamic_url.' -->';
-            ob_end_flush(); //Flush and turn off output buffering
             exit();
     } elseif (Jojo::ctrlF5() && file_exists($cache_file)){
             unlink($cache_file);
@@ -618,13 +624,10 @@ header('Content-Length: ' . strlen($html));
 echo $html;
 
 /* Cache the page */
-if (_CONTENTCACHE && !Jojo::noCache() && !$_USERID && count($_POST) == 0 && ($page->page['pg_contentcache'] != 'no')) {
-    if (!is_dir(_CACHEDIR.'/public/')) { //create a new folder if we need to
-        mkdir(_CACHEDIR.'/public/');
-    }
-    $fp = fopen($cache_file, 'w');  //open file for writing
-    fwrite($fp, ob_get_contents()); //write contents of the output buffer in Cache file
-    fclose($fp); //Close file pointer
+if (_CONTENTCACHE && !Jojo::noCache() && !$_USERID && count($_POST) == 0 && $page->page['pg_contentcache'] != 'no') {
+    Jojo::RecursiveMkdir( dirname($cache_file)); // create folder structure
+    $data = ob_get_contents();
+    file_put_contents($cache_file, $data);
 /* or wipe the cache file if it's been set to no cache since */
 } elseif (Jojo::noCache() && file_exists($cache_file)){
         unlink($cache_file);

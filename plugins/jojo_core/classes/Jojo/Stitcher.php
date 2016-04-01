@@ -66,60 +66,6 @@ class Jojo_Stitcher {
         $this->dirty = true;
     }
 
-    /* deprecated */
-    function getServerCache() 
-    {
-        if (_CONTENTCACHE && !isset($_SERVER['HTTP_PRAGMA'])) {
-            //$cacheuserid = isset($_USERID) ? $_USERID : 0;
-            $cacheuserid = 0;
-
-            $query = 'SELECT * FROM {contentcache} WHERE cc_url = ? AND cc_userid = ? AND cc_expires > ? LIMIT 1';
-            $values = array(
-                        _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-                        $cacheuserid,
-                        strtotime('now')
-                      );
-
-            $contentcache = Jojo::selectQuery($query, $values);
-
-            if (count($contentcache) == 1) {
-                $this->header .= '/** [Page generated '.date('d M y h:i:sa') . ' based on copy cached '.date('d M h:i:s',$contentcache[0]['cc_cached']) . '. This copy expires '.date('d M h:i',$contentcache[0]['cc_expires']) . '] **/'."\n";
-                $modified = $contentcache[0]['cc_cached'];
-
-                $this->addText($contentcache[0]['cc_content']);
-                $this->output(false);
-                exit;
-            }
-        }
-    }
-
-    /* deprecated */
-    function setServerCache()
-    {
-        //global $_USERID;
-        if (_CONTENTCACHE) {
-            $this->optimize();
-            //$cacheuserid = isset($_USERID) ? $_USERID : 0;
-            $cacheuserid = 0;
-
-            $query = 'REPLACE INTO {contentcache} SET cc_url = ?, cc_userid = ?, cc_content = ?, cc_cached = ?, cc_expires = ?';
-            $values = array(
-                        _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-                        $cacheuserid,
-                        $this->data,
-                        strtotime('now'),
-                        strtotime('+'._CONTENTCACHETIME . ' second')
-                      );
-            Jojo::updateQuery($query, $values);
-        }
-
-        if (_CONTENTCACHE) {
-            $this->header .= '/** [Code generated '.date('d M y h:i:sa',strtotime('now')) . ' and cached until '.date('d M y h:ia',strtotime('+'._CONTENTCACHETIME . ' second')) . '] **/'."\n";
-        } else {
-            $this->header .= '/** [Code generated '.date('d M y h:i:sa',strtotime('now')) . '] **/'."\n";
-        }
-    }
-
     function optimize()
     {
         if ($this->dirty && $this->type == 'css') {
@@ -133,7 +79,8 @@ class Jojo_Stitcher {
     function output($optimize = true)
     {
         header('Content-type: text/' . $this->type);
-        $this->sendCacheHeaders($this->modified);
+        $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
+        Jojo_Plugin_Core::sendCacheHeaders(time(), $cachetime);
 
         if ($optimize) {
             $this->optimize();
@@ -207,6 +154,63 @@ class Jojo_Stitcher {
 
         return $optimized;
     }
+
+    /* *
+    **   deprecated functions 
+    ** */
+    
+    function setServerCache()
+    {
+        //global $_USERID;
+        if (_CONTENTCACHE) {
+            $this->optimize();
+            //$cacheuserid = isset($_USERID) ? $_USERID : 0;
+            $cacheuserid = 0;
+
+            $query = 'REPLACE INTO {contentcache} SET cc_url = ?, cc_userid = ?, cc_content = ?, cc_cached = ?, cc_expires = ?';
+            $values = array(
+                        _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+                        $cacheuserid,
+                        $this->data,
+                        strtotime('now'),
+                        strtotime('+'._CONTENTCACHETIME . ' second')
+                      );
+            Jojo::updateQuery($query, $values);
+        }
+
+        if (_CONTENTCACHE) {
+            $this->header .= '/** [Code generated '.date('d M y h:i:sa',strtotime('now')) . ' and cached until '.date('d M y h:ia',strtotime('+'._CONTENTCACHETIME . ' second')) . '] **/'."\n";
+        } else {
+            $this->header .= '/** [Code generated '.date('d M y h:i:sa',strtotime('now')) . '] **/'."\n";
+        }
+    }
+
+    function getServerCache() 
+    {
+        if (_CONTENTCACHE && !isset($_SERVER['HTTP_PRAGMA'])) {
+            //$cacheuserid = isset($_USERID) ? $_USERID : 0;
+            $cacheuserid = 0;
+
+            $query = 'SELECT * FROM {contentcache} WHERE cc_url = ? AND cc_userid = ? AND cc_expires > ? LIMIT 1';
+            $values = array(
+                        _PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+                        $cacheuserid,
+                        strtotime('now')
+                      );
+
+            $contentcache = Jojo::selectQuery($query, $values);
+
+            if (count($contentcache) == 1) {
+                $this->header .= '/** [Page generated '.date('d M y h:i:sa') . ' based on copy cached '.date('d M h:i:s',$contentcache[0]['cc_cached']) . '. This copy expires '.date('d M h:i',$contentcache[0]['cc_expires']) . '] **/'."\n";
+                $modified = $contentcache[0]['cc_cached'];
+
+                $this->addText($contentcache[0]['cc_content']);
+                $this->output(false);
+                exit;
+            }
+        }
+    }
+
 
     function sendCacheHeaders($timestamp)
     {

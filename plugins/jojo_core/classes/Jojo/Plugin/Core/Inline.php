@@ -17,7 +17,7 @@
 class Jojo_Plugin_Core_Inline extends Jojo_Plugin_Core {
 
     /**
-     * Serve an external file.
+     * Serve a file as explicitly inline (to override default browser download for file types like PDF).
      */
     function __construct()
     {
@@ -34,6 +34,7 @@ class Jojo_Plugin_Core_Inline extends Jojo_Plugin_Core {
             exit;
         }
 
+        $filename = 'inline/' . $file;
         $file = _DOWNLOADDIR . '/' . Jojo::relative2absolute(urldecode($file), '/');
         if (file_exists($file)) {
             Jojo::runHook('jojo_core:downloadFile', array('filename' => $file));
@@ -41,16 +42,20 @@ class Jojo_Plugin_Core_Inline extends Jojo_Plugin_Core {
             /* Get Content */
             $content = file_get_contents($file);
 
+            $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
             /* Send header */
+            $lastmodified = filemtime($file);
+            parent::sendCacheHeaders($lastmodified, $cachetime);
             header('Content-Type: ' . Jojo::getMimeType($file));
             header('Content-Length: ' . strlen($content));
 			header('Content-disposition: inline; filename="' . basename($file) . '"');
             header("Content-Transfer-Encoding: binary");
-            header('Pragma: public');
-            header('Cache-Control: max-age=0');
 
-            /* Send Conent */
+            /* Send Content */
             echo $content;
+
+            /* Cache Content */
+            Jojo::publicCache($filename, $content, $lastmodified);
             exit;
         }
 

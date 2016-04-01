@@ -884,39 +884,106 @@ class Jojo {
     /**
      * caches a file in the public cache area (ie for files the public are allowed to see)
      */
-    static function publicCache($filename, $data=false, $modified=false)
+    static function publicCache($filename, $data=false, $modified=false, $resource=true)
     {
-        $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf');
+        $extensions = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css', 'swf', 'woff', 'svg', 'eot', 'ttf', 'html', 'pdf');
         $extension = Jojo::getFileExtension($filename);
         if (!in_array($extension, $extensions)) {
             return false;
         }
-        $publiccachefile = _CACHEDIR.'/public/'.md5($filename).'.'.$extension;
-        Jojo::RecursiveMkdir(_CACHEDIR.'/public/'); //in case this folder does not exist
+        $cachedir = $resource && _RESOURCEROOTCACHE ? _RESOURCEROOTCACHE : _CACHEDIR . '/public';
+        $publiccachefile =  $cachedir . '/' . $filename;
+        Jojo::RecursiveMkdir($cachedir . '/' . dirname($filename)); //in case this folder does not exist
         if (!$data) {
             return $publiccachefile; //if no data is supplied, return the name of the cache location
         }
         file_put_contents($publiccachefile, $data);
-        /*
-        if (is_int($modified)) {
+
+        if ($modified && is_int($modified)) {
             touch($publiccachefile, $modified);
         }
-         todo: periodic cache cleanup */
     }
 
-    /**
-     * clears all files in the public cache area. Use an array of file extensions as an argument to restrict what gets cleared (todo)
+    /*
+     * This function prevents content from being cached, regardless of other settings within Jojo.
+     * Whenever code is executed that outputs content that should not be cached, run Jojo::noCache(true);
+     * to test, run Jojo::noCache() which will return true if $nocache has previously been set on this request
      */
-    static function clearPublicCache($extensions=false)
+    static function noCache($set=false)
     {
-        $cache = scandir(_CACHEDIR.'/public/');
-        if (is_array($cache)) {
-            foreach ($cache as $filename) {
-                if (preg_match('/^[0-9a-f]{32}\\.[0-9a-z]{2,4}$/im', $filename)) {
-                    unlink(_CACHEDIR.'/public/'.$filename);
+        static $nocache;
+        if ($set) {
+            $nocache = true;
+        } elseif (!isset($nocache)) {
+            $nocache = false;
+        }
+        return $nocache;
+    }
+
+    /* clearing the full argument also wipes Smarty templates_c and the cached api / listplugins / listthemes files */
+    static function clearCache($scope='html', $url=false, $rmdir=false) {
+                
+        if ($scope=='full') {
+            if (Jojo::fileExists(_CACHEDIR . '/api.txt')) {
+                unlink(_CACHEDIR.'/api.txt');
+            }
+            if (Jojo::fileExists(_CACHEDIR . '/listPlugins.txt')) {
+                unlink(_CACHEDIR.'/listPlugins.txt');
+            }
+            if (Jojo::fileExists(_CACHEDIR . '/listThemes.txt')) {
+                unlink(_CACHEDIR.'/listThemes.txt');
+            }
+            $files = scandir(_CACHEDIR . '/smarty/templates_c');
+            foreach ($files as $file) {
+                if (preg_match('/^%%.*%%.*\\.tpl\\.php$/i', $file)) {
+                    unlink(_CACHEDIR . '/smarty/templates_c/' . $file);
                 }
             }
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(_CACHEDIR . '/public/', RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($files as $fileinfo) {
+                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                $todo($fileinfo->getRealPath());
+            }
+            
+            if (_RESOURCEROOTCACHE) {
+                $cachefolders = array('css', 'js', 'images', 'external', 'downloads', 'files', 'inline' );
+                foreach ($cachefolders as $f) {
+                    if (file_exists(_RESOURCEROOTCACHE . '/' . $f)) {
+                        $files = new RecursiveIteratorIterator(
+                            new RecursiveDirectoryIterator(_RESOURCEROOTCACHE . '/' . $f, RecursiveDirectoryIterator::SKIP_DOTS),
+                            RecursiveIteratorIterator::CHILD_FIRST
+                        );
+                        foreach ($files as $fileinfo) {
+                            $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                            $todo($fileinfo->getRealPath());
+                        }
+                        rmdir(_RESOURCEROOTCACHE . '/' . $f);
+                    }
+               }
+            }
+        } elseif ($url) {
+            $cachedir = _RESOURCEROOTCACHE && $scope!='html' ? _RESOURCEROOTCACHE : _CACHEDIR . '/public';
+            $cachefile = $cachedir . '/' . ($scope=='html' ? 'html/' : '') . $url;
+            if (file_exists($cachefile)) {
+                unlink($cachefile);
+                if ($rmdir)  rmdir(dirname($cachefile));
+            }
+        } elseif ($scope) {
+            $cachedir = _RESOURCEROOTCACHE && $scope!='html' ? _RESOURCEROOTCACHE : _CACHEDIR . '/public';
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($cachedir . '/' . $scope, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($files as $fileinfo) {
+                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                $todo($fileinfo->getRealPath());
+            }
+            rmdir($cachedir . '/' . $scope);
         }
+        return true;
     }
 
     /**
@@ -2700,57 +2767,6 @@ class Jojo {
         /* Returns space seperated string. Use in the following format... <meta name="keywords" content="$keywords" /> */
         return implode(' ',$keywords);
     }
-    /* clearing the full argument also wipes Smarty templates_c and the cached api / listplugins / listthemes files */
-    static function clearCache($scope='html', $url=false) {
-                
-        if ($scope=='full') {
-            if (Jojo::fileExists(_CACHEDIR . '/api.txt')) {
-                unlink(_CACHEDIR.'/api.txt');
-            }
-            if (Jojo::fileExists(_CACHEDIR . '/listPlugins.txt')) {
-                unlink(_CACHEDIR.'/listPlugins.txt');
-            }
-            if (Jojo::fileExists(_CACHEDIR . '/listThemes.txt')) {
-                unlink(_CACHEDIR.'/listThemes.txt');
-            }
-            $files = scandir(_CACHEDIR . '/smarty/templates_c');
-            foreach ($files as $file) {
-                if (preg_match('/^%%.*%%.*\\.tpl\\.php$/i', $file)) {
-                    unlink(_CACHEDIR . '/smarty/templates_c/' . $file);
-                }
-            }
-            array_map('unlink', glob(_CACHEDIR . '/public/*.js'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.css'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.html'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.woff'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.ttf'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.svg'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.eot'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.swf'));
-        } elseif ($scope=='images') {
-            array_map('unlink', glob(_CACHEDIR . '/public/*.jpg'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.jpeg'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.png'));
-            array_map('unlink', glob(_CACHEDIR . '/public/*.gif'));
-        } elseif ($url) {
-            unlink(_CACHEDIR . '/public/' . md5($url) . '.' . $scope);
-        } elseif ($scope) {
-            array_map('unlink', glob(_CACHEDIR . '/public/*.' . $scope));
-        }
-        return true;
-    }
-
-    /**
-     * DEPRECATED
-     */
-    static function html2text($html)
-    {
-        return Text_Filter::filter($html, 'html2text');
-    }
 
     static function pseudobreaks($text, $remove=false)
     {
@@ -3508,22 +3524,6 @@ class Jojo {
         return $selectedPages;
     }
 
-    /*
-     * This function prevents content from being cached, regardless of other settings within Jojo.
-     * Whenever code is executed that outputs content that should not be cached, run Jojo::noCache(true);
-     * to test, run Jojo::noCache() which will return true if $nocache has previously been set on this request
-     */
-    static function noCache($set=false)
-    {
-        static $nocache;
-        if ($set) {
-            $nocache = true;
-        } elseif (!isset($nocache)) {
-            $nocache = false;
-        }
-        return $nocache;
-    }
-
     static function getFeed($items, $fields)
     {
         $pagetitle = $fields['pagetitle'];
@@ -3547,7 +3547,7 @@ class Jojo {
         $rss .= "<channel>\n";
         $rss .= '<title>' . $site . ': ' . $pagetitle . "</title>\n";
         $rss .= '<description>' . $description . "</description>\n";
-        $rss .= "<link>" . $pageurl . "</link>\n";
+        $rss .= "<link>" . _SITEURL . '/' . $pageurl . "</link>\n";
         $rss .= "<copyright>" . htmlentities(_SITETITLE) . " " . date('Y', strtotime('now')) . "</copyright>\n";
 
         foreach ($items as &$i) {
@@ -3585,7 +3585,7 @@ class Jojo {
                 $rss .= $i['imageurl'] && $i['imagedata'] ? '<enclosure url="' . $i['imageurl'] . '" length="' . $i['imagedata']['size'] . '" type="' . ( isset($i['imagedata']['mime']) ? $i['imagedata']['mime'] : 'image/jpeg' ) . '" />' . "\n" : '';
             }
             $rss .= "<link>". $source . "</link>\n";
-            $rss .= '<source url="'. $pageurl . '">' . $pagetitle . "</source>\n";
+            $rss .= '<source url="'. _SITEURL . '/' . $pageurl . '">' . $pagetitle . "</source>\n";
             $rss .= "<pubDate>" . $i['date'] . "</pubDate>\n";
             $rss .= "</item>\n";
         }
@@ -3594,18 +3594,17 @@ class Jojo {
 
         header('Content-type: application/rss+xml');
         echo $rss;
-        ob_end_flush(); //Flush and turn off output buffering
        
         /* Cache the page */
+        $filename = 'html/' . $pageurl . 'rss/index.html';
         if (_CONTENTCACHE && !Jojo::noCache()) {
-            $cachefile = _CACHEDIR . '/public/' . md5($pageurl . 'rss/uri=' . ltrim(str_replace(_SITEURL, '', $pageurl) . 'rss/', '/')) . '.html';
-            $fp = fopen($cachefile, 'w');  //open file for writing
-            fwrite($fp, $rss); //write contents to Cache file
-            fclose($fp); //Close file pointer
+            $data = ob_get_contents();
+            Jojo::publicCache($filename, $data, time(), $resource=false);
         /* or wipe the cache file if it's been set to no cache since */
-        } elseif (Jojo::noCache() && file_exists($cachefile)){
-                unlink($cachefile);
+        } elseif (Jojo::noCache() && file_exists($filename)){
+            unlink(_CACHEDIR . '/public/' . $filename);
         }
+        ob_end_flush(); //Flush and turn off output buffering
 
         exit;
     }
@@ -3959,4 +3958,29 @@ class Jojo {
         $browser = new Horde_Browser();
         return $browser->isMobile();
     }
+
+    /**
+     * DEPRECATED
+     */
+
+    /**
+     * clears all files in the public cache area. Use an array of file extensions as an argument to restrict what gets cleared (todo)
+     */
+    static function clearPublicCache($extensions=false)
+    {
+        $cache = scandir(_CACHEDIR.'/public/');
+        if (is_array($cache)) {
+            foreach ($cache as $filename) {
+                if (preg_match('/^[0-9a-f]{32}\\.[0-9a-z]{2,4}$/im', $filename)) {
+                    unlink(_CACHEDIR.'/public/'.$filename);
+                }
+            }
+        }
+    }
+
+    static function html2text($html)
+    {
+        return Text_Filter::filter($html, 'html2text');
+    }
+
 }

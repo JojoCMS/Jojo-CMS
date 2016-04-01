@@ -319,6 +319,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'resource_rootcache',
+    'category'    => 'Cacheing',
+    'label'       => 'Static Resource cache',
+    'description' => 'If enabled, resources (css, js, images, external) will be cached under the root folder. This is faster than the default php-mediated cacheing but means cached copies can only be cleared via the admin functions - force refresh will have no effect. Root folder should be owned by the web process and set to 755',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
+);
+
+$_options[] = array(
     'id'          => 'contentcachetime',
     'category'    => 'Cacheing',
     'label'       => 'Content cache time',
@@ -564,7 +574,7 @@ $_options[] = array(
     'id'          => 'nav_mainnav',
     'category'    => 'Navigation',
     'label'       => 'Mainnav levels',
-    'description' => 'How many levels of sub-navigation to include below the mainnav. 0 = just the top level. Disables separate subnav if >0 ',
+    'description' => 'How many levels of sub-navigation to include below the mainnav. 0 = just the top level. Disabled if -1 ',
     'type'        => 'integer',
     'default'     => '0',
     'options'     => ''
@@ -574,9 +584,9 @@ $_options[] = array(
     'id'          => 'nav_subnav',
     'category'    => 'Navigation',
     'label'       => 'Subnav levels',
-    'description' => 'How many levels of sub-navigation to include below the subnav. 0 = just the top level. Disabled if mainnav not 0',
+    'description' => 'How many levels of sub-navigation to include below the subnav. 0 = just the top level. Disabled if -1 (default)',
     'type'        => 'integer',
-    'default'     => '2',
+    'default'     => '-1',
     'options'     => ''
 );
 
@@ -584,7 +594,7 @@ $_options[] = array(
     'id'          => 'nav_footernav',
     'category'    => 'Navigation',
     'label'       => 'Footernav levels',
-    'description' => 'How many levels of sub-navigation to include below the footernav. 0 = just the top level',
+    'description' => 'How many levels of sub-navigation to include below the footernav. 0 = just the top level. Disabled if -1',
     'type'        => 'integer',
     'default'     => '0',
     'options'     => ''
@@ -594,9 +604,9 @@ $_options[] = array(
     'id'          => 'use_secondary_nav',
     'category'    => 'Navigation',
     'label'       => 'Use secondary navigation',
-    'description' => 'Enables / disables the Secondary Nav field on Edit pages. It is recommended this is set to NO unless it is specifically used by the site. Please run SETUP after changing this option.',
+    'description' => 'Enables / disables the Secondary Nav field on Edit pages. Disabled by default. Run SETUP after changing this option.',
     'type'        => 'radio',
-    'default'     => 'yes',
+    'default'     => 'no',
     'options'     => 'yes,no'
 );
 
@@ -787,22 +797,24 @@ $_options[] = array(
     'options'     => ''
 );
 
+/* deprecated */
 $_options[] = array(
     'id'          => 'css-print',
     'category'    => 'CSS',
     'label'       => 'CSS for print',
     'description' => 'Any additional CSS specifically for printouts required by the site can be added here. This may be easier and quicker than editing the CSS file and uploading via FTP.',
-    'type'        => 'textarea',
+    'type'        => 'hidden',
     'default'     => '',
     'options'     => ''
 );
 
+/* deprecated */
 $_options[] = array(
     'id'          => 'css-handheld',
     'category'    => 'CSS',
     'label'       => 'CSS for handhelds',
     'description' => 'Any additional CSS specifically for handheld devices and PDAs required by the site can be added here. This may be easier and quicker than editing the CSS file and uploading via FTP.',
-    'type'        => 'textarea',
+    'type'        => 'hidden',
     'default'     => '',
     'options'     => ''
 );
@@ -815,6 +827,16 @@ $_options[] = array(
     'type'        => 'textarea',
     'default'     => '',
     'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'css_inline',
+    'category'    => 'CSS',
+    'label'       => 'Inline CSS',
+    'description' => 'Insert css into the head inline instead of as a linked resource. Speeds page rendering but means CSS will only be updated when the page cache is flushed.',
+    'type'        => 'radio',
+    'default'     => 'no',
+    'options'     => 'yes,no'
 );
 
 $_options[] = array(

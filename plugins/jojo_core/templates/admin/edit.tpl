@@ -29,8 +29,10 @@
         <input type="submit" name="btn_save" id="btn_save" accesskey="s" value="Save" class="btn btn-default" title="Save the changes to this {$displayname}" />
         <div id="buttons"{if $deletebutton || $addsimilarbutton || $addchildbutton} class="btn-group"{/if}>
             {if $deletebutton}<input style="display:none;" type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn btn-default" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
-            {if $addsimilarbutton}<input style="display:none;" type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default" title="Create another {$displayname} using selected {$displayname} as a starting point " />{/if}
-            {if $addchildbutton}<input style="display:none;" type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default" title="Add a new {$displayname} underneath this one" />{/if}
+            {if $addsimilarbutton}<input style="display:none;" type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default" title="Create another {$displayname} using this item as a starting point " />{/if}
+            {* deprecate Child button
+            {if false && $addchildbutton}<input style="display:none;" type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default" title="Add a new {$displayname} underneath this one" />{/if}
+            *}
         </div><!-- [end buttons] -->
 
         {if $numtabs > 1}

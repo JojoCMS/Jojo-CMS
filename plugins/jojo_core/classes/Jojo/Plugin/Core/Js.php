@@ -166,7 +166,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
         $js->output($optimise);
 
         /* Cache a copy for later */
-        Jojo::publicCache('js/' . $file . '.js', $js->data, $js->modified);
+        Jojo::publicCache('js/' . $file . '.js', $js->data, time());
         exit;
     }
 }

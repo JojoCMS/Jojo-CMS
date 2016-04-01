@@ -78,6 +78,15 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             $section =  !$p['pg_language'] ? $mldata['sectiondata'][Jojo::getSectionRoot($id)]['lc_code'] : $p['pg_language'];
             Jojo::updateQuery("UPDATE {page} SET `pg_htmllang`=?, `pg_language`=? WHERE `pageid`=?", array($htmllanguage, $section, $id));
         }
+        /* Clear the cache for this page */
+        Jojo::clearCache($scope='html', $p['url'] . 'index.html');
+    }
+
+    static function admin_action_delete_success_page($id)
+    {
+        $p = self::getItemsById($id, 'showhidden');
+        /* Clear the cache for this page*/
+        Jojo::clearCache($scope='html', $p['url'] . 'index.html');
     }
 
     /**
@@ -622,14 +631,14 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     static function sendCacheHeaders($timestamp=0, $cachetime=28800) {
         // A PHP implementation of conditional get, see
         //   http://fishbowl.pastiche.org/archives/001132.html
-        $timestamp = $timestamp ? $timestamp : time();
+        $timestamp = $timestamp ?: time();
         $last_modified = substr(date('r', $timestamp), 0, -5) . 'GMT';
         $etag = md5($last_modified);
         // Send the headers
         header("Last-Modified: $last_modified");
         header("ETag: $etag");
         header('Cache-Control: private, max-age=' . $cachetime);
-        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', $timestamp + $cachetime));
+        header('Expires: ' . date('D, d M Y H:i:s \G\M\T', time() + $cachetime));
         header('Pragma: ');
         // See if the client has provided the required headers
         $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ?

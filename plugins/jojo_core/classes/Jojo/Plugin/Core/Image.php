@@ -37,8 +37,9 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
             exit;
         }
 
+        $cachedir = _RESOURCEROOTCACHE ?: _CACHEDIR . '/public';
         $cachetime = _CONTENTCACHETIMERESOURCES;
-        Jojo::RecursiveMkdir(_CACHEDIR . '/public/'); //in case this folder does not exist
+
         $pad = false;
 
         if (preg_match('/^([0-9]+|default)\/(.+)/', $file, $matches)) {
@@ -146,11 +147,11 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         $f = ($filters && isset($_GET['filter']) && $_GET['filter'] && isset($filters[$_GET['filter']])) ? $_GET['filter'] : '';
 
        if ($s && self::isRemoteFile($filename)) {
-            $cachefile = _CACHEDIR . '/images/remote/' . $s . $f . '/' . md5($filename) . '.' . Jojo::getFileExtension($filename);
+            $cachefile = _CACHEDIR . '/images/remote/' . $s . $f . '/' . $filename;
         } elseif ($s) {
             $cachefile = _CACHEDIR . '/images/' . $s . $f . '/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
         } elseif (self::isRemoteFile($filename)) {
-            $cachefile = _CACHEDIR . '/images/remote/' . md5($filename) . '.' . $filetype;
+            $cachefile = _CACHEDIR . '/images/remote/' . $filename;
         } else {
             $cachefile = _CACHEDIR . '/images/' . str_replace(_DOWNLOADDIR . '/', '', $filename);
         }
@@ -159,6 +160,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
 
         /* for default sized images, read image data directly to save reprocessing */
         if (($s == 'default') || ($s == '')) {
+            Jojo::RecursiveMkdir($cachedir . '/images/' . dirname($file)); // create folder structure
             if (self::isRemoteFile($filename) || Jojo::fileExists($filename)) {
                 Jojo::runHook('jojo_core:imageDefaultFile', array('filename' => $filename));
 
@@ -177,7 +179,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     $im = imagecreatefromjpeg($filename);
                     $im = self::applySharpening($im, $sharpness);
                     Imagejpeg($im,null,$quality);
-                    Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
+                    Imagejpeg($im, $cachedir . '/images/' . $file, $quality);
                 } else {
                     echo $data;
                     /* cache image data */
@@ -206,7 +208,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     $im = imagecreatefromjpeg($pluginfile);
                     $im = self::applySharpening($im, $sharpness);
                     Imagejpeg($im,null,$quality);
-                    Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
+                    Imagejpeg($im, $cachedir . '/images/' . $file, $quality);
                 } else {
                     echo $data;
                    /* cache image data */
@@ -235,7 +237,7 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                     $im = imagecreatefromjpeg($pluginfile);
                     $im = self::applySharpening($im, $sharpness);
                     Imagejpeg($im,null,$quality);
-                    Imagejpeg($im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
+                    Imagejpeg($im, $cachedir . '/images/' . $file, $quality);
                 } else {
                     echo $data;
                     /* cache image data */
@@ -496,16 +498,17 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
         header('Content-Transfer-Encoding: binary');
 
         // output
+        Jojo::RecursiveMkdir($cachedir . '/images/' . dirname($file)); // create folder structure
         if ($filetype == "gif") {
             Imagegif($new_im);
-            Imagegif($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.gif');
+            Imagegif($new_im, $cachedir . '/images/' . $file);
         } elseif ($filetype == "png") {
             imagesavealpha($new_im, true);
             Imagepng($new_im);
-            Imagepng($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.png');
+            Imagepng($new_im, $cachedir . '/images/' . $file);
         } else {
            Imagejpeg($new_im,null,$quality);
-           Imagejpeg($new_im, _CACHEDIR . '/public/' . md5('images/' . $file) . '.' . Jojo::getFileExtension($file), $quality);
+           Imagejpeg($new_im, $cachedir . '/images/' . $file, $quality);
         }
 
         // cleanup

@@ -60,7 +60,8 @@
         <p><button class="btn btn-warning empty-cache" data-scope="html"/>Empty Page Cache</button></p>
         <p>Pages have a cache time of {$contentcachetime} - emptying the cache will ensure everyone will see fresh content immediately.</p>
         <p><button class="btn btn-warning empty-cache" data-scope="js"/>Empty JS Cache</button>
-        <button class="btn btn-warning empty-cache" data-scope="css"/>Empty CSS Cache</button></p>
+        <button class="btn btn-warning empty-cache" data-scope="css"/>Empty CSS Cache</button>
+        <button class="btn btn-warning empty-cache" data-scope="external"/>Empty Externals Cache</button></p>
         <p>Resources (images, css, js etc) have a cache time of {$resourcecachetime} and should usually not need be cleared.</p>
         <p><button class="btn btn-danger empty-cache" data-scope="full"/>Clear Everything</button></p>
 

@@ -19,7 +19,7 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
     private $inlineExtensions = array('jpg', 'gif', 'jpeg', 'png', 'swf', 'xml');
 
     /**
-     * Serve an external file.
+     * Serve a file from the downloads folder.
      */
     function __construct()
     {
@@ -35,15 +35,17 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
             header("HTTP/1.0 404 Not Found", true, 404);
             exit;
         }
-
+        $filename = 'downloads/' . $file;
         $file = _DOWNLOADDIR . '/' . Jojo::relative2absolute(urldecode($file), '/');
         if (file_exists($file)) {
+            $content = file_get_contents($file);
             Jojo::runHook('jojo_core:downloadFile', array('filename' => $file));
             $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
+            $lastmodified = filemtime($file);
             /* Send header */
-            parent::sendCacheHeaders(filemtime($file), $cachetime);
+            parent::sendCacheHeaders($lastmodified, $cachetime);
             header('Content-Type: ' . Jojo::getMimeType($file));
-            header('Content-Length: ' . filesize($file));
+            header('Content-Length: ' . strlen($content));
             if (in_array(Jojo::getFileExtension($file), $this->inlineExtensions)) {
                 header('Content-disposition: inline; filename="' . basename($file) . '"');
             } else {
@@ -51,8 +53,9 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
             }
             header('Content-Transfer-Encoding: binary');
 
-            /* Send Conent */
-            readfile($file, 'rb');
+            /* Send Content */
+            echo $content;
+            Jojo::publicCache($filename, $content, $lastmodified);
             exit;
         }
 

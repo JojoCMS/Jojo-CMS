@@ -73,7 +73,7 @@
                 to = setTimeout(function () {
                   var v = $('#treediv_q').val();
                   $('#treediv').jstree(true).search(v);
-                }, 250);
+                }, 500);
             });
 {/literal}{/if}{literal}
        });

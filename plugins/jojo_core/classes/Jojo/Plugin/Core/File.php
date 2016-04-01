@@ -35,11 +35,17 @@ class Jojo_Plugin_Core_File extends Jojo_Plugin_Core {
         }
 
         /* Look for the files in a plugin */
-        foreach (Jojo::listPlugins('files/'.$file) as $pluginfile) {
+        foreach (Jojo::listPlugins('files/' . $file) as $pluginfile) {
             $mimetype = Jojo::getMimeType($pluginfile);
             if ($mimetype) {
-                header('content-type:'.$mimetype);
-                echo file_get_contents($pluginfile);
+                $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
+                $lastmodified = filemtime($pluginfile);
+                parent::sendCacheHeaders($lastmodified, $cachetime);
+                header('Content-Type:' . $mimetype);
+                $content = file_get_contents($pluginfile);
+                header('Content-Length: ' . strlen($content));
+                echo $content;
+                Jojo::publicCache('files/' . $file, $content, $lastmodified);
                 exit;
             }
         }
