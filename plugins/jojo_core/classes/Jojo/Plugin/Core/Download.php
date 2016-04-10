@@ -55,7 +55,6 @@ class Jojo_Plugin_Core_Download extends Jojo_Plugin_Core {
 
             /* Send Content */
             echo $content;
-            Jojo::publicCache($filename, $content, $lastmodified);
             exit;
         }
 
