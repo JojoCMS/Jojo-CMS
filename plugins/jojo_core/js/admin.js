@@ -1,9 +1,10 @@
 $(document).ready(function() {
 
   $('.empty-cache').click(function(){
+    var buttontext = $(this).html();
     $(this).html('Emptying ...');
     var button = $(this);
-    $.get( 'json/admin-empty-cache.php', {scope: $(this).attr('data-scope')}, function(){button.html('Cache Emptied');} );
+    $.get( 'json/admin-empty-cache.php', {scope: $(this).attr('data-scope')}, function(){button.html(buttontext);} );
      return false;
   });
 

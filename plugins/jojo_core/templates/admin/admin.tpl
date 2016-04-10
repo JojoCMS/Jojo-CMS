@@ -44,17 +44,14 @@
 <div class="col-md-5 offset1">
 
     <div class="admin-home-item-right">
-        <h3>Edit Site Options</h3>
-        <p>These options are for managing your website. Unless you know what these do, they are best left unchanged</p>
-
         <!-- [Content Cache] -->
-        <h3>Content Cache: </h3>
+        <h3>Page Cache</h3>
         <div class="controls">
             <label for="content-cache-on" class="radio inline"><input type="radio" name="content-cache" id="content-cache-on" onclick="$('#savemsg_contentcache').hide().html('Saving...').show(); frajax('admin-set-options','contentcache','yes');"{if $OPTIONS.contentcache == 'yes'} checked="checked"{/if} />On</label>
             <label for="content-cache-off" class="radio inline"><input type="radio" name="content-cache" id="content-cache-off" onclick="$('#savemsg_contentcache').hide().html('Saving...').show(); frajax('admin-set-options','contentcache','no');"{if $OPTIONS.contentcache == 'no'} checked="checked"{/if} />Off</label>
             <span id="savemsg_contentcache" style="color: red;" class="inline-help"></span>
         </div>
-        <p>Caching your website's content makes it run a lot faster, and reduces load on the server. It should usually be left on, unless new features are being tested</p>
+        <p>Caching site content makes it run a lot faster, and reduces load on the server. It should usually be left on, unless new features are being tested</p>
 
         <!-- [Empty Content Cache] -->
         <p><button class="btn btn-warning empty-cache" data-scope="html"/>Empty Page Cache</button></p>
