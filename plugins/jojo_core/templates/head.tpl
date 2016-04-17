@@ -21,7 +21,7 @@
     {elseif $OPTIONS.robots_odp == "yes"}<meta name="robots" content="noodp" />
     {elseif $OPTIONS.robots_ydir == "yes"}<meta name="slurp" content="noydir" />{/if}{/if}{* end of the ODP and Ydir section*}
     {if $inlinecss}<style>{$inlinecss}</style>
-    {else}<link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/styles.css"}" />{/if}{if $rtl}
+    {else}<link rel="stylesheet" type="text/css" href="{$SITEURL}/css/styles{if $cssmodtime}{$cssmodtime}{/if}.css" />{/if}{if $rtl}
     <link rel="stylesheet" type="text/css" href="{cycle values=$NEXTASSET}{jojoAsset file="css/rtl.css"}" />{/if}
     {/if}{if $css}
     <style type="text/css">
@@ -49,7 +49,7 @@
           var siteurl = '{$SITEURL}';
           var secureurl = '{$SECUREURL}';
     </script>
-    <script{if !$htmldoctype} type="text/javascript"{/if} src="{cycle values=$NEXTASSET}{jojoAsset file="js/common.js"}"></script>
+    <script{if !$htmldoctype} type="text/javascript"{/if} src="{$SITEURL}/js/common{if $jsmodtime}{$jsmodtime}{/if}.js"></script>
     {/if}{if $head}{$head}
     {/if}{if $isadmin}<script type="text/javascript" src="{cycle values=$NEXTASSET}{jojoAsset file="js/commonadmin.js"}"></script>
     {else}{if $OPTIONS.analyticscode && !$isadmin && !$adminloggedin && $OPTIONS.analyticsposition == 'top'}{include file="analytics.tpl"}

@@ -917,10 +917,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
                 if ($t['url']) { Jojo::clearCache($scope='html', 'tags/' . $t['url'] . '/' . 'index.html'); }
             }
         }
-
-
         Jojo::updateQuery("UPDATE {option} SET `op_value`=? WHERE `op_name`='article_last_updated'", time());
-        return true;
     }
 
     static function admin_action_delete_success_article($id)

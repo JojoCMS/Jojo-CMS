@@ -134,6 +134,8 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* Twitter Bootstrap options */
                 /* Transitions */
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/transition.js');
+                /* Modals */
+                    $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/modal.js');
                 /* Dropdowns */
                     $js->addFile(_BASEPLUGINDIR . '/jojo_core/external/bootstrap/js/dropdown.js');
                 /* Togglable tabs */
@@ -147,6 +149,10 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
                 /* Core functions */
                 $js->addFile(_BASEPLUGINDIR . '/jojo_core/js/admin.js');
 
+                /* Search for admin js in each plugin */
+                foreach (Jojo::listPlugins('js/admin.js') as $pluginfile) {
+                    $js->addFile($pluginfile);
+                }
                 break;
 
             default:

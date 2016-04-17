@@ -31,14 +31,20 @@ $smarty->assign('commonhead', (boolean)(Jojo::getOption('commonjs_head', 'yes')=
 
 /* inline css if option is set and a cached compressed copy exists. 
 Don't cache page if option is set but css has been flushed and is being rebuilt */
+$rcachedir = _RESOURCEROOTCACHE ?: _CACHEDIR . '/public';
 if (Jojo::getOption('css_inline', 'no')=='yes') {
-    $cachedir = _RESOURCEROOTCACHE ?: _CACHEDIR . '/public';
-    if (file_exists($cachedir . '/css/styles.css')) {
-        $smarty->assign ('inlinecss', file_get_contents($cachedir . '/css/styles.css'));
+    if (file_exists($rcachedir . '/css/styles.css')) {
+        $smarty->assign ('inlinecss', file_get_contents($rcachedir . '/css/styles.css'));
     } else {
         Jojo::noCache(true);
     }
+} elseif (Jojo::getOption('resource_cachebust', 'no')=='yes') {
+    $smarty->assign ('cssmodtime', '_' . ( file_exists($rcachedir . '/css/styles.css') ? filemtime($rcachedir . '/css/styles.css') : time() ) );
 }
+if (Jojo::getOption('resource_cachebust', 'no')=='yes') {
+    $smarty->assign ('jsmodtime', '_' . ( file_exists($rcachedir . '/js/common.js') ? filemtime($rcachedir . '/js/common.js') : time() ) );
+}
+
 /* Create root page for current section and generate page tree array to show cascading selected menu levels beyond child */
 $root = Jojo::getSectionRoot($page->id);
 $selectedPages = Jojo::getSelectedPages($page->id, $root);

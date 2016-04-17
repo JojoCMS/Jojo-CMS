@@ -4,7 +4,18 @@ $(document).ready(function() {
     var buttontext = $(this).html();
     $(this).html('Emptying ...');
     var button = $(this);
-    $.get( 'json/admin-empty-cache.php', {scope: $(this).attr('data-scope')}, function(){button.html(buttontext);} );
+    var clearscope = button.data('scope');
+    $.get( 'json/admin-empty-cache.php', {scope: clearscope}, function(){
+        button.html(buttontext);
+        if (clearscope == 'full' || clearscope == 'css') {
+            $.post( 'css/styles.css');
+            $.post( 'css/admin.css');
+        }
+        if (clearscope == 'full' || clearscope == 'js') {
+            $.post( 'js/common.js');
+            $.post( 'js/commonadmin.js');
+        }
+     });
      return false;
   });
 
