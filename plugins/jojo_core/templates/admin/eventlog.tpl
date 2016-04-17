@@ -1,5 +1,18 @@
 {include file="admin/header.tpl"}
 <div id="event-log">
+<div class="row">
+        <form action='' method="post" class="form-inline">
+            <div class="form-group">
+                <button type="submit" name="submit" class="btn btn-default btn-sm">Clear</button>
+                <select class="form-control input-sm" name="logdelete" id="logdelete">
+                        {if $OPTIONS.eventlog_404=='yes'}<option value="404">404 Errors</option>{/if}
+                        <option value="php">PHP Errors</option>
+                        <option value="all">All</option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
 {if $OPTIONS.eventlog_404=='yes'}<p><button class="btn btn-default btn-sm" onclick="$('.404').hide(); $('#hide404').hide(); $('#show404').show(); return false;" id="hide404" >Hide 404 errors</button><button class="btn btn-default btn-sm" onclick="$('.404').show(); $('#show404').hide(); $('#hide404').show(); return false;" id="show404"  style="display:none;">Show 404 errors</button></p>{/if}
 <table class="table">
     <thead>
