@@ -646,9 +646,9 @@ $_options[] = array(
     'id'          => 'image_padbackground',
     'category'    => 'Images',
     'label'       => 'Pad Background',
-    'description' => 'Background colour for padded images as r,g,b -  integers between 0 and 255 or hexadecimals between 0x00 and 0xFF',
+    'description' => 'Background colour for padded images as r,g,b,a -  integers between 0 and 255 or hexadecimals between 0x00 and 0xFF for rgb - and alpha from 0 (opaque) to 127 (transparent)',
     'type'        => 'text',
-    'default'     => '0xFF,0xFF,0xFF',
+    'default'     => '255,255,255,0',
     'options'     => ''
 );
 

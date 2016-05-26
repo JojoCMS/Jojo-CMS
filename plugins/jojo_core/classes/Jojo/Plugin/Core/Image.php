@@ -420,12 +420,12 @@ class Jojo_Plugin_Core_Image extends Jojo_Plugin_Core {
                 $new_im = ImageCreateTrueColor($new_width, $new_height);
             }
             if ($filetype == 'png') { //prevent the black background from appearing when resizing transparent png
-                imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0,0));
+                imagecolortransparent($new_im, imagecolorallocatealpha($new_im, 0, 0, 0, 0));
                 imagealphablending($new_im, false);
             }
             if ($pad) {
-                $padbg = explode(',', Jojo::getOption('image_padbackground', '0xFF, 0xFF, 0xFF'));
-                $background = imagecolorallocate($new_im, $padbg[0], $padbg[1], $padbg[2]);
+                $padbg = explode(',', Jojo::getOption('image_padbackground', '0xFF, 0xFF, 0xFF, 0'));
+                $background = imagecolorallocatealpha($new_im, $padbg[0], $padbg[1], $padbg[2], (isset($padbg[3]) ? $padbg[3] : 0 ) );
                 imagefill($new_im, 0, 0, $background);
             }
             $dst_x = ($pad) ? round(($fitmaxw / 2) - ($new_width / 2)) : 0;
