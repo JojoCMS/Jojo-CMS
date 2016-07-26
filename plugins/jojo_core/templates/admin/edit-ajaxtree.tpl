@@ -1,4 +1,4 @@
-    {if $searchable}<div class="search form-group"><input id="treediv_q" class="input form-control" type="text" value="Search" onfocus="if ($(this).val()=='Search') $(this).val('');" /></div>
+    {if $searchable}<div class="search form-group"><input id="treediv_q" class="input form-control" type="text" value="Search (3 characters minimum)" onfocus="if ($(this).val()=='Search (3 characters minimum)') $(this).val('');" /></div>
     {/if}
     <div id="treediv" class="treediv{if $menutype} {$menutype}{/if}"></div>
     {if $requested_id}<input type="hidden" name="requestedid" id="requestedid" value="{$requested_id}" />{/if}
@@ -71,8 +71,10 @@
             $('#treediv_q').keyup(function () {
                 if(to) { clearTimeout(to); }
                 to = setTimeout(function () {
-                  var v = $('#treediv_q').val();
-                  $('#treediv').jstree(true).search(v);
+                    var v = $('#treediv_q').val();
+                    if (v.length>2 || v.length==0) {
+                        $('#treediv').jstree(true).search(v);
+                    }
                 }, 500);
             });
 {/literal}{/if}{literal}

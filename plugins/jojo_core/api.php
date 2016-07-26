@@ -334,7 +334,7 @@ $_options[] = array(
     'label'       => 'Cache Bust CSS / JS',
     'description' => 'If enabled, styles.css and common.js will have a mtime appended to the filename in the template. Should only be set to on if htaccess has the v1741 rewrite rule present. Has no effect on css if inline css option is enabled.',
     'type'        => 'radio',
-    'default'     => ( file_exists(_WEBDIR . '/.htaccess') && strpos(file_get_contents(_WEBDIR . '/.htaccess'), '# Version 1741') ? 'yes' : 'no'),
+    'default'     => 'no',
     'options'     => 'yes,no'
 );
 

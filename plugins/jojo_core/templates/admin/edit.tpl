@@ -30,9 +30,6 @@
         <div id="buttons"{if $deletebutton || $addsimilarbutton || $addchildbutton} class="btn-group"{/if}>
             {if $deletebutton}<input style="display:none;" type="submit" name="btn_delete" id="btn_delete" value="Delete" onclick="return confirmdelete();" class="btn btn-default" title="Delete to this {$displayname} - this action cannot be undone" />{/if}
             {if $addsimilarbutton}<input style="display:none;" type="submit" name="btn_addsimilar" id="btn_addsimilar" value="Copy" class="btn btn-default" title="Create another {$displayname} using this item as a starting point " />{/if}
-            {* deprecate Child button
-            {if false && $addchildbutton}<input style="display:none;" type="submit" name="btn_addchild" id="btn_addchild" value="Child" class="btn btn-default" title="Add a new {$displayname} underneath this one" />{/if}
-            *}
         </div><!-- [end buttons] -->
 
         {if $numtabs > 1}
@@ -52,7 +49,7 @@
             {foreach from=$fields key=fieldname item=field}
             {if $field.tabname == $tab.tabname}
                 <div id="row_{$fieldname}" class="form-group{if $field.error} has-error{/if}{if $field.type=='hidden' || $field.type=='privacy'} hidden{/if}">
-                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<label style="padding-left: 15px;">{$field.name}</label>{else}<label for="fm_{$fieldname}" class="col-md-3 col-lg-2{if $field.error} text-danger{/if}">{$field.name} {if $field.required=="yes"}<span class="symbol required" title="required">!</span>{/if}{if $field.help}<span class="symbol help"  data-toggle="tooltip" data-placement="top" title="{$field.help|replace:'\"':''}">?</span>{/if}</label>{/if}
+                    {if $field.showlabel=='no' || $field.type=='permissions'}{elseif $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor'}<label style="padding-left: 15px;">{$field.name}</label>{else}<label for="fm_{$fieldname}" class="col-md-3 col-lg-2{if $field.error} text-danger{/if}">{$field.name} {if $field.required=="yes"}<span class="text-warning" title="required">*</span>{/if}{if $field.help}<span class="symbol help"  data-toggle="tooltip" data-placement="top" title="{$field.help|replace:'\"':''}">?</span>{/if}</label>{/if}
                     <div title="{$field.help|replace:'\"':''}" id="wrap_{$fieldname}" class="{if $field.type=='texteditor' ||  $field.type=='wysiwygeditor' || $field.type=='bbeditor' || $field.showlabel=='no' || $field.type=='permissions'}col-md-12{elseif $field.flags.PRIVACY}col-md-7 col-lg-8{else}col-md-9 col-lg-10{/if}">
                         {$field.html}
                     </div>
