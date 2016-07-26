@@ -54,7 +54,7 @@ if (($uri_parts[0] == 'index.php') && file_exists('config.php') && file_exists('
 /* Create contents for default htaccess file */
 $htaccess = <<<EOHTACCESS
 # Jojo .htaccess file.
-# Version 1740
+# Version 1741
 RewriteEngine On
 
 RewriteBase REWRITEBASE
