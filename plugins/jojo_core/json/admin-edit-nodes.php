@@ -457,7 +457,7 @@ function getNodes($t, $node)
             $jtableoptions = Jojo::selectRow("SELECT * FROM {tabledata} WHERE td_name = ?", $jtablename);
             $jtableidfield         = $jtableoptions['td_primarykey'];
             $jtabledisplayfield    = Jojo::either($jtableoptions['td_displayfield'], $jtableoptions['td_primarykey']);
-            $query .= "t." . $jtabledisplayfield . " as nodetitle ";
+            $query .= ( strpos($jtabledisplayfield, 'if')===false ? "t." : '' ) . $jtabledisplayfield . " as nodetitle ";
         } else {
             $query .= Jojo::either($table->getOption('displayfield'), $table->getOption('primarykey')) . " as nodetitle";
         }
@@ -469,7 +469,8 @@ function getNodes($t, $node)
        if ($table->getOption('displayfield')=='pageid' || $table->getOption('orderbyfields')=='pageid') {
             $query .= " LEFT JOIN {page} p ON (p.pageid=i.pageid) ORDER BY p.pg_order";
         } elseif ($displayfieldtype == 'dblist') {
-            $query .= " LEFT JOIN {" . $jtablename . "} t ON (t." . $jtableidfield . "=i." . $table->getOption('displayfield') . ") ORDER BY i." . $table->getOption('orderbyfields');
+            $query .= " LEFT JOIN {" . $jtablename . "} t ON (t." . $jtableidfield . "=i." . $table->getOption('displayfield') . ")";
+            $query .= $table->getOption('orderbyfields') ? " ORDER BY i." . $table->getOption('orderbyfields') : '';
         } else {
             $query .= $table->getOption('orderbyfields') ? 'ORDER BY ' . $table->getOption('orderbyfields') : '';
         }
