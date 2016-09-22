@@ -100,7 +100,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
         $pages = self::getItems('sitemap', $sortby='pg_order');
         /* Add pages to the sitemap */
         foreach ($pages as $k => $p) {
-            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], _SITEURL . '/' . $p['url']);
+            $pagetree->addNode($p['id'], $p['pg_parent'], $p['title'], $p['absoluteurl']);
         }
         /* Add to the sitemap array */
         $sitemap['pages'] = array(
