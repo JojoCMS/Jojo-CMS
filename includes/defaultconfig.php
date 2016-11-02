@@ -73,7 +73,12 @@ if (!defined('_DEBUG')) {
     define('_DEBUG', false);
 }
 
-/* Debug mode on/off */
+/* Test email address */
+if (!defined('_TESTEMAIL')) {
+    define('_TESTEMAIL', '');
+}
+
+/* Admin folder name */
 if (!defined('_ADMIN')) {
     define('_ADMIN', 'admin');
 }

@@ -2778,7 +2778,7 @@ class Jojo {
      */
     static function isLocalServer($domain=false)
     {
-        if (!$domain) $domain = _PROTOCOL.$_SERVER['HTTP_HOST'];
+        if (!$domain) $domain = _PROTOCOL . $_SERVER['HTTP_HOST'];
         $localservers = Jojo::getOption('dev_domains');
         if (empty($localservers)) return false;
 
@@ -2811,6 +2811,8 @@ class Jojo {
             }
         }
 
+        $toaddress = _TESTEMAIL ?: $toaddress;
+
         /* Log the message */
         if (!class_exists('Jojo_Eventlog')) require_once(_BASEDIR.'/plugins/jojo_core/classes/Jojo/Eventlog.php');
         $log             = new Jojo_Eventlog();
@@ -2820,6 +2822,7 @@ class Jojo {
         $log->desc       = "To: $toname <$toaddress>\nFrom: $fromname <$fromaddress>\nSubject: $subject\nMessage:\n$message";
         $log->savetodb();
         unset($log);
+        
 
         $smtp = Jojo::getOption('smtp_mail_enabled', 'no');
         if ($smtp == 'yes') {

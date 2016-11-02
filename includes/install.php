@@ -295,8 +295,10 @@ define('_MYSITEDIR', '%s');
 /* Shared plugin directory (if used) */
 define('_ALTPLUGINDIR', '%s');
 
-/* Debug Options - not recommended for production installations */
+/* Debug: Display all errors */
 define('_DEBUG', false);
+/* Email testing: Send -all- site generated emails to this address */
+define('_TESTEMAIL', '');
 
 /* Master password */
 define('_MASTERPASS', '%s');
