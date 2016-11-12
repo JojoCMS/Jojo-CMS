@@ -155,7 +155,6 @@ switch($action) {
                     'dbname' => '',
                     'webdir' => dirname($_SERVER['SCRIPT_FILENAME']),
                     'sitedir' => '',
-                    'altplugindir' => '',
                     'siteurl' => preg_replace('%(.*?)/install/?%', '$1', $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']),
                         );
 
@@ -174,7 +173,6 @@ switch($action) {
                 $missing = true;
             }
         }
-
         /* User submitted some values so lets check them */
         if ($found) {
             $link = @mysql_connect($dbhost, $dbuser, $dbpass);
@@ -213,7 +211,7 @@ switch($action) {
         $webdir  = str_replace('\\', '/', $webdir);
         $basedir = str_replace('\\', '/', $basedir);
         $sitedir = str_replace('\\', '/', $sitedir);
-        $altplugindir = str_replace('\\', '/', $altplugindir);
+        $altplugindir = $altplugindir ? str_replace('\\', '/', $altplugindir) : '';
         $data = explode('/', $webdir);
         $suggested_mysite = '';
         for ($i=0; $i<(count($data)-1); $i++) {
@@ -263,7 +261,7 @@ switch($action) {
                 <div class="help-block">Please create the mysite folder manually before proceeding</div>
            </div>
             <div class="form-group">
-                <label for="altplugindir">Shared Plugin Directory: </label><input class="form-control" type="text" size="45" id="altplugindir" name="altplugindir" value="'.$altplugindir.'" />
+                <label for="altplugindir">Shared Plugin Directory: </label><input class="form-control" type="text" size="45" id="altplugindir" name="altplugindir" value="'. $altplugindir .'" />
            </div>
             </div>
             <p class="action">Please complete the above fields and manually create the <strong>mysite</strong> folder, then proceed with the installation. <button class="btn btn-default" type="submit" name="submit" value="Create Config File">Next</button></p>';
@@ -310,7 +308,7 @@ EOCONFIG;
         if (!isset($_SESSION['dbpass'])) $_SESSION['dbpass'] = ''; //prevent notice error
         $configText = sprintf($configText,
                               $_SESSION['dbhost'], $_SESSION['dbuser'], $_SESSION['dbpass'], $_SESSION['dbname'],
-                              rtrim($_SESSION['siteurl'], '/'), (isset($_SESSION['secureurl']) && $_SESSION['secureurl'] ?  rtrim($_SESSION['secureurl'], '/') : rtrim($_SESSION['siteurl'], '/')), rtrim(str_replace('\\', '/', $_SESSION['basedir']), '/'), rtrim($_SESSION['webdir'], '/'), rtrim($_SESSION['sitedir'], '/'), rtrim($_SESSION['altplugindir'], '/'),
+                              rtrim($_SESSION['siteurl'], '/'), (isset($_SESSION['secureurl']) && $_SESSION['secureurl'] ?  rtrim($_SESSION['secureurl'], '/') : rtrim($_SESSION['siteurl'], '/')), rtrim(str_replace('\\', '/', $_SESSION['basedir']), '/'), rtrim($_SESSION['webdir'], '/'), rtrim($_SESSION['sitedir'], '/'), (isset($_SESSION['altplugindir']) && $_SESSION['altplugindir'] ?  rtrim($_SESSION['altplugindir'], '/') : ''),
                               $_SESSION['masterpass'], $_SESSION['admin']);
 
         /* If possible create config file automatically */
