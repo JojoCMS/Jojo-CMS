@@ -35,15 +35,6 @@ $default_td['page'] = array(
 
 /* Content Tab */
 
-// ID Field
-$default_fd['page']['pageid'] = array(
-        'fd_name' => "ID",
-        'fd_type' => "readonly",
-        'fd_help' => "A unique ID for this page - automatically assigned by the system",
-        'fd_order' => "1",
-        'fd_tabname' => "Content",
-    );
-
 // Page Heading Field
 $default_fd['page']['pg_title'] = array(
         'fd_name' => "Page Heading",
@@ -52,17 +43,6 @@ $default_fd['page']['pg_title'] = array(
         'fd_size' => "60",
         'fd_help' => "The heading is an important page element. As well as being the page H1 heading, it will become the default title, button text and URL if other fields are not specified.",
         'fd_order' => "2",
-        'fd_tabname' => "Content",
-    );
-
-// SEO Title Field
-$default_fd['page']['pg_seotitle'] = array(
-        'fd_name' => "SEO Title",
-        'fd_type' => "text",
-        'fd_options' => "seotitle",
-        'fd_size' => "60",
-        'fd_help' => "Search Engine Optimised text for the title bar. Start with your preferred search phrase, and try to keep this within 70 characters",
-        'fd_order' => "3",
         'fd_tabname' => "Content",
     );
 
@@ -94,51 +74,6 @@ $default_fd['page']['pg_body'] = array(
         'fd_type' => "hidden",
         'fd_showlabel' => "no",
         'fd_order' => "6",
-        'fd_tabname' => "Content",
-    );
-
-// Language/Country Field
-$default_fd['page']['pg_language'] = array(
-        'fd_name' => "Language/Country",
-        'fd_type' => "hidden",
-        'fd_options' => "lang_country",
-        'fd_default' => "en",
-        'fd_help' => "The language/country this page is written for",
-        'fd_order' => "7",
-        'fd_tabname' => "Content",
-    );
-
-// HTML Language Field
-$default_fd['page']['pg_htmllang'] = array(
-        'fd_name' => "HTML Language",
-        'fd_type' => "dblist",
-        'fd_options' => "language",
-        'fd_default' => "en",
-        'fd_help' => "The language this page is written in (if not the default language for the language/country chosen above",
-        'fd_order' => "8",
-        'fd_tabname' => "Content",
-    );
-
-// Meta Description Field
-$default_fd['page']['pg_metadesc'] = array(
-        'fd_name' => "Meta Description",
-        'fd_type' => "textarea",
-        'fd_options' => "metadescription",
-        'fd_rows' => "3",
-        'fd_cols' => "60",
-        'fd_help' => "A good sales oriented description of the page for the Search Engine snippet. Try to keep this within 155 characters, as anything larger will be chopped from the snippet.",
-        'fd_order' => "9",
-        'fd_tabname' => "Content",
-    );
-
-// META Keywords Field
-$default_fd['page']['pg_metakeywords'] = array(
-        'fd_name' => "META Keywords",
-        'fd_type' => "hidden",
-        'fd_rows' => "3",
-        'fd_cols' => "60",
-        'fd_help' => "A space separated list of keywords / phrases to help search engines index the site. If you leave this field empty, meta keywords are generated automatically, which is the recommended behaviour.",
-        'fd_order' => "10",
         'fd_tabname' => "Content",
     );
 
@@ -201,7 +136,7 @@ $default_fd['page']['pg_mainnav'] = array(
 // Main Nav Intl Field
 $default_fd['page']['pg_mainnavalways'] = array(
         'fd_name' => "Main Nav Intl",
-        'fd_type' => "checkbox",
+        'fd_type' => "hidden",
         'fd_options' => "yes\nno",
         'fd_default' => "no",
         'fd_help' => "When Internationalisation (Multi Language) is on, show page on all menus.",
@@ -253,6 +188,75 @@ $default_fd['page']['pg_sitemapnav'] = array(
         'fd_tabname' => "Navigation",
     );
 
+
+// Permissions Field
+$default_fd['page']['pg_permissions'] = array(
+        'fd_name' => "Permissions",
+        'fd_type' => "permissions",
+        'fd_order' => "18",
+        'fd_tabname' => "Navigation",
+    );
+
+$o=0;
+/* SEO Tab */
+
+// SEO Title Field
+$default_fd['page']['pg_seotitle'] = array(
+        'fd_name' => "SEO Title",
+        'fd_type' => "text",
+        'fd_options' => "seotitle",
+        'fd_size' => "60",
+        'fd_help' => "Search Engine Optimised text for the title bar. Start with your preferred search phrase, and try to keep this within 70 characters",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
+    );
+
+// Meta Description Field
+$default_fd['page']['pg_metadesc'] = array(
+        'fd_name' => "Meta Description",
+        'fd_type' => "textarea",
+        'fd_options' => "metadescription",
+        'fd_rows' => "3",
+        'fd_cols' => "60",
+        'fd_help' => "A good sales oriented description of the page for the Search Engine snippet. Try to keep this within 155 characters, as anything larger will be chopped from the snippet.",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
+    );
+
+// Language/Country Field
+$default_fd['page']['pg_language'] = array(
+        'fd_name' => "Language/Country",
+        'fd_type' => "hidden",
+        'fd_options' => "lang_country",
+        'fd_default' => "en",
+        'fd_help' => "The language/country this page is written for",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
+    );
+
+// HTML Language Field
+$default_fd['page']['pg_htmllang'] = array(
+        'fd_name' => "HTML Language",
+        'fd_type' => "dblist",
+        'fd_options' => "language",
+        'fd_default' => "en",
+        'fd_help' => "The language this page is written in (if not the default language for the site/section",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
+    );
+
+
+// META Keywords Field
+$default_fd['page']['pg_metakeywords'] = array(
+        'fd_name' => "META Keywords",
+        'fd_type' => "hidden",
+        'fd_rows' => "3",
+        'fd_cols' => "60",
+        'fd_help' => "A space separated list of keywords / phrases to help search engines index the site. If you leave this field empty, meta keywords are generated automatically, which is the recommended behaviour.",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
+    );
+
 // XML Sitemap Field
 $default_fd['page']['pg_xmlsitemapnav'] = array(
         'fd_name' => "XML Sitemap",
@@ -260,8 +264,8 @@ $default_fd['page']['pg_xmlsitemapnav'] = array(
         'fd_options' => "yes:yes:pg_xmlsitemap_lastmod,pg_xmlsitemap_changefreq,pg_xmlsitemap_priority\nno",
         'fd_default' => "yes",
         'fd_help' => "Will this page show on the XML sitemap?",
-        'fd_order' => "11",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 // XML Sitemap show lastmod? Field
@@ -271,8 +275,8 @@ $default_fd['page']['pg_xmlsitemap_lastmod'] = array(
         'fd_options' => "yes\nno",
         'fd_default' => "yes",
         'fd_help' => "XML Sitemap - show the lastmod date of the page? Some pages may be generated by a plugin and have dynamic content. Best to not show date for these",
-        'fd_order' => "12",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 // XML Sitemap ChangeFreq Field
@@ -281,8 +285,8 @@ $default_fd['page']['pg_xmlsitemap_changefreq'] = array(
         'fd_type' => "list",
         'fd_options' => "active:default\nalways\nhourly\ndaily\nweekly\nmonthly\nyearly\nnever",
         'fd_help' => "XML Sitemap - how often the content changes - don't show field, or add the options",
-        'fd_order' => "13",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 // XML Sitemap Priority Field
@@ -291,8 +295,8 @@ $default_fd['page']['pg_xmlsitemap_priority'] = array(
         'fd_type' => "list",
         'fd_options' => ":default\n1.0:1.0 highest priority\n0.9\n0.8\n0.7\n0.6\n0.5\n0.4\n0.3\n0.2\n0.1\n0.0:0.0 lowest priority",
         'fd_help' => "XML Sitemap priority of pages ranging 0.0 to 1.0",
-        'fd_order' => "14",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 // Index Field
@@ -302,8 +306,8 @@ $default_fd['page']['pg_index'] = array(
         'fd_options' => "yes\nno",
         'fd_default' => "yes",
         'fd_help' => "Setting this option to NO will help prevent search engines from indexing this page by using a meta noindex tag and an entry in robots.txt - USE WITH CAUTION!",
-        'fd_order' => "15",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 // Follow to Field
@@ -313,8 +317,8 @@ $default_fd['page']['pg_followto'] = array(
         'fd_options' => "yes\nno",
         'fd_default' => "yes",
         'fd_help' => "Prevent link juice from flowing to this page by nofollowing all navigation links to the page. Useful for low-search-value pages on the site such as privacy policy and terms pages.",
-        'fd_order' => "16",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 // Follow from Field
@@ -324,16 +328,8 @@ $default_fd['page']['pg_followfrom'] = array(
         'fd_options' => "yes\nno",
         'fd_default' => "yes",
         'fd_help' => "Prevent spiders from following any links on this page by inserting a nofollow meta tag.",
-        'fd_order' => "17",
-        'fd_tabname' => "Navigation",
-    );
-
-// Permissions Field
-$default_fd['page']['pg_permissions'] = array(
-        'fd_name' => "Permissions",
-        'fd_type' => "permissions",
-        'fd_order' => "18",
-        'fd_tabname' => "Navigation",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO"
     );
 
 
@@ -372,14 +368,25 @@ $default_fd['page']['pg_status'] = array(
 
 
 /* Technical Tab */
+$o=0;
+
+// ID Field
+$default_fd['page']['pageid'] = array(
+        'fd_name' => "ID",
+        'fd_type' => "readonly",
+        'fd_help' => "A unique ID for this page - automatically assigned by the system",
+        'fd_order' => $o++,
+        'fd_tabname' => "Technical",
+    );
+
 
 // Last Updated Field
 $default_fd['page']['pg_updated'] = array(
         'fd_name' => "Last Updated",
         'fd_type' => "timestamp",
         'fd_default' => "CURRENT_TIMESTAMP",
-        'fd_order' => "1",
-        'fd_tabname' => "Technical",
+        'fd_order' => $o++,
+        'fd_tabname' => "Technical"
     );
 
 
@@ -389,8 +396,8 @@ $default_fd['page']['pg_link'] = array(
         'fd_type' => "plugin",
         'fd_size' => "40",
         'fd_help' => "If the page is controlled by a PHP plugin, select the plugin/class here.",
-        'fd_order' => "2",
-        'fd_tabname' => "Technical",
+        'fd_order' => $o++,
+        'fd_tabname' => "Technical"
     );
 
 // Head content Field
@@ -400,8 +407,8 @@ $default_fd['page']['pg_head'] = array(
         'fd_rows' => "6",
         'fd_cols' => "60",
         'fd_help' => "Any HEAD elements to include in the page, such as Javascript and CSS. For sitewide additions, use a .js or .css file instead.",
-        'fd_order' => "3",
-        'fd_tabname' => "Technical",
+        'fd_order' => $o++,
+        'fd_tabname' => "Technical"
     );
 
 // SSL Secure Field
@@ -411,8 +418,8 @@ $default_fd['page']['pg_ssl'] = array(
         'fd_options' => "yes\nno",
         'fd_default' => "no",
         'fd_help' => "If a secure certificate is installed on the site, this option determines whether a page is served securely or not.",
-        'fd_order' => "4",
-        'fd_tabname' => "Technical",
+        'fd_order' => $o++,
+        'fd_tabname' => "Technical"
     );
 
 // Content Cache Field
@@ -422,8 +429,8 @@ $default_fd['page']['pg_contentcache'] = array(
         'fd_options' => "yes\nno\nauto",
         'fd_default' => "auto",
         'fd_help' => "Caches content to improve performance, however pages that change often should not be cached.",
-        'fd_order' => "5",
-        'fd_tabname' => "Technical",
+        'fd_order' => $o++,
+        'fd_tabname' => "Technical"
     );
 
 
