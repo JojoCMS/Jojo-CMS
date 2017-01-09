@@ -1740,7 +1740,7 @@ $_options[] = array(
     'label'       => 'Allow login with email',
     'description' => 'If YES, allows users to login with their email address or username.',
     'type'        => 'radio',
-    'default'     => 'no',
+    'default'     => 'yes',
     'options'     => 'yes,no'
 );
 
