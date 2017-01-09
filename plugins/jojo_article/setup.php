@@ -65,10 +65,10 @@ if ($res === true) {
 $data = Jojo::selectRow("SELECT * FROM {article}");
 if (!count($data)) {
     echo "Jojo_Plugin_Jojo_Article: Added sample article.<br/>";
-    Jojo::insertQuery("INSERT INTO {article} ( `ar_title` , `ar_url`, `ar_desc` , `ar_body` , `ar_bbbody` , `ar_category` , `ar_date` , `ar_image` , `ar_author` , `ar_source` , `ar_seotitle` , `ar_metadesc` , `ar_language` )
+    Jojo::insertQuery("INSERT INTO {article} ( `ar_title` , `ar_url`, `ar_body` , `ar_bbbody` , `ar_category` , `ar_date`)
     VALUES (
-    'Welcome to JojoCMS', 'test', 'A test article', 'Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by <a href=\"http://www.jojocms.org\">Jojo CMS</a>.', '[editor:bb]Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by [url=http://www.jojocms.org]Jojo CMS[/url].', ?, ? , '', '', '', '', '', ?
-    );", array((isset($catid) ? $catid : 1), time(), 'en'));
+    'Welcome to JojoCMS', 'test', 'Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by <a href=\"http://www.jojocms.org\">Jojo CMS</a>.', '[editor:html]\n<p>Welcome to the articles section of your JojoCMS site. This part of the site is under construction. Article plugin powered by <a href=\"http://www.jojocms.org\">Jojo CMS</a>.', ?, ?
+    );", array((isset($catid) ? $catid : 1), time()));
 }
 
 /* Regenerating HTML cache for Article */

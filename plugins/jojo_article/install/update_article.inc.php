@@ -88,18 +88,6 @@ $default_fd['article']['ar_subtitle'] = array(
         'fd_tabname' => "Content",
     );
 
-// SEO Title Field
-$default_fd['article']['ar_seotitle'] = array(
-        'fd_name' => "SEO Title",
-        'fd_type' => "text",
-        'fd_options' => "seotitle",
-        'fd_size' => "60",
-        'fd_help' => "Version of the title used by search engines - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
-        'fd_order' => $o++,
-        'fd_tabname' => "Content",
-        'fd_mode' => "standard",
-    );
-
 // Date Field
 $default_fd['article']['ar_date'] = array(
         'fd_name' => "Date",
@@ -111,16 +99,6 @@ $default_fd['article']['ar_date'] = array(
         'fd_mode' => "standard",
     );
 
-// Description Field
-$default_fd['article']['ar_desc'] = array(
-        'fd_name' => "Description",
-        'fd_type' => "text",
-        'fd_size' => "60",
-        'fd_help' => "A one sentence description of the article. Used for rollover text on links, which enhances usability",
-        'fd_order' => $o++,
-        'fd_tabname' => "Content",
-        'fd_mode' => "advanced",
-    );
 
 // URL Field
 $default_fd['article']['ar_url'] = array(
@@ -193,30 +171,6 @@ $default_fd['article']['ar_author'] = array(
         'fd_mode' => "advanced",
     );
 
-// Source Field
-$default_fd['article']['ar_source'] = array(
-        'fd_name' => "Source",
-        'fd_type' => "url",
-        'fd_size' => "20",
-        'fd_help' => "The original source of the article (Syndicated articles only). This field is not displayed, but is for internal use.",
-        'fd_order' => $o++,
-        'fd_tabname' => "Content",
-        'fd_mode' => "advanced",
-    );
-
-// META Description Field
-$default_fd['article']['ar_metadesc'] = array(
-        'fd_name' => "META Description",
-        'fd_type' => "textarea",
-        'fd_options' => "metadescription",
-        'fd_rows' => "4",
-        'fd_cols' => "60",
-        'fd_help' => "A META Description for the article. By default, a meta description is auto-generated, but hand-written descriptions are always better. This is a recommended field.",
-        'fd_order' => $o++,
-        'fd_tabname' => "Content",
-        'fd_mode' => "advanced",
-    );
-
 // Image Field
 $default_fd['article']['ar_image'] = array(
         'fd_name' => "Image",
@@ -225,6 +179,17 @@ $default_fd['article']['ar_image'] = array(
         'fd_order' => $o++,
         'fd_tabname' => "Content",
         'fd_mode' => "standard",
+    );
+
+// Source Field  (deprecated)
+$default_fd['article']['ar_source'] = array(
+        'fd_name' => "Source",
+        'fd_type' => "hidden",
+        'fd_size' => "20",
+        'fd_help' => "The original source of the article (Syndicated articles only). This field is not displayed, but is for internal use.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+        'fd_mode' => "advanced",
     );
 
 // Language Field  (deprecated)
@@ -240,6 +205,45 @@ $default_fd['article']['ar_language'] = array(
         'fd_mode' => "advanced",
     );
 
+// Description Field (deprecated)
+$default_fd['article']['ar_desc'] = array(
+        'fd_name' => "Description",
+        'fd_type' => "hidden",
+        'fd_size' => "60",
+        'fd_help' => "A one sentence description of the article. Used for rollover text on links, which enhances usability",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO",
+        'fd_mode' => "advanced",
+    );
+
+/* SEO Tab */
+$o= 0;
+
+// SEO Title Field
+$default_fd['article']['ar_seotitle'] = array(
+        'fd_name' => "SEO Title",
+        'fd_type' => "text",
+        'fd_options' => "seotitle",
+        'fd_size' => "60",
+        'fd_help' => "Version of the title used by search engines - it may be worth including your search phrase at the beginning of the title to improve rankings for that phrase.",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO",
+        'fd_mode' => "standard",
+    );
+
+// META Description Field
+$default_fd['article']['ar_metadesc'] = array(
+        'fd_name' => "META Description",
+        'fd_type' => "textarea",
+        'fd_options' => "metadescription",
+        'fd_rows' => "4",
+        'fd_cols' => "60",
+        'fd_help' => "A META Description for the article. By default, a meta description is auto-generated, but hand-written descriptions are always better. This is a recommended field.",
+        'fd_order' => $o++,
+        'fd_tabname' => "SEO",
+        'fd_mode' => "advanced",
+    );
+
 // HTMLLang Field (to allow user to override the default language for the section chosen.
 $default_fd['article']['ar_htmllang'] = array(
         'fd_name' => "HTML Language",
@@ -249,7 +253,7 @@ $default_fd['article']['ar_htmllang'] = array(
         'fd_size' => "20",
         'fd_help' => "The language of the article - if different from the default language for this section.",
         'fd_order' => $o++,
-        'fd_tabname' => "Content",
+        'fd_tabname' => "SEO",
         'fd_mode' => "advanced",
     );
 

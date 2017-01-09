@@ -24,7 +24,6 @@ $query = "
       `articleid` int(11) NOT NULL auto_increment,
       `ar_title` varchar(255) NOT NULL default '',
       `ar_subtitle` varchar(255) NOT NULL default '',
-      `ar_desc` varchar(255) NOT NULL default '',
       `ar_url` varchar(255) NOT NULL default '',
       `ar_body` text NULL,
       `ar_category` int(11) NOT NULL default '0',
@@ -39,17 +38,14 @@ if (class_exists('Jojo_Plugin_Jojo_comment')) {
 }
 $query .= "
       `ar_author` varchar(255) NOT NULL default '',
-      `ar_source` varchar(255) NOT NULL default '',
       `ar_featured` tinyint(1) NOT NULL default '0',
       `ar_seotitle` varchar(255) NOT NULL default '',
       `ar_metadesc` varchar(255) NOT NULL default '',
-      `ar_language` varchar(100) NOT NULL default 'en',
       `ar_htmllang` varchar(100) NOT NULL default 'en',
       PRIMARY KEY  (`articleid`),
       KEY `category` (`ar_category`),
-      KEY `language` (`ar_language`),
       FULLTEXT KEY `title` (`ar_title`),
-      FULLTEXT KEY `body` (`ar_title`,`ar_desc`,`ar_body`)
+      FULLTEXT KEY `body` (`ar_title`,`ar_body`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci  AUTO_INCREMENT=1000;";
 
 /* Convert mysql date format to unix timestamps */
