@@ -155,15 +155,17 @@ switch($action) {
                     'dbname' => '',
                     'webdir' => dirname($_SERVER['SCRIPT_FILENAME']),
                     'sitedir' => '',
+                    'altplugindir' => '',
                     'siteurl' => preg_replace('%(.*?)/install/?%', '$1', $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']),
                         );
+        $optional = array('altplugindir');
 
         foreach($fields as $f => $default) {
-            if (!empty($_POST[$f])) {
+            if ($_POST[$f] || in_array($f, $optional)) {
                 $$f = $_POST[$f];
                 $_SESSION[$f] = $_POST[$f];
                 $found = true;
-            } elseif (!empty($_SESSION[$f])) {
+            } elseif ($_SESSION[$f]) {
                 $$f = $_SESSION[$f];
                 $found = true;
             } elseif ($f == 'dbpass') {
@@ -197,10 +199,6 @@ switch($action) {
             if (!file_exists($sitedir)) {
                 $errors[] = 'My Site Directory ' . $sitedir . ' not found';
             }
-            if ($altplugindir && !file_exists($altplugindir)) {
-                $errors[] = 'Shared Plugin Directory ' . $altplugindir . ' not found';
-            }
-
             if (count($errors)) {
                 $errortext = implode('<br />',$errors);
                 echo '<div class="errors"><h2>Errors</h2>' . $errortext . '</div>';
@@ -211,7 +209,7 @@ switch($action) {
         $webdir  = str_replace('\\', '/', $webdir);
         $basedir = str_replace('\\', '/', $basedir);
         $sitedir = str_replace('\\', '/', $sitedir);
-        $altplugindir = $altplugindir ? str_replace('\\', '/', $altplugindir) : '';
+        $altplugindir = $_SESSION['altplugindir'] ? str_replace('\\', '/', $_SESSION['altplugindir']) : '';
         $data = explode('/', $webdir);
         $suggested_mysite = '';
         for ($i=0; $i<(count($data)-1); $i++) {

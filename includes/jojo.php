@@ -367,7 +367,10 @@ if (!$resourcerequest) {
     $smarty->assign('loginmessage', $loginfailure);
 
     /* After login hook */
-    if ( isset($_SESSION['loggingin']) && $_SESSION['loggingin']) Jojo::runHook('action_after_login');
+    if ( isset($_SESSION['loggingin']) && $_SESSION['loggingin']) {
+        Jojo::runHook('action_after_login');
+        unset($_SESSION['loggingin']);
+    }
     if ( isset($_SESSION['loggingout']) && $_SESSION['loggingout']) Jojo::runHook('action_after_logout');
 
 } 
@@ -536,8 +539,9 @@ if (Jojo::getOption('shorttitlebranding') == 'yes') {
     $brandingtitle = _SITETITLE;
 }
 
-/* Append or Prepend the site title based on used options */
-if (Jojo::getOption('titlebranding') == 'first' && $brandingtitle) {
+/* Append or Prepend the site title based on user options (unless it's the same as the page title) */
+if ($displaytitle==$brandingtitle) {
+} elseif (Jojo::getOption('titlebranding') == 'first' && $brandingtitle) {
     $displaytitle = $brandingtitle . Jojo::getOption('title_separator', ' | ') . $displaytitle;
 } elseif (Jojo::getOption('titlebranding') == 'last' && $brandingtitle) {
     $displaytitle = $displaytitle . Jojo::getOption('title_separator', ' | ') . $brandingtitle;
