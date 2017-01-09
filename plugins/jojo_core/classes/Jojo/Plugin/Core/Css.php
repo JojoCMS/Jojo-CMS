@@ -376,7 +376,13 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
             $basedir = ($filepath) ? dirname($filepath) : dirname(jojo::getFormData('uri'));
 
             foreach ($matches as $import) {
-                $file = $basedir.'/'.$import[2];
+                if (strpos($import[2], 'http')===false) {
+                    $file =  $basedir . '/' . $import[2];
+                    $external = false;
+                } else {
+                    $file = $import[2];
+                    $external = true;
+                }
                 $output = '';
                 $found = false;
                 // Todo: Add code to protect against "../../" strings. Should be able to trust the CSS files, but just to be safe.
@@ -386,16 +392,20 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
                 if ($import[3]) {
                     $output = '@media '.$import[3].' { ';
                 }
-                foreach (Jojo::listThemes($file) as $pluginfile) {
-                    $output .= Jojo_Plugin_Core_Css::parseImports(file_get_contents($pluginfile), $file);
+                if ($external && $ecss=file_get_contents($file)) {
                     $found = true;
-                    break;
-                }
-                if (!$found) {
-                    foreach (Jojo::listPlugins($file) as $pluginfile) {
-                        $output .= Jojo_Plugin_Core_Css::parseImports(file_get_contents($pluginfile), $file);
+                } else {
+                    foreach (Jojo::listThemes($file) as $pluginfile) {
+                        $output .= self::parseImports(file_get_contents($pluginfile), $file);
                         $found = true;
                         break;
+                    }
+                    if (!$found) {
+                        foreach (Jojo::listPlugins($file) as $pluginfile) {
+                            $output .= Jojo_Plugin_Core_Css::parseImports(file_get_contents($pluginfile), $file);
+                            $found = true;
+                            break;
+                        }
                     }
                 }
                 if ($found && $import[3]) {
