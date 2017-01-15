@@ -357,7 +357,7 @@ if (!$resourcerequest) {
     $smarty->assign('IS_MOBILE',            Jojo::isMobile());
 
     /* User is logged in */
-    $smarty->assign('loggedIn', (boolean)(!empty($logindata)));
+    $smarty->assign('loggedIn', (boolean)(is_array($logindata)));
     $smarty->assign('userrecord', $logindata);
     if (in_array('admin',$_USERGROUPS)) {
        $smarty->assign('adminloggedin', true);

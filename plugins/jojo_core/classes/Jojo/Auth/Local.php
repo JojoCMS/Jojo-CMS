@@ -8,6 +8,8 @@ class Jojo_Auth_Local {
         $password = Jojo::getFormData('password', '');
         $remember = Jojo::getFormData('remember', false);
 
+        $logindata = false;
+
         if ($username) {
             /* Allow logging in by email or just username? */
             if (Jojo::getOption('allow_email_login', 'no') == 'yes') {
@@ -17,7 +19,6 @@ class Jojo_Auth_Local {
             }
 
             if (!$userdata) { return false; }
-            $logindata = false;
             /* Try PHPass' Blowfish algo, then fall back to the older methods */
             if (self::checkPassword($password, $userdata["us_password"])) {
                 /* Logged in */
