@@ -730,7 +730,8 @@ $_options[] = array(
     'label'       => 'Grid Column No.',
     'description' => 'How many columns does the grid use (default is 12 - but can be overriden in CSS using @grid-columns)',
     'type'        => 'integer',
-    'default'     => '12'
+    'default'     => '12',
+    'options'     => ''
 );
 
 $_options[] = array(
