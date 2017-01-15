@@ -725,6 +725,15 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'columngrid',
+    'category'    => 'HTML Editor',
+    'label'       => 'Grid Column No.',
+    'description' => 'How many columns does the grid use (default is 12 - but can be overriden in CSS using @grid-columns)',
+    'type'        => 'integer',
+    'default'     => '12'
+);
+
+$_options[] = array(
     'id'          => 'wysiwyg',
     'category'    => 'HTML Editor',
     'label'       => 'WYSIWYG Editor',

@@ -369,6 +369,7 @@ class Jojo_Plugin_Core extends Jojo_Plugin
     {
         if (strpos($content, '[[columnbreak')!==false) {
 
+            $grid = Jojo::getOption('columngrid', 12);
             $columns = substr_count($content, '[[columns]]');
             $uneven = 0;
             $brcount = substr_count($content, '[[columnbreak]]');
@@ -376,36 +377,36 @@ class Jojo_Plugin_Core extends Jojo_Plugin
             // 1/3 | 2/3 split
             if (strpos($content, '[[columnbreak13]]')!==false) {
                 $brcount = 13;
-                $uneven = 8;
+                $uneven = floor($grid/3*2);
                 $content =  str_replace('[[columnbreak13]]', '[[columnbreak]]', $content);
             // 2/3 | 1/3 split
             } elseif (strpos($content, '[[columnbreak23]]')!==false) {
                 $brcount = 23;
-                $uneven = 4;
+                $uneven = floor($grid/3);
                 $content =  str_replace('[[columnbreak23]]', '[[columnbreak]]', $content);
             }
 
             switch ($brcount) {
               case '1':
-                $colspan = 6;
+                $colspan = floor($grid/2);
                 break;
               case '2':
-                $colspan = 4;
+                $colspan = floor($grid/3);
                 break;
               case '3':
-                $colspan = 3;
+                $colspan = floor($grid/4);
                 break;
               case '5':
-                $colspan = 2;
+                $colspan = floor($grid/6);
                 break;
               case '13':
-                $colspan = 4;
+                $colspan = floor($grid/3);
                 break;
               case '23':
-                $colspan = 8;
+                $colspan = floor($grid/3*2);
                 break;
               default:
-                $colspan = 6;
+                $colspan = floor($grid/2);
             }
 
             $breaksize = Jojo::getOption('columnbreaks_min', 'sm');
