@@ -26,13 +26,6 @@ class Jojo_Plugin_Admin_Edit extends Jojo_Plugin
         global $smarty, $_USERGROUPS, $templateoptions;
         $content = array('javascript' => '');
 
-        /* Make sure we are on http / https for viewing this page, as per the page setting */
-        if ((_PROTOCOL == 'http://') && ($this->page['pg_ssl'] == 'yes'))
-           Jojo::redirect(_SECUREURL.'/'.$this->page['pg_url'].'/');
-
-        if ((_PROTOCOL == 'https://') && ($this->page['pg_ssl'] == 'no'))
-           Jojo::redirect(_SITEURL.'/'.$this->page['pg_url'].'/');
-
         /* do not apply content variables to the edit pages. This was causing
         problems with the vars inside the textareas being replaced */
         Jojo::removeFilter('content', 'applyContentVars', 'jojo_core');
