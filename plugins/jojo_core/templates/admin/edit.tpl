@@ -35,7 +35,7 @@
         {if $numtabs > 1}
         <div id="tabs">
             <ul class="nav nav-tabs">
-            {foreach from=$tabnames key=k item=t}<li{if $k==0} class="active"{/if}><a href="#" data-target="#tab-{if $t.tabname == ""}Fields{else}{$t.tabname|replace:" ":""|replace:".":""|replace:"/":""}{/if}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
+            {foreach from=$tabnames key=k item=t}<li{if $k==0} class="active"{/if}><a href="#" data-target="#tab-{if !$t.tabname}fields{else}{Jojo::cleanUrl($t.tabname)}{/if}" data-toggle="tab">{if $t.tabname == ""}Fields{else}{$t.tabname}{/if}</a></li>
             {/foreach}
             </ul>
         </div>
@@ -43,7 +43,7 @@
         <div id="fields" class="tab-content">
             {foreach from=$tabnames key=k item=tab}
             {if $numtabs > 1}
-            <div class="tab-pane fade{if $k==0} in active{/if}" id="tab-{if $tab.tabname == ""}Fields{else}{$tab.tabname|replace:" ":""|replace:".":""|replace:"/":""}{/if}">
+            <div class="tab-pane fade{if $k==0} in active{/if}" id="tab-{if !$tab.tabname}fields{else}{Jojo::cleanUrl($tab.tabname)}{/if}">
             {/if}
           
             {foreach from=$fields key=fieldname item=field}
