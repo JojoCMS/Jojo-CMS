@@ -882,6 +882,16 @@ class Jojo {
     }
 
     /**
+     * returns the file extension of the supplied string
+     */
+    static function SSLSITEURLs($content)
+    {
+        $oldsiteurl = str_replace('https://', 'http://', _SITEURL);
+        return str_replace($oldsiteurl, _SITEURL, $content);
+    }
+
+
+    /**
      * caches a file in the public cache area (ie for files the public are allowed to see)
      */
     static function publicCache($filename, $data=false, $modified=false, $resource=true)
