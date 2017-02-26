@@ -93,7 +93,8 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
                 } else {
                     $messages[] = 'Your password has been changed. You do not need to login again.';
                     $smarty->assign('success',   true);
-                }
+                    unset($_SESSION['temppassword']);
+               }
             }
 
         }
@@ -109,6 +110,9 @@ class Jojo_Plugin_Change_password extends Jojo_Plugin
         if (!$_USERID) {
             $content['content'] = 'You must be logged in to change your password';
         } else {
+            if (isset($_SESSION['temppassword'])) {
+                $smarty->assign('temppassword', $_SESSION['temppassword']);
+            }
             $content['content'] = $smarty->fetch('change_password.tpl');
         }
 

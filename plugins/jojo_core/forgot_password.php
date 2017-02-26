@@ -33,7 +33,6 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
         $messages = array();;
         $errors   = array();
 
-
         /* A reset hash has been sent via GET - find the relevant user and generate random password */
         if ($reset != '') {
             $user = Jojo::selectRow("SELECT userid, us_email, us_login, us_firstname, us_reminder FROM {user} WHERE us_reset= ?", array($reset));
@@ -49,6 +48,8 @@ class Jojo_Plugin_Forgot_password extends Jojo_Plugin
                 $newpasswordhash = Jojo_Auth_Local::hashPassword($newpassword);
                 /* Save new password to DB. Clear old reminder. Clear reset code. Display password on screen. */
                 Jojo::updateQuery("UPDATE {user} SET us_password = ?, us_reminder='', us_reset='' WHERE userid = ? LIMIT 1", array($newpasswordhash, $userid));
+                $_SESSION['temppassword'] = $newpassword;
+                Jojo::redirect($_SITEURL . '/change-password/');
                 $messages[] = "Your password has been reset to <b>$newpassword</b>";
                 $smarty->assign('changed', true);
                 $smarty->assign('newpassword', $newpassword);

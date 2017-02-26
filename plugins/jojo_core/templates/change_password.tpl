@@ -13,8 +13,12 @@
 <h3>Change your password</h3>
 <form method="post" action="{$REQUEST_URI}" class="contact-form no-ajax no-validate" role="form" onsubmit="return checkme_changepass()">
     <div class="form-group">
-        <label for="oldp" class="control-label">Current Password: <span class="required">*</span></label>
-        <input class="form-control" type="password" name="oldp" id="oldp" value="{if $oldp}{$oldp}{/if}" size="25" />
+        {if $temppassword}
+            <input class="form-control" type="hidden" name="oldp" id="oldp" value="{$temppassword}" size="25" />
+        {else}
+            <label for="oldp" class="control-label">Current Password: <span class="required">*</span></label>
+            <input class="form-control" type="password" name="oldp" id="oldp" value="{if $oldp}{$oldp}{/if}" size="25" />
+        {/if}
     </div>
     <div class="form-group">
         <label for="newp" class="control-label">New Password: <span class="required">*</span></label>
