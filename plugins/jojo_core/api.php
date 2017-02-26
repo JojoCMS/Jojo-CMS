@@ -870,6 +870,16 @@ $_options[] = array(
 );
 
 $_options[] = array(
+    'id'          => 'css_fontawesome',
+    'category'    => 'CSS',
+    'label'       => 'FontAwesome CDN ID',
+    'description' => 'FontAwesome ID for loading FontAwesome webfonts (inserts asynchronous loading script in the head). use .fa-events-icons-ready css to hide FOUT.',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
     'id'          => 'css_imports',
     'category'    => 'CSS',
     'label'       => 'Server side CSS Imports',
