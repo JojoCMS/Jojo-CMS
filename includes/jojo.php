@@ -105,6 +105,7 @@ if (_DEBUG) {
 /* _SITEURL can be defined in config file (preferred) or in database */
 defined('_SITEURL') or define('_SITEURL', Jojo::getOption('siteurl')); //set _SITEURL constant from database
 defined('_SECUREURL') or define('_SECUREURL', _SITEURL); 
+defined('_CDNURL') or define('_CDNURL', _SITEURL); 
 
 if (Jojo::usingSslConnection()) {
     define('_PROTOCOL', 'https://');
@@ -348,11 +349,12 @@ if (!$resourcerequest) {
     $smarty->assign('SITEURI',          _SITEURI);
     $smarty->assign('SECUREURL',        _SECUREURL);
     $smarty->assign('NONSECUREURL',     _NONSECUREURL);
+    $smarty->assign('RESOURCEURL',      _CDNURL);
     $smarty->assign('RELATIVE_URL',     _RELATIVE_URL);
     $smarty->assign('issecure',         $issecure);
     $smarty->assign('ADMIN',            _ADMIN);
     $smarty->assign('SITEFOLDER',       _SITEFOLDER);
-    if (!$issecure) $smarty->assign('NEXTASSET',        $ASSETS);
+    $smarty->assign('NEXTASSET',        $ASSETS);
     $smarty->assign('MULTILANGUAGE',        _MULTILANGUAGE);
     $smarty->assign('IS_MOBILE',            Jojo::isMobile());
 
