@@ -489,7 +489,7 @@ class Jojo_Plugin_Jojo_article extends Jojo_Plugin
             /* Prepare OpenGraph metatags (for Facebook etc) if required */
             if ((boolean)(Jojo::getOption('ogdata', 'no')=='yes')) {
                 $content['ogtags']['description'] = $article['description'];
-                $content['ogtags']['image'] = $article['image'] ? _SITEURL .  '/images/' . ($article['thumbnail'] ? $article['thumbnail'] : 's150') . '/' . $article['image'] : '';
+                $content['ogtags']['image'] = $article['image'] ? _CDNURL .  '/images/600x315/' . $article['image'] : '';
                 $content['ogtags']['title'] = $article['title'];
             }
 

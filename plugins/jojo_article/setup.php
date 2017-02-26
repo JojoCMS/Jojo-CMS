@@ -71,32 +71,6 @@ if (!count($data)) {
     );", array((isset($catid) ? $catid : 1), time()));
 }
 
-/* Regenerating HTML cache for Article */
-$articles = Jojo::selectQuery("SELECT * FROM {article} WHERE ar_bbbody != ''");
-if (count($articles)) {
-    echo 'Jojo_Plugin_Jojo_Article: Regenerating HTML cache for Articles<br />';
-    $n = count($articles);
-    for ($i=0; $i<$n; $i++) {
-        $bbcode = $articles[$i]['ar_bbbody'];
-        $cache = '';
-        if (strpos($bbcode, '[editor:bb]') !== false) {
-            /* BB Code field */
-            $bbcode = preg_replace('/\\[editor:bb\\][\\r\\n]{0,2}(.*)/si', '$1', $bbcode);
-            $bb = new bbconverter;
-            $bb->truncateurl = 30;
-            $bb->imagedropshadow = true; // Jojo::yes2true(Jojo::getOption('imagedropshadow'));
-            $bb->setBBCode($bbcode);
-            $cache = $bb->convert('bbcode2html');
-        } elseif (strpos($bbcode, '[editor:html]') !== false) {
-            $cache = str_replace('[editor:html]', '', $bbcode);
-        }
-        if ($cache){
-            /* Update DB with the cached HTML data */
-            Jojo::updateQuery("UPDATE {article} SET ar_body = ? WHERE articleid = ? LIMIT 1", array($cache, $articles[$i]['articleid']));
-        }
-    }
-}
-
 //script to force articles into categories - should only run once
 if (Jojo::getOption('article_enable_categories')) {
 
@@ -188,3 +162,15 @@ if (Jojo::getOption('article_enable_categories')) {
     echo 'Article categories enforced';
 }
 
+/* uncomment and run setup to convert any content links to an old http siteurl to the https version
+if (strpos(_SITEURL, 'https:')!==false) {
+  $articles = Jojo::selectQuery("SELECT articleid, ar_body, ar_bbbody FROM {article}");
+  foreach ($articles as $p) {
+    if ($p['ar_body'] && strpos($p['ar_body'], 'http:')!==false) {
+      $body = Jojo::SSLSITEURLs($p['ar_body']);
+      $bodycode = "[editor:html]\n" . $body;
+      Jojo::updateQuery("UPDATE {article} SET ar_body=?, ar_bbbody=? WHERE articleid=?", array($body, $bodycode, $p['articleid']));
+    }
+  }
+}
+*/
