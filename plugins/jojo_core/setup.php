@@ -400,3 +400,16 @@ if (Jojo::fileExists(_BASEDIR.'/_www/index.php') && Jojo::fileExists(_BASEDIR.'/
         echo 'Your version of index.php may be out of date. Please copy '._BASEDIR.'/www/index.php'.' to '._WEBDIR.'/index.php'.'.<br />';
     }
 }
+
+/* uncomment and run setup to convert any content links to an old http siteurl to the https version
+if (strpos(_SITEURL, 'https:')!==false) {
+  $pages = Jojo::selectQuery("SELECT pageid, pg_body, pg_body_code FROM {page}");
+  foreach ($pages as $p) {
+    if ($p['pg_body']) {
+      $body = Jojo::SSLSITEURLs($p['pg_body']);
+      $bodycode = "[editor:html]\n" . $body;
+      Jojo::updateQuery("UPDATE {page} SET pg_body=?, pg_body_code=? WHERE pageid=?", array($body, $bodycode, $p['pageid']));
+    }
+  }
+}
+*/
