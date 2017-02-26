@@ -179,16 +179,6 @@ $_options[] = array(
 );
 
 $_options[] = array(
-    'id'          => 'doctype',
-    'category'    => 'Config',
-    'label'       => 'Doctype',
-    'description' => 'Declare Doctype as XHTML or HTML5.',
-    'type'        => 'radio',
-    'default'     => 'html5',
-    'options'     => 'xhtml,html5'
-);
-
-$_options[] = array(
     'id'          => 'boilerplate_htmltag',
     'category'    => 'Config',
     'label'       => 'Boilerplate Html tag',
