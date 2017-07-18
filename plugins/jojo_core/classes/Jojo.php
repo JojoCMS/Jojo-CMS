@@ -959,7 +959,7 @@ class Jojo {
             }
             
             if (_RESOURCEROOTCACHE) {
-                $cachefolders = array('css', 'js', 'images', 'external', 'files', 'inline' );
+                $cachefolders = array('css', 'js', 'images', 'external', 'downloads', 'inline' );
                 foreach ($cachefolders as $f) {
                     if (file_exists(_RESOURCEROOTCACHE . '/' . $f)) {
                         $files = new RecursiveIteratorIterator(
