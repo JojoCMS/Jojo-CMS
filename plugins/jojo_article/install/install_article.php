@@ -28,6 +28,7 @@ $query = "
       `ar_body` text NULL,
       `ar_category` int(11) NOT NULL default '0',
       `ar_date` int(11) default '0',
+      `ar_desc` text NULL,
       `ar_image` varchar(255) NOT NULL default '',
       `ar_livedate` int(11) NOT NULL default '0',
       `ar_expirydate` int(11) NOT NULL default '0',

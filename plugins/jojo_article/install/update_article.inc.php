@@ -181,6 +181,17 @@ $default_fd['article']['ar_image'] = array(
         'fd_mode' => "standard",
     );
 
+// Description Field 
+$default_fd['article']['ar_desc'] = array(
+        'fd_name' => "Description",
+        'fd_type' => "textarea",
+        'fd_size' => "60",
+        'fd_help' => "A short summary/abstract of the article.",
+        'fd_order' => $o++,
+        'fd_tabname' => "Content",
+        'fd_mode' => "advanced",
+    );
+
 // Source Field  (deprecated)
 $default_fd['article']['ar_source'] = array(
         'fd_name' => "Source",
@@ -205,16 +216,6 @@ $default_fd['article']['ar_language'] = array(
         'fd_mode' => "advanced",
     );
 
-// Description Field (deprecated)
-$default_fd['article']['ar_desc'] = array(
-        'fd_name' => "Description",
-        'fd_type' => "hidden",
-        'fd_size' => "60",
-        'fd_help' => "A one sentence description of the article. Used for rollover text on links, which enhances usability",
-        'fd_order' => $o++,
-        'fd_tabname' => "SEO",
-        'fd_mode' => "advanced",
-    );
 
 /* SEO Tab */
 $o= 0;
