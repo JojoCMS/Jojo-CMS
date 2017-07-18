@@ -48,6 +48,11 @@ class Jojo_Plugin_Jojo_contact extends Jojo_Plugin
             $formfields = Jojo::selectQuery("SELECT * FROM {form} f LEFT JOIN {formfield} ff ON ( ff.ff_form_id = f.form_id) WHERE f.form_page_id = ? ORDER BY ff_order", array($pageID));
         }
 
+        if (!$formfields) {
+            header("HTTP/1.0 404 Not Found");
+            ob_end_flush(); // Send the output and turn off output buffering
+            exit;
+        }
 
         /* check if it's spammy before doing anything else */
         $errors = self::isSpam('', $formfields[0]['form_captcha']);
