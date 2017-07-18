@@ -623,6 +623,10 @@ Jojo::runHook('after_fetch_template');
 
 /* Allow output to be filtered */
 $html = Jojo::applyFilter('output', $html);
+if (!$isadmin && _CDNURL!=_SITEURL && strpos($html, _SITEURL)!==false) {
+  $html = str_replace(_SITEURL . '/downloads/', _CDNURL . '/downloads/', $html);
+  $html = str_replace('"downloads/', '"' . _CDNURL . '/downloads/', $html);
+}
 $html = str_replace('##', '', $html);
 $html = preg_replace('/<a([^>]*?)href=["\']\\[#\\]([a-z0-9-_]*)?["\']([^>]*?)>/i', '<a$1href="#$2"$3>', $html);
 
