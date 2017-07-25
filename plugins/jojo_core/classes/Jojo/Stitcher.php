@@ -26,7 +26,7 @@ class Jojo_Stitcher {
     var $numfiles = 0;
     var $header = '';
 
-    function Jojo_Stitcher($modified = 0)
+    function __construct($modified = 0)
     {
         $this->modified = $modified;
         if (!defined('_PROTOCOL')) {
