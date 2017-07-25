@@ -57,7 +57,7 @@ class hktree
     var $depth;
     var $showdepth;              //You may want to hide items below a certain depth - default = show all items
 
-    function hktree($name = '')
+    function __construct($name = '')
     {
         $this->name = $name;
         $depth = 0;
