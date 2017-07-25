@@ -352,7 +352,7 @@ class Jojo {
 
             /* Include Database Abstraction Layer and initialize database connection */
             global $ADODB_COUNTRECS, $ADODB_FETCH_MODE;
-            include(_BASEPLUGINDIR . '/jojo_core/external/adodb/adodb.inc.php');
+            include(_BASEPLUGINDIR . '/jojo_core/external/adodb5/adodb.inc.php');
             $ADODB_COUNTRECS = false;
             $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
             $_db = ADONewConnection('mysqli');
