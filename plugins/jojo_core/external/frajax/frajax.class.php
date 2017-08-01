@@ -22,7 +22,7 @@ class frajax {
     var $jsopen;
     var $jsclose;
 
-    function frajax($combined=false, $usegzip=false) {
+    function __construct($combined=false, $usegzip=false) {
         $this->usegzip = $usegzip;
         $this->combined = $combined;
         $this->combined = false; //debug
