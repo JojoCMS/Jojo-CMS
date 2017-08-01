@@ -28,3 +28,6 @@
 [submodule "plugins/jojo_core/external/font-awesome"]
 	path = plugins/jojo_core/external/font-awesome
 	url = https://github.com/FortAwesome/Font-Awesome.git
+[submodule "plugins/jojo_core/external/adodb5"]
+	path = plugins/jojo_core/external/adodb5
+	url = https://github.com/ADOdb/ADOdb.git
