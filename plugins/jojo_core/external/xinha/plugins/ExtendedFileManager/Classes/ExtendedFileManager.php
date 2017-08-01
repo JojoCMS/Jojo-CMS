@@ -40,7 +40,7 @@ class ExtendedFileManager
 	 * Constructor. Create a new Image Manager instance.
 	 * @param array $config configuration array, see config.inc.php
 	 */
-	function ExtendedFileManager($config, $mode = null)
+	function __construct($config, $mode = null)
 	{
 		$this->config = $config;
 		
