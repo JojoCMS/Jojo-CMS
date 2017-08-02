@@ -153,7 +153,7 @@ class bbConverter
     //as above, but for lists <ul> and <ol>
     var $_lastlist = '';
 
-    function bbConverter()
+    function __construct()
     {
     }
 
