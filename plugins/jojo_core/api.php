@@ -1397,8 +1397,8 @@ $_options[] = array(
 /* Google Analytics */
 $_options[] = array(
     'id'          => 'analyticscode',
-    'category'    => 'Google Analytics',
-    'label'       => 'Analytics Code',
+    'category'    => 'Analytics',
+    'label'       => 'Google Analytics Code',
     'description' => 'The number provided by Google Analytics for tracking site traffic - eg UA-XXXXX-X',
     'type'        => 'text',
     'default'     => '',
@@ -1407,8 +1407,8 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'analyticscodetype',
-    'category'    => 'Google Analytics',
-    'label'       => 'Analytics Code Type',
+    'category'    => 'Analytics',
+    'label'       => 'Google Analytics Code Type',
     'description' => 'The type of Google analytics code - universal, asynchronous or ga.js. If you use the async code, then it will be put into the head and the top/bottom option will be ignored.',
     'type'        => 'radio',
     'default'     => 'universal',
@@ -1417,8 +1417,8 @@ $_options[] = array(
 
 $_options[] = array(
     'id'          => 'crossdomainanalytics',
-    'category'    => 'Google Analytics',
-    'label'       => 'Cross Domain Analytics',
+    'category'    => 'Analytics',
+    'label'       => 'Google Cross Domain Analytics',
     'description' => 'Allow Google analytics to track between http and https servers of the same domain, and between domains.',
     'type'        => 'radio',
     'default'     => 'no',
@@ -1427,12 +1427,22 @@ $_options[] = array(
 
 $_options[] = array(
   'id'          => 'analyticsposition',
-  'category'    => 'Google Analytics',
+  'category'    => 'Analytics',
   'label'       => 'Google analytics at the top or bottom',
   'description' => 'Default at the bottom, but when you need to track events within a page, you need Analytics at the top of the HTML',
   'type'        => 'radio',
   'default'     => 'bottom',
   'options'     => 'top,bottom'
+);
+
+$_options[] = array(
+    'id'          => 'facebookpixelid',
+    'category'    => 'Analytics',
+    'label'       => 'Facebook Pixel ID',
+    'description' => 'The ID provided by Facebook',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
 );
 
 /* Email */
@@ -1739,6 +1749,16 @@ $_options[] = array(
     'category'    => 'Social Networking',
     'label'       => 'Instagram link',
     'description' => 'the full url of your Instagram channel',
+    'type'        => 'text',
+    'default'     => '',
+    'options'     => ''
+);
+
+$_options[] = array(
+    'id'          => 'pinterest_link',
+    'category'    => 'Social Networking',
+    'label'       => 'Pinterest link',
+    'description' => 'the full url of your Pinterest page',
     'type'        => 'text',
     'default'     => '',
     'options'     => ''
