@@ -39,6 +39,7 @@ class Jojo_Plugin_Core_Css extends Jojo_Plugin_Core {
         } else {
             /* Valid file extension */
             $file = str_replace( '.css', '', $file);
+            $file = preg_replace('/_(\d+)/', '', $file);
         }
 
         /* If the filename is clean, cache the css */

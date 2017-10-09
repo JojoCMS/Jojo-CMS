@@ -36,6 +36,7 @@ class Jojo_Plugin_Core_Js extends Jojo_Plugin_Core {
         } else {
             /* Valid file extension */
             $file = str_replace( '.js', '', $file);
+            $file = preg_replace('/_(\d+)/', '', $file);
         }
 
         $cachetime = Jojo::getOption('contentcachetime_resources', 604800);
