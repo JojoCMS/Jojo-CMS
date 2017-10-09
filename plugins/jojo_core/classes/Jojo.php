@@ -3483,6 +3483,10 @@ class Jojo {
                 /* Use page url is we have it, else generate something */
                 $n['url'] .= ($n['pg_url'] ? $n['pg_url'] : $n['pageid'] . '/' . Jojo::cleanURL($n['pg_title'])) . '/';
             }
+            if (strpos($n['url'], '#')!==false) {
+              $hashparts = explode('#', $n['url']);
+              $n['hash'] = '#' . $hashparts[1];
+            }
             /* Create title and label for display */
             $n['title'] = Jojo::htmlspecialchars($n['pg_desc'] ? $n['pg_desc'] : ($n['pg_seotitle'] ? $n['pg_seotitle'] : $n['pg_title']));
             $n['title'] = Jojo::getOption('pseudobreaks', 'no')=='yes' ? Jojo::pseudobreaks($n['title'], 'remove') : $n['title'];
