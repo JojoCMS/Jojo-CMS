@@ -2884,7 +2884,7 @@ class Jojo {
             $headers .= $senderaddress ? "From: " . $senderaddress . "\n" : 'From: "' . '=?UTF-8?B?' . base64_encode($fromname) . '?=' . '" <' . $fromaddress . ">\n";
             $headers .= $senderaddress ? "Reply-To: \"" . "=?UTF-8?B?".base64_encode($fromname)."?=" . "\" <" . $fromaddress . ">\n" : '';
             $additional="-f$fromaddress";
-            $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : $toname . ' <' . $toaddress. '>';
+            $to = (strpos($toname, '@') || empty($toname)) ? $toaddress : "=?UTF-8?B?".base64_encode($toname)."?=" . ' <' . $toaddress. '>';
             if ($htmlmessage) {
                 $body = '';
                 $body.= '--mixed-x' . $hash . "\n";
