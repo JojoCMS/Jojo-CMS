@@ -177,18 +177,18 @@ switch($action) {
         }
         /* User submitted some values so lets check them */
         if ($found) {
-            $link = @mysql_connect($dbhost, $dbuser, $dbpass);
+            $link = @mysqli_connect($dbhost, $dbuser, $dbpass);
             if (!$link) {
-                $errors[] = 'Could not connect to database: '. mysql_error();
+                $errors[] = 'Could not connect to database: '. mysqli_error();
             } else {
-                $db_selected = @mysql_select_db($dbname, $link);
+                $db_selected = @mysqli_select_db($link, $dbname);
                 if (!$db_selected) {
-                    $errors[] = 'Could not select database ' . $dbname . ': ' . mysql_error();
+                    $errors[] = 'Could not select database ' . $dbname . ': ' . mysqli_error();
                 } else {
-                    @mysql_query('ALTER DATABASE `' . $dbname . '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci', $link);
+                    @mysqli_query('ALTER DATABASE `' . $dbname . '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci', $link);
                 }
             }
-            @mysql_close($link);
+            @mysqli_close($link);
 
             if (!file_exists($basedir)) {
                 $errors[] = 'Base Directory ' . $basedir . ' not found';
